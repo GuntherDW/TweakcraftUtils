@@ -7,9 +7,9 @@ import java.util.logging.Logger;
 
 public class TweakcraftUtils extends Plugin {
 
-    private static final int version = 13;
+    private static final int version = 15;
     private final static Logger log = Logger.getLogger("Minecraft");
-    private static String name = "TweakcraftUtils b" + version;
+    private static String name = "TweakcraftUtils rev" + version;
     private static List<String> addlist;
     private static String col = Colors.Yellow;
     private static String col2 = Colors.LightPurple;
@@ -41,7 +41,7 @@ public class TweakcraftUtils extends Plugin {
     }
 
     public String listToString(List<String> lijst) {
-        String res = null;
+        String res = "";
         if (lijst.size() != 0) {
             for (String s : lijst) {
                 res += s + ",";
@@ -75,8 +75,7 @@ public class TweakcraftUtils extends Plugin {
     }
 
     public void enable() {
-        /* log.log(Level.INFO, "Loading admin subscr list!");
-        addlist = toList(properties.getString("admin-subscr-list", "")); */
+        loadProperties();
         log.info(name + " enabled");
     }
 
@@ -92,8 +91,10 @@ public class TweakcraftUtils extends Plugin {
         etc.getInstance().addCommand("/admin-list", "Show the current subscriber list.");
         etc.getInstance().addCommand("/admon", "Automatically send messages as admin msg while you chat!");
         etc.getInstance().addCommand("/admoff", "Disable the auto-admin msg.");
+        etc.getInstance().addCommand("/admon-list", "Show the current auto-admin list.");
+
         etc.getInstance().addCommand("/mlength", "Set the max length.");
-        loadProperties();
+
     }
 
 /*     public com.sk89q.craftbook.Vector playerVector(Player n){
@@ -103,14 +104,16 @@ public class TweakcraftUtils extends Plugin {
 
     private static void loadProperties() {
         log.log(Level.INFO, "Loading admin subscr list!");
-        addlist = toList(properties.getString("admin-subscr-list", ""));
+        log.log(Level.INFO, "Loading auto-admin list!");
         autolist = toList(properties.getString("admin-auto-list", ""));
-        maxlength = properties.getInt("max-length", 45);
-        autolist = new ArrayList<String>();
+        // log.log(Level.INFO, "auto-list: "+autolist);
+        addlist = toList(properties.getString("admin-subscr-list", ""));
+        maxlength = properties.getInt("max-length", 55);
+        // autolist = new ArrayList<String>();
     }
 
     private static List<String> toList(String str) {
-        if (str.trim().length() == 0) {
+        if (str.trim().isEmpty()) {
             return new ArrayList<String>();
         }
 
@@ -118,7 +121,7 @@ public class TweakcraftUtils extends Plugin {
         List<String> result = new ArrayList<String>();
 
         for (String n : names)
-            result.add(n);
+            result.add(n.trim());
         return result;
     }
 
@@ -353,8 +356,35 @@ public class TweakcraftUtils extends Plugin {
                 }
 
                 return true;
+            } else if(split[0].equalsIgnoreCase("/admon-list") &&
+                    player.isInGroup("admin"))
+            {
+
+                String msg= "";
+                if(autolist.size() != 0)
+                {
+                    player.sendMessage(col2 + "Current admin-auto-msg list : ");
+                    String color = "";
+                    for (String name : autolist) {
+                        try {
+                             Player p = etc.getServer().getPlayer(name);
+                             if (p != null) {
+                                color = p.getColor();
+                             } else {
+                                color = getPlayerColor(name, true);
+                            }
+                        } catch (NullPointerException e) {
+                            color = Colors.White;
+                        }
+                        msg = color + name;
+                        player.sendMessage(msg);
+                    }
+                } else {
+                       player.sendMessage(col2 + "Current admin-auto-msg list is empty!");
+                }
+                return true;
             } else if (split[0].equalsIgnoreCase("/admon")) {
-                if (addlist.contains(player.getName())) {
+                if (addlist.contains(player.getName()) || player.isInGroup("admin")) {
                     if (autolist.contains(player.getName())) {
                         player.sendMessage(Colors.LightPurple + "You already are on the list, use /admoff");
                         player.sendMessage(Colors.LightPurple + "to remove yourself from the list.");
