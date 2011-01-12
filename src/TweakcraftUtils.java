@@ -13,9 +13,10 @@ public class TweakcraftUtils extends Plugin {
     private static List<String> addlist;
     private static String col = Colors.Yellow;
     private static String col2 = Colors.LightPurple;
-    private static PropertiesFile properties = new PropertiesFile("tweakcraftutils.properties");
     private static int maxlength;
     private static List<String> autolist;
+
+    private static PropertiesFile properties = new PropertiesFile("tweakcraftutils.properties");
 
     public List<String> splitUp(String msg)
     {
@@ -41,10 +42,26 @@ public class TweakcraftUtils extends Plugin {
         return lijst;
     }
 
+    public String listToString(List<String> lijst)
+    {
+        String res = null;
+        if(lijst.size() != 0)
+        {   for(String s : lijst)
+            {
+                res += s+",";
+            }
+            res = res.substring(0, res.length()-1);
+        } else {
+            res = "";
+        }
+        return res;
+    }
+
 	public void disable() {
 		log.info(name + " disabled");
-        String lijst="";
-        for(String p : autolist)
+        String lijst=listToString(addlist);
+        String lijst2=listToString(autolist);
+        /* for(String p : autolist)
         {
             try{
                 etc.getServer().getPlayer(p).sendMessage(Colors.LightBlue + "Reloading TweakcraftUtils, remember to");
@@ -53,19 +70,10 @@ public class TweakcraftUtils extends Plugin {
 
             }
 
-        }
-        if(addlist.size() != 0)
-        {   for(String s : addlist)
-            {
-                lijst += s+",";
-            }
-            lijst = lijst.substring(0, lijst.length()-1);
-        } else {
-            lijst = "";
-        }
-
+        } */
         log.log(Level.INFO, "TweakcraftUtils: Writing to properties file!");
         properties.setString("admin-subscr-list", lijst);
+        properties.setString("admin-auto-list", lijst2);
         properties.setInt("max-length", maxlength);
         // properties.
 	}
@@ -101,6 +109,7 @@ public class TweakcraftUtils extends Plugin {
     {
         log.log(Level.INFO, "Loading admin subscr list!");
         addlist = toList(properties.getString("admin-subscr-list", ""));
+        autolist = toList(properties.getString("admin-auto-list", ""));
         maxlength = properties.getInt("max-length", 45);
         autolist = new ArrayList<String>();
     }
@@ -154,7 +163,7 @@ public class TweakcraftUtils extends Plugin {
         List<String> msg = new ArrayList<String>();
         int x;
         String color = getPlayerColor(sender, false);
-                   msg = splitUp(Colors.LightGreen + "ADMIN MSG : <"
+                   msg = splitUp(Colors.LightGreen + "ADMMSG : <"
                                             +color + sender +Colors.LightGreen + "> " +message);
 
                    for(Player p : etc.getServer().getPlayerList())
@@ -381,13 +390,19 @@ public class TweakcraftUtils extends Plugin {
 
                     return true;
             } else if(split[0].equalsIgnoreCase("/admon")) {
-                if(autolist.contains(player.getName()))
+                if(addlist.contains(player.getName()))
                 {
-                    player.sendMessage(Colors.LightPurple + "You already are on the list, use /admoff");
-                    player.sendMessage(Colors.LightPurple + "to remove yourself from the list.");
+                    if(autolist.contains(player.getName()))
+                    {
+                        player.sendMessage(Colors.LightPurple + "You already are on the list, use /admoff");
+                        player.sendMessage(Colors.LightPurple + "to remove yourself from the list.");
+                    } else {
+                        player.sendMessage(Colors.LightGreen + "You will now automatically send as an admin msg!");
+                        autolist.add(player.getName());
+                    }
                 } else {
-                    player.sendMessage(Colors.LightGreen + "You will now automatically send as an admin msg!");
-                    autolist.add(player.getName());
+                    player.sendMessage(Colors.LightPurple + "You are not on the subscriber list!");
+                    player.sendMessage(Colors.LightPurple + "You need to be a subscriber use this feature.");
                 }
                 return true;
             } else if(split[0].equalsIgnoreCase("/admoff")) {
