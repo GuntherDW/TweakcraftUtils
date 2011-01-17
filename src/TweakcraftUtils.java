@@ -42,7 +42,7 @@ public class TweakcraftUtils extends Plugin {
         return lijst;
     }
 
-    public String listToString(List<String> lijst) {
+    public static String listToString(List<String> lijst) {
         String res = "";
         if (lijst.size() != 0) {
             for (String s : lijst) {
@@ -66,6 +66,25 @@ public class TweakcraftUtils extends Plugin {
         for (String n : names)
             result.add(n.trim());
         return result;
+    }
+
+    private static String mToString(Map<String, List<String>> m)
+    {
+        String res = "";
+        String pl2 = "";
+        if(m.keySet().size() > 0)
+        {
+            for(String pl : m.keySet())
+            {
+                pl2 = listToString(m.get(pl));
+                res += pl + ","+pl2 + ";";
+            }
+
+            res = res.substring(0, res.length()-1);
+        } else {
+            res = "";
+        }
+        return res;
     }
 
     public static Map<String, List<String>> toMap(String str) {
@@ -93,6 +112,7 @@ public class TweakcraftUtils extends Plugin {
         String lijst = listToString(addlist);
         String lijst2 = listToString(autolist);
         String lijst3 = listToString(donottp);
+        String lijst4 = mToString(donottpexclude);
 
         /* for(String p : autolist)
         {
@@ -108,6 +128,7 @@ public class TweakcraftUtils extends Plugin {
         properties.setString("admin-subscr-list", lijst);
         properties.setString("admin-auto-list", lijst2);
         properties.setString("do-not-tp", lijst3);
+        properties.setString("do-not-tp-exclude", lijst4);
         properties.setInt("max-length", maxlength);
         etc.getInstance().removeCommand("/admin");
         etc.getInstance().removeCommand("/admin-add");
@@ -120,7 +141,7 @@ public class TweakcraftUtils extends Plugin {
         etc.getInstance().removeCommand("/tpon");
         etc.getInstance().removeCommand("/tpoff");
         etc.getInstance().removeCommand("/tplist");
-
+        etc.getInstance().removeCommand("/tpe");
         // properties.
     }
 

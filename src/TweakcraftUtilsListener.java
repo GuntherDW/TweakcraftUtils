@@ -11,7 +11,7 @@ public class TweakcraftUtilsListener extends PluginListener {
 
 
 
-    public String findPlayer(String partOfName) {
+    public static String findPlayer(String partOfName) {
         for (Player p : etc.getServer().getPlayerList()) {
             if (p.getName().toUpperCase().contains(partOfName.toUpperCase())) // found, return the fullname!
                 return p.getName();
@@ -20,7 +20,7 @@ public class TweakcraftUtilsListener extends PluginListener {
         return partOfName;
     }
 
-    public String findPlayerinList(String partOfName) {
+    public static String findPlayerinList(String partOfName) {
         for (String p : TweakcraftUtils.addlist) {
             if (p.toUpperCase().contains(partOfName.toUpperCase()))
                 return p;
@@ -28,16 +28,24 @@ public class TweakcraftUtilsListener extends PluginListener {
         return partOfName;
     }
 
-    public String getPlayerColor(String name, boolean conn) {
+    public static String getPlayerColor(String n, boolean conn) {
         String col = Colors.White;
-        Player p = etc.getDataSource().getPlayer(name);
-        if (p != null)
-            col = (conn ? Colors.LightBlue + "[NC] " : "") + p.getColor();
+        {
+            Player p = etc.getServer().getPlayer(n);
+            if (p == null)
+            {
+                p = etc.getDataSource().getPlayer(n);
+                col = Colors.LightBlue + "[NC] ";
+            }
 
+            if(p != null)
+                col += p.getColor();
+        }
         return col;
+
     }
 
-    private void sendToAdmins(String sender, String message) {
+    private static void sendToAdmins(String sender, String message) {
         List<String> msg = new ArrayList<String>();
         int x;
         String color = getPlayerColor(sender, false);
@@ -184,11 +192,7 @@ public class TweakcraftUtilsListener extends PluginListener {
                 String color;
                 try {
                     Player p = etc.getServer().getPlayer(name);
-                    if (p != null) {
-                        color = p.getColor();
-                    } else {
-                        color = getPlayerColor(name, true);
-                    }
+                    color = getPlayerColor(name, true);
                 } catch (NullPointerException e) {
                     color = Colors.White;
                 }
@@ -224,11 +228,7 @@ public class TweakcraftUtilsListener extends PluginListener {
                 for (String name : TweakcraftUtils.addlist) {
                     try {
                         Player p = etc.getServer().getPlayer(name);
-                        if (p != null) {
-                            color = p.getColor();
-                        } else {
-                            color = getPlayerColor(name, true);
-                        }
+                        color = getPlayerColor(name, true);
                     } catch (NullPointerException e) {
                         color = Colors.White;
                     }
@@ -250,11 +250,7 @@ public class TweakcraftUtilsListener extends PluginListener {
                 for (String name : TweakcraftUtils.autolist) {
                     try {
                         Player p = etc.getServer().getPlayer(name);
-                        if (p != null) {
-                            color = p.getColor();
-                        } else {
-                            color = getPlayerColor(name, true);
-                        }
+                        color = getPlayerColor(name, true);
                     } catch (NullPointerException e) {
                         color = Colors.White;
                     }
@@ -281,7 +277,7 @@ public class TweakcraftUtilsListener extends PluginListener {
             }
             return true;
         } else if (split[0].equalsIgnoreCase("/admoff")
-                    && TweakcraftUtils.addlist.contains(player.getName())) {
+                    && (TweakcraftUtils.addlist.contains(player.getName()) || player.isInGroup("admin"))) {
             if (!TweakcraftUtils.autolist.contains(player.getName())) {
                 player.sendMessage(Colors.LightPurple + "You aren't on the auto-admin list!");
             } else {
@@ -314,6 +310,12 @@ public class TweakcraftUtilsListener extends PluginListener {
 
                 if (toplayer != null) {
                     boolean refusetp = TweakcraftUtils.donottp.contains(toplayer.getName());
+                    List<String> excludel = TweakcraftUtils.donottpexclude.get(toplayer.getName());
+                    // TweakcraftUtils.log.log(Level.WARNING, excludel.toString());
+                    boolean exclude = false;
+                    if(excludel != null)
+                        exclude = excludel.contains(player.getName());
+                    
                     boolean override = false;
                     
                     if(refusetp && player.isInGroup("admin"))
@@ -325,7 +327,7 @@ public class TweakcraftUtilsListener extends PluginListener {
                     if (toplayer.getName().equalsIgnoreCase(player.getName())) {
                         player.sendMessage(Colors.Rose + "You're already here!");
                     } else {
-                        if(refusetp && !override)
+                        if(refusetp && !override && !exclude)
                         {
                             TweakcraftUtils.log.info("I refused to tp " + player.getName() + " to " + toplayer.getName());
                             player.sendMessage(Colors.Red + "You cannot teleport to " + toplayer.getName());
@@ -333,7 +335,9 @@ public class TweakcraftUtilsListener extends PluginListener {
                         } else {
                             TweakcraftUtils.log.info(player.getName() + " teleported to " + toplayer.getName());
                             toplayer.sendMessage(getPlayerColor(player.getName(), false) + player.getName() + Colors.LightPurple + " teleported to you!");
-                            if(refusetp)
+                            if(exclude)
+                                player.sendMessage(Colors.Red + "TP:"+Colors.LightBlue +" Excluded"+Colors.Red+" tp!");
+                            else if(refusetp)
                                 player.sendMessage(Colors.Red + "TP: Forced tp!");
                             player.teleportTo(toplayer);
                         }
@@ -399,12 +403,7 @@ public class TweakcraftUtilsListener extends PluginListener {
                 String color = "";
                 for (String name : TweakcraftUtils.donottp) {
                     try {
-                        Player p = etc.getServer().getPlayer(name);
-                        if (p != null) {
-                            color = p.getColor();
-                        } else {
-                            color = getPlayerColor(name, true);
-                        }
+                        color = getPlayerColor(name, true);
                     } catch (NullPointerException e) {
                         color = Colors.White;
                     }
