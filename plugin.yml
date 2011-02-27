@@ -1,0 +1,51 @@
+name: TweakcraftUtils
+main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
+version: 1.0
+commands:
+  admin:
+    description: Send message to admins
+    usage: /<command> <message>
+    aliases: a
+  admin-add:
+    description: Adds a player to the admin-msg list
+    usage: /<command> <player>
+  admin-remove:
+    description: Removes a player from the admin-msg list
+    usage: /<command> <player>
+  admin-list:
+    description: Show the current admin-msg list
+    usage: /<command>
+  admon:
+    description: Automatically sends any msg as an admin message
+    usage: /<command>
+  admoff:
+    description: Makes you chat like normal again
+    usage: /<command>
+  who:
+    description: Shows the list of currently connected players
+    usage: /<command>
+    aliases: playerlist
+  tp:
+    description: Teleports you to another player
+    usage: /<command> <player>
+  tpoff:
+    description: Turns off teleporting for you!
+    usage: /<command>
+  tpon:
+    description: Turns tp'ing back on
+    usage: /<command>
+  tplist:
+    description: Shows who has /tpoff
+    usage: /<command>
+  ignite:
+    description: Put someone on fire
+    usage: /<command> <player>
+  ext:
+    description: Extinguish yourself or someone else
+    usage: /<command> <player>
+  lc:
+    description: Toggle local chat
+    usage: /<command>
+  tele:
+    description: Teleport to a specific location
+    usage: /<command> ..
