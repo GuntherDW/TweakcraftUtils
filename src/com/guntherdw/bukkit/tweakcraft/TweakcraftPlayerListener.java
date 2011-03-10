@@ -30,8 +30,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
         Location dloc;
         Double xdiff, zdiff;
         int xdiffi, zdiffi;
+        int playersfound = 0;
 
         for (Player p : plugin.getServer().getOnlinePlayers()) {
+
             dloc = p.getLocation();
             xdiff = dloc.getX() - ploc.getX();
             xdiffi = xdiff.intValue();
@@ -44,17 +46,25 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 zdiffi = ~zdiffi + 1;
             }
             if (zdiffi + xdiffi < plugin.maxRange) {
-                p.sendMessage("[" + plugin.getPlayerColor(sender.getName(), false) + sender.getName() + ChatColor.WHITE + "]: " + message);
+                p.sendMessage("L: [" + plugin.getPlayerColor(sender.getName(), false) + sender.getName() + ChatColor.WHITE + "]: " + message);
+                playersfound++;
             }
+        }
+        if(playersfound < 2)
+        {
+            sender.sendMessage(ChatColor.GOLD + "Noone can hear you!");
         }
     }
 
     public void onPlayerChat(PlayerChatEvent event) {
+
         // if(event.getPlayer().getName())
         Player player = event.getPlayer();
         String message = event.getMessage();
         String name = player.getName();
-        
+
+        //event.setMessage(message);
+
         if (TweakcraftUtils.autolist.contains(name)) {
             if (!message.startsWith("!")) {
                 sendToAdmins(player, event.getMessage(), false);
@@ -67,26 +77,15 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if(!message.startsWith("!"))
             {
                 log.info("L: <"+name+"> "+message);
-                String format = event.getFormat();
-                event.setFormat("[L] "+format);
+                // String format = event.getFormat();
+                // event.setFormat("L: "+format);
                 sendLocally(player, message);
                 event.setCancelled(true);
             } else {
                 // event.setFormat("[g] " + event.getFormat());
-                event.setMessage(event.getMessage().substring(1));
+                event.setMessage(message.substring(1));
             }
         }
-
-        // for(Player p : )
-        /* if(!event.getMessage().startsWith("'"))
-        {
-            plugin.sendLocally(event.getPlayer(), event.getMessage());
-            log.info("L: <"+name+"> "+event.getMessage());
-            event.setCancelled(true);
-        } else {
-            event.setFormat("[g] " + event.getFormat());
-            event.setMessage(event.getMessage().substring(1));
-        } */
     }
 
     protected void sendToAdmins(Player sender, String message, boolean realadmins) {
@@ -101,7 +100,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
             msg = plugin.splitUp(message);
 
         for (Player p : plugin.getServer().getOnlinePlayers()) {
-            if (plugin.check(p, "tweakcraftutils.adminmsg") || (plugin.addlist.contains(p.getName()) && !realadmins)) {
+            if (plugin.check(p, "tweakcraftutils.adminmsg")
+                    || (plugin.addlist.contains(p.getName()) && !realadmins)) {
                 x = 0;
 
                 for (String m : msg) {
@@ -120,6 +120,17 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 }
             }
         }
+    }
+
+    public void onPlayerJoin(PlayerEvent event)
+    {
+     //    if(!event.isCancelled()) {
+            // message = message.replace("%", "%%");
+        String name = event.getPlayer().getName();
+        event.getPlayer().setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+            // event.setFormat("<" +  + "> " + message);
+            // event.setMessage(message);
+     //    }
     }
 
     public void onPlayerQuit(PlayerEvent event)

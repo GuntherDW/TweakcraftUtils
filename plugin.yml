@@ -49,3 +49,7 @@ commands:
   tele:
     description: Teleport to a specific location
     usage: /<command> ..
+  tphere:
+    description: Teleport a player to you
+    usage: /<command> <player>
+    aliases: s
