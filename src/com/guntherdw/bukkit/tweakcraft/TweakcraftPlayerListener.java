@@ -31,9 +31,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         Double xdiff, zdiff;
         int xdiffi, zdiffi;
         int playersfound = 0;
-
         for (Player p : plugin.getServer().getOnlinePlayers()) {
-
             dloc = p.getLocation();
             xdiff = dloc.getX() - ploc.getX();
             xdiffi = xdiff.intValue();
@@ -58,12 +56,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void onPlayerChat(PlayerChatEvent event) {
 
-        // if(event.getPlayer().getName())
         Player player = event.getPlayer();
         String message = event.getMessage();
         String name = player.getName();
-
-        //event.setMessage(message);
 
         if (TweakcraftUtils.autolist.contains(name)) {
             if (!message.startsWith("!")) {
@@ -77,8 +72,6 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if(!message.startsWith("!"))
             {
                 log.info("L: <"+name+"> "+message);
-                // String format = event.getFormat();
-                // event.setFormat("L: "+format);
                 sendLocally(player, message);
                 event.setCancelled(true);
             } else {
@@ -86,6 +79,17 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 event.setMessage(message.substring(1));
             }
         }
+
+        // for(Player p : )
+        /* if(!event.getMessage().startsWith("'"))
+        {
+            plugin.sendLocally(event.getPlayer(), event.getMessage());
+            log.info("L: <"+name+"> "+event.getMessage());
+            event.setCancelled(true);
+        } else {
+            event.setFormat("[g] " + event.getFormat());
+            event.setMessage(event.getMessage().substring(1));
+        } */
     }
 
     protected void sendToAdmins(Player sender, String message, boolean realadmins) {
@@ -102,6 +106,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             if (plugin.check(p, "tweakcraftutils.adminmsg")
                     || (plugin.addlist.contains(p.getName()) && !realadmins)) {
+
                 x = 0;
 
                 for (String m : msg) {

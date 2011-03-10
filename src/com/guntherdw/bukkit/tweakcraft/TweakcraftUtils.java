@@ -14,7 +14,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -23,9 +23,6 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.craftbukkit.CraftServer;
-
-import javax.swing.event.HyperlinkEvent;
 
 /**
  * @author GuntherDW
@@ -46,7 +43,7 @@ public class TweakcraftUtils extends JavaPlugin {
     public static List<String> localchatlist;
     public TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     // public static Server server;
-    public static int maxlength = 65;
+    public static int maxlength = 60;
     public String col = ChatColor.YELLOW.toString();
     public String col2 = ChatColor.LIGHT_PURPLE.toString();
     private static Properties prop;
@@ -279,8 +276,6 @@ public class TweakcraftUtils extends JavaPlugin {
         maxRange = getConfiguration().getInt("maxrange", 200);
         donottp = toList(getConfiguration().getString("donottp"));
         localchatlist = toList(getConfiguration().getString("localchatlist"));
-
-
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 
@@ -441,12 +436,11 @@ public class TweakcraftUtils extends JavaPlugin {
                         playerListener.sendToAdmins(player, "Also removed him from the auto-admin-msg list!", true);
                         autolist.remove(name);
                     }
-                }
-                // }
                 if (!names.equals(" ")) {
                     player.sendMessage(ChatColor.YELLOW + "Removed " + names + " from the admin-msg list!");
                 } else {
                     player.sendMessage(ChatColor.YELLOW + "Couldn't find anyone to remove!");
+                }
                 }
             }
             return true;
@@ -641,7 +635,6 @@ public class TweakcraftUtils extends JavaPlugin {
                             }
                         }
                     }
-
                 } else if(donottp.contains(player.getName())) {
                     player.sendMessage(ChatColor.YELLOW + "You already are on the do-not-tp list!");
                 } else {
