@@ -1,16 +1,17 @@
 package com.guntherdw.bukkit.tweakcraft;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
 import com.echo28.bukkit.vanish.Vanish;
-import com.nijiko.permissions.PermissionHandler;
+import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,8 +21,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -29,19 +28,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 
 public class TweakcraftUtils extends JavaPlugin {
-/*     public TweakcraftUtils(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-        super(pluginLoader, instance, desc, folder, plugin, cLoader);
 
-    } */
-
-
-    // private final TweakcraftListener tweakcraftListener = new TweakcraftListener();
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
     public static Permissions perm = null;
     public static List<String> autolist;
     public static List<String> addlist;
     public static List<String> localchatlist;
-    public TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
+    public final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     // public static Server server;
     public static int maxlength = 60;
     public String col = ChatColor.YELLOW.toString();
@@ -51,29 +44,10 @@ public class TweakcraftUtils extends JavaPlugin {
     public int maxRange;
     public Vanish vanish;
     public static List<String> donottp;
+    private final CommandHandler commandHandler = new CommandHandler(this);
 
     // Packet38
     protected static final Logger log = Logger.getLogger("Minecraft");
-
-    /* public TweakcraftUtils(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-        super(pluginLoader, instance, desc, folder, plugin, cLoader);
-        server = instance;
-        playerLimit = server.getMaxPlayers();
-        folder.mkdirs();
-
-        File yml = new File(getDataFolder(), "config.yml");
-        if (!yml.exists()) {
-            try {
-                yml.createNewFile();
-            } catch (IOException ex) {
-            }
-        }
-
-        autolist = toList(getConfiguration().getString("autolist"));
-        addlist = toList(getConfiguration().getString("addlist"));
-        maxRange = getConfiguration().getInt("maxrange", 200);
-        localchatlist = toList(getConfiguration().getString("localchatlist"));
-    } */
 
     public String findinlist(String find, List<String> list)
     {
@@ -164,14 +138,18 @@ public class TweakcraftUtils extends JavaPlugin {
 
     
     private void registerEvents() {
-        // this.getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Highest, this);
-        // getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, this.playerListener, Event.Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
+
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-        // this.getServer().getPluginManager().registerEvent(Event.Type.PLUGIN_ENABLE, tweakcraftListener, Priority.Monitor, this);
+        
     }
-    
+
+    public Logger getLogger()
+    {
+        return log;
+    }
+
     public String getPlayerColor(String playername, boolean change) {
         /* String group = Permissions.getGroup(getServer().getPlayer(playername).getWorld().toString(), playername);
         String pref = Permissions.getGroupPrefix(getServer().getPlayer(playername).getWorld().toString(), group).replace("&", "§"); */
@@ -208,6 +186,8 @@ public class TweakcraftUtils extends JavaPlugin {
 
     }
 
+
+    @Deprecated
     public static List<String> splitUp(String msg) {
         List<String> lijst = new ArrayList<String>();
         String toadd;
@@ -243,7 +223,7 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public boolean check(Player player, String permNode) {
-        if (perm == null) {
+        if (perm == null || player.isOp()) {
             return true;
         } else {
             return perm.Security.permission(player, permNode);
@@ -276,6 +256,7 @@ public class TweakcraftUtils extends JavaPlugin {
         maxRange = getConfiguration().getInt("maxrange", 200);
         donottp = toList(getConfiguration().getString("donottp"));
         localchatlist = toList(getConfiguration().getString("localchatlist"));
+
         System.out.println(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 
@@ -311,10 +292,10 @@ public class TweakcraftUtils extends JavaPlugin {
             for (Player p : list) {
                 toadd = getPlayerColor(p.getName(), false) + p.getName() + ChatColor.WHITE + ", ";
 
-                if ((msg.length() + toadd.length()) > maxlength) {
+                /* if ((msg.length() + toadd.length()) > maxlength) {
                     player.sendMessage(msg.substring(0, msg.length() - 1));
                     msg = " ";
-                }
+                } */
                 msg += toadd;
             }
             if (!msg.trim().isEmpty()) {
@@ -327,10 +308,10 @@ public class TweakcraftUtils extends JavaPlugin {
             String msg = "";
             for (String m : args)
                 msg += m + " ";
-            for (String m : splitUp(msg)) {
-                playerListener.sendToAdmins(player, m, false);
+            // for (String m : splitUp(msg)) {
+                playerListener.sendToAdmins(player, msg, false);
 
-            }
+            // }
             log.info("AMSG: <" + player.getName() + "> " + msg);
             return true;
         } else if (cmd.getName().equalsIgnoreCase("admin-list")
@@ -514,6 +495,10 @@ public class TweakcraftUtils extends JavaPlugin {
                                     }
                                     if(teleportwarning)
                                         pto.sendMessage(getPlayerColor(player.getName(), false) + player.getName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
+                                    if(!player.getWorld().getName().equals(pto.getWorld().getName()))
+                                    {
+                                        player.teleportTo(pto.getWorld().getSpawnLocation());
+                                    }
                                     player.teleportTo(pto);
                                     if(override)
                                         player.sendMessage(ChatColor.RED + "Forced tp!");
@@ -679,7 +664,7 @@ public class TweakcraftUtils extends JavaPlugin {
         } else if(cmd.getName().equalsIgnoreCase("tele")
                 && check(player, "tweakcraftutils.tele")) {
             if(args.length == 0) {
-                player.sendMessage(ChatColor.GREEN + "Usage: /tele up|x z (y)");
+                player.sendMessage(ChatColor.GREEN + "Usage: /tele up|x z [y] [world]");
             } else if(args.length==1 && args[0].equalsIgnoreCase("up")) {
                 Location loc = player.getLocation();
                 loc.setY(129);
@@ -734,6 +719,25 @@ public class TweakcraftUtils extends JavaPlugin {
                     }
                 }
                 return true;
+            }
+        } else if(commandHandler.getCommandMap().containsKey(cmd.getName())) {
+            try
+            {
+                com.guntherdw.bukkit.tweakcraft.Command command = commandHandler.getCommand(cmd.getName());
+                // public abstract boolean executeCommand(Server server, CommandSender sender, String command, String[] args, TweakcraftUtils plugin);
+                if(!command.executeCommand(play, cmd.getName(), args, this))
+                {
+                    play.sendMessage("This command did not go as intended!");
+                }
+            } catch (CommandNotFoundException e)
+            {
+                play.sendMessage("TweakcraftUtils error, command not found!");
+            } catch (PermissionsException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (CommandUsageException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (CommandSenderException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
         }
         return false;

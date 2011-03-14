@@ -1,6 +1,6 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 1.0
+version: 1.2
 commands:
   admin:
     description: Send message to admins
@@ -53,3 +53,6 @@ commands:
     description: Teleport a player to you
     usage: /<command> <player>
     aliases: s
+  seen:
+    description: Report the last logout time of the player
+    usage: /<command> <player>
