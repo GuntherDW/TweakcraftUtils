@@ -21,7 +21,7 @@ public class CommandAdminList implements Command {
         try {
             ChatHandler ch = plugin.getChathandler();
             ChatMode cm = ch.getChatMode("admin");
-            if (plugin.getDonottplist().size() != 0) {
+            if (cm.getSubscribers().size() != 0) {
                 sender.sendMessage(ChatColor.YELLOW + "Current admin-msg subscriber list : ");
                 String color = "";
                 String msg = "";

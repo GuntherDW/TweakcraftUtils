@@ -30,6 +30,8 @@ public class CommandExt implements Command {
                 if(args[0].equalsIgnoreCase(((Player)sender).getName()))
                 {
                     modus = ExtMode.SELF;
+                } else {
+                    modus = ExtMode.OTHER;
                 }
             } else {
                     modus = ExtMode.OTHER;

@@ -33,7 +33,7 @@ public class CommandSeen implements Command {
             } else {
                 String seen = plugin.getSeenconfig().getString(args[0].toLowerCase(), "");
                 // plugin.getSeenconfig().get
-                if(seen=="")
+                if(seen.equals(""))
                     sender.sendMessage("I haven't seen "+args[0]+" yet!");
                 else
                 {

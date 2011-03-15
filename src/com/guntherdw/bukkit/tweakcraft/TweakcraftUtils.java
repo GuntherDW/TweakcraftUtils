@@ -57,10 +57,10 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
 
-    private void reloadBanList()
+    /* private void reloadBanList()
     {
         ((CraftServer)this.getServer()).getHandle().g();
-    }
+    } */
 
     public String listToString(List<String> lijst) {
         String res = "";
@@ -207,6 +207,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public void onDisable() {
         log.info("[TweakcraftUtils] Goodbye world!");
+    }
+
+    public void onLoad() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 

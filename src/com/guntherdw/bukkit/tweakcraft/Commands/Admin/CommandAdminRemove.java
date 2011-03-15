@@ -32,11 +32,13 @@ public class CommandAdminRemove implements Command {
         try {
             ChatHandler ch = plugin.getChathandler();
             ChatMode cm = ch.getChatMode("admin");
-            if(cm.getSubscribers().contains(args[0]))
+            String name = plugin.findinlist(args[0], cm.getSubscribers());
+            if(cm.getSubscribers().contains(name))
             {
                 List<Player> p = plugin.getServer().matchPlayer(args[0]);
-                String name = args[0];
+
                 Player player = null;
+                String pname = name;
                 String adder = "";
                 if(sender instanceof Player)
                 {
@@ -53,12 +55,14 @@ public class CommandAdminRemove implements Command {
 
                 if(!(sender instanceof Player))
                     sender.sendMessage(name + ChatColor.YELLOW + " has been removed from the admin-msg list!");
-                
+
+                cm.removeRecipient(pname);
+
                 boolean chatlist = false;
                 
-                if(ch.getPlayerChatModeString(args[0]) == "admin")
+                if(ch.getPlayerChatModeString(args[0]).equals("admin"))
                 {
-                    ch.setPlayerchatmode(args[0], null);
+                    ch.setPlayerchatmode(name, null);
                     chatlist=true;
                 }
                 for(Player pl : ((AdminChat)cm).getAdmins())

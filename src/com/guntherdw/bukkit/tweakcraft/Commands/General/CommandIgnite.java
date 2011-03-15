@@ -27,6 +27,8 @@ public class CommandIgnite implements Command {
                 if(args[0].equalsIgnoreCase(((Player)sender).getName()))
                 {
                     modus = IngiteMode.SELF;
+                } else {
+                    modus = IngiteMode.OTHER;
                 }
             } else {
                     modus = IngiteMode.OTHER;
@@ -40,7 +42,7 @@ public class CommandIgnite implements Command {
                 player.setFireTicks(1500);
                 player.sendMessage(ChatColor.YELLOW+"You have been ignited!");
             } else {
-                sender.sendMessage("A console can't be on fire, right?");
+                sender.sendMessage("A console can't be set on fire, right?");
             }
         } else {
             if(sender instanceof Player)

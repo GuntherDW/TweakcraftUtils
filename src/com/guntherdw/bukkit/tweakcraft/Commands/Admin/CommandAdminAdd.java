@@ -10,6 +10,10 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author GuntherDW
  */
@@ -28,7 +32,14 @@ public class CommandAdminAdd implements Command {
 
         try {
             ChatMode cm = plugin.getChathandler().getChatMode("admin");
-            Player player = plugin.getServer().getPlayer(args[0]);
+            List<String> playernames = new ArrayList<String>();
+            for(Player p : plugin.getServer().getOnlinePlayers())
+            {
+                playernames.add(p.getName());
+            }
+
+            String name = plugin.findinlist(args[0], playernames);
+            Player player = plugin.getServer().getPlayer(name);
             if(player!=null)
             {
                 cm.addRecipient(player.getName());
