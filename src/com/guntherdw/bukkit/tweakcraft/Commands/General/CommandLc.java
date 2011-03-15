@@ -32,7 +32,7 @@ public class CommandLc implements Command {
                     sender.sendMessage(ChatColor.YELLOW + "You will now chat locally!");
                 } else {
                     cm.removeRecipient(((Player) sender).getName());
-                    plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(),"null");
+                    plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), null);
                     sender.sendMessage(ChatColor.YELLOW + "You will now chat globally!");
                 }
 
