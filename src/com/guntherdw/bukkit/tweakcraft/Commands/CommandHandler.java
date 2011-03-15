@@ -1,15 +1,10 @@
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
 import com.guntherdw.bukkit.tweakcraft.Command;
-import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdmon;
+import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
+import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.*;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
-import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdmin;
-import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdminAdd;
-import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdminRemove;
-import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.CommandTele;
-import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.CommandTp;
-import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.CommandTphere;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 
 import java.util.HashMap;
@@ -32,9 +27,13 @@ public class CommandHandler {
          * Admin commands
          */
         commandMap.put("admin", new CommandAdmin());
-        commandMap.put("adminadd", new CommandAdminAdd());
-        commandMap.put("adminremove", new CommandAdminRemove());
+        commandMap.put("admin-add", new CommandAdminAdd());
+        commandMap.put("admin-remove", new CommandAdminRemove());
+        commandMap.put("admin-list", new CommandAdminList());
         commandMap.put("admon", new CommandAdmon());
+        commandMap.put("admoff", new CommandAdmoff());
+        commandMap.put("tplist", new CommandTpList());
+        
         /**
          * General commands
          */
@@ -51,7 +50,8 @@ public class CommandHandler {
         commandMap.put("tele", new CommandTele());
         commandMap.put("tp", new CommandTp());
         commandMap.put("tphere", new CommandTphere());
-
+        commandMap.put("tpoff", new CommandTpOff());
+        commandMap.put("tpon", new CommandTpOn());
     }
 
     public TweakcraftUtils getPlugin() {

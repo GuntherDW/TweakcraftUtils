@@ -24,14 +24,16 @@ public class CommandLc implements Command {
 
             try {
                 ChatMode cm = plugin.getChathandler().getChatMode("local");
-                List<Player> sublist = cm.getSubscribers();
-                if(sublist.contains((Player)sender))
+                List<String> sublist = cm.getSubscribers();
+                if(!sublist.contains(((Player) sender).getName()))
                 {
-                    cm.removeRecipient((Player)sender);
-                    sender.sendMessage(ChatColor.YELLOW + "You will now chat globally!");
-                } else {
-                    cm.addRecipient((Player)sender);
+                    cm.addRecipient(((Player) sender).getName());
+                    plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(),"local");
                     sender.sendMessage(ChatColor.YELLOW + "You will now chat locally!");
+                } else {
+                    cm.removeRecipient(((Player) sender).getName());
+                    plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(),"null");
+                    sender.sendMessage(ChatColor.YELLOW + "You will now chat globally!");
                 }
 
             } catch (ChatModeException e) {

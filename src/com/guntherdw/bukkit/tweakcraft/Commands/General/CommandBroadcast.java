@@ -5,6 +5,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class CommandBroadcast implements Command {
         
         for(Player p : plugin.getServer().getOnlinePlayers())
         {
-            p.sendMessage("[Broadcast] §4"+message);
+            p.sendMessage(ChatColor.RED+"["+ChatColor.GREEN+"Broadcast"+ChatColor.RED+"] "+ ChatColor.GREEN +message);
         }
 
         // plugin.getLogger().info

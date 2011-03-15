@@ -26,87 +26,31 @@ public class TweakcraftPlayerListener extends PlayerListener {
         plugin = instance;
     }
 
-    protected void sendLocally(Player sender, String message) {
-        EntityLocation ploc = new EntityLocation(sender);
-        int playersfound = 0;
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
-           if(ploc.getDistance(p) < plugin.maxRange) {
-                p.sendMessage("L: [" + sender.getDisplayName() + "]: " + message);
-                playersfound++;
-            }
-        }
-        if(playersfound < 2)
-        {
-            sender.sendMessage(ChatColor.GOLD + "Noone can hear you!");
-        }
-    }
-
     public void onPlayerChat(PlayerChatEvent event) {
 
         Player player = event.getPlayer();
         String message = event.getMessage();
         String name = player.getName();
-        // if(!event.isCancelled())
-        // {
-            player.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
-        // }
+        player.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
 
-        if (TweakcraftUtils.autolist.contains(name)) {
-            if (!message.startsWith("!")) {
-                sendToAdmins(player, event.getMessage(), false);
-                log.info("AMSG: <" + name + "> " + message);
-                event.setCancelled(true);
-            } else {
-                event.setMessage(message.substring(1));
-            }
-        } else if(TweakcraftUtils.localchatlist.contains(name)) {
-            if(!message.startsWith("!"))
+        ChatMode cm = plugin.getChathandler().getPlayerChatMode(player);
+
+        if(cm != null)
+        {
+            if(!message.startsWith(plugin.getChathandler().getBypassChar()))
             {
-                log.info("L: <"+name+"> "+message);
-                sendLocally(player, message);
+                cm.sendMessage(player, message);
                 event.setCancelled(true);
             } else {
-                // event.setFormat("[g] " + event.getFormat());
                 event.setMessage(message.substring(1));
-            }
-        }
-
-    }
-
-    protected void sendToAdmins(Player sender, String message, boolean realadmins) {
-        String sendername = sender.getName();
-        // List<String> msg = new ArrayList<String>();
-        String msg = "";
-        int x;
-        // String color = plugin.getPlayerColor(sendername, false);
-        if (!realadmins)
-            msg = ChatColor.GREEN + "ADMMSG : <"
-                    + plugin.getPlayerColor(sendername, false) + sendername + ChatColor.GREEN + "> " + message;
-        else
-            msg = message;
-
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
-            if (plugin.check(p, "tweakcraftutils.adminmsg")
-                    || (plugin.addlist.contains(p.getName()) && !realadmins)) {
-
-                p.sendMessage((realadmins ? ChatColor.YELLOW : ChatColor.GREEN) + msg + " ");
-
-            } else if (sendername == p.getName()) {
-                p.sendMessage(ChatColor.LIGHT_PURPLE + "Message sent to admins:");
-                p.sendMessage(ChatColor.GREEN + msg + " ");
             }
         }
     }
 
     public void onPlayerJoin(PlayerEvent event)
     {
-     //    if(!event.isCancelled()) {
-            // message = message.replace("%", "%%");
-            String name = event.getPlayer().getName();
-            event.getPlayer().setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
-            // event.setFormat("<" +  + "> " + message);
-            // event.setMessage(message);
-     //    }
+        String name = event.getPlayer().getName();
+        event.getPlayer().setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
     }
 
     public void onPlayerQuit(PlayerEvent event)
@@ -119,18 +63,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             plugin.getSeenconfig().save();
             log.info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
         }
-        if(TweakcraftUtils.donottp.contains(event.getPlayer().getName()))
-        {
-            TweakcraftUtils.donottp.remove(event.getPlayer().getName());
-        }
-        if(TweakcraftUtils.autolist.contains(event.getPlayer().getName()))
-        {
-            TweakcraftUtils.autolist.remove(event.getPlayer().getName());
-        }
-        if(TweakcraftUtils.localchatlist.contains(event.getPlayer().getName()))
-        {
-            TweakcraftUtils.localchatlist.remove(event.getPlayer().getName());
-        }
+        plugin.getChathandler().removePlayer(event.getPlayer());
     }
 
 }

@@ -16,32 +16,32 @@ public interface ChatMode {
      * @param Message
      * @return
      */
-    public abstract boolean sendMessage(CommandSender sender, String Message);
+    public abstract boolean sendMessage(CommandSender sender, String message);
 
     /**
      * Returns a list of players that will get the message
      * @return
      */
 
-    public abstract List<Player> getRecipients();
+    public abstract List<Player> getRecipients(CommandSender sender);
 
     /**
      * Tries to remove a recipient
      * @param player
      */
-    public abstract void addRecipient(Player player);
+    public abstract void addRecipient(String player);
 
     /**
      * Tries to remove a recipient
      * @param player
      */
-    public abstract void removeRecipient(Player player);
+    public abstract void removeRecipient(String player);
 
     /**
      * Gets the current subscribed list
      * @return
      */
 
-    public abstract List<Player> getSubscribers();
+    public abstract List<String> getSubscribers();
 
 }
