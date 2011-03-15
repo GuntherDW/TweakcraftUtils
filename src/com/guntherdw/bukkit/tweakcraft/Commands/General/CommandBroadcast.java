@@ -16,10 +16,9 @@ public class CommandBroadcast implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
         if(sender instanceof Player)
-        {
-            if(!plugin.check((Player) sender, "tweakcraftutils.broadcast"));
+            if(!plugin.check((Player) sender, "broadcast"))
                 throw new PermissionsException(command);
-        }
+        
         String message = "";
         if(args.length < 1)
         {
@@ -34,10 +33,11 @@ public class CommandBroadcast implements Command {
         
         for(Player p : plugin.getServer().getOnlinePlayers())
         {
-            p.sendMessage("§a[§cBROADCAST§a] §4"+message);
+            p.sendMessage("[Broadcast] §4"+message);
         }
 
-        plugin.getLogger().info("[BROADCAST] "+message);
+        // plugin.getLogger().info
+        plugin.getLogger().info("[Broadcast] "+message);
 
         return true;
     }

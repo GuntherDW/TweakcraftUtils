@@ -8,6 +8,8 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -109,6 +111,14 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void onPlayerQuit(PlayerEvent event)
     {
+        if(plugin.isKeepplayerhistory())
+        {
+            Calendar cal = Calendar.getInstance();
+            String time = String.valueOf(cal.getTime().getTime());
+            plugin.getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), (String) time );
+            plugin.getSeenconfig().save();
+            log.info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
+        }
         if(TweakcraftUtils.donottp.contains(event.getPlayer().getName()))
         {
             TweakcraftUtils.donottp.remove(event.getPlayer().getName());

@@ -1,19 +1,18 @@
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
 import com.guntherdw.bukkit.tweakcraft.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdmon;
+import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdmin;
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdminAdd;
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.CommandAdminRemove;
-import com.guntherdw.bukkit.tweakcraft.Commands.General.CommandExt;
-import com.guntherdw.bukkit.tweakcraft.Commands.General.CommandIgnite;
-import com.guntherdw.bukkit.tweakcraft.Commands.General.CommandSeen;
-import com.guntherdw.bukkit.tweakcraft.Commands.General.CommandWho;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.CommandTele;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.CommandTp;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.CommandTphere;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,18 +20,21 @@ import java.util.Map;
  */
 public class CommandHandler {
 
-    public Map<String, Command> commandMap;
+    public Map<String, Command> commandMap = new HashMap<String, Command>();
     private TweakcraftUtils plugin;
 
     public CommandHandler(TweakcraftUtils instance)
     {
         this.plugin = instance;
+        commandMap.clear();
+
         /**
          * Admin commands
          */
         commandMap.put("admin", new CommandAdmin());
         commandMap.put("adminadd", new CommandAdminAdd());
         commandMap.put("adminremove", new CommandAdminRemove());
+        commandMap.put("admon", new CommandAdmon());
         /**
          * General commands
          */
@@ -40,6 +42,8 @@ public class CommandHandler {
         commandMap.put("ignite", new CommandIgnite());
         commandMap.put("seen", new CommandSeen());
         commandMap.put("who", new CommandWho());
+        commandMap.put("broadcast", new CommandBroadcast());
+        commandMap.put("lc", new CommandLc());
 
         /**
          * Teleportation commands

@@ -56,3 +56,6 @@ commands:
   seen:
     description: Report the last logout time of the player
     usage: /<command> <player>
+  broadcast:
+    description: Broadcasts said message to the server
+    usage: /<command> <message>
