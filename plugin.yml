@@ -60,3 +60,6 @@ commands:
     description: Broadcasts said message to the server
     usage: /<command> <message>
     aliases: b
+  tpmob:
+    description: Teleports you to a mob
+    usage: /<command> <mobid>

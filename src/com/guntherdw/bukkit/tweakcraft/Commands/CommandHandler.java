@@ -52,6 +52,7 @@ public class CommandHandler {
         commandMap.put("tphere", new CommandTphere());
         commandMap.put("tpoff", new CommandTpOff());
         commandMap.put("tpon", new CommandTpOn());
+        commandMap.put("tpmob", new CommandTpMob());
     }
 
     public TweakcraftUtils getPlugin() {
