@@ -30,10 +30,15 @@ public class CommandExt implements Command {
                 if(args[0].equalsIgnoreCase(((Player)sender).getName()))
                 {
                     modus = ExtMode.SELF;
+                } else if(args[0].equals("*")) {
+                    modus = ExtMode.ALL;
                 } else {
                     modus = ExtMode.OTHER;
                 }
             } else {
+                if(args[0].equals("*"))
+                    modus = ExtMode.ALL;
+                else
                     modus = ExtMode.OTHER;
             }
         }
@@ -52,7 +57,19 @@ public class CommandExt implements Command {
             } else {
                 sender.sendMessage("A console can't be on fire, right?");
             }
-        } else {
+        } else if(modus == ExtMode.ALL) {
+            if(sender instanceof Player)
+            {
+                if(!plugin.check((Player)sender, "extother"))
+                    throw new PermissionsException(command);
+
+                sender.sendMessage(ChatColor.YELLOW + "Throwing a bucket of water over every single player!");
+                for(Player play : plugin.getServer().getOnlinePlayers())
+                {
+                    play.setFireTicks(0);
+                }
+            }
+        } else if(modus == ExtMode.OTHER) {
             if(sender instanceof Player)
             {
                 if(!(plugin.check((Player)sender, "extother")))
@@ -80,7 +97,8 @@ public class CommandExt implements Command {
     private enum ExtMode
     {
         SELF,
-        OTHER;
+        OTHER,
+        ALL
     }
 
 }

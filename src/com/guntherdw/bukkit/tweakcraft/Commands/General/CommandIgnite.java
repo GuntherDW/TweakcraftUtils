@@ -7,7 +7,11 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Creature;
+import org.bukkit.entity.Flying;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -19,32 +23,72 @@ public class CommandIgnite implements Command {
 
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
-        IngiteMode modus = IngiteMode.SELF;
+        IgniteMode modus = IgniteMode.SELF;
         if(args.length > 0)
         {
             if(sender instanceof Player)
             {
                 if(args[0].equalsIgnoreCase(((Player)sender).getName()))
                 {
-                    modus = IngiteMode.SELF;
+                    modus = IgniteMode.SELF;
+                } else if(args[0].equals("*")) {
+                    modus = IgniteMode.ALL;
+                } else if(args[0].equalsIgnoreCase("mobs")) {
+                    modus = IgniteMode.MOBS;
                 } else {
-                    modus = IngiteMode.OTHER;
+                    modus = IgniteMode.OTHER;
                 }
             } else {
-                    modus = IngiteMode.OTHER;
+                if(args[0].equals("*"))
+                    modus = IgniteMode.ALL;
+                else if(args[0].equalsIgnoreCase("mobs"))
+                    modus = IgniteMode.MOBS;
+                else
+                    modus = IgniteMode.OTHER;
             }
         }
-        if(modus == IngiteMode.SELF)
+        if(modus == IgniteMode.SELF)
         {
             if(sender instanceof Player)
             {
                 Player player = (Player) sender;
                 player.setFireTicks(1500);
-                player.sendMessage(ChatColor.YELLOW+"You have been ignited!");
+                player.sendMessage(ChatColor.YELLOW + "You have been ignited!");
             } else {
                 sender.sendMessage("A console can't be set on fire, right?");
             }
-        } else {
+        } else if(modus == IgniteMode.ALL) {
+            if(sender instanceof Player)
+            {
+                if(!plugin.check((Player)sender, "extother"))
+                    throw new PermissionsException(command);
+
+                sender.sendMessage(ChatColor.YELLOW + "Is it hot in here or is it just me?");
+                for(Player play : plugin.getServer().getOnlinePlayers())
+                {
+                    play.setFireTicks(300);
+                }
+            }
+        } else if(modus == IgniteMode.MOBS) {
+            if(sender instanceof Player)
+            {
+                if(!plugin.check((Player)sender, "extother"))
+                    throw new PermissionsException(command);
+            }
+
+            sender.sendMessage(ChatColor.YELLOW + "Oh my god it's hell alright!");
+
+            for(World w : plugin.getServer().getWorlds())
+            {
+                for(LivingEntity ent : w.getLivingEntities())
+                {
+                    if(ent instanceof Flying || ent instanceof Creature)
+                    {
+                        ent.setFireTicks(300);
+                    }
+                }
+            }
+        } else if(modus == IgniteMode.OTHER) {
             if(sender instanceof Player)
             {
                 if(!(plugin.check((Player)sender, "extother")))
@@ -57,15 +101,16 @@ public class CommandIgnite implements Command {
             }
             Player player = p.get(0);
             player.setFireTicks(1500);
-            sender.sendMessage(plugin.getPlayerColor(player.getName(), false)+player.getName()
-                                    +ChatColor.YELLOW+" has been ignited!");
+            sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW + " has been ignited!");
         }
         return true;
     }
 
-    private enum IngiteMode
+    private enum IgniteMode
     {
         SELF,
-        OTHER;
+        OTHER,
+        ALL,
+        MOBS
     }
 }
