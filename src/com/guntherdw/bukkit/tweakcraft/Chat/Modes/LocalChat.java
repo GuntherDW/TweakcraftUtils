@@ -31,7 +31,7 @@ public class LocalChat implements ChatMode {
             List<Player> recp = getRecipients(player);
             for(Player p : recp)
             {
-                p.sendMessage("L: [" + p.getDisplayName() + "]: " + message);
+                p.sendMessage("L: [" + player.getDisplayName() + "]: " + message);
             }
             if(recp.size() < 2)
             {

@@ -84,11 +84,9 @@ public class CommandExt implements Command {
             if(player.getFireTicks()!=0)
             {
                 player.setFireTicks(0);
-                sender.sendMessage(plugin.getPlayerColor(player.getName(), false)+player.getName()
-                                    +ChatColor.YELLOW+" has been extinguished!");
+                sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW + " has been extinguished!");
             } else {
-                sender.sendMessage(plugin.getPlayerColor(player.getName(), false)+player.getName()
-                                    +ChatColor.YELLOW+" isn't on fire!");
+                sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW + " isn't on fire!");
             }
         }
         return true;
