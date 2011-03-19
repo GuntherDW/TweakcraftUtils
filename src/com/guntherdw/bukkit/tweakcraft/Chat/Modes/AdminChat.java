@@ -29,16 +29,15 @@ public class AdminChat implements ChatMode {
         String pcolor = "";
         if(sender instanceof Player)
         {
-            sendername = ((Player)sender).getName();
-            pcolor = plugin.getPlayerColor(sendername, false);
+            sendername = ((Player)sender).getDisplayName(); // ((Player)sender).getName();
+            pcolor = ""; // getDisplayName handles this one!
         } else {
             sendername = "CONSOLE";
             pcolor = ChatColor.LIGHT_PURPLE.toString();
         }
         String msg = ChatColor.GREEN + "ADMMSG : <"+ pcolor + sendername+ChatColor.GREEN+"> " + message;
 
-        if(sender instanceof Player &&
-                !getRecipients(null).contains(sender))
+        if(sender instanceof Player && !isOnList(sender))
         {
             sender.sendMessage(msg);
         }
@@ -67,6 +66,16 @@ public class AdminChat implements ChatMode {
             }
         }
         return recp;
+    }
+
+    public boolean isOnList(CommandSender sender)
+    {
+        if(sender instanceof Player)
+        {
+            return getRecipients(sender).contains((Player) sender);
+        } else {
+            return true;
+        }
     }
 
     public void addRecipient(String player) {

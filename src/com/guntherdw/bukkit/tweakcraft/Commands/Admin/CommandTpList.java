@@ -29,9 +29,9 @@ public class CommandTpList implements Command {
                 Player tpp = plugin.getServer().getPlayer(playername);
                 if(tpp != null)
                 {
-                    sender.sendMessage(msg);
+                    sender.sendMessage(tpp.getDisplayName());
                 } else {
-                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Error!");
+                    sender.sendMessage(ChatColor.AQUA + "[NC] "+ChatColor.WHITE+playername);
                 }
             }
         } else {
