@@ -9,8 +9,6 @@ import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,7 +26,7 @@ import org.bukkit.util.config.Configuration;
 public class TweakcraftUtils extends JavaPlugin {
 
     private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
-    public static Permissions perm = null;
+    public Permissions perm = null;
     public final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     public int playerLimit;
     public int maxRange;

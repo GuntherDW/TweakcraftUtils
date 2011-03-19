@@ -35,7 +35,7 @@ public class LocalChat implements ChatMode {
             }
             if(recp.size() < 2)
             {
-                sender.sendMessage(ChatColor.GOLD + "Noone can hear you!");
+                sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
             plugin.getLogger().info("L: <" + player.getName() + "> " + message);
         } else {

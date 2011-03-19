@@ -26,13 +26,13 @@ public class CommandTpList implements Command {
             String color = "";
             String msg = "";
             for (String playername : plugin.getDonottplist()) {
-                try {
-                    color = plugin.getPlayerColor(playername, true);
-                } catch (NullPointerException e) {
-                    color = ChatColor.WHITE.toString();
+                Player tpp = plugin.getServer().getPlayer(playername);
+                if(tpp != null)
+                {
+                    sender.sendMessage(msg);
+                } else {
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Error!");
                 }
-                msg = color + playername;
-                sender.sendMessage(msg);
             }
         } else {
             sender.sendMessage(ChatColor.YELLOW + "Current do-not-tp list is empty!");
