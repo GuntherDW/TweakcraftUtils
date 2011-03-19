@@ -1,9 +1,5 @@
 package com.guntherdw.bukkit.tweakcraft;
 
-import java.io.File;
-import java.util.*;
-import java.util.logging.Logger;
-
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
@@ -18,6 +14,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author GuntherDW

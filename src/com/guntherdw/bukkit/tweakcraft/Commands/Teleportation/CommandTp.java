@@ -24,7 +24,7 @@ public class CommandTp implements Command {
                 throw new PermissionsException(command);
 
             if (args.length == 1) {
-                if (plugin.getDonottplist().contains(player) && !plugin.check(player, "forcetp")) {
+                if (plugin.getDonottplist().contains(player.getName()) && !plugin.check(player, "forcetp")) {
                     player.sendMessage(ChatColor.RED + "You can't tp when you don't allow others to tp to you!");
                 } else {
                     List<Player> p = plugin.getServer().matchPlayer(args[0]);
@@ -32,7 +32,7 @@ public class CommandTp implements Command {
                         player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                     } else {
                         Player pto = p.get(0);
-                        boolean refusetp = plugin.getDonottplist().contains(pto);
+                        boolean refusetp = plugin.getDonottplist().contains(pto.getName());
                         boolean override = false;
                         if (refusetp && (player.isOp() || plugin.check(player, "forcetp"))) {
                             override = true;
@@ -47,6 +47,7 @@ public class CommandTp implements Command {
                         } else {
                             if (refusetp && !override) {
                                 player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + pto.getName() + "!");
+                                pto.sendRawMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
                                 /* boolean teleportwarning = true;
                                if(teleportwarning) */
