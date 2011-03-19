@@ -76,11 +76,6 @@ public class LocalChat implements ChatMode {
     }
 
     public List<String> getSubscribers() {
-        List<String> lijst = new ArrayList<String>();
-        for(String player : subscribers)
-        {
-            lijst.add(player);
-        }
-        return lijst;
+        return subscribers;
     }
 }

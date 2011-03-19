@@ -38,7 +38,10 @@ public class CommandWho implements Command {
             sender.sendMessage(msg);
             msg = " ";
             for (Player p : list) {
-                toadd = plugin.getPlayerColor(p.getName(), false) + p.getName() + ChatColor.WHITE + ", ";
+                if(!(sender instanceof Player)) // console won't show gold colors? shame!
+                    toadd = p.getDisplayName().replace(ChatColor.GOLD.toString(), ChatColor.YELLOW.toString()) + ChatColor.WHITE + ", ";
+                else
+                    toadd = p.getDisplayName() + ChatColor.WHITE + ", ";
                 msg += toadd;
             }
             if (!msg.trim().isEmpty()) {
