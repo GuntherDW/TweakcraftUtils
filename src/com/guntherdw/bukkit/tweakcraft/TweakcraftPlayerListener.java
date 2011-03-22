@@ -18,7 +18,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     private final TweakcraftUtils plugin;
 
     public TweakcraftPlayerListener(TweakcraftUtils instance) {
-        TweakcraftUtils.log.info("[TweakcraftUtils] PlayerListener called!");
+        // TweakcraftUtils.log.info("[TweakcraftUtils] PlayerListener called!");
         plugin = instance;
     }
 
@@ -55,7 +55,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         {
             Calendar cal = Calendar.getInstance();
             String time = String.valueOf(cal.getTime().getTime());
-            plugin.getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), (String) time );
+            plugin.getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), time );
             plugin.getSeenconfig().save();
             log.info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
         }

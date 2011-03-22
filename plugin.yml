@@ -1,6 +1,6 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 1.2
+version: 1.2.1
 commands:
   admin:
     description: Send message to admins
