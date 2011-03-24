@@ -15,7 +15,7 @@ public interface DataSource {
      * Initiate a connection
      * @return false if the conncetion didn't succeed
      */
-    public abstract boolean initConnection();
+    public abstract boolean initConnection(String source);
 
     
 }

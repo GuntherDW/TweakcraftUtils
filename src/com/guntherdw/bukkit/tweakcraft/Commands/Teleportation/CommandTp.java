@@ -52,10 +52,11 @@ public class CommandTp implements Command {
                                 /* boolean teleportwarning = true;
                                if(teleportwarning) */
                                 pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
-                                if (!player.getWorld().getName().equals(pto.getWorld().getName())) {
-                                    player.teleportTo(pto.getWorld().getSpawnLocation());
-                                }
-                                player.teleportTo(pto);
+                                // This is supposed to be fixed nao?
+                                /* if (!player.getWorld().getName().equals(pto.getWorld().getName())) {
+                                    player.teleport(pto.getWorld().getSpawnLocation());
+                                } */
+                                player.teleport(pto);
                                 if (override)
                                     player.sendMessage(ChatColor.RED + "Forced tp!");
                                 plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + pto.getName() + "!");
@@ -104,7 +105,7 @@ public class CommandTp implements Command {
             player = "CONSOLE";
         }
         plugin.getLogger().info("[TweakcraftUtils] " + player + " teleported " + pfrom.getName() + " to " + pto.getName() + "!");
-        pfrom.teleportTo(pto);
+        pfrom.teleport(pto);
     }
 
 }

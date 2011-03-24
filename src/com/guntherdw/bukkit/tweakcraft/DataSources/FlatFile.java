@@ -1,16 +1,16 @@
-package com.guntherdw.bukkit.tweakcraft.DataSource;
+package com.guntherdw.bukkit.tweakcraft.DataSources;
 
 import com.guntherdw.bukkit.tweakcraft.DataSource;
 
 /**
  * @author GuntherDW
  */
-public class YML implements DataSource {
+public class FlatFile implements DataSource {
     public DataSource getDataSource() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return this;
     }
 
-    public boolean initConnection() {
+    public boolean initConnection(String file) {
         return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

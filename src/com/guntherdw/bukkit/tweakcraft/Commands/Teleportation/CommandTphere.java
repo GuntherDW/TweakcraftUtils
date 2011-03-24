@@ -39,7 +39,7 @@ public class CommandTphere implements Command {
                             +pto.getName()+ChatColor.YELLOW + " to you!");
                     pto.sendMessage(plugin.getPlayerColor(player.getName(), false)+player.getName() + ChatColor.YELLOW
                             +" teleported you to him!");
-                    pto.teleportTo(player);
+                    pto.teleport(player);
                 }
             }
         } else {

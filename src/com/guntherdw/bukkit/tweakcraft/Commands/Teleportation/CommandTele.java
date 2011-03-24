@@ -49,7 +49,7 @@ public class CommandTele implements Command {
                 world = ((Player) sender).getWorld();
             }
             Location loc = new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue());
-            ((Player) sender).teleportTo(loc);
+            ((Player) sender).teleport(loc);
 
         } else {
             throw new CommandSenderException("You need to be a player to teleport!");
