@@ -1,5 +1,6 @@
 package com.guntherdw.bukkit.tweakcraft;
 
+import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -60,6 +61,11 @@ public class TweakcraftPlayerListener extends PlayerListener {
             log.info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());
+        try {
+            plugin.getChathandler().setPlayerchatmode(event.getPlayer().getName(), null);
+        } catch(ChatModeException e) {
+            plugin.getLogger().severe("[TweakcraftUtils] Error setting ChatMode to null after the logout!");
+        }
     }
 
 }
