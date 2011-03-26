@@ -259,11 +259,11 @@ public class TweakcraftUtils extends JavaPlugin {
 
                 }
             } catch (CommandUsageException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(ChatColor.YELLOW + e.getMessage());
             } catch (CommandSenderException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(ChatColor.YELLOW + e.getMessage());
             } catch (CommandException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(ChatColor.YELLOW + e.getMessage());
             }
         }
         return false;
