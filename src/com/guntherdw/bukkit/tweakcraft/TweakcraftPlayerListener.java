@@ -52,8 +52,12 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void onPlayerJoin(PlayerEvent event)
     {
-        String name = event.getPlayer().getName();
+        Player p = event.getPlayer();
+        String name = p.getName();
         event.getPlayer().setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+        // p.sendMessage("Ohai thar!");
+        for(String m: plugin.getMOTD())
+            p.sendMessage(m);
     }
 
     public void onPlayerQuit(PlayerEvent event)

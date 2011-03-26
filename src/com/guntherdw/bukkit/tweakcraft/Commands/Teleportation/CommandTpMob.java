@@ -103,7 +103,7 @@ public class CommandTpMob implements Command {
 
                     if(cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue())
                     {
-                        crea.teleportTo(victim);
+                        crea.teleport(victim);
                         continue;
                     }
                 }

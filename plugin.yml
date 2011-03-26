@@ -109,3 +109,10 @@ commands:
   plugin:
     description: General plugin command
     usage: /<command> <list|load|enable|disable|reload> <plugin>
+  msg:
+    description: Send a message to a player
+    usage: /<command> <player> <message>
+  reply:
+    description: Reply to the last player that sent a message to you
+    usage: /<command> <message>
+    aliases: [r, re]

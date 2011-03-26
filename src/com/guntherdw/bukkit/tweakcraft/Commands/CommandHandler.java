@@ -44,14 +44,17 @@ public class CommandHandler {
         commandMap.put("getpos", new CommandGetpos());
         commandMap.put("item", new CommandItem());
         commandMap.put("kick", new CommandKick());
+        commandMap.put("msg", new CommandMsg());
         commandMap.put("motd", new CommandMotd());
         commandMap.put("plugin", new CommandPlugin());
+        commandMap.put("reply", new CommandReply());
         commandMap.put("spawn", new CommandSpawn());
         commandMap.put("setspawn", new CommandSetSpawn());
         commandMap.put("spawnmob", new CommandSpawnmob());
         commandMap.put("time", new CommandTime());
         commandMap.put("unban", new CommandUnban());
         commandMap.put("world", new CommandWorld());
+
 
         /**
          * General commands

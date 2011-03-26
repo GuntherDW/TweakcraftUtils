@@ -31,7 +31,7 @@ public class CommandKick implements Command {
             {
                 for(int x=1; x<args.length; x++)
                 {
-                    reason += args[x];
+                    reason += args[x]+" ";
                 }
                 if(reason.length()>1)
                     reason = reason.substring(0, reason.length()-1);

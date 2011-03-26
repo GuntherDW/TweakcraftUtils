@@ -33,7 +33,7 @@ public class BanHandler {
                 line = banfilereader.readLine();
             }
         } catch (FileNotFoundException e) {
-
+            plugin.getLogger().info("[TweakcraftUtils] Ban file not found!");
         } catch (IOException e) {
 
         }
@@ -43,6 +43,18 @@ public class BanHandler {
     private boolean isBanned(String playername)
     {
         return bans.containsKey(playername);
+    }
+
+    public boolean banPlayer(String playername, String reason)
+    {
+        if(playername.trim().equals(""))
+        {
+            plugin.getLogger().info("[TweakcraftUtils] Can't ban an empty player!");
+        } else {
+            bans.put(playername, new Ban(playername, reason));
+            return true;
+        }
+        return false;
     }
 
     public Map<String, Ban> getBans()

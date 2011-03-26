@@ -3,6 +3,7 @@ package com.guntherdw.bukkit.tweakcraft;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
+import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -19,6 +20,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -31,31 +33,77 @@ public class TweakcraftUtils extends JavaPlugin {
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
+    private final ItemDB itemDB = new ItemDB(this);
     public int playerLimit;
     public int maxRange;
     public static int maxlength = 55;
     private static File seenFile;
     private Configuration seenconfig;
     protected boolean keepplayerhistory = false;
-    private String[] MOTD;
-
+    private List<String> MOTDLines;
+    public Map<String, String> playerReplyDB;
     private final ChatHandler chathandler = new ChatHandler(this);
     private List<String> donottplist;
 
     protected static final Logger log = Logger.getLogger("Minecraft");
 
-    public String findinlist(String find, List<String> list)
-    {
-        for(String name : list)
-        {
-            if(name.toLowerCase().contains(find.toLowerCase()))
-            {
+    public String findinlist(String find, List<String> list) {
+        for (String name : list) {
+            if (name.toLowerCase().contains(find.toLowerCase())) {
                 return name;
             }
         }
         return null;
     }
 
+    public String getPlayerReply(String player)
+    {
+        if(playerReplyDB.containsKey(player))
+        {
+            return playerReplyDB.get(player);
+        } else {
+            return null;
+        }
+    }
+
+    public void setPlayerReply(String player, String toPlayer)
+    {
+        playerReplyDB.put(player, toPlayer);
+    }
+
+    public ItemDB getItemDB() {
+        return itemDB;
+    }
+
+    public String getCompassDirection(Float rotation) {
+        String dir;
+        Float rot = (rotation - 90) % 360;
+        if (rot < 0) {
+            rot += 360;
+        }
+        Integer r = rot.intValue();
+
+        if (r < 23)
+            dir = "N";
+        else if (r < 68)
+            dir = "NE";
+        else if (r < 113)
+            dir = "E";
+        else if (r < 158)
+            dir = "SE";
+        else if (r < 203)
+            dir = "S";
+        else if (r < 248)
+            dir = "SW";
+        else if (r < 293)
+            dir = "W";
+        else if (r < 338)
+            dir = "NW";
+        else
+            dir = "N";
+
+        return dir;
+    }
 
     public String listToString(List<String> lijst) {
         String res = "";
@@ -92,22 +140,20 @@ public class TweakcraftUtils extends JavaPlugin {
         return partOfName;
     }
 
-    
+
     private void registerEvents() {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN,  playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT,  playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT,  playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
     }
 
-    public Logger getLogger()
-    {
+    public Logger getLogger() {
         return log;
     }
 
-    public String[] getMOTD()
-    {
-        return MOTD;
+    public List<String> getMOTD() {
+        return MOTDLines;
     }
 
     public String getPlayerColor(String playername, boolean change) {
@@ -116,16 +162,15 @@ public class TweakcraftUtils extends JavaPlugin {
         String group = "";
         Player p = this.getServer().getPlayer(playername);
 
-        try{
-            if(p!=null)
-            {
+        try {
+            if (p != null) {
                 group = perm.Security.getGroup(p.getWorld().getName(), playername);
                 pref = perm.Security.getGroupPrefix(p.getWorld().getName(), group).replace("&", "§");
             } else {
                 pref = "§f";
             }
 
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             pref = "§f";
         }
         String col = ChatColor.WHITE.toString();
@@ -165,18 +210,14 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
-    public void reloadMOTD()
-    {
+    public void reloadMOTD() {
         File motdfile = new File(this.getDataFolder(), "motd.txt");
         try {
             BufferedReader motdfilereader = new BufferedReader(new FileReader(motdfile));
             String line = motdfilereader.readLine();
-            int x = 0;
-            while(line != null)
-            {
-                MOTD[x] = line;
+            while (line != null) {
+                MOTDLines.add(line.replace('&', '§'));
                 line = motdfilereader.readLine();
-                x++;
             }
         } catch (FileNotFoundException e) {
             log.severe("[TweakcraftUtils] MOTD file not found!");
@@ -190,7 +231,7 @@ public class TweakcraftUtils extends JavaPlugin {
         if (perm == null || player.isOp()) {
             return true;
         } else {
-            return perm.Security.permission(player, "tweakcraftutils."+permNode);
+            return perm.Security.permission(player, "tweakcraftutils." + permNode);
         }
     }
 
@@ -204,24 +245,29 @@ public class TweakcraftUtils extends JavaPlugin {
 
         playerLimit = this.getServer().getMaxPlayers();
         donottplist = new ArrayList<String>();
+        MOTDLines = new ArrayList<String>();
+        this.reloadMOTD();
+
+        playerReplyDB = new HashMap<String, String>();
+
         this.registerEvents();
         this.setupPermissions();
-        if(getConfiguration().getBoolean("keepplayerhistory", false))
-        {
+        if (getConfiguration().getBoolean("keepplayerhistory", false)) {
             log.info("[TweakcraftUtils] Keeping player history!");
             seenFile = new File(getDataFolder(), "players.yml");
             seenconfig = new Configuration(seenFile);
             seenconfig.load();
             keepplayerhistory = true;
         }
+        itemDB.loadDataBase();
         maxRange = getConfiguration().getInt("maxrange", 200);
-        log.info("["+pdfFile.getName() + "] "+pdfFile.getName()+" version " + pdfFile.getVersion() + " is enabled!");
+        log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 
     public List<String> getDonottplist() {
         return donottplist;
     }
-    
+
     public boolean isKeepplayerhistory() {
         return keepplayerhistory;
     }
@@ -237,46 +283,41 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 
-        if(commandHandler.getCommandMap().containsKey(cmd.getName())) {
-            try
-            {
+        if (commandHandler.getCommandMap().containsKey(cmd.getName())) {
+            try {
                 com.guntherdw.bukkit.tweakcraft.Command command = commandHandler.getCommand(cmd.getName());
                 // public abstract boolean executeCommand(Server server, CommandSender sender, String command, String[] args, TweakcraftUtils plugin);
-                if(!command.executeCommand(sender, cmd.getName(), args, this))
-                {
+                if (!command.executeCommand(sender, cmd.getName(), args, this)) {
                     sender.sendMessage("This command did not go as intended!");
                 }
                 String mess = "";
-                if(args.length>1)
-                {
+                if (args.length > 1) {
                     for (String m : args)
-                        mess+=m+" ";
+                        mess += m + " ";
 
-                    mess=mess.substring(0, mess.length()-1);
-                } else if(args.length==1) {
-                    mess=args[0];
+                    mess = mess.substring(0, mess.length() - 1);
+                } else if (args.length == 1) {
+                    mess = args[0];
                 }
 
-                if(sender instanceof Player)
-                    log.info("[TweakcraftUtils] "+((Player)sender).getName()+" issued: /" + cmd.getName() + " " + mess);
+                if (sender instanceof Player)
+                    log.info("[TweakcraftUtils] " + ((Player) sender).getName() + " issued: /" + cmd.getName() + " " + mess);
                 return true;
-            } catch (CommandNotFoundException e)
-            {
+            } catch (CommandNotFoundException e) {
                 sender.sendMessage("TweakcraftUtils error, command not found!");
             } catch (PermissionsException e) {
-                sender.sendMessage("You do not have the correct permissions for this command!");
-                if(sender instanceof Player) {
+                sender.sendMessage(ChatColor.RED + "You do not have the correct permissions for this command or usage!");
+                if (sender instanceof Player) {
                     String mess = "";
-                    if(args.length>1)
-                    {
+                    if (args.length > 1) {
                         for (String m : args)
-                            mess+=m+" ";
+                            mess += m + " ";
 
-                        mess=mess.substring(0, mess.length()-1);
-                    } else if(args.length==1) {
-                        mess=args[0];
+                        mess = mess.substring(0, mess.length() - 1);
+                    } else if (args.length == 1) {
+                        mess = args[0];
                     }
-                    log.info("[TweakcraftUtils] "+((Player)sender).getName()+" tried: /" + cmd.getName() + " " + mess);
+                    log.info("[TweakcraftUtils] " + ((Player) sender).getName() + " tried: /" + cmd.getName() + " " + mess);
 
                 }
             } catch (CommandUsageException e) {
