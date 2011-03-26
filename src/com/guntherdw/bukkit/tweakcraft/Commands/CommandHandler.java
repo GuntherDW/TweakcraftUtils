@@ -39,11 +39,17 @@ public class CommandHandler {
          * Essential commands
          */
         commandMap.put("ban", new CommandBan());
+        commandMap.put("banlist", new CommandBanlist());
         commandMap.put("compass", new CommandCompass());
         commandMap.put("getpos", new CommandGetpos());
         commandMap.put("item", new CommandItem());
         commandMap.put("kick", new CommandKick());
+        commandMap.put("motd", new CommandMotd());
+        commandMap.put("plugin", new CommandPlugin());
+        commandMap.put("spawn", new CommandSpawn());
+        commandMap.put("setspawn", new CommandSetSpawn());
         commandMap.put("spawnmob", new CommandSpawnmob());
+        commandMap.put("time", new CommandTime());
         commandMap.put("unban", new CommandUnban());
         commandMap.put("world", new CommandWorld());
 

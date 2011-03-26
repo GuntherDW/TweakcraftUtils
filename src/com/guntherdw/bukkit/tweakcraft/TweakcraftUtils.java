@@ -15,7 +15,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,16 +27,17 @@ import java.util.logging.Logger;
 
 public class TweakcraftUtils extends JavaPlugin {
 
-    private final HashMap<Player, Boolean> debugees = new HashMap<Player, Boolean>();
     public Permissions perm = null;
-    public final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
+    private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
+    private final CommandHandler commandHandler = new CommandHandler(this);
+    private final BanHandler banhandler = new BanHandler(this);
     public int playerLimit;
     public int maxRange;
-    private final CommandHandler commandHandler = new CommandHandler(this);
     public static int maxlength = 55;
     private static File seenFile;
     private Configuration seenconfig;
     protected boolean keepplayerhistory = false;
+    private String[] MOTD;
 
     private final ChatHandler chathandler = new ChatHandler(this);
     private List<String> donottplist;
@@ -55,11 +56,6 @@ public class TweakcraftUtils extends JavaPlugin {
         return null;
     }
 
-
-    /* private void reloadBanList()
-    {
-        ((CraftServer)this.getServer()).getHandle().g();
-    } */
 
     public String listToString(List<String> lijst) {
         String res = "";
@@ -107,6 +103,11 @@ public class TweakcraftUtils extends JavaPlugin {
     public Logger getLogger()
     {
         return log;
+    }
+
+    public String[] getMOTD()
+    {
+        return MOTD;
     }
 
     public String getPlayerColor(String playername, boolean change) {
@@ -164,6 +165,27 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
+    public void reloadMOTD()
+    {
+        File motdfile = new File(this.getDataFolder(), "motd.txt");
+        try {
+            BufferedReader motdfilereader = new BufferedReader(new FileReader(motdfile));
+            String line = motdfilereader.readLine();
+            int x = 0;
+            while(line != null)
+            {
+                MOTD[x] = line;
+                line = motdfilereader.readLine();
+                x++;
+            }
+        } catch (FileNotFoundException e) {
+            log.severe("[TweakcraftUtils] MOTD file not found!");
+        } catch (IOException e) {
+            log.severe("[TweakcraftUtils] IOException occured while loadign the MOTD file!");
+        }
+
+    }
+
     public boolean check(Player player, String permNode) {
         if (perm == null || player.isOp()) {
             return true;
@@ -172,6 +194,9 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
+    public BanHandler getBanhandler() {
+        return banhandler;
+    }
 
     public void onEnable() {
 
@@ -207,10 +232,6 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public void onDisable() {
         log.info("[TweakcraftUtils] Goodbye world!");
-    }
-
-    public void onLoad() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 

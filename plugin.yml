@@ -94,3 +94,18 @@ commands:
   spawnmob:
     description: Spawns mobs at your position
     usage: /<command> <mobname> [amount] [player]
+  motd:
+    description: Show the message of the day!
+    usage: /<command>
+  spawn:
+    description: Sends you to the spawn of the world you're in
+    usage: /<command>
+  setspawn:
+    description: Sets the spawn of the current world
+    usage: /<command>
+  time:
+    description: Sets the time in this world
+    usage: /<command> <time>
+  plugin:
+    description: General plugin command
+    usage: /<command> <list|load|enable|disable|reload> <plugin>
