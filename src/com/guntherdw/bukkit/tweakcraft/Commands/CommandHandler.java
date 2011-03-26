@@ -2,6 +2,7 @@ package com.guntherdw.bukkit.tweakcraft.Commands;
 
 import com.guntherdw.bukkit.tweakcraft.Command;
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
+import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.*;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
@@ -33,7 +34,19 @@ public class CommandHandler {
         commandMap.put("admon", new CommandAdmon());
         commandMap.put("admoff", new CommandAdmoff());
         commandMap.put("tplist", new CommandTpList());
-        
+
+        /**
+         * Essential commands
+         */
+        commandMap.put("ban", new CommandBan());
+        commandMap.put("compass", new CommandCompass());
+        commandMap.put("getpos", new CommandGetpos());
+        commandMap.put("item", new CommandItem());
+        commandMap.put("kick", new CommandKick());
+        commandMap.put("spawnmob", new CommandSpawnmob());
+        commandMap.put("unban", new CommandUnban());
+        commandMap.put("world", new CommandWorld());
+
         /**
          * General commands
          */

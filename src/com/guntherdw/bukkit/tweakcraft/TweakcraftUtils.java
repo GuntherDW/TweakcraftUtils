@@ -98,9 +98,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     
     private void registerEvents() {
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN,  playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT,  playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT,  playerListener, Priority.Normal, this);
     }
 
     public Logger getLogger()
