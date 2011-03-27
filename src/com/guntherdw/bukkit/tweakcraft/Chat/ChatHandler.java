@@ -7,7 +7,9 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +20,7 @@ public class ChatHandler {
     public Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
     private TweakcraftUtils plugin;
     public Map<String, String> playerchatmode = new HashMap<String, String>();
+    public List<String> mutedPlayers = new ArrayList<String>();
 
     public ChatHandler(TweakcraftUtils instance)
     {
@@ -103,5 +106,23 @@ public class ChatHandler {
 
     }
 
+    public void addMute(String player)
+    {
+        if(!mutedPlayers.contains(player))
+        {
+            mutedPlayers.add(player);
+        }
+    }
 
+    public void removeMute(String player)
+    {
+        if(mutedPlayers.contains(player))
+        {
+            mutedPlayers.remove(player);
+        }
+    }
+
+    public List<String> getMutedPlayers() {
+        return mutedPlayers;
+    }
 }

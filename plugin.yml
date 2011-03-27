@@ -106,6 +106,9 @@ commands:
   time:
     description: Sets the time in this world
     usage: /<command> <time>
+  me:
+    description: Broadcasts a message in third person
+    usage: /<command> <message>
   plugin:
     description: General plugin command
     usage: /<command> <list|load|enable|disable|reload> <plugin>

@@ -49,6 +49,21 @@ public class AdminChat implements ChatMode {
         return true;
     }
 
+    public boolean broadcastMessage(CommandSender sender, String message) {
+
+        String msg = message;
+        if(sender instanceof Player && !isOnList(sender))
+        {
+            sender.sendMessage(msg);
+        }
+        for(Player p : getRecipients(sender))
+        {
+            p.sendMessage(msg);
+        }
+        plugin.getLogger().info("AMSG: "+message);
+        return true;
+    }
+
     public List<Player> getRecipients(CommandSender sender) {
         List<Player> recp = new ArrayList<Player>();
         for(String m : subscribers)

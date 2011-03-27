@@ -44,7 +44,9 @@ public class CommandHandler {
         commandMap.put("getpos", new CommandGetpos());
         commandMap.put("item", new CommandItem());
         commandMap.put("kick", new CommandKick());
+        commandMap.put("me", new CommandMe());
         commandMap.put("msg", new CommandMsg());
+        commandMap.put("mute", new CommandMute());
         commandMap.put("motd", new CommandMotd());
         commandMap.put("plugin", new CommandPlugin());
         commandMap.put("reply", new CommandReply());

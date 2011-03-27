@@ -1,6 +1,7 @@
 package com.guntherdw.bukkit.tweakcraft;
 
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
@@ -36,16 +37,24 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String name = player.getName();
         player.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
 
-        ChatMode cm = plugin.getChathandler().getPlayerChatMode(player);
-
-        if(cm != null)
+        ChatHandler ch = plugin.getChathandler();
+        if(ch.getMutedPlayers().contains(player.getName()))
         {
-            if(!message.startsWith(plugin.getChathandler().getBypassChar()))
+            player.sendMessage("You are muted! No one can hear you.");
+            plugin.getLogger().info("[TweakcraftUtils] Muted player message : <"+event.getPlayer().getName()+"> "+event.getMessage());
+            event.setCancelled(true);
+        } else {
+            ChatMode cm = ch.getPlayerChatMode(player);
+
+            if(cm != null)
             {
-                cm.sendMessage(player, message);
-                event.setCancelled(true);
-            } else {
-                event.setMessage(message.substring(1));
+                if(!message.startsWith(plugin.getChathandler().getBypassChar()))
+                {
+                    cm.sendMessage(player, message);
+                    event.setCancelled(true);
+                } else {
+                    event.setMessage(message.substring(1));
+                }
             }
         }
     }

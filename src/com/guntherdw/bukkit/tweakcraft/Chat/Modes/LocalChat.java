@@ -44,6 +44,26 @@ public class LocalChat implements ChatMode {
         return true;
     }
 
+    public boolean broadcastMessage(CommandSender sender, String message) {
+        if(sender instanceof Player)
+        {
+            Player player = (Player) sender;
+            List<Player> recp = getRecipients(player);
+            for(Player p : recp)
+            {
+                p.sendMessage(message);
+            }
+            if(recp.size() < 2)
+            {
+                sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
+            }
+            plugin.getLogger().info("L: "+ message);
+        } else {
+            sender.sendMessage("How did you get here?!");
+        }
+        return true;
+    }
+
     public List<Player> getRecipients(CommandSender sender) {
         List<Player> recp = new ArrayList<Player>();
         if(sender instanceof Player)
