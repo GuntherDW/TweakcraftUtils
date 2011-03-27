@@ -23,7 +23,7 @@ public class CommandCompass implements Command {
 
             sender.sendMessage(ChatColor.YELLOW + "Current looking direction : " + dir);
         } else {
-            sender.sendMessage("Now why would a console want to know its position?");
+            throw new CommandSenderException("Now why would a console want to know its position?");
         }
         return true;
     }

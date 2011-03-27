@@ -39,7 +39,7 @@ public class CommandGetpos implements Command {
             
             sender.sendMessage(ChatColor.YELLOW + "Compass: "+dir+" ("+(Math.round(degreeRotation * 10) / 10.0) + ")");
         } else {
-            sender.sendMessage("Now why would a console want to know its position?");
+            throw new CommandSenderException("Now why would a console want to know its position?");
         }
         return true;
     }

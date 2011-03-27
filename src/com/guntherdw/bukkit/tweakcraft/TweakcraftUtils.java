@@ -3,7 +3,9 @@ package com.guntherdw.bukkit.tweakcraft;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
+import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
+import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -34,6 +36,7 @@ public class TweakcraftUtils extends JavaPlugin {
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
     private final ItemDB itemDB = new ItemDB(this);
+    private final WorldManager worldmanager = new WorldManager(this);
     public int playerLimit;
     public int maxRange;
     public static int maxlength = 55;
@@ -260,6 +263,9 @@ public class TweakcraftUtils extends JavaPlugin {
             keepplayerhistory = true;
         }
         itemDB.loadDataBase();
+        worldmanager.setupWorlds();
+        banhandler.reloadBans();
+        /* itemDB.writeDB(); */
         maxRange = getConfiguration().getInt("maxrange", 200);
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
@@ -302,6 +308,8 @@ public class TweakcraftUtils extends JavaPlugin {
 
                 if (sender instanceof Player)
                     log.info("[TweakcraftUtils] " + ((Player) sender).getName() + " issued: /" + cmd.getName() + " " + mess);
+                else
+                    log.info("[TweakcraftUtils] CONSOLE issued: /" + cmd.getName() + " " + mess);
                 return true;
             } catch (CommandNotFoundException e) {
                 sender.sendMessage("TweakcraftUtils error, command not found!");

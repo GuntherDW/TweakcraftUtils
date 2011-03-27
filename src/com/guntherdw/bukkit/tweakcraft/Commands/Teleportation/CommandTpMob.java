@@ -75,31 +75,7 @@ public class CommandTpMob implements Command {
                 {
                     // Creature crea = (Creature) c;
                     CreatureType type = null;
-                    if (crea instanceof Chicken) {
-                        type = CreatureType.CHICKEN;
-                    } else if (crea instanceof Cow) {
-                        type = CreatureType.COW;
-                    } else if (crea instanceof Creeper) {
-                        type = CreatureType.CREEPER;
-                    } else if (crea instanceof Ghast) {
-                        type = CreatureType.GHAST;
-                    } else if (crea instanceof Pig) {
-                        type = CreatureType.PIG;
-                    } else if (crea instanceof PigZombie) {
-                        type = CreatureType.PIG_ZOMBIE;
-                    } else if (crea instanceof Sheep) {
-                        type = CreatureType.SHEEP;
-                    } else if (crea instanceof Skeleton) {
-                        type = CreatureType.SKELETON;
-                    } else if (crea instanceof Spider) {
-                        type = CreatureType.SPIDER;
-                    } else if (crea instanceof Zombie) {
-                        type = CreatureType.ZOMBIE;
-                    } else if (crea instanceof Slime) {
-                        type = CreatureType.SLIME;
-                    } else if (crea instanceof Squid) {
-                        type = CreatureType.SQUID;
-                    }
+                    type = CreatureType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
 
                     if(cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue())
                     {

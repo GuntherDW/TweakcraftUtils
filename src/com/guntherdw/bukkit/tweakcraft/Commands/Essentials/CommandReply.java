@@ -44,7 +44,7 @@ public class CommandReply implements Command {
                 throw new CommandUsageException("I need a message!");
             }
         } else {
-            sender.sendMessage("Wait what do you want to do now?");
+            throw new CommandSenderException("Wait what do you want to do now?");
         }
         return true;
     }

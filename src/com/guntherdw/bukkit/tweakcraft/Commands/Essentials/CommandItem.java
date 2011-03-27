@@ -9,6 +9,7 @@ import com.guntherdw.bukkit.tweakcraft.Packages.Item;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.sk89q.worldedit.blocks.ItemType;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,9 +22,7 @@ public class CommandItem implements Command {
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         
         if(sender instanceof Player)
-        {
-            Player player = (Player) sender;
-            if(!plugin.check(player, "item"))
+            if(!plugin.check((Player) sender , "item"))
                 throw new PermissionsException(command);
 
             ItemDB db = plugin.getItemDB();
@@ -53,9 +52,13 @@ public class CommandItem implements Command {
                         itemId = Integer.parseInt(split[0]);
                     } catch(NumberFormatException e) {
                         item = db.getItem(split[0]);
-                        itemId = item.getItemnumber();
-                        itemDmg = item.getDamage();
-                        itemAmount = item.getDefaultstack();
+                        if(item != null) {
+                            itemId = item.getItemnumber();
+                            itemDmg = item.getDamage();
+                            itemAmount = item.getDefaultstack();
+                        } else {
+                            throw new CommandException("Can't find item!");
+                        }
                     }
                 }
                 if(args.length>1) { // set Amount
@@ -72,24 +75,36 @@ public class CommandItem implements Command {
                         throw new CommandUsageException("Can't find the other player!");
                     }
                 } else {
-                    receiver = player;
+                    if(sender instanceof Player)
+                        receiver = (Player) sender;
+                    else
+                        throw new CommandUsageException("If you're a console you have to specify the receiver!");
+                    
                 }
 
                 if(ItemType.isValid(itemId))
                 {
+                    String recvname = "";
+                    String giftfrom = "";
+                    if(sender instanceof Player)
+                    {
+                        recvname = receiver.getDisplayName();
+                        giftfrom = ((Player)sender).getName();
+                    }
+                    else
+                    {
+                        recvname = receiver.getName();
+                        giftfrom = "CONSOLE";
+                    }
+
+                    sender.sendMessage(ChatColor.YELLOW + "Giving "+recvname+ChatColor.YELLOW+" "+itemAmount+" of "+ItemType.toName(itemId)+"!");
                     ItemStack stack = new ItemStack(itemId, itemAmount, itemDmg.shortValue());
                     receiver.getInventory().addItem(stack);
+                    plugin.getLogger().info("[TweakcraftUtils] "+giftfrom +" gave "+recvname+" "+itemAmount+"x"+itemId+" ("+itemDmg.intValue()+")");
                 } else {
                     throw new CommandUsageException("Specified item is not valid!");
                 }
-                /* sender.sendMessage(itemId.toString());
-                sender.sendMessage(itemDmg.toString());
-                sender.sendMessage(itemAmount.toString());
-                sender.sendMessage(ItemType.toName(itemId)); */
-
             }
-
-        }
         return true;
     }
 }

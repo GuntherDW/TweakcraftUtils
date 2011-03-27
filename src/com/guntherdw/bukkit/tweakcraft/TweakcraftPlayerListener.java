@@ -1,5 +1,6 @@
 package com.guntherdw.bukkit.tweakcraft;
 
+import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
@@ -7,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerLoginEvent;
 
 import java.io.*;
 import java.util.Calendar;
@@ -48,6 +50,16 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
+
+    public void onPlayerLogin(PlayerLoginEvent event)
+    {
+        BanHandler handler = plugin.getBanhandler();
+        Ban isBanned = handler.searchBan(event.getPlayer().getName());
+        if(isBanned != null)
+        {
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, isBanned.getReason());
+        }
+    }
 
 
     public void onPlayerJoin(PlayerEvent event)

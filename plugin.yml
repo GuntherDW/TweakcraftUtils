@@ -116,3 +116,6 @@ commands:
     description: Reply to the last player that sent a message to you
     usage: /<command> <message>
     aliases: [r, re]
+  banlist:
+    description: Lists the current bans
+    usage: /<command>

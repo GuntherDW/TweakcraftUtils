@@ -19,7 +19,12 @@ public class Ban {
     }
 
     public String getReason() {
-        return reason;
+        if(reason == null || reason.isEmpty())
+        {
+            return "You are banned!";
+        } else {
+            return reason;
+        }
     }
 
     public void setReason(String reason) {

@@ -1,6 +1,7 @@
 package com.guntherdw.bukkit.tweakcraft.Packages;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.sk89q.worldedit.blocks.ItemType;
 
 import java.io.*;
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class ItemDB {
         } catch(IOException e) {
             plugin.getLogger().info("[TweakcraftUtils] Item DB IO error!");
         }
-        plugin.getLogger().info("[TweakcraftUtils] Loaded item DB "+itemmap.size()+" items found!");
+        plugin.getLogger().info("[TweakcraftUtils] Loaded item DB, "+itemmap.size()+" items found!");
     }
 
     public Item getItem(String name)
