@@ -29,7 +29,7 @@ public class CommandMute implements Command {
             if(player!= null)
             {
 
-                if(!ch.getMutedPlayers().contains(player.getName()))
+                if(!ch.getMutedPlayers().contains(player.getName().toLowerCase()))
                 {
                     sender.sendMessage(ChatColor.YELLOW + "Muting "+player.getDisplayName());
                     ch.addMute(player.getName().toLowerCase());
