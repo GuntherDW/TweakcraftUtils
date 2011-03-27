@@ -32,10 +32,10 @@ public class CommandMute implements Command {
                 if(!ch.getMutedPlayers().contains(player.getName()))
                 {
                     sender.sendMessage(ChatColor.YELLOW + "Muting "+player.getDisplayName());
-                    ch.addMute(player.getName());
+                    ch.addMute(player.getName().toLowerCase());
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Unmuting "+player.getDisplayName());
-                    ch.removeMute(player.getDisplayName());
+                    ch.removeMute(player.getName().toLowerCase());
                 }
             } else {
                 sender.sendMessage(ChatColor.YELLOW + "Can't find player!");
