@@ -37,7 +37,7 @@ public class CommandMe implements Command {
                         msg = msg.substring(0, msg.length()-1);
                     if(cm == null)
                     {
-                        plugin.getServer().broadcastMessage(" * "+player.getDisplayName()+" "+msg);
+                        plugin.getServer().broadcastMessage("* "+player.getDisplayName()+" "+msg);
                     } else if(cm instanceof LocalChat) {
                         ((LocalChat) cm).broadcastMessage(player, "["+ChatColor.YELLOW+"L"+ChatColor.WHITE+"] * "+player.getDisplayName()+" "+msg);
                     } else if(cm instanceof AdminChat) {

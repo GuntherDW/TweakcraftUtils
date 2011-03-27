@@ -215,6 +215,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public void reloadMOTD() {
         File motdfile = new File(this.getDataFolder(), "motd.txt");
+        MOTDLines = new ArrayList<String>();
         try {
             BufferedReader motdfilereader = new BufferedReader(new FileReader(motdfile));
             String line = motdfilereader.readLine();
