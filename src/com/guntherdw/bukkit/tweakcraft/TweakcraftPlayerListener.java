@@ -1,28 +1,23 @@
 package com.guntherdw.bukkit.tweakcraft;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerListener;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * @author GuntherDW
  */
 public class TweakcraftPlayerListener extends PlayerListener {
 
-    private final Logger log = Logger.getLogger("Minecraft");
+    //private final Logger log = Logger.getLogger("Minecraft");
     private final TweakcraftUtils plugin;
 
     public TweakcraftPlayerListener(TweakcraftUtils instance) {
-        TweakcraftUtils.log.info("[TweakcraftUtils] PlayerListener called!");
+        //TweakcraftUtils.log.info("[TweakcraftUtils] PlayerListener called!");
         plugin = instance;
     }
 
@@ -61,7 +56,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
             String time = String.valueOf(cal.getTime().getTime());
             plugin.getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), (String) time );
             plugin.getSeenconfig().save();
-            log.info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
+            //log.info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
+            plugin.getLogger().info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());
     }
