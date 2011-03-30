@@ -48,9 +48,9 @@ public class BanHandler {
                 {
                     String[] lin = line.split(",");
                     if(lin.length>1)
-                        bans.put(line, new Ban(line, lin[1]));
+                        bans.put(lin[0], new Ban(lin[0], lin[1]));
                     else
-                        bans.put(line, new Ban(line, ""));
+                        bans.put(lin[0], new Ban(lin[0], ""));
                 }
             }
         } catch (FileNotFoundException e) {

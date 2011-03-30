@@ -1,10 +1,10 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.World;
 import org.bukkit.World.Environment;
-import org.bukkit.World;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,18 +12,23 @@ import java.util.Map;
  */
 public class WorldManager {
 
-    private World nether;
-    private World normal;
+    private Map<String, com.guntherdw.bukkit.tweakcraft.World> worlds;
     private TweakcraftUtils plugin;
-    private Map<String, World> extraworlds;
+
+
+    public Map<String, World> getWorlds()
+    {
+        return worlds;
+    }
 
     public WorldManager(TweakcraftUtils instance)
     {
         this.plugin = instance;
+        worlds = new HashMap<String, World>();
     }
 
     public void setupWorlds() {
-        List<World> worlds = plugin.getServer().getWorlds();
+        /* List<World> worlds = plugin.getServer().getWorlds();
         for(World w : worlds)
         {
             if(w.getEnvironment() == org.bukkit.World.Environment.NORMAL && normal == null)
@@ -34,20 +39,28 @@ public class WorldManager {
         if(normal == null)
             normal = plugin.getServer().createWorld("world", org.bukkit.World.Environment.NORMAL);
         if(nether == null)
-            nether = plugin.getServer().createWorld("nether", org.bukkit.World.Environment.NETHER);
+            nether = plugin.getServer().createWorld("nether", org.bukkit.World.Environment.NETHER); */
+
+        /* Get the normal world-folder */
+        String worldName = "";
+        // plugin.get
+        /* Get server config, without touching craftbukkit's sources, and get config.level-name */
+
+
     }
 
     public com.guntherdw.bukkit.tweakcraft.World getWorld(String name)
     {
-        return null;
-    }
-
-    public void createWorld(String worldname, Environment env)
-    {
-        if(!extraworlds.containsKey(worldname.toLowerCase()))
+        if(worlds.containsKey(name))
         {
-            plugin.getServer().createWorld(worldname.toLowerCase(), env);
+            return worlds.get(name);
+        } else {
+            return null;
         }
     }
 
+    public TweakcraftUtils getPlugin()
+    {
+        return plugin;
+    }
 }
