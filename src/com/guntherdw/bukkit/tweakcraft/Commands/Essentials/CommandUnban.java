@@ -27,7 +27,7 @@ public class CommandUnban implements Command {
             if(handler.isBanned(target))
             {
                 sender.sendMessage(ChatColor.YELLOW + "Unbanning player!");
-                handler.unBanPlayer(target);
+                handler.unBan(target);
                 handler.saveBans();
             } else {
                 sender.sendMessage(ChatColor.YELLOW + "That player isn't banned!");

@@ -24,7 +24,7 @@ public class CommandMe implements Command {
         {
             Player player = (Player) sender;
             ChatHandler ch = plugin.getChathandler();
-            if(ch.getMutedPlayers().contains(player.getName()))
+            if(ch.getMutedPlayers().contains(player.getName().toLowerCase()))
             {
                 sender.sendMessage(ChatColor.RED + "What were you trying to do?");
             } else {

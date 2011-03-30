@@ -5,7 +5,6 @@ import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,8 +41,8 @@ public class BanHandler {
         try{
             File banfile = new File(plugin.getDataFolder(), "banned-players.txt");
             BufferedReader banfilereader = new BufferedReader(new FileReader(banfile));
-            String line = banfilereader.readLine();
-            while(line != null)
+            String line = "";
+            while((line = banfilereader.readLine()) != null)
             {
                 if(!line.trim().equals(""))
                 {
@@ -53,7 +52,6 @@ public class BanHandler {
                     else
                         bans.put(line, new Ban(line, ""));
                 }
-                line = banfilereader.readLine();
             }
         } catch (FileNotFoundException e) {
             plugin.getLogger().info("[TweakcraftUtils] Ban file not found!");
@@ -90,7 +88,7 @@ public class BanHandler {
         return bans;
     }
 
-    public void unBanPlayer(String player)
+    public void unBan(String player)
     {
         if(bans.containsKey(player))
         {

@@ -37,6 +37,11 @@ public class WorldManager {
             nether = plugin.getServer().createWorld("nether", org.bukkit.World.Environment.NETHER);
     }
 
+    public com.guntherdw.bukkit.tweakcraft.World getWorld(String name)
+    {
+        return null;
+    }
+
     public void createWorld(String worldname, Environment env)
     {
         if(!extraworlds.containsKey(worldname.toLowerCase()))

@@ -1,7 +1,6 @@
 package com.guntherdw.bukkit.tweakcraft.Packages;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.sk89q.worldedit.blocks.ItemType;
 
 import java.io.*;
 import java.util.HashMap;
@@ -26,9 +25,9 @@ public class ItemDB {
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader(itemfile));
-            String itemline = reader.readLine();
+            String itemline = "";
             Integer line = 1;
-            while(itemline != null)
+            while((itemline = reader.readLine()) != null)
             {
                 if(!itemline.startsWith("#"))
                 {
@@ -44,7 +43,6 @@ public class ItemDB {
                     }
 
                 }
-                itemline = reader.readLine();
                 line++;
             }
         } catch(FileNotFoundException e) {

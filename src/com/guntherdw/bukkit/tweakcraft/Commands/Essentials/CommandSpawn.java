@@ -19,6 +19,9 @@ public class CommandSpawn implements Command {
         if(sender instanceof Player)
         {
             Player player = (Player) sender;
+            if(!plugin.check(player, "spawn"))
+                throw new PermissionsException(command);
+            
             sender.sendMessage(ChatColor.YELLOW + "Teleporting you to spawn!");
             player.teleport(player.getWorld().getSpawnLocation());
         } else {
