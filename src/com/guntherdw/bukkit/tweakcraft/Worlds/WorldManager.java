@@ -42,10 +42,24 @@ public class WorldManager {
             nether = plugin.getServer().createWorld("nether", org.bukkit.World.Environment.NETHER); */
 
         /* Get the normal world-folder */
-        String worldName = "";
-        // plugin.get
-        /* Get server config, without touching craftbukkit's sources, and get config.level-name */
+        boolean netherWorldOnline = false;
 
+        for(org.bukkit.World world : plugin.getServer().getWorlds())
+        {
+            worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), true));
+            if(world.getEnvironment() == Environment.NETHER)
+                netherWorldOnline = true;
+        }
+        if(netherWorldOnline == false && plugin.getConfiguration().getBoolean("worlds.enablenether", false))
+        {
+            String netherfolder = plugin.getConfiguration().getString("worlds.netherfolder", "nether").trim();
+            if(!netherfolder.equalsIgnoreCase(""))
+            {
+                worlds.put(netherfolder, new TweakWorld(this, netherfolder, Environment.NETHER, true));
+            } else {
+                plugin.getLogger().info("[TweakcraftUtils] The nether's folder name can't be empty!");
+            }
+        }
 
     }
 

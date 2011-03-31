@@ -34,6 +34,7 @@ public class CommandHandler {
         commandMap.put("admon", new CommandAdmon());
         commandMap.put("admoff", new CommandAdmoff());
         commandMap.put("tplist", new CommandTpList());
+        commandMap.put("tc", new CommandTC());
 
         /**
          * Essential commands

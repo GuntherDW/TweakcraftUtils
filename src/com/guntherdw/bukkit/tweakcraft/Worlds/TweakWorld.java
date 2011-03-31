@@ -24,8 +24,13 @@ public class TweakWorld implements com.guntherdw.bukkit.tweakcraft.World {
                 worldName = null;
             } else {
                 worldName = foldername.trim();
-                environment = env;
-                world = wm.getPlugin().getServer().createWorld(worldName, environment);
+                if((world = wm.getPlugin().getServer().getWorld(worldName)) == null)
+                {
+                    environment = env;
+                    world = wm.getPlugin().getServer().createWorld(worldName, environment);
+                } else {
+                    environment = world.getEnvironment();
+                }
                 this.enabled = true;
             }
         }
