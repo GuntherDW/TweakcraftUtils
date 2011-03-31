@@ -34,7 +34,7 @@ public class CommandWorld implements Command {
                     world = worlds.get(worldnum);
                 } catch(NumberFormatException e) {
                     world = plugin.getServer().getWorld(worldname);
-                } catch(ArrayIndexOutOfBoundsException e) {
+                } catch(IndexOutOfBoundsException e) {
                     throw new CommandUsageException(ChatColor.YELLOW+"Can't find that world!");
                 }
                 if(world != null)

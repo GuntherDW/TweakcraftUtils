@@ -3,8 +3,10 @@ package com.guntherdw.bukkit.tweakcraft.Worlds;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.World;
 import org.bukkit.World.Environment;
+import org.bukkit.util.config.ConfigurationNode;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,9 +57,36 @@ public class WorldManager {
             String netherfolder = plugin.getConfiguration().getString("worlds.netherfolder", "nether").trim();
             if(!netherfolder.equalsIgnoreCase(""))
             {
+                plugin.getLogger().info("[TweakcraftUtils] Loading the netherworld!");
                 worlds.put(netherfolder, new TweakWorld(this, netherfolder, Environment.NETHER, true));
             } else {
                 plugin.getLogger().info("[TweakcraftUtils] The nether's folder name can't be empty!");
+            }
+        }
+        // List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
+        List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
+        for(String node : extraworlds)
+        {
+            if(!worlds.containsKey(node))
+            {
+                String env = plugin.getConfiguration().getString("worlds.extraworlds."+node+".environment", "");
+                boolean enabled = plugin.getConfiguration().getBoolean("worlds.extraworlds."+node+".enabled",false);
+                Environment wenv = null;
+                if(env.equalsIgnoreCase("nether")) {
+                    wenv = Environment.NETHER;
+                } else if(env.equalsIgnoreCase("normal")) {
+                    wenv = Environment.NORMAL;
+                }
+
+                if(!(wenv == null))
+                {
+                    plugin.getLogger().info("[TweakcraftUtils] Adding world with name "+node+" and environmenttype "+env+"!");
+                    worlds.put(node, new TweakWorld(this, node, wenv, enabled));
+                } else {
+                    plugin.getLogger().info("[TweakcraftUtils] "+env+" isn't a correct environment name!");
+                }
+            } else {
+                plugin.getLogger().info("[TweakcraftUtils] World with name "+node+" already exists!");
             }
         }
 

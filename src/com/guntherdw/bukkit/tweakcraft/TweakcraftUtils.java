@@ -47,6 +47,7 @@ public class TweakcraftUtils extends JavaPlugin {
     public Map<String, String> playerReplyDB;
     private final ChatHandler chathandler = new ChatHandler(this);
     private List<String> donottplist;
+    public static File datafolder;
 
     protected static final Logger log = Logger.getLogger("Minecraft");
 
