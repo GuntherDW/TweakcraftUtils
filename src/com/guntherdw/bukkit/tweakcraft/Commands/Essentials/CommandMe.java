@@ -28,6 +28,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -59,7 +60,7 @@ public class CommandMe implements Command {
                     } else if(cm instanceof LocalChat) {
                         ((LocalChat) cm).broadcastMessage(player, "["+ChatColor.YELLOW+"L"+ChatColor.WHITE+"] * "+player.getDisplayName()+" "+msg);
                     } else if(cm instanceof AdminChat) {
-                        ((AdminChat) cm).broadcastMessage(player, ChatColor.GREEN+"ADMIN"+ChatColor.WHITE+" * "+player.getDisplayName()+" "+ChatColor.GREEN+msg);
+                        ((AdminChat) cm).broadcastMessage(player, "["+ChatColor.GREEN +"A"+ChatColor.WHITE+"] * "+player.getDisplayName()+" "+ChatColor.GREEN+msg);
                     }
                 }
 

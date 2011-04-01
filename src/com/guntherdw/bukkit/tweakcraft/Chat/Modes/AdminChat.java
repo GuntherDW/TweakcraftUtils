@@ -45,15 +45,22 @@ public class AdminChat implements ChatMode {
 
         String sendername = "";
         String pcolor = "";
+        String cleanname;
         if(sender instanceof Player)
         {
             sendername = ((Player)sender).getDisplayName(); // ((Player)sender).getName();
             pcolor = ""; // getDisplayName handles this one!
+            cleanname = ((Player)sender).getName();
         } else {
             sendername = "CONSOLE";
+            cleanname = sendername;
             pcolor = ChatColor.LIGHT_PURPLE.toString();
         }
-        String msg = ChatColor.GREEN + "ADMMSG : <"+ pcolor + sendername+ChatColor.GREEN+"> " + message;
+        String msg = ChatColor.GREEN + "A: ["+ pcolor + sendername+ChatColor.GREEN+"] " + message;
+        if(plugin.getCraftIRC() != null)
+        {
+            plugin.getCraftIRC().sendMessageToTag("[A] <"+cleanname+"> "+message, "mchatadmin");
+        }
 
         if(sender instanceof Player && !isOnList(sender))
         {
@@ -77,6 +84,16 @@ public class AdminChat implements ChatMode {
         for(Player p : getRecipients(sender))
         {
             p.sendMessage(msg);
+        }
+        plugin.getLogger().info("AMSG: "+message);
+        return true;
+    }
+
+    public boolean broadcastMessage(String message) {
+        // String msg = message;
+        for(Player p : getRecipients(null))
+        {
+            p.sendMessage(message);
         }
         plugin.getLogger().info("AMSG: "+message);
         return true;

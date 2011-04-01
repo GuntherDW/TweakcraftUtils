@@ -35,8 +35,8 @@ import java.util.Map;
  */
 public class ChatHandler {
 
-    public Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
     private TweakcraftUtils plugin;
+    public Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
     public Map<String, String> playerchatmode = new HashMap<String, String>();
     public List<String> mutedPlayers = new ArrayList<String>();
 
@@ -142,5 +142,9 @@ public class ChatHandler {
 
     public List<String> getMutedPlayers() {
         return mutedPlayers;
+    }
+
+    public boolean isMuted(String playername) {
+        return mutedPlayers.contains(playername.toLowerCase());
     }
 }

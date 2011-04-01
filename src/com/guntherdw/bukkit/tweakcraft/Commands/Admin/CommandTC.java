@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Admin;
 
+import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
@@ -26,6 +27,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 /**
  * @author GuntherDW
@@ -40,6 +42,14 @@ public class CommandTC implements Command {
                 sender.sendMessage(ChatColor.WHITE+plugin.getDescription().getName() + ": version "+ChatColor.GREEN+plugin.getDescription().getVersion());
             } else if(args[0].equalsIgnoreCase("reload")) {
                 sender.sendMessage(ChatColor.GREEN+"Not implemented yet!");
+                if(sender instanceof Player)
+                {
+                    if(plugin.check((Player)sender, "reload"))
+                    {
+                        BanHandler bh = plugin.getBanhandler();
+                        bh.reloadBans();
+                    }
+                }
             }
         } else {
             throw new CommandUsageException("/tc <"+ ChatColor.GREEN+"reload"+ChatColor.YELLOW+"/"+ChatColor.GREEN+"version"+ChatColor.YELLOW+">");

@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft;
 
+import com.ensifera.animosity.craftirc.CraftIRC;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
@@ -49,7 +50,8 @@ import java.util.logging.Logger;
 
 public class TweakcraftUtils extends JavaPlugin {
 
-    public Permissions perm = null;
+    private Permissions perm = null;
+    private CraftIRC circ = null;
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
@@ -57,8 +59,6 @@ public class TweakcraftUtils extends JavaPlugin {
     private final WorldManager worldmanager = new WorldManager(this);
     public int playerLimit;
     public int maxRange;
-    public static int maxlength = 55;
-    private static File seenFile;
     private Configuration seenconfig;
     protected boolean keepplayerhistory = false;
     private List<String> MOTDLines;
@@ -178,6 +178,10 @@ public class TweakcraftUtils extends JavaPlugin {
         return MOTDLines;
     }
 
+    public CraftIRC getCraftIRC() {
+        return circ;
+    }
+
     public String getPlayerColor(String playername, boolean change) {
 
         String pref = "";
@@ -208,6 +212,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     @Deprecated
     public static List<String> splitUp(String msg) {
+        int maxlength = 55;
         List<String> lijst = new ArrayList<String>();
         String toadd;
         int x = 0;
@@ -228,6 +233,16 @@ public class TweakcraftUtils extends JavaPlugin {
         if (perm == null) {
             if (plugin != null) {
                 perm = (Permissions) plugin;
+            }
+        }
+    }
+
+    public void setupCraftIRC() {
+        Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
+
+        if (circ == null) {
+            if (plugin != null) {
+                circ = (CraftIRC) plugin;
             }
         }
     }
@@ -275,9 +290,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
         this.registerEvents();
         this.setupPermissions();
+        this.setupCraftIRC();
         if (getConfiguration().getBoolean("keepplayerhistory", false)) {
             log.info("[TweakcraftUtils] Keeping player history!");
-            seenFile = new File(getDataFolder(), "players.yml");
+            File seenFile = new File(getDataFolder(), "players.yml");
             seenconfig = new Configuration(seenFile);
             seenconfig.load();
             keepplayerhistory = true;

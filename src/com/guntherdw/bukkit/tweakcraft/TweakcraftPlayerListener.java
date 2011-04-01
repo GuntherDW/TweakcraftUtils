@@ -24,10 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.*;
 
 import java.util.Calendar;
 import java.util.logging.Logger;
@@ -81,7 +78,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
 
-    public void onPlayerJoin(PlayerEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         String name = p.getName();
         event.getPlayer().setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
@@ -90,7 +87,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             p.sendMessage(m);
     }
 
-    public void onPlayerQuit(PlayerEvent event) {
+    public void onPlayerQuit(PlayerQuitEvent event) {
         if (plugin.isKeepplayerhistory()) {
             Calendar cal = Calendar.getInstance();
             String time = String.valueOf(cal.getTime().getTime());
