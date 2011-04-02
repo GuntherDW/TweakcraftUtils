@@ -26,16 +26,8 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
-import org.bukkit.util.Vector;
-
-import java.util.HashSet;
-import java.util.List;
-
 
 /**
  * @author GuntherDW

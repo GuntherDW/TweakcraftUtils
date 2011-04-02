@@ -63,6 +63,7 @@ public class CommandHandler {
         commandMap.put("getpos", new CommandGetpos());
         commandMap.put("item", new CommandItem());
         commandMap.put("kick", new CommandKick());
+        commandMap.put("listworlds", new CommandListWorlds());
         commandMap.put("me", new CommandMe());
         commandMap.put("msg", new CommandMsg());
         commandMap.put("mute", new CommandMute());

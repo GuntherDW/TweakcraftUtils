@@ -24,6 +24,9 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,6 +38,18 @@ public class CommandSetSpawn implements Command {
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player)
         {
+            Player player = (Player) sender;
+            if(!plugin.check(player, "setspawn"))
+                throw new PermissionsException(command);
+
+            World world = player.getWorld();
+            Location loc = player.getLocation().clone();
+            if(!world.setSpawnLocation((int)loc.getX(), (int)loc.getY(), (int)loc.getZ()))
+            {
+                throw new CommandException("Something went wrong setting the spawn location for this world!");
+            } else {
+                sender.sendMessage(ChatColor.YELLOW + "Successfully set the spawn location for this world!");
+            }
 
         } else {
             throw new CommandSenderException("What do you think you are doing?");

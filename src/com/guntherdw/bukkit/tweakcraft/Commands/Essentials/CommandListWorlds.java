@@ -16,46 +16,50 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.guntherdw.bukkit.tweakcraft.Commands.Admin;
+package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
-import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
-import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
  * @author GuntherDW
  */
-public class CommandTC implements Command {
+public class CommandListWorlds implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(args.length>0)
+        if(sender instanceof Player) // Give the player a list of worlds he has access to!
         {
-            if(args[0].equalsIgnoreCase("version"))
+            Player player = (Player) sender;
+            player.sendMessage(ChatColor.YELLOW + "Currently enabled worlds that you have access to: ");
+            // String message = "";
+
+            for(World w : plugin.getServer().getWorlds())
             {
-                sender.sendMessage(ChatColor.WHITE+plugin.getDescription().getName() + ": version "+ChatColor.GREEN+plugin.getDescription().getVersion());
-            } else if(args[0].equalsIgnoreCase("reload")) {
-                sender.sendMessage(ChatColor.GREEN+"Not implemented yet!");
-                if(sender instanceof Player)
+                if(plugin.check(player, "worlds."+w.getName()))
                 {
-                    if(plugin.check((Player)sender, "reload"))
-                    {
-                        BanHandler bh = plugin.getBanhandler();
-                        bh.reloadBans();
-                        ItemDB idb = plugin.getItemDB();
-                        idb.loadDataBase();
-                    }
+                    player.sendMessage((w.getEnvironment()==World.Environment.NORMAL?ChatColor.GREEN:ChatColor.RED)+w.getName());
                 }
             }
-        } else {
-            throw new CommandUsageException("/tc <"+ ChatColor.GREEN+"reload"+ChatColor.YELLOW+"/"+ChatColor.GREEN+"version"+ChatColor.YELLOW+">");
+            player.sendMessage(ChatColor.YELLOW+"Warp to a world by issueing /world <worldname>");
+
+        } else { // The console just needs a list!
+            sender.sendMessage("Currently enabled worlds : ");
+            String message = "";
+            for(World w : plugin.getServer().getWorlds())
+            {
+                message += w.getName()+", ";
+            }
+            if(message.length()>1)
+                message = message.substring(0, message.length()-2);
+            sender.sendMessage(message);
         }
         return true;
     }

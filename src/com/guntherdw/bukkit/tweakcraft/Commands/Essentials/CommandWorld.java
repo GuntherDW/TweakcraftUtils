@@ -57,7 +57,10 @@ public class CommandWorld implements Command {
                 }
                 if(world != null)
                 {
-                    player.teleport(world.getSpawnLocation());
+                    if(!plugin.check(player, "worlds."+world.getName()))
+                        throw new PermissionsException(command);
+                    else
+                        player.teleport(world.getSpawnLocation());
                 } else {
                     sender.sendMessage(ChatColor.YELLOW+"Can't find that world!");
                 }

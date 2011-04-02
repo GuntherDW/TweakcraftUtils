@@ -57,6 +57,7 @@ public class TweakcraftUtils extends JavaPlugin {
     private final BanHandler banhandler = new BanHandler(this);
     private final ItemDB itemDB = new ItemDB(this);
     private final WorldManager worldmanager = new WorldManager(this);
+    // private final
     public int playerLimit;
     public int maxRange;
     private Configuration seenconfig;
@@ -95,6 +96,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public ItemDB getItemDB() {
         return itemDB;
+    }
+
+    public WorldManager getworldManager() {
+        return worldmanager;
     }
 
     public String getCompassDirection(Float rotation) {
