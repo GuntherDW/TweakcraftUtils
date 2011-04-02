@@ -38,7 +38,8 @@ public class CommandListWorlds implements Command {
         if(sender instanceof Player) // Give the player a list of worlds he has access to!
         {
             Player player = (Player) sender;
-            player.sendMessage(ChatColor.YELLOW + "Currently enabled worlds that you have access to: ");
+            player.sendMessage(ChatColor.LIGHT_PURPLE + "Listing currently accessible worlds : ");
+
             // String message = "";
 
             for(World w : plugin.getServer().getWorlds())
@@ -48,7 +49,10 @@ public class CommandListWorlds implements Command {
                     player.sendMessage((w.getEnvironment()==World.Environment.NORMAL?ChatColor.GREEN:ChatColor.RED)+w.getName());
                 }
             }
-            player.sendMessage(ChatColor.YELLOW+"Warp to a world by issueing /world <worldname>");
+            player.sendMessage(ChatColor.LIGHT_PURPLE + "Legend: "+ChatColor.RED+"NETHER"+ChatColor.LIGHT_PURPLE+","+
+                                    ChatColor.GREEN+" NORMAL");
+            player.sendMessage(ChatColor.LIGHT_PURPLE+"Warp to a world by issuing /world <worldname>");
+
 
         } else { // The console just needs a list!
             sender.sendMessage("Currently enabled worlds : ");
