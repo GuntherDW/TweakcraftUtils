@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 
@@ -64,6 +65,19 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 } else {
                     event.setMessage(message.substring(1));
                 }
+            }
+        }
+    }
+
+    public void onPlayerTeleport(PlayerTeleportEvent event)
+    {
+        Location floc = event.getFrom();
+        Location tloc = event.getTo();
+        if(floc.getWorld() != tloc.getWorld()) { // The world is different, make a check!
+            Player player = event.getPlayer();
+            if(!plugin.check(player, "worlds."+tloc.getWorld().getName())) {
+                event.setCancelled(true);
+                player.sendMessage(ChatColor.RED + "You don't have access to this world!");
             }
         }
     }
