@@ -37,19 +37,23 @@ public class EntityLocation {
         Double xdiff, zdiff;
         Integer xdiffi, zdiffi;
         dloc = entity.getLocation();
-        xdiff = dloc.getX() - entityLocation.getX();
-        xdiffi = xdiff.intValue();
-        if (xdiffi < 0) {
-            xdiffi = ~xdiffi + 1;
-        }
-        zdiff = dloc.getZ() - entityLocation.getZ();
-        zdiffi = zdiff.intValue();
-        if (zdiffi < 0) {
-            zdiffi = ~zdiffi + 1;
-        }
+        if(dloc.getWorld() == entityLocation.getWorld())
+        {
+            xdiff = dloc.getX() - entityLocation.getX();
+            xdiffi = xdiff.intValue();
+            if (xdiffi < 0) {
+                xdiffi = ~xdiffi + 1;
+            }
+            zdiff = dloc.getZ() - entityLocation.getZ();
+            zdiffi = zdiff.intValue();
+            if (zdiffi < 0) {
+                zdiffi = ~zdiffi + 1;
+            }
 
-        return zdiffi + xdiffi;
-
+            return zdiffi + xdiffi;
+        } else {
+            return null; // Different world, different result!
+        }
     }
 
 }

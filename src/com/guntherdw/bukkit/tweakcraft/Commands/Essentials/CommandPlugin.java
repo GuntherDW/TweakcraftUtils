@@ -77,14 +77,14 @@ public class CommandPlugin implements Command {
             } else if(args[0].equalsIgnoreCase("load")) {
                 sender.sendMessage(ChatColor.YELLOW + "Loading "+pluginname);
                 File plug = new File("plugins", pluginname+".jar");
+                Plugin p = null;
                 try {
-                    plugin.getServer().getPluginManager().loadPlugin(plug);
+                    p = plugin.getServer().getPluginManager().loadPlugin(plug);
                 } catch (Exception e) {
                     e.printStackTrace();
                     throw new CommandException("Exception thrown while loading a plugin!");
                 }
-                Plugin p = plugin.getServer().getPluginManager().getPlugin(pluginname);
-                if(!p.isEnabled())
+                if(p!=null && !p.isEnabled())
                 {
                     plugin.getServer().getPluginManager().enablePlugin(p);
                 }

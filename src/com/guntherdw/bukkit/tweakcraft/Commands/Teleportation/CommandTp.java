@@ -65,7 +65,7 @@ public class CommandTp implements Command {
                         } else {
                             if (refusetp && !override) {
                                 player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + pto.getName() + "!");
-                                pto.sendRawMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
+                                pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
                                 /* boolean teleportwarning = true;
                                if(teleportwarning) */
