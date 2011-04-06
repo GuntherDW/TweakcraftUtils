@@ -2,9 +2,6 @@ package com.guntherdw.bukkit.tweakcraft;
 
 import org.bukkit.util.config.Configuration;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  *
  * @author: GuntherDW
@@ -19,7 +16,7 @@ public class ConfigurationManager {
      */
     public boolean enableSeenConfig   = false;
     public int     localchatdistance  = 200;
-    public Map<String, String>
+    // public Map<String, String>
 
     public ConfigurationManager(TweakcraftUtils instance) {
         this.plugin = instance;
