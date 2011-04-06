@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2011 GuntherDW
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
 import com.guntherdw.bukkit.tweakcraft.ChatMode;
@@ -35,9 +53,29 @@ public class LocalChat implements ChatMode {
             }
             if(recp.size() < 2)
             {
-                sender.sendMessage(ChatColor.GOLD + "Noone can hear you!");
+                sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
             plugin.getLogger().info("L: <" + player.getName() + "> " + message);
+        } else {
+            sender.sendMessage("How did you get here?!");
+        }
+        return true;
+    }
+
+    public boolean broadcastMessage(CommandSender sender, String message) {
+        if(sender instanceof Player)
+        {
+            Player player = (Player) sender;
+            List<Player> recp = getRecipients(player);
+            for(Player p : recp)
+            {
+                p.sendMessage(message);
+            }
+            if(recp.size() < 2)
+            {
+                sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
+            }
+            plugin.getLogger().info("L: "+ message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
@@ -76,11 +114,6 @@ public class LocalChat implements ChatMode {
     }
 
     public List<String> getSubscribers() {
-        List<String> lijst = new ArrayList<String>();
-        for(String player : subscribers)
-        {
-            lijst.add(player);
-        }
-        return lijst;
+        return subscribers;
     }
 }

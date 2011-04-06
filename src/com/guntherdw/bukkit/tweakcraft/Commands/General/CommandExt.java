@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2011 GuntherDW
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Command;
@@ -5,14 +23,11 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.sun.org.apache.xpath.internal.axes.SelfIteratorNoPredicate;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-
 
 /**
  * @author GuntherDW
@@ -30,10 +45,15 @@ public class CommandExt implements Command {
                 if(args[0].equalsIgnoreCase(((Player)sender).getName()))
                 {
                     modus = ExtMode.SELF;
+                } else if(args[0].equals("*")) {
+                    modus = ExtMode.ALL;
                 } else {
                     modus = ExtMode.OTHER;
                 }
             } else {
+                if(args[0].equals("*"))
+                    modus = ExtMode.ALL;
+                else
                     modus = ExtMode.OTHER;
             }
         }
@@ -52,7 +72,19 @@ public class CommandExt implements Command {
             } else {
                 sender.sendMessage("A console can't be on fire, right?");
             }
-        } else {
+        } else if(modus == ExtMode.ALL) {
+            if(sender instanceof Player)
+            {
+                if(!plugin.check((Player)sender, "extother"))
+                    throw new PermissionsException(command);
+
+                sender.sendMessage(ChatColor.YELLOW + "Throwing a bucket of water over every single player!");
+                for(Player play : plugin.getServer().getOnlinePlayers())
+                {
+                    play.setFireTicks(0);
+                }
+            }
+        } else if(modus == ExtMode.OTHER) {
             if(sender instanceof Player)
             {
                 if(!(plugin.check((Player)sender, "extother")))
@@ -67,11 +99,9 @@ public class CommandExt implements Command {
             if(player.getFireTicks()!=0)
             {
                 player.setFireTicks(0);
-                sender.sendMessage(plugin.getPlayerColor(player.getName(), false)+player.getName()
-                                    +ChatColor.YELLOW+" has been extinguished!");
+                sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW + " has been extinguished!");
             } else {
-                sender.sendMessage(plugin.getPlayerColor(player.getName(), false)+player.getName()
-                                    +ChatColor.YELLOW+" isn't on fire!");
+                sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW + " isn't on fire!");
             }
         }
         return true;
@@ -80,7 +110,8 @@ public class CommandExt implements Command {
     private enum ExtMode
     {
         SELF,
-        OTHER;
+        OTHER,
+        ALL
     }
 
 }

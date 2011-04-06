@@ -1,7 +1,26 @@
+/*
+ * Copyright (c) 2011 GuntherDW
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
 import com.guntherdw.bukkit.tweakcraft.Command;
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
+import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.*;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
@@ -33,7 +52,32 @@ public class CommandHandler {
         commandMap.put("admon", new CommandAdmon());
         commandMap.put("admoff", new CommandAdmoff());
         commandMap.put("tplist", new CommandTpList());
-        
+        commandMap.put("tc", new CommandTC());
+
+        /**
+         * Essential commands
+         */
+        commandMap.put("ban", new CommandBan());
+        commandMap.put("banlist", new CommandBanlist());
+        commandMap.put("compass", new CommandCompass());
+        commandMap.put("getpos", new CommandGetpos());
+        commandMap.put("item", new CommandItem());
+        commandMap.put("kick", new CommandKick());
+        commandMap.put("listworlds", new CommandListWorlds());
+        commandMap.put("me", new CommandMe());
+        commandMap.put("msg", new CommandMsg());
+        commandMap.put("mute", new CommandMute());
+        commandMap.put("motd", new CommandMotd());
+        commandMap.put("plugin", new CommandPlugin());
+        commandMap.put("reply", new CommandReply());
+        commandMap.put("spawn", new CommandSpawn());
+        commandMap.put("setspawn", new CommandSetSpawn());
+        commandMap.put("spawnmob", new CommandSpawnmob());
+        commandMap.put("time", new CommandTime());
+        commandMap.put("unban", new CommandUnban());
+        commandMap.put("world", new CommandWorld());
+
+
         /**
          * General commands
          */
@@ -52,6 +96,7 @@ public class CommandHandler {
         commandMap.put("tphere", new CommandTphere());
         commandMap.put("tpoff", new CommandTpOff());
         commandMap.put("tpon", new CommandTpOn());
+        commandMap.put("tpmob", new CommandTpMob());
     }
 
     public TweakcraftUtils getPlugin() {

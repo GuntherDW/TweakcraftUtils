@@ -1,3 +1,21 @@
+/*
+ * Copyright (c) 2011 GuntherDW
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package com.guntherdw.bukkit.tweakcraft.Commands.Teleportation;
 
 import com.guntherdw.bukkit.tweakcraft.Command;
@@ -24,7 +42,7 @@ public class CommandTp implements Command {
                 throw new PermissionsException(command);
 
             if (args.length == 1) {
-                if (plugin.getDonottplist().contains(player) && !plugin.check(player, "forcetp")) {
+                if (plugin.getDonottplist().contains(player.getName()) && !plugin.check(player, "forcetp")) {
                     player.sendMessage(ChatColor.RED + "You can't tp when you don't allow others to tp to you!");
                 } else {
                     List<Player> p = plugin.getServer().matchPlayer(args[0]);
@@ -32,7 +50,7 @@ public class CommandTp implements Command {
                         player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                     } else {
                         Player pto = p.get(0);
-                        boolean refusetp = plugin.getDonottplist().contains(pto);
+                        boolean refusetp = plugin.getDonottplist().contains(pto.getName());
                         boolean override = false;
                         if (refusetp && (player.isOp() || plugin.check(player, "forcetp"))) {
                             override = true;
@@ -47,14 +65,16 @@ public class CommandTp implements Command {
                         } else {
                             if (refusetp && !override) {
                                 player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + pto.getName() + "!");
+                                pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
                                 /* boolean teleportwarning = true;
                                if(teleportwarning) */
                                 pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
-                                if (!player.getWorld().getName().equals(pto.getWorld().getName())) {
-                                    player.teleportTo(pto.getWorld().getSpawnLocation());
-                                }
-                                player.teleportTo(pto);
+                                // This is supposed to be fixed nao?
+                                /* if (!player.getWorld().getName().equals(pto.getWorld().getName())) {
+                                    player.teleport(pto.getWorld().getSpawnLocation());
+                                } */
+                                player.teleport(pto);
                                 if (override)
                                     player.sendMessage(ChatColor.RED + "Forced tp!");
                                 plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + pto.getName() + "!");
@@ -103,7 +123,7 @@ public class CommandTp implements Command {
             player = "CONSOLE";
         }
         plugin.getLogger().info("[TweakcraftUtils] " + player + " teleported " + pfrom.getName() + " to " + pto.getName() + "!");
-        pfrom.teleportTo(pto);
+        pfrom.teleport(pto);
     }
 
 }
