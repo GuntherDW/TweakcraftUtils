@@ -88,7 +88,7 @@ public class LocalChat implements ChatMode {
         {
             Player player = (Player) sender;
             EntityLocation entityloc = new EntityLocation(player);
-            for(Player p : plugin.getServer().getOnlinePlayers())
+            for(Player p : player.getWorld().getPlayers())
             {
                 if(entityloc.getDistance(p) < plugin.maxRange)
                 {
