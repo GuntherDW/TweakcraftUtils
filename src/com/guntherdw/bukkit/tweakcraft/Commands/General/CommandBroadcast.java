@@ -33,29 +33,26 @@ import org.bukkit.entity.Player;
 public class CommandBroadcast implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
-        if(sender instanceof Player)
-            if(!plugin.check((Player) sender, "broadcast"))
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "broadcast"))
                 throw new PermissionsException(command);
-        
+
         String message = "";
-        if(args.length < 1)
-        {
+        if (args.length < 1) {
             throw new CommandUsageException("You did not specify a message!");
         } else {
-            for(String m : args)
-            {
-                message += m+" ";
+            for (String m : args) {
+                message += m + " ";
             }
-            message = message.substring(0, message.length()-1);
+            message = message.substring(0, message.length() - 1);
         }
-        
-        for(Player p : plugin.getServer().getOnlinePlayers())
-        {
-            p.sendMessage(ChatColor.RED+"["+ChatColor.GREEN+"Broadcast"+ChatColor.RED+"] "+ ChatColor.GREEN +message);
+
+        for (Player p : plugin.getServer().getOnlinePlayers()) {
+            p.sendMessage(ChatColor.RED + "[" + ChatColor.GREEN + "Broadcast" + ChatColor.RED + "] " + ChatColor.GREEN + message);
         }
 
         // plugin.getLogger().info
-        plugin.getLogger().info("[Broadcast] "+message);
+        plugin.getLogger().info("[Broadcast] " + message);
 
         return true;
     }

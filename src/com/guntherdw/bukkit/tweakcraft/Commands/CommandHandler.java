@@ -37,8 +37,7 @@ public class CommandHandler {
     public Map<String, Command> commandMap = new HashMap<String, Command>();
     private TweakcraftUtils plugin;
 
-    public CommandHandler(TweakcraftUtils instance)
-    {
+    public CommandHandler(TweakcraftUtils instance) {
         this.plugin = instance;
         commandMap.clear();
 
@@ -107,10 +106,8 @@ public class CommandHandler {
         return commandMap;
     }
 
-    public Command getCommand(String command) throws CommandNotFoundException
-    {
-        if(commandMap.containsKey(command))
-        {
+    public Command getCommand(String command) throws CommandNotFoundException {
+        if (commandMap.containsKey(command)) {
             return commandMap.get(command);
         } else {
             throw new CommandNotFoundException(command);

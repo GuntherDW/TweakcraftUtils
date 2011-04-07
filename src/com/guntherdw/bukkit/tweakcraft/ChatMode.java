@@ -30,6 +30,7 @@ public interface ChatMode {
 
     /**
      * Sends a message in the chosen method
+     *
      * @param sender
      * @param message
      * @return
@@ -38,6 +39,7 @@ public interface ChatMode {
 
     /**
      * Returns a list of players that will get the message
+     *
      * @return
      */
 
@@ -45,18 +47,21 @@ public interface ChatMode {
 
     /**
      * Tries to remove a recipient
+     *
      * @param player
      */
     public abstract void addRecipient(String player);
 
     /**
      * Tries to remove a recipient
+     *
      * @param player
      */
     public abstract void removeRecipient(String player);
 
     /**
      * Gets the current subscribed list
+     *
      * @return
      */
 

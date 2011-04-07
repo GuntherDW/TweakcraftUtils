@@ -36,24 +36,22 @@ import java.util.List;
 public class CommandTpMob implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-        {
-            Player victim = (Player)sender;
+        if (sender instanceof Player) {
+            Player victim = (Player) sender;
             String vname = "you";
 
             Integer cnum;
             CreatureType ctype = null;
-            if(!plugin.check((Player) sender, "tpmob"))
+            if (!plugin.check((Player) sender, "tpmob"))
                 throw new PermissionsException(command);
 
-            if(args.length<1)
+            if (args.length < 1)
                 throw new CommandUsageException("I need at least 1 number or mobname!");
 
-            if(args.length==2) // teleport to victim!
+            if (args.length == 2) // teleport to victim!
             {
                 List<Player> find = plugin.getServer().matchPlayer(args[1]);
-                if(find.size()==1)
-                {
+                if (find.size() == 1) {
                     victim = find.get(0);
                     vname = victim.getDisplayName();
                 } else {
@@ -61,42 +59,37 @@ public class CommandTpMob implements Command {
                 }
             }
 
-            if(args[0].equals("*")) {
+            if (args[0].equals("*")) {
                 cnum = -1;
             } else {
-                try{
+                try {
                     cnum = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
                     String mn = args[0];
-                    if(args[0].length()>2)
+                    if (args[0].length() > 2)
                         mn = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].length());
                     cnum = 0;
                     ctype = CreatureType.fromName(mn);
-                    if(ctype == null)
-                    {
+                    if (ctype == null) {
                         throw new CommandUsageException("I need a number or a name, not a random string!");
                     }
                 }
             }
-            if(ctype != null)
-            {
-                sender.sendMessage(ChatColor.YELLOW + "Teleporting all "+ctype.getName() +" to "+vname+ChatColor.YELLOW+"!");
-            } else if(cnum == -1) {
-                sender.sendMessage(ChatColor.YELLOW + "Teleporting all mobs to "+vname+ChatColor.YELLOW+"!");
+            if (ctype != null) {
+                sender.sendMessage(ChatColor.YELLOW + "Teleporting all " + ctype.getName() + " to " + vname + ChatColor.YELLOW + "!");
+            } else if (cnum == -1) {
+                sender.sendMessage(ChatColor.YELLOW + "Teleporting all mobs to " + vname + ChatColor.YELLOW + "!");
             } else {
-                sender.sendMessage(ChatColor.YELLOW + "Teleporting mob with mobId "+cnum+" to "+vname+ChatColor.YELLOW+"!");
+                sender.sendMessage(ChatColor.YELLOW + "Teleporting mob with mobId " + cnum + " to " + vname + ChatColor.YELLOW + "!");
             }
 
-            for(LivingEntity crea : plugin.getServer().getWorld(((Player)sender).getWorld().getName()).getLivingEntities())
-            {
-                if(crea instanceof Creature || crea instanceof Flying)
-                {
+            for (LivingEntity crea : plugin.getServer().getWorld(((Player) sender).getWorld().getName()).getLivingEntities()) {
+                if (crea instanceof Creature || crea instanceof Flying) {
                     // Creature crea = (Creature) c;
                     CreatureType type = null;
                     type = CreatureType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
 
-                    if(cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue())
-                    {
+                    if (cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue()) {
                         crea.teleport(victim);
                         continue;
                     }

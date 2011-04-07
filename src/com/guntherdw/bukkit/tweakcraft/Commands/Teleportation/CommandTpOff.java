@@ -30,18 +30,17 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandTpOff  implements Command {
+public class CommandTpOff implements Command {
 
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
-        if(sender instanceof Player)
-        {
-            if(!plugin.check((Player)sender, "tpoff"))
+        if (sender instanceof Player) {
+            if (!plugin.check((Player) sender, "tpoff"))
                 throw new PermissionsException(command);
 
-            if (args.length != 0 && !args[0].equalsIgnoreCase(((Player)sender).getName())) {
-                if(!plugin.check((Player)sender, "tpoffother"))
-                     throw new PermissionsException(command);
+            if (args.length != 0 && !args[0].equalsIgnoreCase(((Player) sender).getName())) {
+                if (!plugin.check((Player) sender, "tpoffother"))
+                    throw new PermissionsException(command);
                 this.tpoff(plugin, sender, args[0]);
             } else {
                 if (!plugin.getDonottplist().contains(((Player) sender).getName())) {
@@ -51,7 +50,7 @@ public class CommandTpOff  implements Command {
                     sender.sendMessage(ChatColor.YELLOW + "You already are on the do-not-tp list!");
                 }
             }
-        } else if(args.length == 1) {
+        } else if (args.length == 1) {
             this.tpoff(plugin, sender, args[0]);
         } else {
             throw new CommandSenderException("Why do you need tpon for the console?");
@@ -60,13 +59,11 @@ public class CommandTpOff  implements Command {
         return true;
     }
 
-    private void tpoff(TweakcraftUtils plugin, CommandSender sender, String player)
-    {
+    private void tpoff(TweakcraftUtils plugin, CommandSender sender, String player) {
         String playername = plugin.findPlayer(player);
-        if(!plugin.getDonottplist().contains(playername))
-        {
+        if (!plugin.getDonottplist().contains(playername)) {
             plugin.getDonottplist().add(playername);
-            sender.sendMessage(ChatColor.GREEN + "They can no longer tp to "+playername+"!");
+            sender.sendMessage(ChatColor.GREEN + "They can no longer tp to " + playername + "!");
         } else {
             sender.sendMessage(ChatColor.GREEN + playername + " already is on the do-not-tp list!");
         }

@@ -37,32 +37,28 @@ import java.util.List;
 public class CommandWorld implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
-            if(args.length>0)
-            {
+            if (args.length > 0) {
                 List<World> worlds = plugin.getServer().getWorlds();
                 String worldname = args[0];
                 Integer worldnum;
                 World world;
-                try
-                {
+                try {
                     worldnum = Integer.parseInt(worldname);
                     world = worlds.get(worldnum);
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     world = plugin.getServer().getWorld(worldname);
-                } catch(IndexOutOfBoundsException e) {
-                    throw new CommandUsageException(ChatColor.YELLOW+"Can't find that world!");
+                } catch (IndexOutOfBoundsException e) {
+                    throw new CommandUsageException(ChatColor.YELLOW + "Can't find that world!");
                 }
-                if(world != null)
-                {
-                    if(!plugin.check(player, "worlds."+world.getName()))
+                if (world != null) {
+                    if (!plugin.check(player, "worlds." + world.getName()))
                         throw new PermissionsException(command);
                     else
                         player.teleport(world.getSpawnLocation());
                 } else {
-                    sender.sendMessage(ChatColor.YELLOW+"Can't find that world!");
+                    sender.sendMessage(ChatColor.YELLOW + "Can't find that world!");
                 }
             } else {
                 throw new CommandUsageException("I need a world to tp you to!");

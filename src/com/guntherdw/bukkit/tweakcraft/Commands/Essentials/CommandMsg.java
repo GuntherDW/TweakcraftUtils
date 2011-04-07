@@ -37,13 +37,10 @@ public class CommandMsg implements Command {
 
         String senderName = "";
         String clearName = "";
-        if (sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             clearName = ((Player) sender).getName();
             senderName = ((Player) sender).getDisplayName();
-        }
-        else
-        {
+        } else {
             clearName = "CONSOLE";
             senderName = ChatColor.LIGHT_PURPLE + "CONSOLE" + ChatColor.WHITE;
         }
@@ -52,7 +49,7 @@ public class CommandMsg implements Command {
             String replyto = plugin.findPlayer(args[0]);
             String message = "";
             for (int x = 1; x < args.length; x++) {
-                message += args[x]+ " ";
+                message += args[x] + " ";
             }
             if (message.length() > 1) {
                 message = message.substring(0, message.length() - 1);
@@ -68,7 +65,7 @@ public class CommandMsg implements Command {
             playerto.sendMessage("[" + senderName + " -> Me] " + message);
             if (sender instanceof Player)
                 plugin.setPlayerReply(playerto.getName(), ((Player) sender).getName());
-            
+
             plugin.getLogger().info("[TweakcraftUtils] (MSG) " + clearName + " -> " + playerto.getName() + " : " + message);
         } else if (args.length == 1) {
             throw new CommandUsageException("I need a message!");

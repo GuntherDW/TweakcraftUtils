@@ -33,39 +33,31 @@ public class BanHandler {
     private Map<String, Ban> bans;
     private TweakcraftUtils plugin;
 
-    public BanHandler(TweakcraftUtils instance)
-    {
+    public BanHandler(TweakcraftUtils instance) {
         this.plugin = instance;
         loadBans();
     }
 
-    public Ban searchBan(String playername)
-    {
-        Ban ban = null;
-        for(String search : bans.keySet())
-        {
-            if(search.equalsIgnoreCase(playername))
-            {
-                ban = bans.get(search);
-                return ban;
+    public Ban searchBan(String playername) {
+        //Ban ban = null;
+        for (String search : bans.keySet()) {
+            if (search.equalsIgnoreCase(playername)) {
+                return bans.get(search);
             }
         }
-        return ban;
+        return null; // I Has found nothing!
     }
 
-    private void loadBans()
-    {
+    private void loadBans() {
         bans = new HashMap<String, Ban>();
-        try{
+        try {
             File banfile = new File(plugin.getDataFolder(), "banned-players.txt");
             BufferedReader banfilereader = new BufferedReader(new FileReader(banfile));
             String line = "";
-            while((line = banfilereader.readLine()) != null)
-            {
-                if(!line.trim().equals(""))
-                {
+            while ((line = banfilereader.readLine()) != null) {
+                if (!line.trim().equals("")) {
                     String[] lin = line.split(",");
-                    if(lin.length>1)
+                    if (lin.length > 1)
                         bans.put(lin[0], new Ban(lin[0], lin[1]));
                     else
                         bans.put(lin[0], new Ban(lin[0], ""));
@@ -79,20 +71,16 @@ public class BanHandler {
         // return banlist;
     }
 
-    public boolean isBanned(String playername)
-    {
-        return searchBan(playername)!=null;
+    public boolean isBanned(String playername) {
+        return searchBan(playername) != null;
     }
 
-    public boolean isBannedFullname(String playername)
-    {
+    public boolean isBannedFullname(String playername) {
         return bans.containsKey(playername);
     }
 
-    public boolean banPlayer(String playername, String reason)
-    {
-        if(playername.trim().equals(""))
-        {
+    public boolean banPlayer(String playername, String reason) {
+        if (playername.trim().equals("")) {
             plugin.getLogger().info("[TweakcraftUtils] Can't ban an empty player!");
         } else {
             bans.put(playername, new Ban(playername, reason));
@@ -101,26 +89,21 @@ public class BanHandler {
         return false;
     }
 
-    public Map<String, Ban> getBans()
-    {
+    public Map<String, Ban> getBans() {
         return bans;
     }
 
-    public void unBan(String player)
-    {
-        if(bans.containsKey(player))
-        {
+    public void unBan(String player) {
+        if (bans.containsKey(player)) {
             bans.remove(player);
         }
     }
 
-    public void saveBans()
-    {
+    public void saveBans() {
         File banfile = new File(plugin.getDataFolder(), "banned-players.txt");
         plugin.getLogger().info("[TweakcraftUtils] Trying to save banlist!");
-        if(!banfile.exists())
-        {
-            try{
+        if (!banfile.exists()) {
+            try {
                 banfile.createNewFile();
             } catch (IOException e) {
                 plugin.getLogger().severe("[TweakcraftUtils] Failed trying to create banlist!");
@@ -128,11 +111,10 @@ public class BanHandler {
         }
 
 
-        try{
+        try {
             BufferedWriter banfilewriter = new BufferedWriter(new FileWriter(banfile));
-            for(String bannedplayer : bans.keySet())
-            {
-                String line = bannedplayer+","+bans.get(bannedplayer).getReason()+"\n";
+            for (String bannedplayer : bans.keySet()) {
+                String line = bannedplayer + "," + bans.get(bannedplayer).getReason() + "\n";
                 banfilewriter.write(line);
             }
             banfilewriter.close();
@@ -144,9 +126,8 @@ public class BanHandler {
         }
     }
 
-    public void reloadBans()
-    {
+    public void reloadBans() {
         this.loadBans();
-        plugin.getLogger().info("[TweakcraftUtils] Loaded banlist, "+bans.size()+" bans and counting!");
+        plugin.getLogger().info("[TweakcraftUtils] Loaded banlist, " + bans.size() + " bans and counting!");
     }
 }

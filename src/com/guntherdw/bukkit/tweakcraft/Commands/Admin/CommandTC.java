@@ -36,17 +36,13 @@ import org.bukkit.entity.Player;
 public class CommandTC implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(args.length>0)
-        {
-            if(args[0].equalsIgnoreCase("version"))
-            {
-                sender.sendMessage(ChatColor.WHITE+plugin.getDescription().getName() + ": version "+ChatColor.GREEN+plugin.getDescription().getVersion());
-            } else if(args[0].equalsIgnoreCase("reload")) {
-                sender.sendMessage(ChatColor.GREEN+"Not implemented yet!");
-                if(sender instanceof Player)
-                {
-                    if(plugin.check((Player)sender, "reload"))
-                    {
+        if (args.length > 0) {
+            if (args[0].equalsIgnoreCase("version")) {
+                sender.sendMessage(ChatColor.WHITE + plugin.getDescription().getName() + ": version " + ChatColor.GREEN + plugin.getDescription().getVersion());
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                sender.sendMessage(ChatColor.GREEN + "Not implemented yet!");
+                if (sender instanceof Player) {
+                    if (plugin.check((Player) sender, "reload")) {
                         BanHandler bh = plugin.getBanhandler();
                         bh.reloadBans();
                         ItemDB idb = plugin.getItemDB();
@@ -55,7 +51,7 @@ public class CommandTC implements Command {
                 }
             }
         } else {
-            throw new CommandUsageException("/tc <"+ ChatColor.GREEN+"reload"+ChatColor.YELLOW+"/"+ChatColor.GREEN+"version"+ChatColor.YELLOW+">");
+            throw new CommandUsageException("/tc <" + ChatColor.GREEN + "reload" + ChatColor.YELLOW + "/" + ChatColor.GREEN + "version" + ChatColor.YELLOW + ">");
         }
         return true;
     }

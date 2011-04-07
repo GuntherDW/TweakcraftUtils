@@ -45,11 +45,10 @@ public class CommandTpList implements Command {
             String msg = "";
             for (String playername : plugin.getDonottplist()) {
                 Player tpp = plugin.getServer().getPlayer(playername);
-                if(tpp != null)
-                {
+                if (tpp != null) {
                     sender.sendMessage(tpp.getDisplayName());
                 } else {
-                    sender.sendMessage(ChatColor.AQUA + "[NC] "+ChatColor.WHITE+playername);
+                    sender.sendMessage(ChatColor.AQUA + "[NC] " + ChatColor.WHITE + playername);
                 }
             }
         } else {

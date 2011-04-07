@@ -19,10 +19,10 @@
 package com.guntherdw.bukkit.tweakcraft;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
+import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
-import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -79,18 +79,15 @@ public class TweakcraftUtils extends JavaPlugin {
         return null;
     }
 
-    public String getPlayerReply(String player)
-    {
-        if(playerReplyDB.containsKey(player))
-        {
+    public String getPlayerReply(String player) {
+        if (playerReplyDB.containsKey(player)) {
             return playerReplyDB.get(player);
         } else {
             return null;
         }
     }
 
-    public void setPlayerReply(String player, String toPlayer)
-    {
+    public void setPlayerReply(String player, String toPlayer) {
         playerReplyDB.put(player, toPlayer);
     }
 

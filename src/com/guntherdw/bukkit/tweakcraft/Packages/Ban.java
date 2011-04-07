@@ -26,8 +26,7 @@ public class Ban {
     String player;
     String reason;
 
-    public Ban(String Player, String Reason)
-    {
+    public Ban(String Player, String Reason) {
         this.player = Player;
         this.reason = Reason;
     }
@@ -37,8 +36,7 @@ public class Ban {
     }
 
     public String getReason() {
-        if(reason == null || reason.isEmpty())
-        {
+        if (reason == null || reason.isEmpty()) {
             return "You are banned!";
         } else {
             return reason;

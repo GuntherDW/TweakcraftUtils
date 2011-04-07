@@ -35,15 +35,13 @@ import org.bukkit.entity.Player;
 public class CommandUnban implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-            if(!plugin.check((Player)sender, "ban"))
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "ban"))
                 throw new PermissionsException(command);
         BanHandler handler = plugin.getBanhandler();
-        if(args.length>0)
-        {
+        if (args.length > 0) {
             String target = args[0];
-            if(handler.isBanned(target))
-            {
+            if (handler.isBanned(target)) {
                 sender.sendMessage(ChatColor.YELLOW + "Unbanning player!");
                 handler.unBan(target);
                 handler.saveBans();

@@ -35,13 +35,11 @@ public class WorldManager {
     private TweakcraftUtils plugin;
 
 
-    public Map<String, World> getWorlds()
-    {
+    public Map<String, World> getWorlds() {
         return worlds;
     }
 
-    public WorldManager(TweakcraftUtils instance)
-    {
+    public WorldManager(TweakcraftUtils instance) {
         this.plugin = instance;
         worlds = new HashMap<String, World>();
     }
@@ -63,17 +61,14 @@ public class WorldManager {
         /* Get the normal world-folder */
         boolean netherWorldOnline = false;
 
-        for(org.bukkit.World world : plugin.getServer().getWorlds())
-        {
+        for (org.bukkit.World world : plugin.getServer().getWorlds()) {
             worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), true));
-            if(world.getEnvironment() == Environment.NETHER)
+            if (world.getEnvironment() == Environment.NETHER)
                 netherWorldOnline = true;
         }
-        if(netherWorldOnline == false && plugin.getConfiguration().getBoolean("worlds.enablenether", false))
-        {
+        if (netherWorldOnline == false && plugin.getConfiguration().getBoolean("worlds.enablenether", false)) {
             String netherfolder = plugin.getConfiguration().getString("worlds.netherfolder", "nether");
-            if(!netherfolder.equalsIgnoreCase(""))
-            {
+            if (!netherfolder.equalsIgnoreCase("")) {
                 plugin.getLogger().info("[TweakcraftUtils] Loading the netherworld!");
                 worlds.put(netherfolder, new TweakWorld(this, netherfolder, Environment.NETHER, true));
             } else {
@@ -82,45 +77,39 @@ public class WorldManager {
         }
         // List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
         List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
-        for(String node : extraworlds)
-        {
-            if(!worlds.containsKey(node))
-            {
-                String env = plugin.getConfiguration().getString("worlds.extraworlds."+node+".environment", "");
-                boolean enabled = plugin.getConfiguration().getBoolean("worlds.extraworlds."+node+".enabled",false);
+        for (String node : extraworlds) {
+            if (!worlds.containsKey(node)) {
+                String env = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".environment", "");
+                boolean enabled = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".enabled", false);
                 Environment wenv = null;
-                if(env.equalsIgnoreCase("nether")) {
+                if (env.equalsIgnoreCase("nether")) {
                     wenv = Environment.NETHER;
-                } else if(env.equalsIgnoreCase("normal")) {
+                } else if (env.equalsIgnoreCase("normal")) {
                     wenv = Environment.NORMAL;
                 }
 
-                if(!(wenv == null))
-                {
-                    plugin.getLogger().info("[TweakcraftUtils] Adding world with name "+node+" and environmenttype "+env+"!");
+                if (!(wenv == null)) {
+                    plugin.getLogger().info("[TweakcraftUtils] Adding world with name " + node + " and environmenttype " + env + "!");
                     worlds.put(node, new TweakWorld(this, node, wenv, enabled));
                 } else {
-                    plugin.getLogger().info("[TweakcraftUtils] "+env+" isn't a correct environment name!");
+                    plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
                 }
             } else {
-                plugin.getLogger().info("[TweakcraftUtils] World with name "+node+" already exists!");
+                plugin.getLogger().info("[TweakcraftUtils] World with name " + node + " already exists!");
             }
         }
 
     }
 
-    public com.guntherdw.bukkit.tweakcraft.World getWorld(String name)
-    {
-        if(worlds.containsKey(name))
-        {
+    public com.guntherdw.bukkit.tweakcraft.World getWorld(String name) {
+        if (worlds.containsKey(name)) {
             return worlds.get(name);
         } else {
             return null;
         }
     }
 
-    public TweakcraftUtils getPlugin()
-    {
+    public TweakcraftUtils getPlugin() {
         return plugin;
     }
 }

@@ -94,7 +94,7 @@ public class CommandLc implements Command {
                 throw new CommandSenderException("You need to be a player to use LocalChat!");
             }
         }
-        
+
         return true;
     }
 }

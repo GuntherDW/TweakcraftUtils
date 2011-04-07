@@ -27,8 +27,7 @@ public class Item {
     private byte damage;
     private int defaultstack;
 
-    public Item(int itemnumber, byte damage, int defaultstack)
-    {
+    public Item(int itemnumber, byte damage, int defaultstack) {
         this.itemnumber = itemnumber;
         this.damage = damage;
         this.defaultstack = defaultstack;

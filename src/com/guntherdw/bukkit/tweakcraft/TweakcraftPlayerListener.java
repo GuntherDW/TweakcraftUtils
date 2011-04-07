@@ -68,13 +68,12 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
-    public void onPlayerTeleport(PlayerTeleportEvent event)
-    {
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
         Location floc = event.getFrom();
         Location tloc = event.getTo();
-        if(floc.getWorld() != tloc.getWorld()) { // The world is different, make a check!
+        if (floc.getWorld() != tloc.getWorld()) { // The world is different, make a check!
             Player player = event.getPlayer();
-            if(!plugin.check(player, "worlds."+tloc.getWorld().getName())) {
+            if (!plugin.check(player, "worlds." + tloc.getWorld().getName())) {
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.RED + "You don't have access to this world!");
             }
@@ -106,7 +105,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             String time = String.valueOf(cal.getTime().getTime());
             plugin.getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), time);
             plugin.getSeenconfig().save();
-            plugin.getLogger().info("[TweakcrafUtils] Stored "+event.getPlayer().getName()+"'s logout!");
+            plugin.getLogger().info("[TweakcrafUtils] Stored " + event.getPlayer().getName() + "'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());
         try {

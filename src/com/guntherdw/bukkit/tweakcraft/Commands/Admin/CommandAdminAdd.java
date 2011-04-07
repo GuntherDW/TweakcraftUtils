@@ -34,46 +34,40 @@ import java.util.List;
  * @author GuntherDW
  */
 public class CommandAdminAdd implements Command {
-        public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
-        if(sender instanceof Player)
-        {
-            if(!plugin.check((Player) sender, "admon"))
+        if (sender instanceof Player) {
+            if (!plugin.check((Player) sender, "admon"))
                 throw new PermissionsException(command);
         }
-        if(args.length < 1)
-        {
+        if (args.length < 1) {
             throw new CommandUsageException("Give me a name to add!");
         }
 
         try {
             ChatMode cm = plugin.getChathandler().getChatMode("admin");
             List<String> playernames = new ArrayList<String>();
-            for(Player p : plugin.getServer().getOnlinePlayers())
-            {
+            for (Player p : plugin.getServer().getOnlinePlayers()) {
                 playernames.add(p.getName());
             }
 
             String name = plugin.findinlist(args[0], playernames);
             Player player = plugin.getServer().getPlayer(name);
-            if(player!=null)
-            {
+            if (player != null) {
                 cm.addRecipient(player.getName());
-                String addedplayer = plugin.getPlayerColor(player.getName(), false)+player.getName();
-                if(!(sender instanceof Player))
-                    sender.sendMessage(addedplayer +ChatColor.YELLOW + " has been added to the admin-msg list!");
+                String addedplayer = plugin.getPlayerColor(player.getName(), false) + player.getName();
+                if (!(sender instanceof Player))
+                    sender.sendMessage(addedplayer + ChatColor.YELLOW + " has been added to the admin-msg list!");
                 String adder = "";
-                if(sender instanceof Player)
-                {
-                    adder = plugin.getPlayerColor(((Player) sender).getName(), false)+((Player)sender).getName();
+                if (sender instanceof Player) {
+                    adder = plugin.getPlayerColor(((Player) sender).getName(), false) + ((Player) sender).getName();
                 } else {
                     adder = ChatColor.LIGHT_PURPLE + "CONSOLE";
                 }
 
-                player.sendMessage(ChatColor.YELLOW + "You have been added to the admin-msg list by "+adder+ChatColor.YELLOW+"!");
-                for(Player p : ((AdminChat)cm).getAdmins())
-                {
-                    p.sendMessage(adder + ChatColor.YELLOW + " added "+ addedplayer + ChatColor.YELLOW+" to the admin-msg list!");
+                player.sendMessage(ChatColor.YELLOW + "You have been added to the admin-msg list by " + adder + ChatColor.YELLOW + "!");
+                for (Player p : ((AdminChat) cm).getAdmins()) {
+                    p.sendMessage(adder + ChatColor.YELLOW + " added " + addedplayer + ChatColor.YELLOW + " to the admin-msg list!");
                 }
             } else {
                 throw new CommandException("Can't find player!");

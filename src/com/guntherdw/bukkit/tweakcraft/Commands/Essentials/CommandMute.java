@@ -35,31 +35,28 @@ import org.bukkit.entity.Player;
 public class CommandMute implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-            if(!plugin.check((Player)sender, "mute"))
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "mute"))
                 throw new PermissionsException(command);
 
         ChatHandler ch = plugin.getChathandler();
-        if(args.length==1)
-        {
+        if (args.length == 1) {
             String playername = plugin.findPlayer(args[0]);
             Player player = plugin.getServer().getPlayer(playername);
-            if(player!= null)
-            {
+            if (player != null) {
 
-                if(!ch.getMutedPlayers().contains(player.getName().toLowerCase()))
-                {
-                    sender.sendMessage(ChatColor.YELLOW + "Muting "+player.getDisplayName());
+                if (!ch.getMutedPlayers().contains(player.getName().toLowerCase())) {
+                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName());
                     ch.addMute(player.getName().toLowerCase());
                 } else {
-                    sender.sendMessage(ChatColor.YELLOW + "Unmuting "+player.getDisplayName());
+                    sender.sendMessage(ChatColor.YELLOW + "Unmuting " + player.getDisplayName());
                     ch.removeMute(player.getName().toLowerCase());
                 }
             } else {
                 sender.sendMessage(ChatColor.YELLOW + "Can't find player!");
             }
         } else {
-            sender.sendMessage(ChatColor.YELLOW+"Now who on earth do i have to mute?");
+            sender.sendMessage(ChatColor.YELLOW + "Now who on earth do i have to mute?");
         }
 
         return true;

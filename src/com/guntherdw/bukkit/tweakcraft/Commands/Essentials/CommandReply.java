@@ -41,10 +41,9 @@ public class CommandReply implements Command {
 
                 String message = "";
                 for (int x = 0; x < args.length; x++) {
-                    message += args[x]+ " ";
+                    message += args[x] + " ";
                 }
-                if (message.length() > 1)
-                {
+                if (message.length() > 1) {
                     message = message.substring(0, message.length() - 1);
                 }
                 if (replyto == null)

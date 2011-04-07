@@ -33,13 +33,11 @@ import org.bukkit.entity.Player;
 public class CommandAdmon implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
-        if(sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             try {
                 ChatMode cm = plugin.getChathandler().getChatMode("admin");
-                if(cm.getSubscribers().contains(((Player) sender).getName())
-                        || ((AdminChat)cm).getAdminsString().contains(((Player) sender).getName()))
-                {
+                if (cm.getSubscribers().contains(((Player) sender).getName())
+                        || ((AdminChat) cm).getAdminsString().contains(((Player) sender).getName())) {
                     plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), "admin");
                     sender.sendMessage(ChatColor.YELLOW + "You will now automatically send admin-msges!");
                 } else {

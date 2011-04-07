@@ -31,12 +31,10 @@ import org.bukkit.entity.Player;
  */
 public class CommandAdmoff implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin) throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             try {
                 ChatMode cm = plugin.getChathandler().getChatMode("admin");
-                if(cm.getRecipients(sender).contains(sender))
-                {
+                if (cm.getRecipients(sender).contains(sender)) {
                     plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), null);
                     sender.sendMessage(ChatColor.YELLOW + "You will now chat globally!");
                 } else {

@@ -61,7 +61,7 @@ public class CommandTele implements Command {
                         world = ((Player) sender).getWorld();
                     }
                 } catch (Exception e) {
-                    throw new CommandUsageException("Can't find world with name "+args[3]);
+                    throw new CommandUsageException("Can't find world with name " + args[3]);
                 }
             } else {
                 world = ((Player) sender).getWorld();

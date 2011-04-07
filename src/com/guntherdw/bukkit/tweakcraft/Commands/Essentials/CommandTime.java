@@ -35,37 +35,34 @@ import org.bukkit.entity.Player;
 public class CommandTime implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-            if(!plugin.check((Player)sender, "time"))
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "time"))
                 throw new PermissionsException(command);
 
-        if(args.length == 0) // Check the current time!
+        if (args.length == 0) // Check the current time!
         {
-            if(sender instanceof Player)
-                sender.sendMessage("Current time in this world : "+(((Player)sender).getWorld().getTime()/1000));
+            if (sender instanceof Player)
+                sender.sendMessage("Current time in this world : " + (((Player) sender).getWorld().getTime() / 1000));
         } else {
             String settime = args[0];
             long timeset = 0;
-            if(settime.equalsIgnoreCase("day"))
-            {
+            if (settime.equalsIgnoreCase("day")) {
                 timeset = 0L;
-            } else if(settime.equalsIgnoreCase("night")) {
+            } else if (settime.equalsIgnoreCase("night")) {
                 timeset = 13000L;
             }
-            if(args.length>1) { // World?
+            if (args.length > 1) { // World?
                 World world = plugin.getServer().getWorld(args[1].toLowerCase());
-                if(world != null)
-                {
-                    sender.sendMessage(ChatColor.YELLOW+"Setting time in world "+world.getName());
+                if (world != null) {
+                    sender.sendMessage(ChatColor.YELLOW + "Setting time in world " + world.getName());
                     world.setTime(timeset);
                 } else {
-                    sender.sendMessage(ChatColor.YELLOW+"Can't find that world!");
+                    sender.sendMessage(ChatColor.YELLOW + "Can't find that world!");
                 }
             } else {
-                if(sender instanceof Player)
-                {
+                if (sender instanceof Player) {
                     Player p = (Player) sender;
-                    sender.sendMessage(ChatColor.YELLOW+"Setting time in world "+p.getWorld().getName());
+                    sender.sendMessage(ChatColor.YELLOW + "Setting time in world " + p.getWorld().getName());
                     p.getWorld().setTime(timeset);
                 }
             }

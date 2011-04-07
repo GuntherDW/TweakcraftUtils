@@ -45,18 +45,17 @@ public class CommandTphere implements Command {
             }
             Player player = (Player) sender;
             List<Player> p = plugin.getServer().matchPlayer(args[0]);
-            if(p.size()<1)
-            {
+            if (p.size() < 1) {
                 player.sendMessage(ChatColor.YELLOW + "Can't find player!");
             } else {
                 Player pto = p.get(0);
                 if (pto.getName().equals(player.getName())) {
                     player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
                 } else {
-                    player.sendMessage(ChatColor.YELLOW + "Teleporting "+plugin.getPlayerColor(pto.getName(), false)
-                            +pto.getName()+ChatColor.YELLOW + " to you!");
-                    pto.sendMessage(plugin.getPlayerColor(player.getName(), false)+player.getName() + ChatColor.YELLOW
-                            +" teleported you to him!");
+                    player.sendMessage(ChatColor.YELLOW + "Teleporting " + plugin.getPlayerColor(pto.getName(), false)
+                            + pto.getName() + ChatColor.YELLOW + " to you!");
+                    pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.YELLOW
+                            + " teleported you to him!");
                     pto.teleport(player);
                 }
             }

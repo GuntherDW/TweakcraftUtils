@@ -34,12 +34,11 @@ import org.bukkit.entity.Player;
 public class CommandSpawn implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
-            if(!plugin.check(player, "spawn"))
+            if (!plugin.check(player, "spawn"))
                 throw new PermissionsException(command);
-            
+
             sender.sendMessage(ChatColor.YELLOW + "Teleporting you to spawn!");
             player.teleport(player.getWorld().getSpawnLocation());
         } else {

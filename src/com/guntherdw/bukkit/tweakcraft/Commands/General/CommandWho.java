@@ -40,32 +40,32 @@ public class CommandWho implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
 
-            List<Player> list = Arrays.asList(plugin.getServer().getOnlinePlayers());
-            String msg = ChatColor.LIGHT_PURPLE + "Player list (" + list.size() + "/" + plugin.getServer().getMaxPlayers() + "): ";
-            String toadd;
+        List<Player> list = Arrays.asList(plugin.getServer().getOnlinePlayers());
+        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + list.size() + "/" + plugin.getServer().getMaxPlayers() + "): ";
+        String toadd;
 
-            // player.
+        // player.
 
-            Collections.sort(list, new Comparator<Player>() {
-                public int compare(Player p1, Player p2) {
-                    return p1.getName().compareToIgnoreCase(p2.getName());
-                }
-            });
-
-            sender.sendMessage(msg);
-            msg = " ";
-            for (Player p : list) {
-                if(!(sender instanceof Player)) // console won't show gold colors? shame!
-                    toadd = p.getDisplayName().replace(ChatColor.GOLD.toString(), ChatColor.YELLOW.toString()) + ChatColor.WHITE + ", ";
-                else
-                    toadd = p.getDisplayName() + ChatColor.WHITE + ", ";
-                msg += toadd;
+        Collections.sort(list, new Comparator<Player>() {
+            public int compare(Player p1, Player p2) {
+                return p1.getName().compareToIgnoreCase(p2.getName());
             }
-            if (!msg.trim().isEmpty()) {
-                sender.sendMessage(msg.substring(0, msg.length() - 2));
-            }
+        });
+
+        sender.sendMessage(msg);
+        msg = " ";
+        for (Player p : list) {
+            if (!(sender instanceof Player)) // console won't show gold colors? shame!
+                toadd = p.getDisplayName().replace(ChatColor.GOLD.toString(), ChatColor.YELLOW.toString()) + ChatColor.WHITE + ", ";
+            else
+                toadd = p.getDisplayName() + ChatColor.WHITE + ", ";
+            msg += toadd;
+        }
+        if (!msg.trim().isEmpty()) {
+            sender.sendMessage(msg.substring(0, msg.length() - 2));
+        }
 
 
-            return true;
+        return true;
     }
 }

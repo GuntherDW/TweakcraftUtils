@@ -36,16 +36,14 @@ import org.bukkit.entity.Player;
 public class CommandSetSpawn implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-        {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
-            if(!plugin.check(player, "setspawn"))
+            if (!plugin.check(player, "setspawn"))
                 throw new PermissionsException(command);
 
             World world = player.getWorld();
             Location loc = player.getLocation().clone();
-            if(!world.setSpawnLocation((int)loc.getX(), (int)loc.getY(), (int)loc.getZ()))
-            {
+            if (!world.setSpawnLocation((int) loc.getX(), (int) loc.getY(), (int) loc.getZ())) {
                 throw new CommandException("Something went wrong setting the spawn location for this world!");
             } else {
                 sender.sendMessage(ChatColor.YELLOW + "Successfully set the spawn location for this world!");

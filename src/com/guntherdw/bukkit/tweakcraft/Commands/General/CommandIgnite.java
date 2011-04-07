@@ -89,8 +89,7 @@ public class CommandIgnite implements Command {
             CreatureType type = null;
             Integer range = 0;
             Vector playervector = null;
-            if(sender instanceof Player)
-            {
+            if (sender instanceof Player) {
                 Location loc = ((Player) sender).getLocation();
                 playervector = new Vector(loc.getX(), loc.getY(), loc.getZ());
             }
@@ -103,8 +102,7 @@ public class CommandIgnite implements Command {
                 if (type == null)
                     throw new CommandUsageException("Can't find mob with name " + mobName + "!");
                 if (args.length > 2) {
-                    if(sender instanceof Player)
-                    {
+                    if (sender instanceof Player) {
                         try {
                             range = Integer.parseInt(args[2]);
                         } catch (NumberFormatException e) {
@@ -121,17 +119,14 @@ public class CommandIgnite implements Command {
             for (World w : plugin.getServer().getWorlds()) {
                 for (LivingEntity ent : w.getLivingEntities()) {
                     if (ent instanceof Flying || ent instanceof Creature) {
-                        if(type != null)
-                        {
-                            if(type == CreatureType.fromName(ent.getClass().getCanonicalName().split("Craft")[1]))
-                            {
-                                if(range != 0) // Range set, check range
+                        if (type != null) {
+                            if (type == CreatureType.fromName(ent.getClass().getCanonicalName().split("Craft")[1])) {
+                                if (range != 0) // Range set, check range
                                 {
                                     Location loc = ent.getLocation();
-                                    Vector   vec = new Vector(loc.getX(), loc.getY(), loc.getZ());
+                                    Vector vec = new Vector(loc.getX(), loc.getY(), loc.getZ());
 
-                                    if(playervector.distance(vec) < range)
-                                    {
+                                    if (playervector.distance(vec) < range) {
                                         ent.setFireTicks(300);
                                     }
                                 } else { // No range set
