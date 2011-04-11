@@ -42,7 +42,7 @@ public class CommandWho implements Command {
             throws PermissionsException, CommandSenderException, CommandUsageException {
 
         List<Player> list = Arrays.asList(plugin.getServer().getOnlinePlayers());
-        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + list.size() + "/" + plugin.getServer().getMaxPlayers() + "): ";
+        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (list.size()-plugin.getPlayerListener().getInvisplayers().size()) + "/" + plugin.getServer().getMaxPlayers() + "): ";
         String toadd;
 
         // player.

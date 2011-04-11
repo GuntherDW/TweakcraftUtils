@@ -91,6 +91,14 @@ public class AdminChat implements ChatMode {
         return true;
     }
 
+    public boolean broadcastMessageRealAdmins(String message) {
+        for (Player player : getAdmins()) {
+            player.sendMessage(message);
+        }
+        plugin.getLogger().info("AMSG: " + message);
+        return true;
+    }
+
     public List<Player> getRecipients(CommandSender sender) {
         List<Player> recp = new ArrayList<Player>();
         for (String m : subscribers) {

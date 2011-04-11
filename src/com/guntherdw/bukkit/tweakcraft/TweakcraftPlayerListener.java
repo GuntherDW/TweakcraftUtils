@@ -20,6 +20,7 @@ package com.guntherdw.bukkit.tweakcraft;
 
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
+import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
@@ -58,12 +59,16 @@ public class TweakcraftPlayerListener extends PlayerListener {
         player.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
 
         ChatHandler ch = plugin.getChathandler();
+        ChatMode cm = ch.getPlayerChatMode(player);
+
+
+
         if (ch.getMutedPlayers().contains(player.getName().toLowerCase())) {
             player.sendMessage("You are muted! No one can hear you.");
             plugin.getLogger().info("[TweakcraftUtils] Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
             event.setCancelled(true);
         } else {
-            ChatMode cm = ch.getPlayerChatMode(player);
+
 
             if (cm != null) {
                 if (!message.startsWith(plugin.getChathandler().getBypassChar())) {
@@ -72,8 +77,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 } else {
                     event.setMessage(message.substring(1));
                 }
-            } if(cm != null && getInvisplayers().contains(event.getPlayer().getName())) {
+            } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
                 event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
+                event.setCancelled(true);
             }
         }
     }
@@ -110,6 +116,15 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
         if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
             event.setJoinMessage(null);
+            p.sendMessage(ChatColor.AQUA + "You has joined STEALTHILY!");
+            try {
+                ChatHandler ch = plugin.getChathandler();
+                ChatMode    cm = ch.getChatMode("admin");
+                AdminChat   am = (AdminChat) cm;
+                am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
+            } catch (ChatModeException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
     }
 
@@ -129,6 +144,14 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
         if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "left" message
             event.setQuitMessage(null);
+            try {
+                ChatHandler ch = plugin.getChathandler();
+                ChatMode    cm = ch.getChatMode("admin");
+                AdminChat   am = (AdminChat) cm;
+                am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth quit : "+event.getPlayer().getDisplayName());
+            } catch (ChatModeException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
     }
 
