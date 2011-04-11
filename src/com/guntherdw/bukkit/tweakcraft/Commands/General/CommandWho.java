@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
+import com.avaje.ebeaninternal.server.el.ElSetValue;
 import com.guntherdw.bukkit.tweakcraft.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -54,11 +55,31 @@ public class CommandWho implements Command {
 
         sender.sendMessage(msg);
         msg = " ";
+        boolean check;
+        boolean hasperm;
         for (Player p : list) {
-            if (!(sender instanceof Player)) // console won't show gold colors? shame!
-                toadd = p.getDisplayName().replace(ChatColor.GOLD.toString(), ChatColor.YELLOW.toString()) + ChatColor.WHITE + ", ";
-            else
-                toadd = p.getDisplayName() + ChatColor.WHITE + ", ";
+            toadd = "";
+            check = plugin.getPlayerListener().getInvisplayers().contains(p.getName());
+
+            if (!(sender instanceof Player)) { // console won't show gold colors? shame!
+                if(check)
+                    toadd = ChatColor.AQUA+"[";
+
+                toadd += p.getDisplayName().replace(ChatColor.GOLD.toString(), ChatColor.YELLOW.toString());
+                
+                if(check)
+                    toadd += ChatColor.AQUA+"]";
+
+                toadd+=ChatColor.WHITE+", ";
+            } else {
+                hasperm = plugin.check((Player)sender, "tpinvis");
+                if(check && hasperm)
+                {
+                    toadd = ChatColor.AQUA+"["+p.getDisplayName() + ChatColor.AQUA + "]"+ChatColor.WHITE+", ";
+                } else if(!check) {
+                    toadd = p.getDisplayName() + ChatColor.WHITE + ", ";
+                }
+            }
             msg += toadd;
         }
         if (!msg.trim().isEmpty()) {

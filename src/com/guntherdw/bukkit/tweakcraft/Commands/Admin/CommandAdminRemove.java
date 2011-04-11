@@ -72,7 +72,7 @@ public class CommandAdminRemove implements Command {
 
                 boolean chatlist = false;
 
-                if (ch.getPlayerChatModeString(pname).equals("admin")) {
+                if (ch.getPlayerChatModeString(pname) != null && ch.getPlayerChatModeString(pname).equals("admin")) {
                     ch.setPlayerchatmode(pname, null);
                     chatlist = true;
                 }

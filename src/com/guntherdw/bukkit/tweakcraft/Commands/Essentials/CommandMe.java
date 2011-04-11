@@ -50,8 +50,13 @@ public class CommandMe implements Command {
                     for (String m : args)
                         msg += m + " ";
                     msg = msg.substring(0, msg.length() - 1);
+
                     if (cm == null) {
-                        plugin.getServer().broadcastMessage("* " + player.getDisplayName() + " " + msg);
+                        if(plugin.getPlayerListener().getInvisplayers().contains(player.getName())) {
+                            player.sendMessage(ChatColor.AQUA + "Are you crazy? set a chatmode first!");
+                        } else {
+                            plugin.getServer().broadcastMessage("* " + player.getDisplayName() + " " + msg);
+                        }
                     } else if (cm instanceof LocalChat) {
                         ((LocalChat) cm).broadcastMessage(player, "[" + ChatColor.YELLOW + "L" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
                     } else if (cm instanceof AdminChat) {

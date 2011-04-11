@@ -27,7 +27,9 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.*;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * @author GuntherDW
@@ -36,10 +38,16 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     //private final Logger log = Logger.getLogger("Minecraft");
     private final TweakcraftUtils plugin;
+    private List<String> invisplayers;
 
 
     public TweakcraftPlayerListener(TweakcraftUtils instance) {
         plugin = instance;
+        invisplayers = new ArrayList<String>();
+    }
+
+    public List<String> getInvisplayers() {
+        return invisplayers;
     }
 
     public void onPlayerChat(PlayerChatEvent event) {
@@ -64,6 +72,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 } else {
                     event.setMessage(message.substring(1));
                 }
+            } if(cm != null && getInvisplayers().contains(event.getPlayer().getName())) {
+                event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
             }
         }
     }
@@ -97,6 +107,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
         // p.sendMessage("Ohai thar!");
         for (String m : plugin.getMOTD())
             p.sendMessage(m);
+
+        if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
+            event.setJoinMessage(null);
+        }
     }
 
     public void onPlayerQuit(PlayerQuitEvent event) {
@@ -112,6 +126,17 @@ public class TweakcraftPlayerListener extends PlayerListener {
             plugin.getChathandler().setPlayerchatmode(event.getPlayer().getName(), null);
         } catch (ChatModeException e) {
             plugin.getLogger().severe("[TweakcraftUtils] Error setting ChatMode to null after the logout!");
+        }
+        if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "left" message
+            event.setQuitMessage(null);
+        }
+    }
+
+    public void reloadInvisTable() {
+        List<String> lijst = plugin.getConfiguration().getStringList("invisible-playerlist", null);
+        if(lijst != null)
+        {
+            this.invisplayers.addAll(lijst);
         }
     }
 

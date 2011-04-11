@@ -40,13 +40,22 @@ public class CommandTC implements Command {
             if (args[0].equalsIgnoreCase("version")) {
                 sender.sendMessage(ChatColor.WHITE + plugin.getDescription().getName() + ": version " + ChatColor.GREEN + plugin.getDescription().getVersion());
             } else if (args[0].equalsIgnoreCase("reload")) {
-                sender.sendMessage(ChatColor.GREEN + "Not implemented yet!");
+
                 if (sender instanceof Player) {
                     if (plugin.check((Player) sender, "reload")) {
+                        sender.sendMessage(ChatColor.GREEN + "Reloading settings,dbs and setting colors.");
                         BanHandler bh = plugin.getBanhandler();
                         bh.reloadBans();
                         ItemDB idb = plugin.getItemDB();
                         idb.loadDataBase();
+                        for(Player p : plugin.getServer().getOnlinePlayers())
+                        {
+                            String name = p.getName();
+                            p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+                        }
+                        plugin.getPlayerListener().reloadInvisTable();
+                    } else {
+                        sender.sendMessage(ChatColor.GREEN + "Not implemented yet!");
                     }
                 }
             }

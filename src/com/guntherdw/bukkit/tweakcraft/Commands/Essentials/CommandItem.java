@@ -32,6 +32,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import javax.sound.midi.Receiver;
+
 /**
  * @author GuntherDW
  */
@@ -110,6 +112,8 @@ public class CommandItem implements Command {
                 }
 
                 sender.sendMessage(ChatColor.YELLOW + "Giving " + recvname + ChatColor.YELLOW + " " + itemAmount + " of " + ItemType.toName(itemId) + "!");
+                if(!(recvname.equals(giftfrom)))
+                    receiver.sendMessage(ChatColor.AQUA+"Enjoy your gift! :3");
                 ItemStack stack = new ItemStack(itemId, itemAmount, itemDmg.shortValue());
                 receiver.getInventory().addItem(stack);
                 plugin.getLogger().info("[TweakcraftUtils] " + giftfrom + " gave " + recvname + " " + itemAmount + "x" + itemId + " (" + itemDmg.intValue() + ")");

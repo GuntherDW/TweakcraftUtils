@@ -115,10 +115,20 @@ public class CommandIgnite implements Command {
 
             }
 
-
+            boolean allowed = true;
             for (World w : plugin.getServer().getWorlds()) {
                 for (LivingEntity ent : w.getLivingEntities()) {
                     if (ent instanceof Flying || ent instanceof Creature) {
+                        allowed = true;
+                        if(ent instanceof Wolf)
+                        {
+                            Wolf wolf = (Wolf) ent;
+                            if(wolf.isAngry() || !wolf.isTame())
+                                allowed = true;
+                            else
+                                allowed = false;
+                        }
+
                         if (type != null) {
                             if (type == CreatureType.fromName(ent.getClass().getCanonicalName().split("Craft")[1])) {
                                 if (range != 0) // Range set, check range
@@ -127,14 +137,17 @@ public class CommandIgnite implements Command {
                                     Vector vec = new Vector(loc.getX(), loc.getY(), loc.getZ());
 
                                     if (playervector.distance(vec) < range) {
-                                        ent.setFireTicks(300);
+                                            if(allowed)
+                                                ent.setFireTicks(300);
                                     }
                                 } else { // No range set
-                                    ent.setFireTicks(300);
+                                    if(allowed)
+                                        ent.setFireTicks(300);
                                 }
                             }
                         } else { // every mob alive!
-                            ent.setFireTicks(300);
+                            if(allowed)
+                                ent.setFireTicks(300);
                         }
                     }
                 }

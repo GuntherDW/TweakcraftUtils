@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft;
 
-import com.ensifera.animosity.craftirc.CraftIRC;
+import com.ensifera.animosity.IRCPlugin.IRCPlugin;
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
@@ -51,7 +51,7 @@ import java.util.logging.Logger;
 public class TweakcraftUtils extends JavaPlugin {
 
     private Permissions perm = null;
-    private CraftIRC circ = null;
+    private IRCPlugin circ = null;
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
@@ -85,6 +85,10 @@ public class TweakcraftUtils extends JavaPlugin {
         } else {
             return null;
         }
+    }
+
+    public TweakcraftPlayerListener getPlayerListener() {
+        return playerListener;
     }
 
     public void setPlayerReply(String player, String toPlayer) {
@@ -166,7 +170,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
 
     private void registerEvents() {
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
@@ -181,7 +185,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return MOTDLines;
     }
 
-    public CraftIRC getCraftIRC() {
+    public IRCPlugin getCraftIRC() {
         return circ;
     }
 
@@ -241,11 +245,11 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void setupCraftIRC() {
-        Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
+        Plugin plugin = this.getServer().getPluginManager().getPlugin("IRCPlugin");
 
         if (circ == null) {
             if (plugin != null) {
-                circ = (CraftIRC) plugin;
+                circ = (IRCPlugin) plugin;
             }
         }
     }
@@ -306,6 +310,7 @@ public class TweakcraftUtils extends JavaPlugin {
         banhandler.reloadBans();
         /* itemDB.writeDB(); */
         maxRange = getConfiguration().getInt("maxrange", 200);
+        playerListener.reloadInvisTable();
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 

@@ -31,7 +31,7 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandBanlist implements Command {
+public class  CommandBanlist implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)

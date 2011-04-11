@@ -82,15 +82,26 @@ public class CommandTpMob implements Command {
             } else {
                 sender.sendMessage(ChatColor.YELLOW + "Teleporting mob with mobId " + cnum + " to " + vname + ChatColor.YELLOW + "!");
             }
-
+            boolean allowed = true;
             for (LivingEntity crea : plugin.getServer().getWorld(((Player) sender).getWorld().getName()).getLivingEntities()) {
                 if (crea instanceof Creature || crea instanceof Flying) {
-                    // Creature crea = (Creature) c;
+                                            allowed = true;
+                        if(crea instanceof Wolf)
+                        {
+                            Wolf wolf = (Wolf) crea;
+                            if(wolf.isAngry() || !wolf.isTame())
+                                allowed = true;
+                            else
+                            {
+                                allowed = wolf.getTarget().equals(victim.getName());
+                            }
+                        }
                     CreatureType type = null;
                     type = CreatureType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
 
                     if (cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue()) {
-                        crea.teleport(victim);
+                        if(allowed)
+                            crea.teleport(victim);
                         continue;
                     }
                 }

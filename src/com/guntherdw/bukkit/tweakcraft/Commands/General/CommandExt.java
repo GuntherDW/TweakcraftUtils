@@ -23,9 +23,12 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.sk89q.worldedit.Vector;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 import java.util.List;
 
@@ -44,6 +47,8 @@ public class CommandExt implements Command {
                     modus = ExtMode.SELF;
                 } else if (args[0].equals("*")) {
                     modus = ExtMode.ALL;
+                } else if (args[0].equalsIgnoreCase("mobs")) {
+                    modus = ExtMode.MOBS;
                 } else {
                     modus = ExtMode.OTHER;
                 }
@@ -76,6 +81,67 @@ public class CommandExt implements Command {
                     play.setFireTicks(0);
                 }
             }
+        } else if (modus == ExtMode.MOBS) {
+            if (sender instanceof Player) {
+                if (!plugin.check((Player) sender, "extother"))
+                    throw new PermissionsException(command);
+            }
+
+            sender.sendMessage(ChatColor.YELLOW + "Oh my god it's hell alright!");
+
+            CreatureType type = null;
+            Integer range = 0;
+            Vector playervector = null;
+            if (sender instanceof Player) {
+                Location loc = ((Player) sender).getLocation();
+                playervector = new Vector(loc.getX(), loc.getY(), loc.getZ());
+            }
+            if (args.length > 1) {
+
+                String mobName = "";
+                if (args[1].length() > 2)
+                    mobName = args[1].substring(0, 1).toUpperCase() + args[1].substring(1, args[1].length());
+                type = CreatureType.fromName(mobName);
+                if (type == null)
+                    throw new CommandUsageException("Can't find mob with name " + mobName + "!");
+                if (args.length > 2) {
+                    if (sender instanceof Player) {
+                        try {
+                            range = Integer.parseInt(args[2]);
+                        } catch (NumberFormatException e) {
+                            throw new CommandUsageException("Invalid range!");
+                        }
+                    } else {
+                        throw new CommandSenderException("Where do i need to base myself off of now huh?");
+                    }
+                }
+
+            }
+
+
+            for (World w : plugin.getServer().getWorlds()) {
+                for (LivingEntity ent : w.getLivingEntities()) {
+                    if (ent instanceof Flying || ent instanceof Creature) {
+                        if (type != null) {
+                            if (type == CreatureType.fromName(ent.getClass().getCanonicalName().split("Craft")[1])) {
+                                if (range != 0) // Range set, check range
+                                {
+                                    Location loc = ent.getLocation();
+                                    Vector vec = new Vector(loc.getX(), loc.getY(), loc.getZ());
+
+                                    if (playervector.distance(vec) < range) {
+                                        ent.setFireTicks(0);
+                                    }
+                                } else { // No range set
+                                    ent.setFireTicks(0);
+                                }
+                            }
+                        } else { // every mob alive!
+                            ent.setFireTicks(0);
+                        }
+                    }
+                }
+            }
         } else if (modus == ExtMode.OTHER) {
             if (sender instanceof Player) {
                 if (!(plugin.check((Player) sender, "extother")))
@@ -99,7 +165,8 @@ public class CommandExt implements Command {
     private enum ExtMode {
         SELF,
         OTHER,
-        ALL
+        ALL,
+        MOBS
     }
 
 }

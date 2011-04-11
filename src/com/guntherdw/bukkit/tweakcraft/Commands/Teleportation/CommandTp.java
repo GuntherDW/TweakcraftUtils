@@ -51,6 +51,12 @@ public class CommandTp implements Command {
                     } else {
                         Player pto = p.get(0);
                         boolean refusetp = plugin.getDonottplist().contains(pto.getName());
+                        if(plugin.getPlayerListener().getInvisplayers().contains(pto.getName()) && !plugin.check(player, "tpinvis"))
+                        {
+                            player.sendMessage(ChatColor.YELLOW + "Can't find player!");
+                            plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " tried to tp to " + pto.getName() + " <invisible>!");
+                            return true;
+                        }
                         boolean override = false;
                         if (refusetp && (player.isOp() || plugin.check(player, "forcetp"))) {
                             override = true;
