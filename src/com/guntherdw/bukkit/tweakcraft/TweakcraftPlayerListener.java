@@ -134,6 +134,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void reloadInvisTable() {
         List<String> lijst = plugin.getConfiguration().getStringList("invisible-playerlist", null);
+        this.invisplayers.clear();
         if(lijst != null)
         {
             this.invisplayers.addAll(lijst);
