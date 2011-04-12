@@ -50,6 +50,7 @@ public class CommandTC implements Command {
 
 
                 sender.sendMessage(ChatColor.GREEN + "Reloading settings,dbs and setting colors.");
+                plugin.reloadConfig();
                 BanHandler bh = plugin.getBanhandler();
                 bh.reloadBans();
                 ItemDB idb = plugin.getItemDB();
@@ -58,7 +59,7 @@ public class CommandTC implements Command {
                     String name = p.getName();
                     p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
                 }
-                plugin.getPlayerListener().reloadInvisTable(false);
+                plugin.getPlayerListener().reloadInvisTable();
             }
         } else {
             throw new CommandUsageException("/tc <" + ChatColor.GREEN + "reload" + ChatColor.YELLOW + "/" + ChatColor.GREEN + "version" + ChatColor.YELLOW + ">");

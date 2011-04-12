@@ -319,7 +319,7 @@ public class TweakcraftUtils extends JavaPlugin {
         banhandler.reloadBans();
         /* itemDB.writeDB(); */
 
-        playerListener.reloadInvisTable(true);
+        playerListener.reloadInvisTable();
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 
