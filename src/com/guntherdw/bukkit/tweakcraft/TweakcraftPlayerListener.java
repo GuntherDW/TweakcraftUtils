@@ -155,12 +155,16 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
-    public void reloadInvisTable() {
+    public void reloadInvisTable(boolean skipconfig) {
+        if(!skipconfig) plugin.reloadConfig();
         List<String> lijst = plugin.getConfiguration().getStringList("invisible-playerlist", null);
         this.invisplayers.clear();
         if(lijst != null)
         {
             this.invisplayers.addAll(lijst);
+        }
+        for(String s : lijst) {
+            plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
         }
     }
 

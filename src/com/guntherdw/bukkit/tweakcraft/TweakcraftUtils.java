@@ -189,6 +189,19 @@ public class TweakcraftUtils extends JavaPlugin {
         return circ;
     }
 
+    public void reloadConfig() {
+        log.info("[TweakcraftUtils] Parsing configuration file...");
+        getConfiguration().load();
+        if (getConfiguration().getBoolean("keepplayerhistory", false)) {
+            log.info("[TweakcraftUtils] Keeping player history!");
+            File seenFile = new File(getDataFolder(), "players.yml");
+            seenconfig = new Configuration(seenFile);
+            seenconfig.load();
+            keepplayerhistory = true;
+        }
+        maxRange = getConfiguration().getInt("maxrange", 200);
+    }
+
     public String getPlayerColor(String playername, boolean change) {
 
         String pref = "";
@@ -264,6 +277,7 @@ public class TweakcraftUtils extends JavaPlugin {
                 MOTDLines.add(line.replace('&', '§'));
                 line = motdfilereader.readLine();
             }
+            motdfilereader.close();
         } catch (FileNotFoundException e) {
             log.severe("[TweakcraftUtils] MOTD file not found!");
         } catch (IOException e) {
@@ -296,21 +310,16 @@ public class TweakcraftUtils extends JavaPlugin {
         playerReplyDB = new HashMap<String, String>();
 
         this.registerEvents();
+        this.reloadConfig();
         this.setupPermissions();
         this.setupCraftIRC();
-        if (getConfiguration().getBoolean("keepplayerhistory", false)) {
-            log.info("[TweakcraftUtils] Keeping player history!");
-            File seenFile = new File(getDataFolder(), "players.yml");
-            seenconfig = new Configuration(seenFile);
-            seenconfig.load();
-            keepplayerhistory = true;
-        }
+
         itemDB.loadDataBase();
         worldmanager.setupWorlds();
         banhandler.reloadBans();
         /* itemDB.writeDB(); */
-        maxRange = getConfiguration().getInt("maxrange", 200);
-        playerListener.reloadInvisTable();
+
+        playerListener.reloadInvisTable(true);
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
 

@@ -63,6 +63,7 @@ public class BanHandler {
                         bans.put(lin[0], new Ban(lin[0], ""));
                 }
             }
+            banfilereader.close();
         } catch (FileNotFoundException e) {
             plugin.getLogger().info("[TweakcraftUtils] Ban file not found!");
         } catch (IOException e) {

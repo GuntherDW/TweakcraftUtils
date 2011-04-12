@@ -1,6 +1,6 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 1.3.2
+version: 1.4.0-IRCPlugin
 commands:
   tc:
     description: General tweakcraftutils command

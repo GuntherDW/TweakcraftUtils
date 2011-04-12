@@ -85,17 +85,18 @@ public class CommandTpMob implements Command {
             boolean allowed = true;
             for (LivingEntity crea : plugin.getServer().getWorld(((Player) sender).getWorld().getName()).getLivingEntities()) {
                 if (crea instanceof Creature || crea instanceof Flying) {
-                                            allowed = true;
-                        if(crea instanceof Wolf)
-                        {
-                            Wolf wolf = (Wolf) crea;
-                            if(wolf.isAngry() || !wolf.isTame())
-                                allowed = true;
-                            else
-                            {
-                                allowed = wolf.getTarget().equals(victim.getName());
-                            }
-                        }
+                    allowed = true;
+                    if(crea instanceof Wolf)
+                    {
+                       Wolf wolf = (Wolf) crea;
+                       // System.out.println(wolf);
+                       if(wolf.isAngry() || !wolf.isTame())
+                            allowed = true;
+                       else
+                       {
+                            allowed = wolf.getTarget()!= null && wolf.getTarget().equals(victim.getName());
+                       }
+                    }
                     CreatureType type = null;
                     type = CreatureType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
 

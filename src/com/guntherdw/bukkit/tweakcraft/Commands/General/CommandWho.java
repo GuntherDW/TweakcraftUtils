@@ -42,11 +42,18 @@ public class CommandWho implements Command {
             throws PermissionsException, CommandSenderException, CommandUsageException {
 
         List<Player> list = Arrays.asList(plugin.getServer().getOnlinePlayers());
-        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (list.size()-plugin.getPlayerListener().getInvisplayers().size()) + "/" + plugin.getServer().getMaxPlayers() + "): ";
+        Integer amountofinvis = 0;
+        for(Player p : list)
+        {
+            if(plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
+                amountofinvis++;
+        }
+
+        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (list.size()-amountofinvis) + "/" + plugin.getServer().getMaxPlayers() + "): ";
+        if(amountofinvis>0) {
+            msg += ChatColor.AQUA+" ["+list.size()+"/"+plugin.getServer().getMaxPlayers()+"]";
+        }
         String toadd;
-
-        // player.
-
         Collections.sort(list, new Comparator<Player>() {
             public int compare(Player p1, Player p2) {
                 return p1.getName().compareToIgnoreCase(p2.getName());

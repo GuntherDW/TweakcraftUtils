@@ -42,22 +42,23 @@ public class CommandTC implements Command {
             } else if (args[0].equalsIgnoreCase("reload")) {
 
                 if (sender instanceof Player) {
-                    if (plugin.check((Player) sender, "reload")) {
-                        sender.sendMessage(ChatColor.GREEN + "Reloading settings,dbs and setting colors.");
-                        BanHandler bh = plugin.getBanhandler();
-                        bh.reloadBans();
-                        ItemDB idb = plugin.getItemDB();
-                        idb.loadDataBase();
-                        for(Player p : plugin.getServer().getOnlinePlayers())
-                        {
-                            String name = p.getName();
-                            p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
-                        }
-                        plugin.getPlayerListener().reloadInvisTable();
-                    } else {
+                    if (!plugin.check((Player) sender, "reload")) {
                         sender.sendMessage(ChatColor.GREEN + "Not implemented yet!");
+                        return true;
                     }
                 }
+
+
+                sender.sendMessage(ChatColor.GREEN + "Reloading settings,dbs and setting colors.");
+                BanHandler bh = plugin.getBanhandler();
+                bh.reloadBans();
+                ItemDB idb = plugin.getItemDB();
+                idb.loadDataBase();
+                for (Player p : plugin.getServer().getOnlinePlayers()) {
+                    String name = p.getName();
+                    p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+                }
+                plugin.getPlayerListener().reloadInvisTable(false);
             }
         } else {
             throw new CommandUsageException("/tc <" + ChatColor.GREEN + "reload" + ChatColor.YELLOW + "/" + ChatColor.GREEN + "version" + ChatColor.YELLOW + ">");
