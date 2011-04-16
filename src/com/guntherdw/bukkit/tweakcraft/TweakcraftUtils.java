@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft;
 
-import com.ensifera.animosity.IRCPlugin.IRCPlugin;
+import com.ensifera.animosity.ircplugin.IRCPlugin;
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
@@ -26,6 +26,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -51,7 +52,9 @@ import java.util.logging.Logger;
 public class TweakcraftUtils extends JavaPlugin {
 
     private Permissions perm = null;
+    private WorldGuardPlugin wg = null;
     private IRCPlugin circ = null;
+
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
@@ -189,6 +192,10 @@ public class TweakcraftUtils extends JavaPlugin {
         return circ;
     }
 
+    public WorldGuardPlugin getWorldGuard() {
+        return wg;
+    }
+
     public void reloadConfig() {
         log.info("[TweakcraftUtils] Parsing configuration file...");
         getConfiguration().load();
@@ -267,15 +274,24 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
+    public void setupWorldGuard() {
+        Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
+
+        if (wg == null) {
+            if (plugin != null) {
+                wg = (WorldGuardPlugin) plugin;
+            }
+        }
+    }
+
     public void reloadMOTD() {
         File motdfile = new File(this.getDataFolder(), "motd.txt");
         MOTDLines = new ArrayList<String>();
         try {
             BufferedReader motdfilereader = new BufferedReader(new FileReader(motdfile));
             String line = motdfilereader.readLine();
-            while (line != null) {
+            while ((line = motdfilereader.readLine()) != null) {
                 MOTDLines.add(line.replace('&', '§'));
-                line = motdfilereader.readLine();
             }
             motdfilereader.close();
         } catch (FileNotFoundException e) {
@@ -301,18 +317,19 @@ public class TweakcraftUtils extends JavaPlugin {
     public void onEnable() {
 
         PluginDescriptionFile pdfFile = this.getDescription();
-
+        
         playerLimit = this.getServer().getMaxPlayers();
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();
+        this.setupWorldGuard();
+        this.setupCraftIRC();
 
         playerReplyDB = new HashMap<String, String>();
 
         this.registerEvents();
         this.reloadConfig();
         this.setupPermissions();
-        this.setupCraftIRC();
 
         itemDB.loadDataBase();
         worldmanager.setupWorlds();
@@ -344,7 +361,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
         if (commandHandler.getCommandMap().containsKey(cmd.getName())) {
             try {
-                com.guntherdw.bukkit.tweakcraft.Command command = commandHandler.getCommand(cmd.getName());
+                com.guntherdw.bukkit.tweakcraft.Commands.Command command = commandHandler.getCommand(cmd.getName());
                 // public abstract boolean executeCommand(Server server, CommandSender sender, String command, String[] args, TweakcraftUtils plugin);
                 if (!command.executeCommand(sender, cmd.getName(), args, this)) {
                     sender.sendMessage("This command did not go as intended!");

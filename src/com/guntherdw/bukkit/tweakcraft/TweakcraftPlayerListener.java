@@ -20,7 +20,7 @@ package com.guntherdw.bukkit.tweakcraft;
 
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
@@ -64,7 +64,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
 
         if (ch.getMutedPlayers().contains(player.getName().toLowerCase())) {
-            player.sendMessage("You are muted! No one can hear you.");
+            player.sendMessage(ChatColor.GOLD + "You are muted! No one can hear you.");
             plugin.getLogger().info("[TweakcraftUtils] Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
             event.setCancelled(true);
         } else {
@@ -117,14 +117,24 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
             event.setJoinMessage(null);
             p.sendMessage(ChatColor.AQUA + "You has joined STEALTHILY!");
-            try {
+            if (plugin.getCraftIRC() != null) {
+                plugin.getCraftIRC().sendMessageToTag("STEALTH JOIN : " +event.getPlayer().getName() ,"mchatadmin");
+            }
+            /* try {
                 ChatHandler ch = plugin.getChathandler();
                 ChatMode    cm = ch.getChatMode("admin");
-                AdminChat   am = (AdminChat) cm;
-                am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
-            } catch (ChatModeException e) {
+                AdminChat   am = (AdminChat) cm; */
+                for(Player play : plugin.getServer().getOnlinePlayers())
+                {
+                    if(plugin.check(play, "tpinvis"))
+                    {
+                        play.sendMessage(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
+                    }
+                }
+                // am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
+            /* } catch (ChatModeException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+            } */
         }
     }
 
@@ -144,14 +154,24 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
         if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "left" message
             event.setQuitMessage(null);
-            try {
+            if (plugin.getCraftIRC() != null) {
+                plugin.getCraftIRC().sendMessageToTag("STEALTH QUIT : " +event.getPlayer().getName() ,"mchatadmin");
+            }
+            /* try {
                 ChatHandler ch = plugin.getChathandler();
                 ChatMode    cm = ch.getChatMode("admin");
-                AdminChat   am = (AdminChat) cm;
-                am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth quit : "+event.getPlayer().getDisplayName());
-            } catch (ChatModeException e) {
+                AdminChat   am = (AdminChat) cm; */
+                for(Player play : plugin.getServer().getOnlinePlayers())
+                {
+                    if(plugin.check(play, "tpinvis"))
+                    {
+                        play.sendMessage(ChatColor.AQUA+"Stealth quit : "+event.getPlayer().getDisplayName());
+                    }
+                }
+                // am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
+            /* } catch (ChatModeException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
+            } */
         }
     }
 

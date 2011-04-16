@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
-import com.guntherdw.bukkit.tweakcraft.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -31,8 +31,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import javax.sound.midi.Receiver;
 
 /**
  * @author GuntherDW

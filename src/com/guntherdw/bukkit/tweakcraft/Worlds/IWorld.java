@@ -16,16 +16,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.guntherdw.bukkit.tweakcraft;
+package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import org.bukkit.util.config.Configuration;
 
 /**
  * @author GuntherDW
  */
-public interface World {
+public interface IWorld {
 
-    public abstract World getWorld();
+    public abstract IWorld getWorld();
 
     public abstract org.bukkit.World getBukkitWorld();
 

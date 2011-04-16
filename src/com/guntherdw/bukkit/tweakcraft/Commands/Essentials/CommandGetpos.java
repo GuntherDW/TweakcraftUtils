@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
-import com.guntherdw.bukkit.tweakcraft.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -29,17 +29,43 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 /**
  * @author GuntherDW
  */
 public class CommandGetpos implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (!plugin.check(player, "getpos"))
+        if(sender instanceof Player)
+            if (!plugin.check((Player) sender , "getpos"))
                 throw new PermissionsException(command);
-            Location loc = player.getLocation();
+        Location loc=null;
+
+        /**
+         * Permissions checking!
+         */
+        if(args.length==0 && !(sender instanceof Player))
+            throw new CommandUsageException("If you're going to call this from a console i need a player to check!");
+        if(args.length==0 && sender instanceof Player)
+            loc = ((Player)sender).getLocation().clone();
+        if(args.length>0 && sender instanceof Player)
+            if(!plugin.check((Player)sender, "getposother"))
+                throw new PermissionsException(command);
+
+        if(args.length>0) {
+            List<Player> plist = plugin.getServer().matchPlayer(args[0]);
+            if(plist.size()==0) {
+                throw new CommandUsageException(ChatColor.YELLOW + "Can't find player!");
+            } else if(plist.size()>1) {
+                throw new CommandUsageException(ChatColor.YELLOW + "Can't match player, got more than one result!");
+            } else {
+                loc = plist.get(0).getLocation().clone();
+            }
+        }
+
+        if(loc != null)
+        {
             Integer x, y, z, yaw, pitch;
             x = Math.round((float) loc.getX());
             y = Math.round((float) loc.getY());
@@ -49,14 +75,15 @@ public class CommandGetpos implements Command {
 
             sender.sendMessage(ChatColor.YELLOW + "Pos X: " + x + " Y: " + y + " Z: " + z);
             sender.sendMessage(ChatColor.YELLOW + "Rotation: " + yaw + " Pitch: " + pitch);
-            String dir = plugin.getCompassDirection(player.getLocation().getYaw());
-            double degreeRotation = ((player.getLocation().getYaw() - 90) % 360);
+            sender.sendMessage(ChatColor.YELLOW + "World: " + loc.getWorld().getName());
+            String dir = plugin.getCompassDirection(loc.getYaw());
+            double degreeRotation = ((loc.getYaw() - 90) % 360);
             if (degreeRotation < 0)
                 degreeRotation += 360.0;
 
             sender.sendMessage(ChatColor.YELLOW + "Compass: " + dir + " (" + (Math.round(degreeRotation * 10) / 10.0) + ")");
         } else {
-            throw new CommandSenderException("Now why would a console want to know its position?");
+            throw new CommandException("This isn't supposed to happen!");
         }
         return true;
     }

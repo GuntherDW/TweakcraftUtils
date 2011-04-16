@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
+import com.guntherdw.bukkit.tweakcraft.Chat.Modes.RegionChat;
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
@@ -31,7 +32,7 @@ import java.util.List;
 /**
  * @author GuntherDW
  */
-public class CommandLc implements Command {
+public class CommandRc implements Command {
 
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
@@ -39,27 +40,28 @@ public class CommandLc implements Command {
         if (args.length != 0 && args[0].equalsIgnoreCase("list")) {
 
             if (sender instanceof Player)
-                if (!plugin.check((Player) sender, "chat.list.local"))
+                if (!plugin.check((Player) sender, "chat.list.region"))
                     throw new PermissionsException(command);
 
             try {
-                ChatMode cm = plugin.getChathandler().getChatMode("local");
+                ChatMode cm = plugin.getChathandler().getChatMode("region");
                 List<String> sublist = cm.getSubscribers();
                 if (sublist.size() != 0) {
-                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current localchat playerlist:");
+                    RegionChat rc = (RegionChat) cm;
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current regionchat playerlist:");
                     String color = "";
                     String msg = "";
-                    for (String playername : cm.getSubscribers()) {
+                    for (String playername : rc.getSubscribers()) {
                         try {
                             color = plugin.getPlayerColor(playername, true);
                         } catch (NullPointerException e) {
                             color = ChatColor.WHITE.toString();
                         }
-                        msg = color + playername;
+                        msg = color + playername + ChatColor.WHITE+" ("+rc.getRegionName(playername, true)+")";
                         sender.sendMessage(msg);
                     }
                 } else {
-                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current localchat playerlist is empty!");
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current regionchat playerlist is empty!");
                 }
                 // sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current localchat chatters : ");
 
@@ -68,10 +70,10 @@ public class CommandLc implements Command {
             }
         } else if(args.length != 0) {
              if (sender instanceof Player)
-                if (!plugin.check((Player) sender, "chat.mode.local"))
+                if (!plugin.check((Player) sender, "chat.mode.region"))
                     throw new PermissionsException(command);
             try {
-                ChatMode cm = plugin.getChathandler().getChatMode("local");
+                ChatMode cm = plugin.getChathandler().getChatMode("region");
                 String msg = "";
                 for (String m : args)
                     msg += m + " ";
@@ -83,17 +85,24 @@ public class CommandLc implements Command {
             }
         } else {
             if (sender instanceof Player) {
-                if (!plugin.check((Player) sender, "chat.mode.local"))
+                if (!plugin.check((Player) sender, "chat.mode.region"))
                     throw new PermissionsException(command);
 
                 else {
                     try {
-                        ChatMode cm = plugin.getChathandler().getChatMode("local");
+                        ChatMode cm = plugin.getChathandler().getChatMode("region");
                         List<String> sublist = cm.getSubscribers();
                         if (!sublist.contains(((Player) sender).getName())) {
+                            RegionChat rc = (RegionChat) cm;
                             cm.addRecipient(((Player) sender).getName());
-                            plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), "local");
-                            sender.sendMessage(ChatColor.YELLOW + "You will now chat locally!");
+                            plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), "region");
+                            String rgnames = rc.getRegionName(((Player)sender).getName(), true);
+                            if(rgnames == null || rc.getRegionName(((Player)sender).getName(), false).equals(""))
+                            {
+                                sender.sendMessage(ChatColor.YELLOW + "Regionchat enabled but haven't found any active region!");
+                            } else {
+                                sender.sendMessage(ChatColor.YELLOW + "Regionchat in regions "+ChatColor.WHITE+"["+rgnames+"]!");
+                            }
                         } else {
                             cm.removeRecipient(((Player) sender).getName());
                             plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), null);

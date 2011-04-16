@@ -18,7 +18,6 @@
 
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
-import com.guntherdw.bukkit.tweakcraft.World;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -27,7 +26,7 @@ import java.io.IOException;
 /**
  * @author GuntherDW
  */
-public class TweakWorld implements com.guntherdw.bukkit.tweakcraft.World {
+public class TweakWorld implements IWorld {
 
     private org.bukkit.World world;
     private boolean enabled = false;
@@ -62,7 +61,7 @@ public class TweakWorld implements com.guntherdw.bukkit.tweakcraft.World {
         }
     }
 
-    public World getWorld() {
+    public IWorld getWorld() {
         return this;
     }
 

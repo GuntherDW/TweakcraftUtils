@@ -49,6 +49,9 @@ commands:
   lc:
     description: Toggle local chat
     usage: /<command>
+  rc:
+    description: Toggle region chat
+    usage: /<command>
   tele:
     description: Teleport to a specific location
     usage: /<command> ...

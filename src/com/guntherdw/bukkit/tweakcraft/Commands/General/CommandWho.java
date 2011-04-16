@@ -18,8 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
-import com.avaje.ebeaninternal.server.el.ElSetValue;
-import com.guntherdw.bukkit.tweakcraft.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
@@ -48,10 +47,16 @@ public class CommandWho implements Command {
             if(plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
                 amountofinvis++;
         }
+        boolean hasperm;
+        if(sender instanceof Player)
+                hasperm = plugin.check((Player)sender, "tpinvis");
+            else
+                hasperm = true;
 
         String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (list.size()-amountofinvis) + "/" + plugin.getServer().getMaxPlayers() + "): ";
         if(amountofinvis>0) {
-            msg += ChatColor.AQUA+" ["+list.size()+"/"+plugin.getServer().getMaxPlayers()+"]";
+            if(hasperm)
+                msg += ChatColor.AQUA+" ["+list.size()+"/"+plugin.getServer().getMaxPlayers()+"]";
         }
         String toadd;
         Collections.sort(list, new Comparator<Player>() {
@@ -63,7 +68,7 @@ public class CommandWho implements Command {
         sender.sendMessage(msg);
         msg = " ";
         boolean check;
-        boolean hasperm;
+        
         for (Player p : list) {
             toadd = "";
             check = plugin.getPlayerListener().getInvisplayers().contains(p.getName());
@@ -79,7 +84,6 @@ public class CommandWho implements Command {
 
                 toadd+=ChatColor.WHITE+", ";
             } else {
-                hasperm = plugin.check((Player)sender, "tpinvis");
                 if(check && hasperm)
                 {
                     toadd = ChatColor.AQUA+"["+p.getDisplayName() + ChatColor.AQUA + "]"+ChatColor.WHITE+", ";

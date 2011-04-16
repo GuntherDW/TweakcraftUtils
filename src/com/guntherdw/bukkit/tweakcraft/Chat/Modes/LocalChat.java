@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
-import com.guntherdw.bukkit.tweakcraft.ChatMode;
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.EntityLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
@@ -46,7 +46,7 @@ public class LocalChat implements ChatMode {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage("L: [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.YELLOW+"L"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
             }
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");

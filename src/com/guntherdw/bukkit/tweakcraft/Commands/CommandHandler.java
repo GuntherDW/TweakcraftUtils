@@ -18,7 +18,6 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
-import com.guntherdw.bukkit.tweakcraft.Command;
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
@@ -86,6 +85,7 @@ public class CommandHandler {
         commandMap.put("who", new CommandWho());
         commandMap.put("broadcast", new CommandBroadcast());
         commandMap.put("lc", new CommandLc());
+        commandMap.put("rc", new CommandRc());
 
         /**
          * Teleportation commands

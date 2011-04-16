@@ -19,10 +19,11 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.LocalChat;
-import com.guntherdw.bukkit.tweakcraft.ChatMode;
-import com.guntherdw.bukkit.tweakcraft.Command;
+import com.guntherdw.bukkit.tweakcraft.Chat.Modes.RegionChat;
+import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -61,6 +62,8 @@ public class CommandMe implements Command {
                         ((LocalChat) cm).broadcastMessage(player, "[" + ChatColor.YELLOW + "L" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
                     } else if (cm instanceof AdminChat) {
                         ((AdminChat) cm).broadcastMessage(player, "[" + ChatColor.GREEN + "A" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + ChatColor.GREEN + msg);
+                    } else if (cm instanceof RegionChat) {
+                        ((RegionChat) cm).broadcastMessage(player, "[" + ChatColor.AQUA + "G" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
                     }
                 }
 

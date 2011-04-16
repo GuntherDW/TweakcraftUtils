@@ -19,7 +19,6 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.guntherdw.bukkit.tweakcraft.World;
 import org.bukkit.World.Environment;
 
 import java.util.HashMap;
@@ -31,34 +30,20 @@ import java.util.Map;
  */
 public class WorldManager {
 
-    private Map<String, com.guntherdw.bukkit.tweakcraft.World> worlds;
+    private Map<String, IWorld> worlds;
     private TweakcraftUtils plugin;
 
 
-    public Map<String, World> getWorlds() {
+    public Map<String, IWorld> getWorlds() {
         return worlds;
     }
 
     public WorldManager(TweakcraftUtils instance) {
         this.plugin = instance;
-        worlds = new HashMap<String, World>();
+        worlds = new HashMap<String, IWorld>();
     }
 
     public void setupWorlds() {
-        /* List<World> worlds = plugin.getServer().getWorlds();
-        for(World w : worlds)
-        {
-            if(w.getEnvironment() == org.bukkit.World.Environment.NORMAL && normal == null)
-                normal = w;
-            if(w.getEnvironment() == org.bukkit.World.Environment.NETHER && nether == null)
-                nether = w;
-        }
-        if(normal == null)
-            normal = plugin.getServer().createWorld("world", org.bukkit.World.Environment.NORMAL);
-        if(nether == null)
-            nether = plugin.getServer().createWorld("nether", org.bukkit.World.Environment.NETHER); */
-
-        /* Get the normal world-folder */
         boolean netherWorldOnline = false;
 
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
@@ -101,7 +86,7 @@ public class WorldManager {
 
     }
 
-    public com.guntherdw.bukkit.tweakcraft.World getWorld(String name) {
+    public IWorld getWorld(String name) {
         if (worlds.containsKey(name)) {
             return worlds.get(name);
         } else {
