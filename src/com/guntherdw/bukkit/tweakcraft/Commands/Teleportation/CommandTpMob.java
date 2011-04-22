@@ -95,7 +95,6 @@ public class CommandTpMob implements Command {
                        else
                        {
                             allowed = wolf.getTarget()!= null && wolf.getTarget().equals(victim.getName());
-                           wolf.setHealth();
                        }
                     }
                     CreatureType type = null;
