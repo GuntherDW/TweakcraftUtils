@@ -55,14 +55,14 @@ public class RegionChat implements ChatMode {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.AQUA+"G"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.AQUA+"R"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
             }
             if(getRegionName(player.getName(), false).equals("")) {
                 sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a region!");
             } else if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("G: ("+getRegionName(player.getName(), false)+") <" + player.getName() + "> " + message);
+            plugin.getLogger().info("R: ("+getRegionName(player.getName(), false)+") <" + player.getName() + "> " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
@@ -118,7 +118,7 @@ public class RegionChat implements ChatMode {
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("G: ("+getRegionName(player.getName(), false)+") : "+message);
+            plugin.getLogger().info("R: ("+getRegionName(player.getName(), false)+") : "+message);
         } else {
             sender.sendMessage("How did you get here?!");
         }

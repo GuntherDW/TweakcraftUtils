@@ -63,7 +63,7 @@ public class CommandMe implements Command {
                     } else if (cm instanceof AdminChat) {
                         ((AdminChat) cm).broadcastMessage(player, "[" + ChatColor.GREEN + "A" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + ChatColor.GREEN + msg);
                     } else if (cm instanceof RegionChat) {
-                        ((RegionChat) cm).broadcastMessage(player, "[" + ChatColor.AQUA + "G" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
+                        ((RegionChat) cm).broadcastMessage(player, "[" + ChatColor.AQUA + "R" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
                     }
                 }
 

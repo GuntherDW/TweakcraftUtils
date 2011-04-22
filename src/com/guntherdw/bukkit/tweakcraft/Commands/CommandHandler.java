@@ -22,6 +22,9 @@ import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.*;
+import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandLightning;
+import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandRain;
+import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandThunder;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 
@@ -50,7 +53,8 @@ public class CommandHandler {
         commandMap.put("admon", new CommandAdmon());
         commandMap.put("admoff", new CommandAdmoff());
         commandMap.put("tplist", new CommandTpList());
-        commandMap.put("tc", new CommandTC());
+        commandMap.put("tweakcraft", new CommandTC());
+        commandMap.put("clearinventory", new CommandClearInventory());
 
         /**
          * Essential commands
@@ -96,6 +100,14 @@ public class CommandHandler {
         commandMap.put("tpoff", new CommandTpOff());
         commandMap.put("tpon", new CommandTpOn());
         commandMap.put("tpmob", new CommandTpMob());
+
+        /**
+         * Weather control commands
+         */
+        commandMap.put("rain", new CommandRain());
+        commandMap.put("strike", new CommandLightning());
+        commandMap.put("thunder", new CommandThunder());
+
     }
 
     public TweakcraftUtils getPlugin() {

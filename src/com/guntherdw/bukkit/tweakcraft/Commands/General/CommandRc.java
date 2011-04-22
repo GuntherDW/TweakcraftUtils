@@ -37,6 +37,11 @@ public class CommandRc implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
+        if(plugin.getWorldGuard() == null)
+        {
+            throw new CommandUsageException("WorldGuard not found, is it loaded/running?");
+        }
+
         if (args.length != 0 && args[0].equalsIgnoreCase("list")) {
 
             if (sender instanceof Player)

@@ -39,10 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -51,9 +48,9 @@ import java.util.logging.Logger;
 
 public class TweakcraftUtils extends JavaPlugin {
 
-    private Permissions perm = null;
-    private WorldGuardPlugin wg = null;
-    private IRCPlugin circ = null;
+    protected Permissions perm = null;
+    protected WorldGuardPlugin wg = null;
+    protected IRCPlugin circ = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
@@ -357,7 +354,19 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
 
-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] unfilteredargs) {
+
+        List<String> argsa = new ArrayList<String>();
+        // String[] args = new String[];
+        int argc = 0;
+        for(String a : unfilteredargs) {
+            if(a!=null&& !a.isEmpty() && !a.trim().equals("")) {
+                // args[argc] = a;
+                argsa.add(a);
+                argc++;
+            }
+        }
+        String[] args = argsa.toArray(new String[0]);
 
         if (commandHandler.getCommandMap().containsKey(cmd.getName())) {
             try {

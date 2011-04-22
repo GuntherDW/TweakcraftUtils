@@ -1,8 +1,8 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 1.4.0-IRCPlugin
+version: 1.4.1
 commands:
-  tc:
+  tweakcraft:
     description: General tweakcraftutils command
     usage: /<command> ...
   admin:
@@ -132,3 +132,17 @@ commands:
     description: Lists the currently active worlds
     usage: /<command>
     aliases: lw
+  clearinventory:
+    description: Clears yours or another player's inventory
+    usage: /<command> [player]
+    aliases: [cli]
+  strike:
+    description: Strike lightning at command
+    usage: /<command> [player]
+    aliases: [ls]
+  rain:
+    description: Turn storm on or off at command
+    usage: /<command> <world> <on|off>
+  thunder:
+    description: Turn thunder on or off at command
+    usage: /<command> <world> <on|off>

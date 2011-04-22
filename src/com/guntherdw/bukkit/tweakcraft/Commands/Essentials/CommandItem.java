@@ -110,7 +110,7 @@ public class CommandItem implements Command {
                 }
 
                 sender.sendMessage(ChatColor.YELLOW + "Giving " + recvname + ChatColor.YELLOW + " " + itemAmount + " of " + ItemType.toName(itemId) + "!");
-                if(!(recvname.equals(giftfrom)))
+                if(!(receiver.getName().equals(giftfrom)))
                     receiver.sendMessage(ChatColor.AQUA+"Enjoy your gift! :3");
                 ItemStack stack = new ItemStack(itemId, itemAmount, itemDmg.shortValue());
                 receiver.getInventory().addItem(stack);

@@ -16,9 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
+package com.guntherdw.bukkit.tweakcraft.Commands.Weather;
 
-import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
@@ -26,47 +25,38 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * @author GuntherDW
  */
-public class CommandMute implements Command {
+public class CommandLightning implements Command {
+    @Override
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if (sender instanceof Player)
-            if (!plugin.check((Player) sender, "mute"))
+        if(sender instanceof Player) {
+            if(!plugin.check((Player)sender, "weather"))
                 throw new PermissionsException(command);
-
-        ChatHandler ch = plugin.getChathandler();
-        if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE+"Current list of muted players : ");
-            if(ch.getMutedPlayers().isEmpty()) { sender.sendMessage(ChatColor.LIGHT_PURPLE + "List is empty!"); }
-            else {
-                for(String s : ch.getMutedPlayers()) {
-                    sender.sendMessage(plugin.getPlayerColor(s, true)+s);
-                }
-            }
+        }
+        Location loc = null;
+        if(args.length==0 && sender instanceof Player) {
+            loc = ((Player)sender).getTargetBlock(null, 200).getLocation();
+            sender.sendMessage(ChatColor.RED+"*CCCRRREEAAAAAAAACK*");
         } else if(args.length == 1) {
-            String playername = plugin.findPlayer(args[0]);
-            Player player = plugin.getServer().getPlayer(playername);
-            if (player != null) {
-
-                if (!ch.getMutedPlayers().contains(player.getName().toLowerCase())) {
-                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName());
-                    ch.addMute(player.getName().toLowerCase());
-                } else {
-                    sender.sendMessage(ChatColor.YELLOW + "Unmuting " + player.getDisplayName());
-                    ch.removeMute(player.getName().toLowerCase());
-                }
-            } else {
-                sender.sendMessage(ChatColor.YELLOW + "Can't find player!");
-            }
-        } else {
-            sender.sendMessage(ChatColor.YELLOW + "Now who on earth do i have to mute?");
+            List<Player> players = plugin.getServer().matchPlayer(args[0]);
+            if(players.size()!=1) { throw new CommandUsageException("Can't find player!"); }
+            loc = players.get(0).getLocation();
+            sender.sendMessage(ChatColor.RED+"I hope "+players.get(0).getName()+ChatColor.RED+" wasn't standing under a tree!");
         }
 
+        if(loc != null)
+        {
+            loc.getWorld().strikeLightning(loc);
+        }
         return true;
     }
 }

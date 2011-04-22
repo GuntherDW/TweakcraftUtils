@@ -21,6 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -56,7 +57,21 @@ public class AdminChat implements ChatMode {
         }
         String msg = ChatColor.GREEN + "A: [" + pcolor + sendername + ChatColor.GREEN + "] " + message;
         if (plugin.getCraftIRC() != null) {
-            plugin.getCraftIRC().sendMessageToTag("[A] <" + cleanname + "> " + message, "mchatadmin");
+            String w = null;
+            String prex = "";
+            String sufx = "";
+            if(sender instanceof Player) {
+                w = ((Player)sender).getWorld().getName();
+                prex = plugin.getCraftIRC().getPermPrefix(w, cleanname);
+                sufx = plugin.getCraftIRC().getPermSuffix(w, cleanname);
+            } else {
+                prex = Character.toString((char) 3)+String.format("%02d", plugin.getCraftIRC().cColorIrcFromName("magenta"));
+                sufx = "";
+            }
+            if(sufx.equals("")) {
+                // System.out.println("bla "+this.plugin.cColorIrcFromName("foreground"));
+                sufx = Character.toString((char) 3)+String.format("%02d", plugin.getCraftIRC().cColorIrcFromName("foreground")); }
+            plugin.getCraftIRC().sendMessageToTag("[A] <" + prex + cleanname + sufx + "> " + message, "mchatadmin");
         }
 
         if (sender instanceof Player && !isOnList(sender)) {
