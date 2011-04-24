@@ -139,11 +139,11 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void onPlayerQuit(PlayerQuitEvent event) {
-        if (plugin.isKeepplayerhistory()) {
+        if (plugin.getConfigHandler().enableSeenConfig) {
             Calendar cal = Calendar.getInstance();
             String time = String.valueOf(cal.getTime().getTime());
-            plugin.getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), time);
-            plugin.getSeenconfig().save();
+            plugin.getConfigHandler().getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), time);
+            plugin.getConfigHandler().getSeenconfig().save();
             plugin.getLogger().info("[TweakcrafUtils] Stored " + event.getPlayer().getName() + "'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());

@@ -39,11 +39,11 @@ public class CommandSeen implements Command {
         if (args.length < 1) {
             throw new CommandUsageException("You did not specify a name!");
         }
-        if (plugin.getSeenconfig() != null) {
+        if (plugin.getConfigHandler().getSeenconfig() != null) {
             if (plugin.getServer().getPlayer(args[0]) != null) {
                 sender.sendMessage(ChatColor.GOLD + args[0] + " is online right now!");
             } else {
-                String seen = plugin.getSeenconfig().getString(args[0].toLowerCase(), "");
+                String seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
                 // plugin.getSeenconfig().get
                 if (seen.equals(""))
                     sender.sendMessage("I haven't seen " + args[0] + " yet!");

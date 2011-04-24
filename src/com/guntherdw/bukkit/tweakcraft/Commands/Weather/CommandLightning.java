@@ -45,7 +45,8 @@ public class CommandLightning implements Command {
         Location loc = null;
         if(args.length==0 && sender instanceof Player) {
             loc = ((Player)sender).getTargetBlock(null, 200).getLocation();
-            sender.sendMessage(ChatColor.RED+"*CCCRRREEAAAAAAAACK*");
+            loc.setY(loc.getY()+1);
+            // sender.sendMessage(ChatColor.RED+"*CCCRRREEAAAAAAAACK*");
         } else if(args.length == 1) {
             List<Player> players = plugin.getServer().matchPlayer(args[0]);
             if(players.size()!=1) { throw new CommandUsageException("Can't find player!"); }

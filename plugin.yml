@@ -1,10 +1,11 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 1.4.1
+version: 1.4.5
 commands:
   tweakcraft:
     description: General tweakcraftutils command
     usage: /<command> ...
+    aliases: [tc]
   admin:
     description: Send message to admins
     usage: /<command> <message>
@@ -52,6 +53,13 @@ commands:
   rc:
     description: Toggle region chat
     usage: /<command>
+  zc:
+    description: Toggle ZoneChat
+    usage: /<command>
+  chatmode:
+    description: ChatMode control
+    usage: /<command> <chatmode>
+    aliases: [cm]
   tele:
     description: Teleport to a specific location
     usage: /<command> ...

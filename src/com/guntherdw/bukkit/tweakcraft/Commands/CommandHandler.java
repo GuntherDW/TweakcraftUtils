@@ -90,6 +90,8 @@ public class CommandHandler {
         commandMap.put("broadcast", new CommandBroadcast());
         commandMap.put("lc", new CommandLc());
         commandMap.put("rc", new CommandRc());
+        commandMap.put("zc", new CommandZc());
+        commandMap.put("chatmode", new CommandChatMode());
 
         /**
          * Teleportation commands

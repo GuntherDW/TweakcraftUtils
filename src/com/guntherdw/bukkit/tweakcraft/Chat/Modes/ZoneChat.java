@@ -19,8 +19,8 @@
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
-import com.guntherdw.bukkit.tweakcraft.EntityLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.zones.model.ZoneBase;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,31 +31,55 @@ import java.util.List;
 /**
  * @author GuntherDW
  */
-public class LocalChat implements ChatMode {
+public class ZoneChat implements ChatMode {
 
     private List<String> subscribers;
     private TweakcraftUtils plugin;
 
-    public LocalChat(TweakcraftUtils instance) {
-        subscribers = new ArrayList<String>();
-        plugin = instance;
+    public ZoneChat(TweakcraftUtils instance) {
+        this.plugin = instance;
+        this.subscribers = new ArrayList<String>();
     }
 
+    @Override
     public boolean sendMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.YELLOW+"L"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.AQUA+"Z"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
             }
-            if (recp.size() < 2) {
+            if(getZoneName(player, false).equals("")) {
+                sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a region!");
+            } else if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("L: <" + player.getName() + "> " + message);
+            plugin.getLogger().info("Z: ("+getZoneName(player, false)+") <" + player.getName() + "> " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
         return true;
+    }
+
+    @Override
+    public List<Player> getRecipients(CommandSender sender) {
+        List<Player> recp = new ArrayList<Player>();
+        List<String> regionIds = null;
+        if(sender instanceof Player) {
+            Player player = (Player) sender;
+            com.zones.WorldManager wm = plugin.getZones().getWorldManager(player.getWorld());
+            ZoneBase zb = wm.getActiveZone(player.getLocation());
+            for(Player p : player.getWorld().getPlayers()) {
+                if(zb.isInsideZone(p)) {
+                    recp.add(p);
+                }
+            }
+
+            if(!recp.contains(player)) {
+                recp.add(player);
+            }
+        }
+        return recp;
     }
 
     public boolean broadcastMessage(CommandSender sender, String message) {
@@ -68,53 +92,53 @@ public class LocalChat implements ChatMode {
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("L: " + message);
+            plugin.getLogger().info("Z: ("+getZoneName(player, false)+") : "+message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
         return true;
     }
 
-    public List<Player> getRecipients(CommandSender sender) {
-        List<Player> recp = new ArrayList<Player>();
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            EntityLocation entityloc = new EntityLocation(player);
-            for (Player p : player.getWorld().getPlayers()) {
-                if (entityloc.getDistance(p) < plugin.getConfigHandler().localchatdistance) {
-                    recp.add(p);
-                }
-            }
-        }
-        return recp;
-    }
-
+    @Override
     public void addRecipient(String player) {
         if (!subscribers.contains(player)) {
             subscribers.add(player);
         }
     }
 
+    @Override
     public void removeRecipient(String player) {
         if (subscribers.contains(player)) {
             subscribers.remove(player);
         }
     }
 
+    @Override
     public List<String> getSubscribers() {
         return subscribers;
     }
 
     @Override
     public String getDescription() {
-        return "Chat locally ("+plugin.getConfigHandler().localchatdistance+" blocks)";
+        return "Zones zone chat!";
+    }
+
+    public String getZoneName(CommandSender sender, boolean color) {
+        Player p = (Player) sender;
+        if(p!=null) {
+            com.zones.WorldManager wm = plugin.getZones().getWorldManager(p);
+            String msg = (color?ChatColor.GOLD:"")+wm.getActiveZone(p).getName();
+            return msg+(color?ChatColor.WHITE:"");
+        } else {
+            return null;
+        }
     }
 
     public boolean isEnabled() {
-        return plugin.getConfigHandler().localchatdistance > 0;
+        return plugin.getConfigHandler().enableZones;
     }
 
     public String getColor() {
-        return ChatColor.YELLOW.toString();
+        return ChatColor.DARK_PURPLE.toString();
     }
 }

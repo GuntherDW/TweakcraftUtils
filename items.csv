@@ -115,7 +115,7 @@ woodenstair,53,0,64
 woodenstairs,53,0,64
 storage,54,0,64
 chest,54,0,64
-redstone,55,0,64
+redstonewire,55,0,64
 diamondore,56,0,64
 diamondblock,57,0,64
 diamond,57,0,64
@@ -158,9 +158,9 @@ woodenpressureplate,72,0,64
 woodenplate,72,0,64
 redstoneore,73,0,64
 glowingredstoneore,74,0,64
-redstonetorch,75,0,64
+redstonetorch,76,0,64
 rstorch,75,0,64
-redstonetorchon,76,0,64
+redstonetorchoff,75,0,64
 stonebutton,77,0,64
 button,77,0,64
 snow,78,0,64
@@ -317,6 +317,7 @@ cart,328,0,64
 saddle,329,0,64
 irondoor,330,0,64
 redstonedust,331,0,64
+redstone,331,0,64
 reddust,331,0,64
 snowball,332,0,64
 woodboat,333,0,64

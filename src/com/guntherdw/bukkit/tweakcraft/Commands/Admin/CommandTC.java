@@ -50,7 +50,7 @@ public class CommandTC implements Command {
 
 
                 sender.sendMessage(ChatColor.GREEN + "Reloading settings,dbs and setting colors.");
-                plugin.reloadConfig();
+                plugin.getConfigHandler().reloadConfig();
                 BanHandler bh = plugin.getBanhandler();
                 bh.reloadBans();
                 ItemDB idb = plugin.getItemDB();

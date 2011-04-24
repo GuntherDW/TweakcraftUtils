@@ -124,7 +124,8 @@ public class AdminChat implements ChatMode {
 
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             if (plugin.check(p, "admon")) {
-                recp.add(p);
+                if(!recp.contains(p))
+                       recp.add(p);
             }
         }
         return recp;
@@ -171,10 +172,27 @@ public class AdminChat implements ChatMode {
         return subscribers;
     }
 
+    @Override
+    public String getDescription() {
+        return "Admin chat (needs permissions!)";
+    }
+
     public boolean sendToRealAdmins(CommandSender sender, String message) {
         for (Player player : getAdmins()) {
             player.sendMessage(message);
         }
         return true;
+    }
+
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public boolean isPlayerAllowed(String playername) {
+        return subscribers.contains(playername);
+    }
+
+    public String getColor() {
+        return ChatColor.GREEN.toString();
     }
 }

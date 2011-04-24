@@ -19,7 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.RegionChat;
+import com.guntherdw.bukkit.tweakcraft.Chat.Modes.ZoneChat;
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
@@ -32,40 +32,41 @@ import java.util.List;
 /**
  * @author GuntherDW
  */
-public class CommandRc implements Command {
-
+public class CommandZc implements Command {
+    @Override
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-
-        if(plugin.getConfigHandler().enableWorldGuard==false) {
-            throw new CommandUsageException("WorldGuard not enabled!");
+        if(plugin.getConfigHandler().enableZones==false) {
+            throw new CommandUsageException("Zones not enabled!");
         }
 
         if (args.length != 0 && args[0].equalsIgnoreCase("list")) {
 
             if (sender instanceof Player)
-                if (!plugin.check((Player) sender, "chat.list.region"))
+                if (!plugin.check((Player) sender, "chat.list.zones"))
                     throw new PermissionsException(command);
 
             try {
-                ChatMode cm = plugin.getChathandler().getChatMode("region");
+                ChatMode cm = plugin.getChathandler().getChatMode("zones");
                 List<String> sublist = cm.getSubscribers();
                 if (sublist.size() != 0) {
-                    RegionChat rc = (RegionChat) cm;
-                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current regionchat playerlist:");
+                    ZoneChat zc = (ZoneChat) cm;
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current ZoneChat playerlist:");
                     String color = "";
                     String msg = "";
-                    for (String playername : rc.getSubscribers()) {
+                    for (String playername : zc.getSubscribers()) {
                         try {
+                            Player p = plugin.getServer().getPlayer(playername);
                             color = plugin.getPlayerColor(playername, true);
+                            msg = color + playername + ChatColor.WHITE+" ("+zc.getZoneName(p, true)+")";
+                            sender.sendMessage(msg);
                         } catch (NullPointerException e) {
-                            color = ChatColor.WHITE.toString();
+                            // color = ChatColor.WHITE.toString();
                         }
-                        msg = color + playername + ChatColor.WHITE+" ("+rc.getRegionName(playername, true)+")";
-                        sender.sendMessage(msg);
+
                     }
                 } else {
-                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current regionchat playerlist is empty!");
+                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current ZoneChat playerlist is empty!");
                 }
                 // sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current localchat chatters : ");
 
@@ -74,38 +75,38 @@ public class CommandRc implements Command {
             }
         } else if(args.length != 0) {
              if (sender instanceof Player)
-                if (!plugin.check((Player) sender, "chat.mode.region"))
+                if (!plugin.check((Player) sender, "chat.mode.zones"))
                     throw new PermissionsException(command);
             try {
-                ChatMode cm = plugin.getChathandler().getChatMode("region");
+                ChatMode cm = plugin.getChathandler().getChatMode("zones");
                 String msg = "";
                 for (String m : args)
                     msg += m + " ";
                 msg = msg.substring(0, msg.length() - 1);
                 cm.sendMessage(sender, msg);
-                
+
             } catch(ChatModeException ex) {
                 throw new CommandException("Exception thrown when setting chatmode!");
             }
         } else {
             if (sender instanceof Player) {
-                if (!plugin.check((Player) sender, "chat.mode.region"))
+                if (!plugin.check((Player) sender, "chat.mode.zones"))
                     throw new PermissionsException(command);
 
                 else {
                     try {
-                        ChatMode cm = plugin.getChathandler().getChatMode("region");
+                        ChatMode cm = plugin.getChathandler().getChatMode("zones");
                         List<String> sublist = cm.getSubscribers();
                         if (!sublist.contains(((Player) sender).getName())) {
-                            RegionChat rc = (RegionChat) cm;
+                            ZoneChat zc = (ZoneChat) cm;
                             cm.addRecipient(((Player) sender).getName());
-                            plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), "region");
-                            String rgnames = rc.getRegionName(((Player)sender).getName(), true);
-                            if(rgnames == null || rc.getRegionName(((Player)sender).getName(), false).equals(""))
+                            plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), "zones");
+                            String rgnames = zc.getZoneName(sender, true);
+                            if(rgnames == null || zc.getZoneName(sender, false).equals(""))
                             {
-                                sender.sendMessage(ChatColor.YELLOW + "Regionchat enabled but haven't found any active region!");
+                                sender.sendMessage(ChatColor.YELLOW + "ZoneChat enabled but haven't found any active zone!");
                             } else {
-                                sender.sendMessage(ChatColor.YELLOW + "Regionchat in regions "+ChatColor.WHITE+"["+rgnames+"]!");
+                                sender.sendMessage(ChatColor.YELLOW + "ZoneChat in zones "+ChatColor.WHITE+"["+rgnames+"]!");
                             }
                         } else {
                             cm.removeRecipient(((Player) sender).getName());
@@ -119,10 +120,9 @@ public class CommandRc implements Command {
                 }
             } else {
                 // It's the console!
-                throw new CommandSenderException("You need to be a player to use RegionChat!");
+                throw new CommandSenderException("You need to be a player to use ZoneChat!");
             }
         }
-
         return true;
     }
 }

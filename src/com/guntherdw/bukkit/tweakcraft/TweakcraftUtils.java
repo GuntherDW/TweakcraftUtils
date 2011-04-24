@@ -22,11 +22,13 @@ import com.ensifera.animosity.ircplugin.IRCPlugin;
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
+import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.zones.Zones;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -51,16 +53,17 @@ public class TweakcraftUtils extends JavaPlugin {
     protected Permissions perm = null;
     protected WorldGuardPlugin wg = null;
     protected IRCPlugin circ = null;
+    protected Zones zones = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
     private final ItemDB itemDB = new ItemDB(this);
     private final WorldManager worldmanager = new WorldManager(this);
+    private final ConfigurationHandler configHandler = new ConfigurationHandler(this);
     // private final
     public int playerLimit;
-    public int maxRange;
-    private Configuration seenconfig;
+
     protected boolean keepplayerhistory = false;
     private List<String> MOTDLines;
     public Map<String, String> playerReplyDB;
@@ -161,7 +164,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public String findPlayer(String partOfName) {
         for (Player p : this.getServer().getOnlinePlayers()) {
-            if (p.getName().toUpperCase().contains(partOfName.toUpperCase())) // found, return the fullname!
+            if (p.getName().toLowerCase().contains(partOfName.toLowerCase())) // found, return the fullname!
                 return p.getName();
         }
         // not found, just return partOfName
@@ -192,20 +195,7 @@ public class TweakcraftUtils extends JavaPlugin {
     public WorldGuardPlugin getWorldGuard() {
         return wg;
     }
-
-    public void reloadConfig() {
-        log.info("[TweakcraftUtils] Parsing configuration file...");
-        getConfiguration().load();
-        if (getConfiguration().getBoolean("keepplayerhistory", false)) {
-            log.info("[TweakcraftUtils] Keeping player history!");
-            File seenFile = new File(getDataFolder(), "players.yml");
-            seenconfig = new Configuration(seenFile);
-            seenconfig.load();
-            keepplayerhistory = true;
-        }
-        maxRange = getConfiguration().getInt("maxrange", 200);
-    }
-
+    
     public String getPlayerColor(String playername, boolean change) {
 
         String pref = "";
@@ -262,23 +252,42 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void setupCraftIRC() {
-        Plugin plugin = this.getServer().getPluginManager().getPlugin("IRCPlugin");
+        if(this.getConfigHandler().enableIRC) {
+            Plugin plugin = this.getServer().getPluginManager().getPlugin("IRCPlugin");
 
-        if (circ == null) {
-            if (plugin != null) {
-                circ = (IRCPlugin) plugin;
+            if (circ == null) {
+                if (plugin != null) {
+                    circ = (IRCPlugin) plugin;
+                }
             }
         }
     }
 
     public void setupWorldGuard() {
-        Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
+        if(this.getConfigHandler().enableWorldGuard) {
+            Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
 
-        if (wg == null) {
-            if (plugin != null) {
-                wg = (WorldGuardPlugin) plugin;
+            if (wg == null) {
+                if (plugin != null) {
+                    wg = (WorldGuardPlugin) plugin;
+                }
             }
         }
+    }
+
+    public void setupZones() {
+        if(this.getConfigHandler().enableZones) {
+            Plugin plugin = this.getServer().getPluginManager().getPlugin("Zones");
+
+            if(zones == null) {
+                if(plugin != null)
+                    zones = (Zones) plugin;
+            }
+        }
+    }
+
+    public Zones getZones() {
+        return zones;
     }
 
     public void reloadMOTD() {
@@ -319,13 +328,13 @@ public class TweakcraftUtils extends JavaPlugin {
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();
+        configHandler.reloadConfig();
         this.setupWorldGuard();
         this.setupCraftIRC();
+        this.setupZones();
 
         playerReplyDB = new HashMap<String, String>();
-
         this.registerEvents();
-        this.reloadConfig();
         this.setupPermissions();
 
         itemDB.loadDataBase();
@@ -341,18 +350,13 @@ public class TweakcraftUtils extends JavaPlugin {
         return donottplist;
     }
 
-    public boolean isKeepplayerhistory() {
-        return keepplayerhistory;
-    }
-
-    public Configuration getSeenconfig() {
-        return seenconfig;
-    }
-
     public void onDisable() {
         log.info("[TweakcraftUtils] Goodbye world!");
     }
 
+    public ConfigurationHandler getConfigHandler() {
+        return configHandler;
+    }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] unfilteredargs) {
 

@@ -42,7 +42,6 @@ public interface ChatMode {
      *
      * @return
      */
-
     public abstract List<Player> getRecipients(CommandSender sender);
 
     /**
@@ -64,7 +63,26 @@ public interface ChatMode {
      *
      * @return
      */
-
     public abstract List<String> getSubscribers();
 
+    /**
+     * Shows a little description about the ChatMode
+     *
+     * @return The description
+     */
+    public abstract String getDescription();
+
+    /**
+     * Check if it's enabled
+     *
+     * @return enabled
+     */
+    public abstract boolean isEnabled();
+
+    /**
+     * Gets the ChatMode's color
+     *
+     * @return the color
+     */
+    public abstract String getColor();
 }

@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.LocalChat;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.RegionChat;
+import com.guntherdw.bukkit.tweakcraft.Chat.Modes.ZoneChat;
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
@@ -64,6 +65,8 @@ public class CommandMe implements Command {
                         ((AdminChat) cm).broadcastMessage(player, "[" + ChatColor.GREEN + "A" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + ChatColor.GREEN + msg);
                     } else if (cm instanceof RegionChat) {
                         ((RegionChat) cm).broadcastMessage(player, "[" + ChatColor.AQUA + "R" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
+                    } else if (cm instanceof ZoneChat)  {
+                        ((ZoneChat) cm).broadcastMessage(player, "[" + ChatColor.AQUA + "Z" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
                     }
                 }
 

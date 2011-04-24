@@ -144,6 +144,11 @@ public class RegionChat implements ChatMode {
         return subscribers;
     }
 
+    @Override
+    public String getDescription() {
+        return "WorldGuard regions chat!";
+    }
+
     public String getRegionName(String sender, boolean color) {
         Player p = plugin.getServer().getPlayer(sender);
         if(p!=null) {
@@ -167,5 +172,13 @@ public class RegionChat implements ChatMode {
         } else {
             return null;
         }
+    }
+
+    public boolean isEnabled() {
+        return plugin.getConfigHandler().enableWorldGuard;
+    }
+
+    public String getColor() {
+        return ChatColor.AQUA.toString();
     }
 }
