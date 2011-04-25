@@ -18,10 +18,13 @@
 
 package com.guntherdw.bukkit.tweakcraft.Configuration;
 
+import com.guntherdw.bukkit.tweakcraft.Packages.LockdownLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author GuntherDW
@@ -31,6 +34,8 @@ public class ConfigurationHandler {
     private Configuration globalconfig, userconfig;
     private TweakcraftUtils plugin;
     private Configuration seenconfig;
+    private Map<String, Map<Integer, Boolean>> lsbindmap;
+    private Map<String, LockdownLocation> lockdowns;
 
     /**
      * Defaults
@@ -44,6 +49,8 @@ public class ConfigurationHandler {
 
     public ConfigurationHandler(TweakcraftUtils instance) {
         this.plugin = instance;
+        lsbindmap = new HashMap<String, Map<Integer, Boolean>>();
+        lockdowns = new HashMap<String, LockdownLocation>();
     }
 
     public void reloadConfig() {
@@ -91,5 +98,13 @@ public class ConfigurationHandler {
 
     public Configuration getSeenconfig() {
         return seenconfig;
+    }
+    
+    public Map<String, Map<Integer, Boolean>> getLsbindmap() {
+        return lsbindmap;
+    }
+
+    public Map<String, LockdownLocation> getLockdowns() {
+        return lockdowns;
     }
 }

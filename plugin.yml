@@ -148,9 +148,16 @@ commands:
     description: Strike lightning at command
     usage: /<command> [player]
     aliases: [ls]
+  strikebind:
+    description: Bind the lightning tool to a tool/item
+    usage: /<command>
+    aliases: [lsbind]
   rain:
     description: Turn storm on or off at command
     usage: /<command> <world> <on|off>
   thunder:
     description: Turn thunder on or off at command
     usage: /<command> <world> <on|off>
+  help:
+    description: Gets a nice list of commands available and and a description
+    usage: /<command>

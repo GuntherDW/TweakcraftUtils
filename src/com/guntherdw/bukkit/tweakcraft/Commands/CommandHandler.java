@@ -24,7 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandLightning;
 import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandRain;
-import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandThunder;
+import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandStrikeBind;import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandThunder;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 
@@ -63,6 +63,7 @@ public class CommandHandler {
         commandMap.put("banlist", new CommandBanlist());
         commandMap.put("compass", new CommandCompass());
         commandMap.put("getpos", new CommandGetpos());
+        commandMap.put("help", new CommandHelp());
         commandMap.put("item", new CommandItem());
         commandMap.put("kick", new CommandKick());
         commandMap.put("listworlds", new CommandListWorlds());
@@ -109,7 +110,7 @@ public class CommandHandler {
         commandMap.put("rain", new CommandRain());
         commandMap.put("strike", new CommandLightning());
         commandMap.put("thunder", new CommandThunder());
-
+        commandMap.put("strikebind", new CommandStrikeBind());
     }
 
     public TweakcraftUtils getPlugin() {

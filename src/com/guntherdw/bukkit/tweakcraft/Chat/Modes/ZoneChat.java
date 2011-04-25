@@ -47,10 +47,10 @@ public class ZoneChat implements ChatMode {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.AQUA+"Z"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.DARK_PURPLE+"Z"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
             }
             if(getZoneName(player, false).equals("")) {
-                sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a region!");
+                sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a zone!");
             } else if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
@@ -69,12 +69,7 @@ public class ZoneChat implements ChatMode {
             Player player = (Player) sender;
             com.zones.WorldManager wm = plugin.getZones().getWorldManager(player.getWorld());
             ZoneBase zb = wm.getActiveZone(player.getLocation());
-            for(Player p : player.getWorld().getPlayers()) {
-                if(zb.isInsideZone(p)) {
-                    recp.add(p);
-                }
-            }
-
+            recp.addAll(zb.getCharactersInside().values());
             if(!recp.contains(player)) {
                 recp.add(player);
             }
