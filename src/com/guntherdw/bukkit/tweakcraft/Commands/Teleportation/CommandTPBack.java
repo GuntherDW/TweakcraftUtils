@@ -46,7 +46,15 @@ public class CommandTPBack implements Command {
                 if(back == null) {
                     player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
                 } else {
+                    Integer remaining = plugin.getTelehistory().getRemaining(player.getName());
+                    String rem = "";
+                    if(remaining == null || remaining == 0) {
+                        rem = "Origin! No TPBack lines left!";
+                    } else {
+                        rem = remaining+" TPBack lines left!";
+                    }
                     player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
+                    player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
                     player.teleport(back);
                 }
             } else {

@@ -37,6 +37,14 @@ public class TeleportHistory {
         this.plugin = instance;
     }
 
+    public Integer getRemaining(String playername) {
+        if(!historymap.containsKey(playername)) {
+            return null;
+        } else {
+            return historymap.get(playername).size();
+        }
+    }
+
     public Location getLastEntry(String playername) {
         if(plugin.getConfigHandler().enableTPBack) {
             Location loc = null;
@@ -44,8 +52,13 @@ public class TeleportHistory {
                 return null;
             } else {
                 List<Location> locmap = historymap.get(playername);
-                loc = locmap.get(locmap.size());
-                locmap.remove(locmap.size());
+                loc = locmap.get(locmap.size()-1);
+                locmap.remove(locmap.size()-1);
+                if(locmap.size()==0) {
+                    historymap.remove(playername);
+                } else {
+                    historymap.put(playername, locmap);
+                }
             }
             return loc;
         } else {
@@ -61,7 +74,7 @@ public class TeleportHistory {
             }
             if(historymap.containsKey(playername)) {
                  locmap = historymap.get(playername);
-                if(!locmap.get(locmap.size()).equals(loc)) { // Do not save identical tpback issues
+                if(!locmap.get(locmap.size()-1).equals(loc)) { // Do not save identical tpback issues
                     locmap.add(loc);
                 }
             } else {

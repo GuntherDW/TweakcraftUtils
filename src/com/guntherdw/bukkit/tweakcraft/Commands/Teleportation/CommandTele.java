@@ -55,15 +55,18 @@ public class CommandTele implements Command {
                 y = 129;
                 z = (int)l.getZ();
                 world = l.getWorld();
-            } else if(args.length==1 && args[0].equalsIgnoreCase("chunk")) {
+            } else if(args.length>0 && args[0].equalsIgnoreCase("chunk")) {
                 if(args.length<3) {
                     throw new CommandUsageException("I need at least 2 variables!");
                 }
                 try {
+                    world = player.getWorld();
                     x = Integer.parseInt(args[1])<<4;
                     z = Integer.parseInt(args[2])<<4;
                     if(args.length>3) {
                         y = Integer.parseInt(args[3]);
+                    } else {
+                        y = 129;
                     }
                     if(args.length>4) {
                         if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(args[4]))) {
