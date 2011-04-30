@@ -42,9 +42,6 @@ public class CommandTPBack implements Command {
             if(!plugin.check(player, "tpback"))
                 throw new PermissionsException(command);
             if(plugin.getConfigHandler().enableTPBack) {
-
-            } else {
-                player.sendMessage(ChatColor.RED+"TP History isn't enabled!");
                 Location back = plugin.getTelehistory().getLastEntry(player.getName());
                 if(back == null) {
                     player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
@@ -52,6 +49,8 @@ public class CommandTPBack implements Command {
                     player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
                     player.teleport(back);
                 }
+            } else {
+                player.sendMessage(ChatColor.RED+"TP History isn't enabled!");
             }
         } else {
             throw new CommandSenderException("Consoles need tp history nowadays?");
