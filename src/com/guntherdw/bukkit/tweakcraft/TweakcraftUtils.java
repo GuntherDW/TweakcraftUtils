@@ -296,7 +296,7 @@ public class TweakcraftUtils extends JavaPlugin {
         MOTDLines = new ArrayList<String>();
         try {
             BufferedReader motdfilereader = new BufferedReader(new FileReader(motdfile));
-            String line = motdfilereader.readLine();
+            String line = "";
             while ((line = motdfilereader.readLine()) != null) {
                 MOTDLines.add(line.replace('&', '§'));
             }
@@ -309,11 +309,23 @@ public class TweakcraftUtils extends JavaPlugin {
 
     }
 
+    public CommandHandler getCommandHandler() {
+        return commandHandler;
+    }
+
     public boolean check(Player player, String permNode) {
         if (perm == null || player.isOp()) {
             return true;
         } else {
             return perm.Security.permission(player, "tweakcraftutils." + permNode);
+        }
+    }
+
+    public boolean checkfull(Player player, String permNode) {
+        if (perm == null || player.isOp()) {
+            return true;
+        } else {
+            return perm.Security.permission(player, permNode);
         }
     }
 

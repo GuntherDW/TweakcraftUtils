@@ -87,4 +87,9 @@ public class CommandGetpos implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "getpos";
+    }
 }

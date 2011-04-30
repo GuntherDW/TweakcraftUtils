@@ -125,4 +125,9 @@ public class CommandRc implements Command {
 
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "chat.mode.region";
+    }
 }

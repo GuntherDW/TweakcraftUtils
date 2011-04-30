@@ -1,6 +1,6 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 1.4.5
+version: 1.4.6
 commands:
   tweakcraft:
     description: General tweakcraftutils command
@@ -26,7 +26,7 @@ commands:
     description: Makes you chat like normal again
     usage: /<command>
   who:
-    description: Shows the list of currently connected players
+    description: List of currently connected players
     usage: /<command>
     aliases: playerlist
   tp:
@@ -93,7 +93,7 @@ commands:
     description: Mute a player
     usage: /<command> <player>
   item:
-    description: Give yourself an item of choise
+    description: Give yourself an item of choice
     usage: /<command> <itemID/itemName> [amount] [player]
     aliases: [i, give]
   world:
@@ -130,7 +130,7 @@ commands:
     description: Send a message to a player
     usage: /<command> <player> <message>
   reply:
-    description: Reply to the last player that sent a message to you
+    description: Reply to the last msg
     usage: /<command> <message>
     aliases: [r, re]
   banlist:
@@ -141,7 +141,7 @@ commands:
     usage: /<command>
     aliases: lw
   clearinventory:
-    description: Clears yours or another player's inventory
+    description: Clear a player's inventory
     usage: /<command> [player]
     aliases: [cli]
   strike:
@@ -159,5 +159,5 @@ commands:
     description: Turn thunder on or off at command
     usage: /<command> <world> <on|off>
   help:
-    description: Gets a nice list of commands available and and a description
+    description: What you're reading right now
     usage: /<command>

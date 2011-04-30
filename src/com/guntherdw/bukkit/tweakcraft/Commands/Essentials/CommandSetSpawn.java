@@ -54,4 +54,9 @@ public class CommandSetSpawn implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "setspawn";
+    }
 }

@@ -174,4 +174,9 @@ public class CommandIgnite implements Command {
         ALL,
         MOBS
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return null;
+    }
 }

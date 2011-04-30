@@ -108,4 +108,9 @@ public class CommandSpawnmob implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "spawnmob";
+    }
 }

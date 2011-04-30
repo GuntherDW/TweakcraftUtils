@@ -56,4 +56,9 @@ public class CommandBroadcast implements Command {
 
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "broadcast";
+    }
 }

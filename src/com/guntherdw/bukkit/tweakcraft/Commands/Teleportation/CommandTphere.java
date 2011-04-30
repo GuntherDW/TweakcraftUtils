@@ -64,7 +64,11 @@ public class CommandTphere implements Command {
         }
 
         return true;
+    }
 
+    @Override
+    public String getPermissionSuffix() {
+        return "tphere";
     }
 
 }

@@ -50,4 +50,10 @@ public class CommandAdmoff implements Command {
 
         return true;
     }
+
+
+    @Override
+    public String getPermissionSuffix() {
+        return "admin";
+    }
 }

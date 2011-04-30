@@ -104,12 +104,18 @@ public class CommandChatMode implements Command {
                         ChatMode cm = ch.getChatMode(chatMode);
                         if((chatMode.equals("admin") && ((AdminChat)cm).isPlayerAllowed(player.getName()))
                                 || plugin.check(player, "chat.mode."+chatMode)) {
-                            ChatMode oldcm = ch.getPlayerChatMode(player);
-                            if(oldcm != null)
-                                oldcm.removeRecipient(player.getName());
 
-                            ch.setPlayerchatmode(player.getName(), chatMode);
-                            cm.addRecipient(player.getName());
+                            if(cm.isEnabled()) {
+
+                                ChatMode oldcm = ch.getPlayerChatMode(player);
+                                if(oldcm != null)
+                                    oldcm.removeRecipient(player.getName());
+
+                                ch.setPlayerchatmode(player.getName(), chatMode);
+                                cm.addRecipient(player.getName());
+                            } else {
+                                throw new CommandException(ChatColor.GOLD+"That ChatMode is not enabled");
+                            }
                         }
                         else
                             throw new PermissionsException("You don't have the permission to join this chatmode!");
@@ -135,15 +141,22 @@ public class CommandChatMode implements Command {
 
                         if((chatMode.equals("admin") && ((AdminChat)cm).isPlayerAllowed(player.getName()))
                                     || plugin.check(player, "chat.mode."+chatMode)) {
-                            String spam = "";
-                            int x = 0;
-                            for (String m : args) {
-                                if(x!=0)
-                                    spam += m + " ";
-                                x++;
+                            if(cm.isEnabled())
+                            {
+                                String spam;
+                                spam = "";
+
+                                int x = 0;
+                                for (String m : args) {
+                                    if(x!=0)
+                                        spam += m + " ";
+                                    x++;
+                                }
+                                spam = spam.substring(0, spam.length() - 1);
+                                cm.sendMessage(player, spam);
+                            } else {
+                                throw new CommandException(ChatColor.GOLD+"That ChatMode is not enabled");
                             }
-                            spam = spam.substring(0, spam.length() - 1);
-                            cm.sendMessage(player, spam);
                         } else {
                             throw new PermissionsException("You don't have the permission to join this chatmode!");
                         }
@@ -158,5 +171,10 @@ public class CommandChatMode implements Command {
             throw new CommandSenderException("What are you doing here?");
         }
         return true;
+    }
+
+    @Override
+    public String getPermissionSuffix() {
+        return null;
     }
 }

@@ -112,4 +112,9 @@ public class CommandLc implements Command {
 
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "chat.mode.local";
+    }
 }

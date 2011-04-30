@@ -91,4 +91,10 @@ public class CommandAdminRemove implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "admon";
+    }
+
 }

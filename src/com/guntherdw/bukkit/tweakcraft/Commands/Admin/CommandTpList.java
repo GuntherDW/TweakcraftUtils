@@ -56,4 +56,9 @@ public class CommandTpList implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "tplist";
+    }
 }

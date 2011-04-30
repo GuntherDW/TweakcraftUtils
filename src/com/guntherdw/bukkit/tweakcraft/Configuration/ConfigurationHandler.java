@@ -22,8 +22,11 @@ import com.guntherdw.bukkit.tweakcraft.Packages.LockdownLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.util.config.Configuration;
 
+import javax.naming.ldap.ExtendedRequest;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +40,7 @@ public class ConfigurationHandler {
     private Map<String, Map<Integer, Boolean>> lsbindmap;
     private Map<String, LockdownLocation> lockdowns;
 
+
     /**
      * Defaults
      */
@@ -45,6 +49,9 @@ public class ConfigurationHandler {
     public boolean enableWorldGuard = false;
     public boolean enableZones = false;
     public boolean enableIRC = false;
+    public Integer helpPerPage = 10;
+    public List<String> extrahelpplugin = new ArrayList<String>();
+    public List<String> extrahelphide = new ArrayList<String>();
     // public Map<String, String>
 
     public ConfigurationHandler(TweakcraftUtils instance) {
@@ -62,6 +69,20 @@ public class ConfigurationHandler {
         enableWorldGuard = plugin.getConfiguration().getBoolean("enableWorldGuard", false);
         enableZones = plugin.getConfiguration().getBoolean("enableZones", false);
         enableIRC = plugin.getConfiguration().getBoolean("enableIRC", false);
+        extrahelpplugin = new ArrayList<String>();
+        for(String plist : plugin.getConfiguration().getStringList("extrahelp.plugins", null)) {
+            if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
+                if(!extrahelpplugin.contains(plist)) {
+                    plugin.getLogger().info("[TweakcraftUtils] Adding "+plist+" to the /help addons.");
+                    extrahelpplugin.add(plist);
+                } else {
+                    plugin.getLogger().info("[TweakcraftUtils] WARNING: "+plist+" is on the extrahelp list multiple times!");
+                }
+            } else {
+                plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
+            }
+        }
+        extrahelphide = plugin.getConfiguration().getStringList("extrahelp.hide", null);
         if (plugin.getConfiguration().getBoolean("keepplayerhistory", false)) {
             plugin.getLogger().info("[TweakcraftUtils] Keeping player history!");
             File seenFile = new File(plugin.getDataFolder(), "players.yml");

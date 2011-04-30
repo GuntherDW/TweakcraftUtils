@@ -132,4 +132,9 @@ public class CommandTp implements Command {
         pfrom.teleport(pto);
     }
 
+    @Override
+    public String getPermissionSuffix() {
+        return "tp";
+    }
+
 }

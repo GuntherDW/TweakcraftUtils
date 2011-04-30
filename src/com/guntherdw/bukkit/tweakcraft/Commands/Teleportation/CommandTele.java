@@ -86,4 +86,9 @@ public class CommandTele implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "tele";
+    }
 }

@@ -68,4 +68,9 @@ public class CommandWorld implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return null;
+    }
 }

@@ -69,4 +69,9 @@ public class CommandMute implements Command {
 
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "mute";
+    }
 }

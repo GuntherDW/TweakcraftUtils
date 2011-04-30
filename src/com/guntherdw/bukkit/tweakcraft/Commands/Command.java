@@ -41,4 +41,12 @@ public interface Command {
      */
     public abstract boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException;
+
+    /**
+     * Get the command's main permission node, or null if there isn't one
+     * This is without the tweakcraftutils. prefix!
+     *
+     * @return The node
+     */
+    public abstract String getPermissionSuffix();
 }

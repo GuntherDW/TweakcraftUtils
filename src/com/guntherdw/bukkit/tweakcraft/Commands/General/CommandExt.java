@@ -169,4 +169,9 @@ public class CommandExt implements Command {
         MOBS
     }
 
+    @Override
+    public String getPermissionSuffix() {
+        return null;
+    }
+
 }

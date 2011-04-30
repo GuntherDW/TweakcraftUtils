@@ -69,4 +69,9 @@ public class CommandTpOff implements Command {
         }
     }
 
+    @Override
+    public String getPermissionSuffix() {
+        return "tpoff";
+    }
+
 }

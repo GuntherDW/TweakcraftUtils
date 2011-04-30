@@ -100,4 +100,9 @@ public class CommandWho implements Command {
 
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return null;
+    }
 }

@@ -40,7 +40,7 @@ public class CommandBan implements Command {
                 throw new PermissionsException(command);
         BanHandler handler = plugin.getBanhandler();
         if (args.length < 1)
-            throw new CommandUsageException(ChatColor.YELLOW + "I need at leat 1 name to ban!");
+            throw new CommandUsageException(ChatColor.YELLOW + "I need at least 1 name to ban!");
         if (handler.isBanned(args[0])) {
             sender.sendMessage(ChatColor.YELLOW + "This player is already banned!");
         } else {
@@ -66,5 +66,10 @@ public class CommandBan implements Command {
             handler.saveBans();
         }
         return true;
+    }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "ban";
     }
 }

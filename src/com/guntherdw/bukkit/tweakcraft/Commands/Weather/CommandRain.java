@@ -61,7 +61,7 @@ public class CommandRain implements Command {
             } else {
                 throw new CommandUsageException("on/off or worldname please!");
             }
-        } else if(args.length > 2) {
+        } else if(args.length > 1) {
             World w = plugin.getServer().getWorld(args[0]);
             if(w==null) {
                 throw new CommandUsageException("Can't find world!");
@@ -75,8 +75,11 @@ public class CommandRain implements Command {
                 }
             }
         }
-        
-
         return true;
+    }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "weather";
     }
 }

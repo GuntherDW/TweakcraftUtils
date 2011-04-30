@@ -106,4 +106,9 @@ public class CommandPlugin implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "plugins";
+    }
 }

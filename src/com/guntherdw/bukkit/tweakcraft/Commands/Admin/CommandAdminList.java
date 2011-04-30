@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 public class CommandAdminList implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin) throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
-            if (!plugin.check((Player) sender, "adminlist"))
+            if (!plugin.check((Player) sender, getPermissionSuffix()))
                 throw new PermissionsException(command);
         }
         try {
@@ -60,5 +60,10 @@ public class CommandAdminList implements Command {
             throw new CommandException("Exception thrown while fetching ChatMode!");
         }
         return true;
+    }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "adminlist";
     }
 }

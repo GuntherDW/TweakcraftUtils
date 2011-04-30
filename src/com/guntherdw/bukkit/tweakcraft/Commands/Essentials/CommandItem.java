@@ -121,4 +121,9 @@ public class CommandItem implements Command {
         }
         return true;
     }
+
+    @Override
+    public String getPermissionSuffix() {
+        return "item";
+    }
 }
