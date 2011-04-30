@@ -73,13 +73,8 @@ public class CommandTp implements Command {
                                 player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + pto.getName() + "!");
                                 pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
-                                /* boolean teleportwarning = true;
-                               if(teleportwarning) */
                                 pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
-                                // This is supposed to be fixed nao?
-                                /* if (!player.getWorld().getName().equals(pto.getWorld().getName())) {
-                                    player.teleport(pto.getWorld().getSpawnLocation());
-                                } */
+                                plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
                                 player.teleport(pto);
                                 if (override)
                                     player.sendMessage(ChatColor.RED + "Forced tp!");
@@ -129,6 +124,7 @@ public class CommandTp implements Command {
             player = "CONSOLE";
         }
         plugin.getLogger().info("[TweakcraftUtils] " + player + " teleported " + pfrom.getName() + " to " + pto.getName() + "!");
+        plugin.getTelehistory().addHistory(pfrom.getName(), pfrom.getLocation());
         pfrom.teleport(pto);
     }
 

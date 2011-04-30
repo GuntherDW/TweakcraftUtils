@@ -161,3 +161,7 @@ commands:
   help:
     description: What you're reading right now
     usage: /<command>
+  back:
+    description: Get back to where you previously tp'ed from
+    usage: /<command>
+    aliases: [tpb, tpback]

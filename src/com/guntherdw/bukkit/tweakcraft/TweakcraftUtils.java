@@ -38,7 +38,6 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 
 import java.io.*;
 import java.util.*;
@@ -61,6 +60,7 @@ public class TweakcraftUtils extends JavaPlugin {
     private final ItemDB itemDB = new ItemDB(this);
     private final WorldManager worldmanager = new WorldManager(this);
     private final ConfigurationHandler configHandler = new ConfigurationHandler(this);
+    private final TeleportHistory telehistory = new TeleportHistory(this);
     // private final
     public int playerLimit;
 
@@ -88,6 +88,10 @@ public class TweakcraftUtils extends JavaPlugin {
         } else {
             return null;
         }
+    }
+
+    public TeleportHistory getTelehistory() {
+        return telehistory;
     }
 
     public TweakcraftPlayerListener getPlayerListener() {

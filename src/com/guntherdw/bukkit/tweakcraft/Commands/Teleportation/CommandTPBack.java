@@ -19,57 +19,48 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.Teleportation;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 
 /**
  * @author GuntherDW
  */
-public class CommandTphere implements Command {
-
+public class CommandTPBack implements Command {
+    @Override
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
-            throws PermissionsException, CommandSenderException, CommandUsageException {
-        if (sender instanceof Player) {
-            if (!plugin.check((Player) sender, "tphere"))
-                throw new PermissionsException(command);
-
-            if (args.length < 1) {
-                throw new CommandUsageException("You need to give me a name!");
-            }
+            throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+        if(sender instanceof Player) {
             Player player = (Player) sender;
-            List<Player> p = plugin.getServer().matchPlayer(args[0]);
-            if (p.size() < 1) {
-                player.sendMessage(ChatColor.YELLOW + "Can't find player!");
+            if(!plugin.check(player, "tpback"))
+                throw new PermissionsException(command);
+            if(plugin.getConfigHandler().enableTPBack) {
+
             } else {
-                Player pto = p.get(0);
-                if (pto.getName().equals(player.getName())) {
-                    player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
+                player.sendMessage(ChatColor.RED+"TP History isn't enabled!");
+                Location back = plugin.getTelehistory().getLastEntry(player.getName());
+                if(back == null) {
+                    player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
                 } else {
-                    player.sendMessage(ChatColor.YELLOW + "Teleporting " + plugin.getPlayerColor(pto.getName(), false)
-                            + pto.getName() + ChatColor.YELLOW + " to you!");
-                    pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.YELLOW
-                            + " teleported you to him!");
-                    plugin.getTelehistory().addHistory(pto.getName(), pto.getLocation());
-                    pto.teleport(player);
+                    player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
+                    player.teleport(back);
                 }
             }
         } else {
-            throw new CommandSenderException("You need to be player to teleport someone to you!");
+            throw new CommandSenderException("Consoles need tp history nowadays?");
         }
-
         return true;
     }
 
     @Override
     public String getPermissionSuffix() {
-        return "tphere";
+        return "tpback";
     }
-
 }

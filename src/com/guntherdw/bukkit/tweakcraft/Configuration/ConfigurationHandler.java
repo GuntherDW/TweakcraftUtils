@@ -20,9 +20,9 @@ package com.guntherdw.bukkit.tweakcraft.Configuration;
 
 import com.guntherdw.bukkit.tweakcraft.Packages.LockdownLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.Location;
 import org.bukkit.util.config.Configuration;
 
-import javax.naming.ldap.ExtendedRequest;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class ConfigurationHandler {
     private Configuration seenconfig;
     private Map<String, Map<Integer, Boolean>> lsbindmap;
     private Map<String, LockdownLocation> lockdowns;
-
+    private Map<String, List<Location>> tpfromlocations;
 
     /**
      * Defaults
@@ -49,6 +49,7 @@ public class ConfigurationHandler {
     public boolean enableWorldGuard = false;
     public boolean enableZones = false;
     public boolean enableIRC = false;
+    public boolean enableTPBack = true;
     public Integer helpPerPage = 10;
     public List<String> extrahelpplugin = new ArrayList<String>();
     public List<String> extrahelphide = new ArrayList<String>();
@@ -69,6 +70,7 @@ public class ConfigurationHandler {
         enableWorldGuard = plugin.getConfiguration().getBoolean("enableWorldGuard", false);
         enableZones = plugin.getConfiguration().getBoolean("enableZones", false);
         enableIRC = plugin.getConfiguration().getBoolean("enableIRC", false);
+        enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
         extrahelpplugin = new ArrayList<String>();
         for(String plist : plugin.getConfiguration().getStringList("extrahelp.plugins", null)) {
             if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {

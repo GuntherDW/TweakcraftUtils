@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.Teleportation;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
@@ -35,7 +36,7 @@ import org.bukkit.entity.Player;
 public class CommandTele implements Command {
 
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
-            throws PermissionsException, CommandSenderException, CommandUsageException {
+            throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "tele")) {
                 throw new PermissionsException(command);
@@ -47,21 +48,47 @@ public class CommandTele implements Command {
             World world = null;
             
             if(args.length == 0) {
-                throw new CommandUsageException("Usage: /tele up|x z (y)");
+                throw new CommandUsageException("Usage: /tele up|x z (y) <world> or /tele chunk x y (z) <world>");
             } else if(args.length==1 && args[0].equalsIgnoreCase("up")) {
                 Location l = player.getLocation().clone();
                 x = (int)l.getX();
                 y = 129;
                 z = (int)l.getZ();
                 world = l.getWorld();
-            } else {
+            } else if(args.length==1 && args[0].equalsIgnoreCase("chunk")) {
+                if(args.length<3) {
+                    throw new CommandUsageException("I need at least 2 variables!");
+                }
+                try {
+                    x = Integer.parseInt(args[1])<<4;
+                    z = Integer.parseInt(args[2])<<4;
+                    if(args.length>3) {
+                        y = Integer.parseInt(args[3]);
+                    }
+                    if(args.length>4) {
+                        if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(args[4]))) {
+                            world = plugin.getServer().getWorld(args[4]);
+                        } else {
+                            world = ((Player) sender).getWorld();
+                        }
+                    }
 
-                x = Integer.parseInt(args[0]);
-                z = Integer.parseInt(args[1]);
-                if (args.length == 3) {
-                    y = Integer.parseInt(args[2]);
-                } else {
-                    y = 129;
+                } catch(NumberFormatException ex) {
+                    throw new CommandException("I need numbers not strings!");
+                } catch(NullPointerException ex) {
+                    throw new CommandException("I can't find that world!");
+                }
+            } else {
+                try{
+                    x = Integer.parseInt(args[0]);
+                    z = Integer.parseInt(args[1]);
+                    if (args.length == 3) {
+                        y = Integer.parseInt(args[2]);
+                    } else {
+                        y = 129;
+                    }
+                } catch(NumberFormatException ex) {
+                    throw new CommandException("I need numbers not strings!");
                 }
                 if (args.length == 4) {
                     try {
@@ -78,6 +105,7 @@ public class CommandTele implements Command {
                 }
             }
             Location loc = new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue());
+            plugin.getTelehistory().addHistory(((Player)sender).getName(), ((Player)sender).getLocation());
             ((Player) sender).teleport(loc);
 
 

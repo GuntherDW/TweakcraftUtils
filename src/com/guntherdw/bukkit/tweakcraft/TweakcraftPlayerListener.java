@@ -63,8 +63,6 @@ public class TweakcraftPlayerListener extends PlayerListener {
         ChatHandler ch = plugin.getChathandler();
         ChatMode cm = ch.getPlayerChatMode(player);
 
-
-
         if (ch.getMutedPlayers().contains(player.getName().toLowerCase())) {
             player.sendMessage(ChatColor.GOLD + "You are muted! No one can hear you.");
             plugin.getLogger().info("[TweakcraftUtils] Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
@@ -159,21 +157,13 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if (plugin.getCraftIRC() != null) {
                 plugin.getCraftIRC().sendMessageToTag("STEALTH QUIT : " +event.getPlayer().getName() ,"mchatadmin");
             }
-            /* try {
-                ChatHandler ch = plugin.getChathandler();
-                ChatMode    cm = ch.getChatMode("admin");
-                AdminChat   am = (AdminChat) cm; */
-                for(Player play : plugin.getServer().getOnlinePlayers())
+            for(Player play : plugin.getServer().getOnlinePlayers())
+            {
+                if(plugin.check(play, "tpinvis"))
                 {
-                    if(plugin.check(play, "tpinvis"))
-                    {
-                        play.sendMessage(ChatColor.AQUA+"Stealth quit : "+event.getPlayer().getDisplayName());
-                    }
+                    play.sendMessage(ChatColor.AQUA+"Stealth quit : "+event.getPlayer().getDisplayName());
                 }
-                // am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
-            /* } catch (ChatModeException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } */
+            }
         }
     }
 

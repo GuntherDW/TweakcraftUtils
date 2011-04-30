@@ -99,6 +99,7 @@ public class CommandHandler {
          */
         commandMap.put("tele", new CommandTele());
         commandMap.put("tp", new CommandTp());
+        commandMap.put("tpback", new CommandTPBack());
         commandMap.put("tphere", new CommandTphere());
         commandMap.put("tpoff", new CommandTpOff());
         commandMap.put("tpon", new CommandTpOn());
