@@ -53,10 +53,13 @@ public class CommandWorld implements Command {
                     throw new CommandUsageException(ChatColor.YELLOW + "Can't find that world!");
                 }
                 if (world != null) {
-                    if (!plugin.check(player, "worlds." + world.getName()))
+                    if (!plugin.check(player, "worlds." + world.getName())) {
                         throw new PermissionsException(command);
-                    else
+                    }
+                    else {
+                        plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
                         player.teleport(world.getSpawnLocation());
+                    }
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Can't find that world!");
                 }
