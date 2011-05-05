@@ -19,16 +19,20 @@
 package com.guntherdw.bukkit.tweakcraft;
 
 import com.ensifera.animosity.ircplugin.IRCPlugin;
+
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
+import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijikokun.bukkit.Permissions.Permissions;
+
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -61,10 +65,8 @@ public class TweakcraftUtils extends JavaPlugin {
     private final WorldManager worldmanager = new WorldManager(this);
     private final ConfigurationHandler configHandler = new ConfigurationHandler(this);
     private final TeleportHistory telehistory = new TeleportHistory(this);
-    // private final
-    public int playerLimit;
+    private final TamerTool tamertool = new TamerTool(this);
 
-    protected boolean keepplayerhistory = false;
     private List<String> MOTDLines;
     public Map<String, String> playerReplyDB;
     private final ChatHandler chathandler = new ChatHandler(this);
@@ -108,6 +110,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public WorldManager getworldManager() {
         return worldmanager;
+    }
+
+    public TamerTool getTamerTool() {
+        return tamertool;
     }
 
     public String getCompassDirection(Float rotation) {
@@ -183,6 +189,7 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
     }
 
     public Logger getLogger() {
@@ -341,7 +348,6 @@ public class TweakcraftUtils extends JavaPlugin {
 
         PluginDescriptionFile pdfFile = this.getDescription();
         
-        playerLimit = this.getServer().getMaxPlayers();
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();

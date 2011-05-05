@@ -94,7 +94,7 @@ public class CommandStrikeBind implements Command {
             int item = player.getItemInHand().getTypeId();
             if (item > 0 && item < 255) {
                 player.sendMessage(ChatColor.GOLD + "Can't bind to "+ ItemType.toName(item)+". Can't use blocks!");
-            } else if (item == 263 || item == 348) {
+            } else if (item == 263 || item == 348 || item == 0) {
                 player.sendMessage(ChatColor.GOLD + "Can't bind to "+ItemType.toName(item)+". Item is nog usable!");
             } else {
                 player.sendMessage(ChatColor.GOLD + "Strike tool bound to "+ItemType.toName(item)+"."+(left?" (left click)":""));

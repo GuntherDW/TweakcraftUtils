@@ -21,6 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Configuration;
 import com.guntherdw.bukkit.tweakcraft.Packages.LockdownLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -53,6 +54,8 @@ public class ConfigurationHandler {
     public Integer helpPerPage = 10;
     public List<String> extrahelpplugin = new ArrayList<String>();
     public List<String> extrahelphide = new ArrayList<String>();
+    public boolean enabletamertool = true;
+    public int     tamertoolid = Material.STICK.getId();
     // public Map<String, String>
 
     public ConfigurationHandler(TweakcraftUtils instance) {
@@ -93,6 +96,8 @@ public class ConfigurationHandler {
             this.enableSeenConfig = true;
         }
         this.localchatdistance = plugin.getConfiguration().getInt("maxrange", 200);
+        this.enabletamertool =  plugin.getConfiguration().getBoolean("tamer.enabled", true);
+        this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
     }
 
     public Configuration getGlobalconfig() {

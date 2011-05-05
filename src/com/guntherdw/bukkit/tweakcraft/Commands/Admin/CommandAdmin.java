@@ -39,7 +39,8 @@ public class CommandAdmin implements Command {
             String msg = "";
             for (String m : args)
                 msg += m + " ";
-            msg = msg.substring(0, msg.length() - 1);
+            if(msg.length()>0)
+                msg = msg.substring(0, msg.length() - 1);
 
             if (sender instanceof Player) {
                 onlist = (cm.getSubscribers().contains(((Player) sender).getName())

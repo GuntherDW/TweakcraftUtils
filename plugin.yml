@@ -162,6 +162,12 @@ commands:
     description: What you're reading right now
     usage: /<command>
   tpback:
-    description: Get back to where you previously tp'ed from
+    description: Go back to where you previously tp'ed from
     usage: /<command>
     aliases: [tpb, back]
+  debug:
+    description: Various debug commands
+    usage: /<command> <test>
+  tamer:
+    description: Tamer tool control
+    usage: /<command> <mode>

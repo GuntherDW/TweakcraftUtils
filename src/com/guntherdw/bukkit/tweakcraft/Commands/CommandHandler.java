@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
+import com.guntherdw.bukkit.tweakcraft.Commands.Debug.CommandDebug;
 import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.*;
@@ -93,6 +94,7 @@ public class CommandHandler {
         commandMap.put("rc", new CommandRc());
         commandMap.put("zc", new CommandZc());
         commandMap.put("chatmode", new CommandChatMode());
+        commandMap.put("tamer", new CommandTamer());
 
         /**
          * Teleportation commands
@@ -112,6 +114,13 @@ public class CommandHandler {
         commandMap.put("strike", new CommandLightning());
         commandMap.put("thunder", new CommandThunder());
         commandMap.put("strikebind", new CommandStrikeBind());
+
+        /**
+         * Debug commands
+         */
+
+        commandMap.put("debug", new CommandDebug());
+
     }
 
     public TweakcraftUtils getPlugin() {

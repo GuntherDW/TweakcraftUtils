@@ -25,7 +25,9 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 
@@ -171,27 +173,27 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String playername = event.getPlayer().getName();
         if(plugin.getConfigHandler().getLsbindmap().containsKey(playername)) {
             Map<Integer, Boolean> bind = plugin.getConfigHandler().getLsbindmap().get(playername);
-            for(Integer i : bind.keySet()) {
-
-                if(((event.getItem()==null)&&i==0)
-                        || (event.getItem().getTypeId() == i)) {
-                    Action a = event.getAction();
-                    if((!bind.get(i) && (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)))
-                    || ( bind.get(i) && (a.equals(Action. LEFT_CLICK_AIR) || a.equals(Action. LEFT_CLICK_BLOCK)))) {
-                        Location target = null;
-                        if(plugin.getConfigHandler().getLockdowns().containsKey(playername)) {
-                            target = plugin.getConfigHandler().getLockdowns().get(playername).getTarget();
-                        } else {
-                            Location loc = event.getPlayer().getTargetBlock(null, 200).getLocation();
-                            loc.setY(loc.getY()+1);
-                            target = loc.clone();
-                        }
-                        if(target!=null) {
-                            target.getWorld().strikeLightning(target);
+            if(bind.keySet().size()>0) {
+                for(Integer i : bind.keySet()) {
+                    if(( event.getItem()==null && i==0 )
+                            || (event.getItem().getTypeId() == i)) {
+                        Action a = event.getAction();
+                        if((!bind.get(i) && (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)))
+                        || ( bind.get(i) && (a.equals(Action. LEFT_CLICK_AIR) || a.equals(Action. LEFT_CLICK_BLOCK)))) {
+                            Location target = null;
+                            if(plugin.getConfigHandler().getLockdowns().containsKey(playername)) {
+                                target = plugin.getConfigHandler().getLockdowns().get(playername).getTarget();
+                            } else {
+                                Location loc = event.getPlayer().getTargetBlock(null, 200).getLocation();
+                                loc.setY(loc.getY()+1);
+                                target = loc.clone();
+                            }
+                            if(target!=null) {
+                                target.getWorld().strikeLightning(target);
+                            }
                         }
                     }
                 }
-                
             }
         }
     }
@@ -205,6 +207,23 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
         for(String s : lijst) {
             plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
+        }
+    }
+
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        Entity entity = event.getRightClicked();
+        Player player = event.getPlayer();
+        if(plugin.getConfigHandler().enabletamertool) {
+            if(entity instanceof Wolf) {
+                if(player.getItemInHand() != null &&
+                   player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
+
+                    if(plugin.getTamerTool().getTamers().containsKey(player)) {
+                        event.setCancelled(true);
+                        plugin.getTamerTool().handleEvent(player, (Wolf) entity);
+                    }
+                }
+            }
         }
     }
 
