@@ -49,7 +49,7 @@ public class TamerTool {
                 Player ptamer = (Player) tamer;
                 boolean allowed = true;
                 if(!ptamer.equals(player)) {
-                    if(plugin.check(player, "tamer.info.other"))
+                    if(!plugin.check(player, "tamer.info.other"))
                         allowed = false;
                 }
                 if(allowed) {
