@@ -24,6 +24,8 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -75,7 +77,7 @@ public class CommandTp implements Command {
                             } else {
                                 pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
                                 plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
-                                player.teleport(pto);
+                                player.teleport(getTpLocation(pto));
                                 if (override)
                                     player.sendMessage(ChatColor.RED + "Forced tp!");
                                 plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + pto.getName() + "!");
@@ -98,6 +100,19 @@ public class CommandTp implements Command {
         }
 
         return true;
+    }
+    private static int floor(double d) { int rt = (int) d; return rt > d ? rt-1 : rt; }
+    private Location getTpLocation(Player player) {
+    	Location loc = player.getLocation();
+    	int x = floor(loc.getX()), y = floor(loc.getY())-1,  z = floor(loc.getZ());
+    	for(int dx = -1; dx < 1;dx++)
+    		for(int dz = -1; dz <= 1;dz++)
+    			if(validSpot(loc.getWorld(),x+dx,y,z+dz))
+    				return new Location(loc.getWorld(),x+dx,y+1,z+dz);
+    	return loc;
+    }
+    private boolean validSpot(World world,int x, int y, int z) {
+    	return world.getBlockTypeIdAt(x, y, z) != 0 && world.getBlockTypeIdAt(x, y+1, z) == 0 && world.getBlockTypeIdAt(x, y+2, z) == 0; 
     }
 
     private void tpfromto(TweakcraftUtils plugin, CommandSender sender, String p1, String p2) {
