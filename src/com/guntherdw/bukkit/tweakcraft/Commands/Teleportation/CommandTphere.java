@@ -27,7 +27,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 
 /**
  * @author GuntherDW
@@ -44,17 +43,18 @@ public class CommandTphere implements Command {
                 throw new CommandUsageException("You need to give me a name!");
             }
             Player player = (Player) sender;
-            List<Player> p = plugin.getServer().matchPlayer(args[0]);
-            if (p.size() < 1) {
+            // List<Player> p = plugin.getServer().matchPlayer(args[0]);
+            Player p = plugin.findPlayerasPlayer(args[0]);
+            if (p==null) {
                 player.sendMessage(ChatColor.YELLOW + "Can't find player!");
             } else {
-                Player pto = p.get(0);
+                // Player pto = p.get(0);
+                Player pto = p;
                 if (pto.getName().equals(player.getName())) {
                     player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
                 } else {
-                    player.sendMessage(ChatColor.YELLOW + "Teleporting " + plugin.getPlayerColor(pto.getName(), false)
-                            + pto.getName() + ChatColor.YELLOW + " to you!");
-                    pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.YELLOW
+                    player.sendMessage(ChatColor.YELLOW + "Teleporting " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
+                    pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
                             + " teleported you to him!");
                     plugin.getTelehistory().addHistory(pto.getName(), pto.getLocation());
                     pto.teleport(player);

@@ -49,7 +49,7 @@ public class CommandReply implements Command {
                 if (replyto == null)
                     throw new CommandException("Can't find the player to reply to!");
 
-                Player playerto = plugin.getServer().getPlayer(replyto);
+                Player playerto = plugin.findPlayerasPlayer(replyto);
                 if (playerto == null)
                     throw new CommandException("That player is no longer online!");
 

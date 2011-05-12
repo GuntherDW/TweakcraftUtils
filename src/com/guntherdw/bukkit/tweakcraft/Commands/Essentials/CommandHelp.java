@@ -30,6 +30,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author GuntherDW
@@ -86,7 +87,7 @@ public class CommandHelp implements Command {
             if(plugin.getServer().getPluginManager().getPlugin(plug) != null) {
 
                 PluginDescriptionFile pdesc = plugin.getServer().getPluginManager().getPlugin(plug).getDescription();
-                HashMap<String, HashMap<String, Object>> cmds = (HashMap<String, HashMap<String, Object>>) pdesc.getCommands();
+                Map<String, Map<String, Object>> cmds = (Map<String, Map<String, Object>>) pdesc.getCommands();
                 for(String cmd : cmds.keySet()) {
 
                     if(!plugin.getConfigHandler().extrahelphide.contains(cmd)) {

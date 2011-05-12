@@ -46,7 +46,8 @@ public class CommandMsg implements Command {
         }
 
         if (args.length > 1) {
-            String replyto = plugin.findPlayer(args[0]);
+            Player playerto = plugin.findPlayerasPlayer(args[0]);
+
             String message = "";
             for (int x = 1; x < args.length; x++) {
                 message += args[x] + " ";
@@ -54,12 +55,8 @@ public class CommandMsg implements Command {
             if (message.length() > 1) {
                 message = message.substring(0, message.length() - 1);
             }
-            if (replyto == null)
-                throw new CommandException("Can't find that player!");
-
-            Player playerto = plugin.getServer().getPlayer(replyto);
             if (playerto == null)
-                throw new CommandException("That player is no longer online!");
+                throw new CommandException("Can't find that player!");
 
             sender.sendMessage("[Me -> " + playerto.getDisplayName() + "] " + message);
             playerto.sendMessage("[" + senderName + " -> Me] " + message);

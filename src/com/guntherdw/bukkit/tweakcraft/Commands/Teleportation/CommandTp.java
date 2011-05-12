@@ -47,17 +47,21 @@ public class CommandTp implements Command {
                 if (plugin.getDonottplist().contains(player.getName()) && !plugin.check(player, "forcetp")) {
                     player.sendMessage(ChatColor.RED + "You can't tp when you don't allow others to tp to you!");
                 } else {
-                    List<Player> p = plugin.getServer().matchPlayer(args[0]);
-                    if (p.size() != 1) {
+                    // List<Player> p = plugin.getServer().matchPlayer(args[0]);
+                    Player p = plugin.findPlayerasPlayer(args[0]);
+                    if (p == null) {
                         player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                     } else {
-                        Player pto = p.get(0);
-                        boolean refusetp = plugin.getDonottplist().contains(pto.getName());
-                        if(plugin.getPlayerListener().getInvisplayers().contains(pto.getName()) && !plugin.check(player, "tpinvis"))
+                        boolean refusetp = plugin.getDonottplist().contains(p.getName());
+                        if(plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
                         {
-                            player.sendMessage(ChatColor.YELLOW + "Can't find player!");
-                            plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " tried to tp to " + pto.getName() + " <invisible>!");
-                            return true;
+                            if(!plugin.check(player, "tpinvis")) {
+                                player.sendMessage(ChatColor.YELLOW + "Can't find player!");
+                                plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " tried to tp to " + p.getName() + " <invisible>!");
+                                return true;
+                            } else {
+                                player.sendMessage(ChatColor.AQUA + "Stealth player TP!");
+                            }
                         }
                         boolean override = false;
                         if (refusetp && (player.isOp() || plugin.check(player, "forcetp"))) {
@@ -68,19 +72,19 @@ public class CommandTp implements Command {
                          override = true; */
                         }
 
-                        if (pto.getName().equals(player.getName())) {
+                        if (p.getName().equals(player.getName())) {
                             player.sendMessage(ChatColor.YELLOW + "You're already there!");
                         } else {
                             if (refusetp && !override) {
-                                player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + pto.getName() + "!");
-                                pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
+                                player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + p.getDisplayName() + ChatColor.RED + "!");
+                                p.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
-                                pto.sendMessage(plugin.getPlayerColor(player.getName(), false) + player.getName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
+                                p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
                                 plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
-                                player.teleport(getTpLocation(pto));
+                                player.teleport(getTpLocation(p));
                                 if (override)
                                     player.sendMessage(ChatColor.RED + "Forced tp!");
-                                plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + pto.getName() + "!");
+                                plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + p.getName() + "!");
                             }
                         }
                     }
@@ -108,11 +112,13 @@ public class CommandTp implements Command {
     	for(int dx = -1; dx < 1;dx++)
     		for(int dz = -1; dz <= 1;dz++)
     			if(validSpot(loc.getWorld(),x+dx,y,z+dz))
-    				return new Location(loc.getWorld(),x+dx,y+1,z+dz);
+    				return new Location(loc.getWorld(),x+dx+0.5F,y+2,z+dz+0.5F);
     	return loc;
     }
     private boolean validSpot(World world,int x, int y, int z) {
-    	return world.getBlockTypeIdAt(x, y, z) != 0 && world.getBlockTypeIdAt(x, y+1, z) == 0 && world.getBlockTypeIdAt(x, y+2, z) == 0; 
+    	return world.getBlockTypeIdAt(x, y, z) != 0
+            && world.getBlockTypeIdAt(x, y+1, z) == 0
+            && world.getBlockTypeIdAt(x, y+2, z) == 0;
     }
 
     private void tpfromto(TweakcraftUtils plugin, CommandSender sender, String p1, String p2) {

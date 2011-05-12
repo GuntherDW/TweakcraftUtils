@@ -57,7 +57,8 @@ public class CommandTC implements Command {
                 idb.loadDataBase();
                 for (Player p : plugin.getServer().getOnlinePlayers()) {
                     String name = p.getName();
-                    p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+                    // p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+                    p.setDisplayName(plugin.getNickWithColors(p.getName()));
                 }
                 plugin.getPlayerListener().reloadInvisTable();
             }

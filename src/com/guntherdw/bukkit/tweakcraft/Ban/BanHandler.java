@@ -111,7 +111,6 @@ public class BanHandler {
             }
         }
 
-
         try {
             BufferedWriter banfilewriter = new BufferedWriter(new FileWriter(banfile));
             for (String bannedplayer : bans.keySet()) {

@@ -172,7 +172,22 @@ public class TweakcraftUtils extends JavaPlugin {
         return result;
     }
 
+    public Player findPlayerasPlayer(String partOfName) {
+        // Go for the nicks first!
+        Player nick = playerListener.findPlayerByNick(partOfName);
+        if(nick==null) {
+            for (Player p : this.getServer().getOnlinePlayers()) {
+                if (p.getName().toLowerCase().contains(partOfName.toLowerCase())) // found, return the fullname!
+                    return p;
+            }
+        }
+
+        // not found, just return partOfName
+        return nick;
+    }
+
     public String findPlayer(String partOfName) {
+        // Go for the nicks first!
         for (Player p : this.getServer().getOnlinePlayers()) {
             if (p.getName().toLowerCase().contains(partOfName.toLowerCase())) // found, return the fullname!
                 return p.getName();
@@ -206,6 +221,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public WorldGuardPlugin getWorldGuard() {
         return wg;
+    }
+
+    public Permissions getPerm() {
+        return perm;
     }
     
     public String getPlayerColor(String playername, boolean change) {
@@ -324,6 +343,20 @@ public class TweakcraftUtils extends JavaPlugin {
         return commandHandler;
     }
 
+    public String getNickWithColors(String player) {
+        String nick = playerListener.getNick(player);
+        String realname = player;
+        if(nick == null) nick = realname;
+        return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
+    }
+    
+    public String getNick(String player) {
+        String nick = playerListener.getNick(player);
+        String realname = player;
+        if(nick == null) nick = realname;
+        return  nick;
+    }
+
     public boolean check(Player player, String permNode) {
         if (perm == null || player.isOp()) {
             return true;
@@ -342,6 +375,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public BanHandler getBanhandler() {
         return banhandler;
+    }
+
+    public boolean hasNick(String player) {
+        return playerListener.getNick(player)!=null;
     }
 
     public void onEnable() {

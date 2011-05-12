@@ -53,6 +53,12 @@ music,25,0,64
 noteblock,25,0,64
 note,25,0,64
 musicblock,25,0,64
+poweredrail,27,0,64
+poweredtracks,27,0,64
+detectrail,27,0,64
+detecttracks,27,0,64
+web,30,0,64
+spiderweb,30,0,64
 cloth,35,0,64
 wool,35,0,64
 whitewool,35,0,64

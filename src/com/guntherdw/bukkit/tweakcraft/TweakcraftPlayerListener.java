@@ -31,10 +31,8 @@ import org.bukkit.entity.Wolf;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import javax.lang.model.util.ElementScanner6;
+import java.util.*;
 
 /**
  * @author GuntherDW
@@ -44,11 +42,56 @@ public class TweakcraftPlayerListener extends PlayerListener {
     //private final Logger log = Logger.getLogger("Minecraft");
     private final TweakcraftUtils plugin;
     private List<String> invisplayers;
+    private Map<String, String> nicks;
 
 
     public TweakcraftPlayerListener(TweakcraftUtils instance) {
         plugin = instance;
         invisplayers = new ArrayList<String>();
+        nicks = new HashMap<String, String>();
+    }
+
+    public void setNick(String player, String nick) {
+        nicks.put(player, nick);
+    }
+
+    public boolean removeNick(String player) {
+        if(nicks.containsKey(player)) {
+            nicks.remove(player);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String getNick(String player) {
+        if(nicks.containsKey(player)) {
+            return nicks.get(player);
+        } else {
+            return null;
+        }
+    }
+
+    public Player findPlayerByNick(String nick) {
+
+        String p = null;
+        String n = null;
+
+        for(String part : nicks.keySet()) {
+            n = nicks.get(part);
+            if(n.toLowerCase().contains(nick.toLowerCase())) {
+                p = part;
+            }
+        }
+
+        if(p!=null) {
+            return plugin.getServer().getPlayer(p);
+        }
+        return null;
+    }
+
+    public boolean nickTaken(String nick) {
+        return nicks.values().contains(nick);
     }
 
     public List<String> getInvisplayers() {
@@ -60,7 +103,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         Player player = event.getPlayer();
         String message = event.getMessage();
         String name = player.getName();
-        player.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+        player.setDisplayName(plugin.getNickWithColors(player.getName()));
 
         ChatHandler ch = plugin.getChathandler();
         ChatMode cm = ch.getPlayerChatMode(player);
@@ -82,6 +125,19 @@ public class TweakcraftPlayerListener extends PlayerListener {
             } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
                 event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
                 event.setCancelled(true);
+            }
+        }
+
+        if(!event.isCancelled() && cm!=null) {
+            // Log nicks!
+            if(getNick(name)!=null) {
+                // plugin.getLogger().info("[TweakcraftUtils] "+getNick(name)+" is "+name);
+                event.setCancelled(true);
+                plugin.getLogger().info("("+player.getName()+")  <"+player.getDisplayName()+"> "+message);
+                /* if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null) {
+                    plugin.getCraftIRC().sendMessageToTag();
+                } */
+                plugin.getServer().broadcastMessage(ChatColor.WHITE+"<"+player.getDisplayName()+ChatColor.WHITE+"> "+message);
             }
         }
     }
@@ -111,7 +167,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         String name = p.getName();
-        event.getPlayer().setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
+        event.getPlayer().setDisplayName(plugin.getNickWithColors(name));
         // p.sendMessage("Ohai thar!");
         for (String m : plugin.getMOTD())
             p.sendMessage(m);
@@ -173,13 +229,17 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String playername = event.getPlayer().getName();
         if(plugin.getConfigHandler().getLsbindmap().containsKey(playername)) {
             Map<Integer, Boolean> bind = plugin.getConfigHandler().getLsbindmap().get(playername);
-            if(bind.keySet().size()>0) {
-                for(Integer i : bind.keySet()) {
-                    if(( event.getItem()==null && i==0 )
+            for(Integer i : bind.keySet()) {
+                if(i == null) {
+                    event.getPlayer().sendMessage(ChatColor.RED+"[TweakcraftUtils] onPlayerInteract Null error!");
+                    plugin.getLogger().info("[TweakcraftUtils] "+event.getPlayer().getName()+" triggered a i == null event!");
+                } else {
+                    if((event.getItem()==null
+                            &&i.intValue()==0)
                             || (event.getItem().getTypeId() == i)) {
                         Action a = event.getAction();
                         if((!bind.get(i) && (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)))
-                        || ( bind.get(i) && (a.equals(Action. LEFT_CLICK_AIR) || a.equals(Action. LEFT_CLICK_BLOCK)))) {
+                                || ( bind.get(i) && (a.equals(Action. LEFT_CLICK_AIR) || a.equals(Action. LEFT_CLICK_BLOCK)))) {
                             Location target = null;
                             if(plugin.getConfigHandler().getLockdowns().containsKey(playername)) {
                                 target = plugin.getConfigHandler().getLockdowns().get(playername).getTarget();
@@ -194,6 +254,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                         }
                     }
                 }
+
             }
         }
     }
