@@ -21,6 +21,7 @@ package com.guntherdw.bukkit.tweakcraft;
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
@@ -43,6 +44,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     private final TweakcraftUtils plugin;
     private List<String> invisplayers;
     private Map<String, String> nicks;
+    private List<PlayerInfo> playerinfo = new ArrayList<PlayerInfo>();
 
 
     public TweakcraftPlayerListener(TweakcraftUtils instance) {
@@ -53,11 +55,29 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void setNick(String player, String nick) {
         nicks.put(player, nick);
+        if(plugin.getConfigHandler().usePersistence) {
+            PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
+            if(pi==null) {
+                pi = new PlayerInfo();
+                pi.setName(player);
+                pi.setNick(nick);
+            }
+            plugin.getDatabase().save(pi);
+        }
     }
 
     public boolean removeNick(String player) {
         if(nicks.containsKey(player)) {
             nicks.remove(player);
+            if(plugin.getConfigHandler().usePersistence) {
+                PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
+                if(pi==null) {
+                    pi = new PlayerInfo();
+                    pi.setName(player);
+                    pi.setNick((String)null);
+                }
+                plugin.getDatabase().save(pi);
+            }
             return true;
         } else {
             return false;
@@ -98,6 +118,18 @@ public class TweakcraftPlayerListener extends PlayerListener {
         return invisplayers;
     }
 
+    public void reloadInfo() {
+        playerinfo = plugin.getDatabase().find(PlayerInfo.class).findList();
+        nicks.clear();
+        for(PlayerInfo pi : playerinfo) {
+            if(pi.getNick()!=null) {
+                plugin.getLogger().info("[TweakcraftUtils] Setting "+pi.getName()+"'s nick to "+pi.getNick());
+                nicks.put(pi.getName(), pi.getNick());
+            }
+        }
+
+    }
+
     public void onPlayerChat(PlayerChatEvent event) {
 
         Player player = event.getPlayer();
@@ -120,7 +152,13 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     cm.sendMessage(player, message);
                     event.setCancelled(true);
                 } else {
-                    event.setMessage(message.substring(1));
+                    if(!plugin.hasNick(player.getName())) {
+
+                        event.setMessage(message.substring(1));
+                        message = event.getMessage();
+                    } else {
+                        message = message.substring(1);
+                    }
                 }
             } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
                 event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
@@ -172,6 +210,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
         for (String m : plugin.getMOTD())
             p.sendMessage(m);
 
+        if(plugin.hasNick(name)) {
+            event.setJoinMessage(ChatColor.YELLOW + getNick(name) + " joined the game.");
+        }
+
         if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
             event.setJoinMessage(null);
             p.sendMessage(ChatColor.AQUA + "You has joined STEALTHILY!");
@@ -197,23 +239,43 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void onPlayerQuit(PlayerQuitEvent event) {
+
+        String name = event.getPlayer().getName();
+
         if (plugin.getConfigHandler().enableSeenConfig) {
             Calendar cal = Calendar.getInstance();
-            String time = String.valueOf(cal.getTime().getTime());
-            plugin.getConfigHandler().getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), time);
-            plugin.getConfigHandler().getSeenconfig().save();
-            plugin.getLogger().info("[TweakcrafUtils] Stored " + event.getPlayer().getName() + "'s logout!");
+            if(!plugin.getConfigHandler().usePersistence) {
+                String time = String.valueOf(cal.getTime().getTime());
+                plugin.getConfigHandler().getSeenconfig().setProperty(name.toLowerCase(), time);
+                plugin.getConfigHandler().getSeenconfig().save();
+            } else {
+                PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", name).findUnique();
+                if(pi==null) {
+                    pi = new PlayerInfo();
+                    pi.setName(name);
+                }
+                pi.setLastseen(cal.getTime().getTime());
+                plugin.getDatabase().save(pi);
+            }
+            plugin.getLogger().info("[TweakcraftUtils] Stored " + name + "'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());
         try {
-            plugin.getChathandler().setPlayerchatmode(event.getPlayer().getName(), null);
+            plugin.getChathandler().setPlayerchatmode(name, null);
         } catch (ChatModeException e) {
             plugin.getLogger().severe("[TweakcraftUtils] Error setting ChatMode to null after the logout!");
         }
-        if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "left" message
+
+
+
+        if(plugin.hasNick(name)) {
+            event.setQuitMessage(ChatColor.YELLOW + getNick(name) + " has left the game.");
+        }
+
+        if(getInvisplayers().contains(name)) { // Invisible players do not send out a "left" message
             event.setQuitMessage(null);
             if (plugin.getCraftIRC() != null) {
-                plugin.getCraftIRC().sendMessageToTag("STEALTH QUIT : " +event.getPlayer().getName() ,"mchatadmin");
+                plugin.getCraftIRC().sendMessageToTag("STEALTH QUIT : " +name ,"mchatadmin");
             }
             for(Player play : plugin.getServer().getOnlinePlayers())
             {

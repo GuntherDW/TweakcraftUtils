@@ -56,6 +56,7 @@ public class ConfigurationHandler {
     public List<String> extrahelphide = new ArrayList<String>();
     public boolean enabletamertool = true;
     public int     tamertoolid = Material.STICK.getId();
+    public boolean usePersistence = true;
     // public Map<String, String>
 
     public ConfigurationHandler(TweakcraftUtils instance) {
@@ -75,6 +76,11 @@ public class ConfigurationHandler {
         enableIRC = plugin.getConfiguration().getBoolean("enableIRC", false);
         enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
         extrahelpplugin = new ArrayList<String>();
+        usePersistence = plugin.getConfiguration().getBoolean("usePersistence", true);
+        if(usePersistence) {
+            if(!plugin.databaseloaded)
+                plugin.setupDatabase();
+        }
         for(String plist : plugin.getConfiguration().getStringList("extrahelp.plugins", null)) {
             if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
                 if(!extrahelpplugin.contains(plist)) {
@@ -98,6 +104,9 @@ public class ConfigurationHandler {
         this.localchatdistance = plugin.getConfiguration().getInt("maxrange", 200);
         this.enabletamertool =  plugin.getConfiguration().getBoolean("tamer.enabled", true);
         this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
+        if(usePersistence) {
+            plugin.getPlayerListener().reloadInfo();
+        }
     }
 
     public Configuration getGlobalconfig() {

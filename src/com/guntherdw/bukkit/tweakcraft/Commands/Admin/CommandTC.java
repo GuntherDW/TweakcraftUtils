@@ -61,6 +61,9 @@ public class CommandTC implements Command {
                     p.setDisplayName(plugin.getNickWithColors(p.getName()));
                 }
                 plugin.getPlayerListener().reloadInvisTable();
+                if(plugin.getConfigHandler().usePersistence) {
+                    plugin.getPlayerListener().reloadInfo();
+                }
             }
         } else {
             throw new CommandUsageException("/tc <" + ChatColor.GREEN + "reload" + ChatColor.YELLOW + "/" + ChatColor.GREEN + "version" + ChatColor.YELLOW + ">");

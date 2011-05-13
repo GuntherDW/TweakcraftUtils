@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
@@ -39,11 +40,18 @@ public class CommandSeen implements Command {
         if (args.length < 1) {
             throw new CommandUsageException("You did not specify a name!");
         }
-        if (plugin.getConfigHandler().getSeenconfig() != null) {
+        if (plugin.getConfigHandler().getSeenconfig() != null || plugin.getConfigHandler().usePersistence) {
             if (plugin.getServer().getPlayer(args[0]) != null) {
                 sender.sendMessage(ChatColor.GOLD + args[0] + " is online right now!");
             } else {
-                String seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
+                String seen = "";
+                if(!plugin.getConfigHandler().usePersistence)
+                    seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
+                else {
+                    PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", args[0]).findUnique();
+                    if(pi!=null)
+                        seen = pi.getLastseen().toString();
+                }
                 // plugin.getSeenconfig().get
                 if (seen.equals(""))
                     sender.sendMessage("I haven't seen " + args[0] + " yet!");

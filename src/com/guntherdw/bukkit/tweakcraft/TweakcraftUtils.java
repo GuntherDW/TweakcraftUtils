@@ -24,6 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
@@ -43,6 +44,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.persistence.PersistenceException;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
@@ -67,6 +69,7 @@ public class TweakcraftUtils extends JavaPlugin {
     private final TeleportHistory telehistory = new TeleportHistory(this);
     private final TamerTool tamertool = new TamerTool(this);
 
+    public boolean databaseloaded = false;
     private List<String> MOTDLines;
     public Map<String, String> playerReplyDB;
     private final ChatHandler chathandler = new ChatHandler(this);
@@ -144,6 +147,23 @@ public class TweakcraftUtils extends JavaPlugin {
             dir = "N";
 
         return dir;
+    }
+
+    @Override
+    public List<Class<?>> getDatabaseClasses() {
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(PlayerInfo.class);
+        return list;
+    }
+
+     public void setupDatabase() {
+         try {
+             getDatabase().find(PlayerInfo.class).findRowCount();
+         } catch (PersistenceException ex) {
+             log.info("[TweakcraftUtils] Installing database for " + getDescription().getName() + " due to first time usage");
+             installDDL();
+         }
+         databaseloaded = true;
     }
 
     public String listToString(List<String> lijst) {
@@ -392,6 +412,9 @@ public class TweakcraftUtils extends JavaPlugin {
         this.setupWorldGuard();
         this.setupCraftIRC();
         this.setupZones();
+        /* if(configHandler.usePersistence) {
+            setupDatabase();
+        } */
 
         playerReplyDB = new HashMap<String, String>();
         this.registerEvents();
