@@ -28,11 +28,7 @@ import javax.persistence.Table;
  * @author GuntherDW
  */
 @Entity()
-<<<<<<< HEAD
 @Table(name="tcutils_players")
-=======
-@Table(name="tcutils_player")
->>>>>>> First persistence work done
 public class PlayerInfo {
     @Id
     public int Id;
