@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -48,9 +49,17 @@ public class CommandSeen implements Command {
                 if(!plugin.getConfigHandler().usePersistence)
                     seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
                 else {
-                    PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", args[0]).findUnique();
-                    if(pi!=null)
-                        seen = pi.getLastseen().toString();
+                    if(!plugin.getConfigHandler().useTweakBotSeen) {
+                        PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", args[0]).findUnique();
+                        if(pi!=null)
+                            seen = pi.getLastseen().toString();
+                    } else {
+                        PlayerHistoryInfo phi = plugin.getDatabase().find(PlayerHistoryInfo.class).where().ieq("nickname", args[0]).findUnique();
+                        if(phi!=null) {
+                            Long l = phi.getDate().getTime();
+                            seen = l.toString();
+                        }
+                    }
                 }
                 // plugin.getSeenconfig().get
                 if (seen.equals(""))

@@ -57,6 +57,7 @@ public class ConfigurationHandler {
     public boolean enabletamertool = true;
     public int     tamertoolid = Material.STICK.getId();
     public boolean usePersistence = true;
+    public boolean useTweakBotSeen = false;
     // public Map<String, String>
 
     public ConfigurationHandler(TweakcraftUtils instance) {
@@ -77,6 +78,8 @@ public class ConfigurationHandler {
         enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
         extrahelpplugin = new ArrayList<String>();
         usePersistence = plugin.getConfiguration().getBoolean("usePersistence", true);
+        useTweakBotSeen = plugin.getConfiguration().getBoolean("useTweakBotSeen", false);
+        plugin.getLogger().info("[TweakcraftUtils] Using TweakBot's seen table for /seen!");
         if(usePersistence) {
             if(!plugin.databaseloaded)
                 plugin.setupDatabase();

@@ -21,6 +21,7 @@ package com.guntherdw.bukkit.tweakcraft;
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
@@ -249,13 +250,25 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 plugin.getConfigHandler().getSeenconfig().setProperty(name.toLowerCase(), time);
                 plugin.getConfigHandler().getSeenconfig().save();
             } else {
-                PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", name).findUnique();
-                if(pi==null) {
-                    pi = new PlayerInfo();
-                    pi.setName(name);
+                if(plugin.getConfigHandler().useTweakBotSeen) {
+                    PlayerHistoryInfo phi = plugin.getDatabase().find(PlayerHistoryInfo.class).where().ieq("nickname", name).findUnique();
+                    if(phi==null) {
+                        phi = new PlayerHistoryInfo();
+                        phi.setNickname(name);
+                    }
+                    phi.setDate(cal.getTime())
+                    phi.setAct("");
+                    phi.setChannel("");
+                    plugin.getDatabase().save(phi);
+                } else {
+                    PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", name).findUnique();
+                    if(pi==null) {
+                        pi = new PlayerInfo();
+                        pi.setName(name);
+                    }
+                    pi.setLastseen(cal.getTime().getTime());
+                    plugin.getDatabase().save(pi);
                 }
-                pi.setLastseen(cal.getTime().getTime());
-                plugin.getDatabase().save(pi);
             }
             plugin.getLogger().info("[TweakcraftUtils] Stored " + name + "'s logout!");
         }

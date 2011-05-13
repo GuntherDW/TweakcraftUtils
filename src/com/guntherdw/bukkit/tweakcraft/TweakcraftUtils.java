@@ -24,6 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
@@ -153,14 +154,24 @@ public class TweakcraftUtils extends JavaPlugin {
     public List<Class<?>> getDatabaseClasses() {
         List<Class<?>> list = new ArrayList<Class<?>>();
         list.add(PlayerInfo.class);
+        /* if(configHandler.useTweakBotSeen) {
+            log.info("OHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAI"); */
+            list.add(PlayerHistoryInfo.class);
+        /* } else {
+            log.info("MEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEH");
+        }*/
         return list;
     }
 
     public void setupDatabase() {
          try {
              getDatabase().find(PlayerInfo.class).findRowCount();
+             if(configHandler.useTweakBotSeen)
+                 getDatabase().find(PlayerHistoryInfo.class).findRowCount();
          } catch (PersistenceException ex) {
              log.info("[TweakcraftUtils] Installing database for " + getDescription().getName() + " due to first time usage");
+             if(configHandler.useTweakBotSeen)
+                 log.info("[TweakcraftUtils] Also creating the TweakBot !seen helpen table");
              installDDL();
          }
          databaseloaded = true;
@@ -401,20 +412,21 @@ public class TweakcraftUtils extends JavaPlugin {
         return playerListener.getNick(player)!=null;
     }
 
-    public void onEnable() {
+    public void onLoad() {
 
-        PluginDescriptionFile pdfFile = this.getDescription();
-        
+
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();
         configHandler.reloadConfig();
+    }
+
+    public void onEnable() {
+        PluginDescriptionFile pdfFile = this.getDescription();
+        
         this.setupWorldGuard();
         this.setupCraftIRC();
         this.setupZones();
-        /* if(configHandler.usePersistence) {
-            setupDatabase();
-        } */
 
         playerReplyDB = new HashMap<String, String>();
         this.registerEvents();
