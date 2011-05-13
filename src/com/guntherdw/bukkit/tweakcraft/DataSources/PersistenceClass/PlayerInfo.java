@@ -61,6 +61,7 @@ public class PlayerInfo {
     }
 
     public void setLastseen(Long lastseen) {
+
         this.lastseen = lastseen;
     }
 

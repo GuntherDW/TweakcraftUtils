@@ -30,6 +30,4 @@ public class Persistence {
     public Persistence(TweakcraftUtils instance) {
         this.plugin = instance;
     }
-
-
 }
