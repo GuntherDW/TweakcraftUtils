@@ -156,7 +156,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return list;
     }
 
-     public void setupDatabase() {
+    public void setupDatabase() {
          try {
              getDatabase().find(PlayerInfo.class).findRowCount();
          } catch (PersistenceException ex) {
