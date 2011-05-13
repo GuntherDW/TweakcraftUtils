@@ -1,6 +1,7 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 1.4.6
+version: 2.0.0
+database: true
 commands:
   tweakcraft:
     description: General tweakcraftutils command
