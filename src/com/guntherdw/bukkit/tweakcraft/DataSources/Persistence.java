@@ -18,17 +18,16 @@
 
 package com.guntherdw.bukkit.tweakcraft.DataSources;
 
-import com.guntherdw.bukkit.tweakcraft.DataSource;
+import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 
 /**
  * @author GuntherDW
  */
-public class FlatFile implements DataSource {
-    public DataSource getDataSource() {
-        return this;
-    }
+public class Persistence {
 
-    public boolean initConnection(String file) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public TweakcraftUtils plugin;
+
+    public Persistence(TweakcraftUtils instance) {
+        this.plugin = instance;
     }
 }

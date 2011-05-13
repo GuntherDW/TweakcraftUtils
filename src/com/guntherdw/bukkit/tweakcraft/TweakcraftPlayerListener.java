@@ -120,7 +120,13 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     cm.sendMessage(player, message);
                     event.setCancelled(true);
                 } else {
-                    event.setMessage(message.substring(1));
+                    if(!plugin.hasNick(player.getName())) {
+
+                        event.setMessage(message.substring(1));
+                        message = event.getMessage();
+                    } else {
+                        message = message.substring(1);
+                    }
                 }
             } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
                 event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
@@ -202,7 +208,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             String time = String.valueOf(cal.getTime().getTime());
             plugin.getConfigHandler().getSeenconfig().setProperty(event.getPlayer().getName().toLowerCase(), time);
             plugin.getConfigHandler().getSeenconfig().save();
-            plugin.getLogger().info("[TweakcrafUtils] Stored " + event.getPlayer().getName() + "'s logout!");
+            plugin.getLogger().info("[TweakcraftUtils] Stored " + event.getPlayer().getName() + "'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());
         try {

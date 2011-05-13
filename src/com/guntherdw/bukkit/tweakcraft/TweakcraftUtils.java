@@ -24,6 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
@@ -43,6 +44,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.persistence.PersistenceException;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
@@ -144,6 +146,22 @@ public class TweakcraftUtils extends JavaPlugin {
             dir = "N";
 
         return dir;
+    }
+
+    @Override
+    public List<Class<?>> getDatabaseClasses() {
+        List<Class<?>> list = new ArrayList<Class<?>>();
+        list.add(PlayerInfo.class);
+        return list;
+    }
+
+     private void setupDatabase() {
+        try {
+            getDatabase().find(PlayerInfo.class).findRowCount();
+        } catch (PersistenceException ex) {
+            log.info("[TweakcraftUtils] Installing database for " + getDescription().getName() + " due to first time usage");
+            installDDL();
+        }
     }
 
     public String listToString(List<String> lijst) {
@@ -392,6 +410,7 @@ public class TweakcraftUtils extends JavaPlugin {
         this.setupWorldGuard();
         this.setupCraftIRC();
         this.setupZones();
+        if(configHandler.)
 
         playerReplyDB = new HashMap<String, String>();
         this.registerEvents();
