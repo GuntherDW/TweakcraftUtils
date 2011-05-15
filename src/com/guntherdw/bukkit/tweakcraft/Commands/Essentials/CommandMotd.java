@@ -43,8 +43,10 @@ public class CommandMotd implements Command {
                     throw new PermissionsException(command);
                 }
             } else {
+                // int x = 0;
                 for (String motdline : plugin.getMOTD()) {
                     sender.sendMessage(motdline);
+                    // x++;
                 }
             }
         } else {

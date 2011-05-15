@@ -154,12 +154,7 @@ public class TweakcraftUtils extends JavaPlugin {
     public List<Class<?>> getDatabaseClasses() {
         List<Class<?>> list = new ArrayList<Class<?>>();
         list.add(PlayerInfo.class);
-        /* if(configHandler.useTweakBotSeen) {
-            log.info("OHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAIOHAI"); */
-            list.add(PlayerHistoryInfo.class);
-        /* } else {
-            log.info("MEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEHMEHBLEH");
-        }*/
+        list.add(PlayerHistoryInfo.class);
         return list;
     }
 
@@ -412,17 +407,13 @@ public class TweakcraftUtils extends JavaPlugin {
         return playerListener.getNick(player)!=null;
     }
 
-    public void onLoad() {
-
+    public void onEnable() {
+        PluginDescriptionFile pdfFile = this.getDescription();
 
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();
         configHandler.reloadConfig();
-    }
-
-    public void onEnable() {
-        PluginDescriptionFile pdfFile = this.getDescription();
         
         this.setupWorldGuard();
         this.setupCraftIRC();

@@ -46,6 +46,7 @@ public class CommandSeen implements Command {
                 sender.sendMessage(ChatColor.GOLD + args[0] + " is online right now!");
             } else {
                 String seen = "";
+                String extramsg = "";
                 if(!plugin.getConfigHandler().usePersistence)
                     seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
                 else {
@@ -56,6 +57,11 @@ public class CommandSeen implements Command {
                     } else {
                         PlayerHistoryInfo phi = plugin.getDatabase().find(PlayerHistoryInfo.class).where().ieq("nickname", args[0]).findUnique();
                         if(phi!=null) {
+                            if(phi.getChannel().equals("gameserver")) {
+                                extramsg = " (Gameserver quit!)";
+                            } else {
+                                extramsg = " (IRC/Non gameserver stuff!)";
+                            }
                             Long l = phi.getDate().getTime();
                             seen = l.toString();
                         }
@@ -63,12 +69,12 @@ public class CommandSeen implements Command {
                 }
                 // plugin.getSeenconfig().get
                 if (seen.equals(""))
-                    sender.sendMessage("I haven't seen " + args[0] + " yet!");
+                    sender.sendMessage(ChatColor.DARK_AQUA+ "I haven't seen " + args[0] + " yet!");
                 else {
                     SimpleDateFormat smf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     Date datelastseen = new Date(Long.parseLong(seen));
                     String lastseen = smf.format(datelastseen);
-                    sender.sendMessage(ChatColor.GOLD + args[0] + " was last seen on " + lastseen + "!");
+                    sender.sendMessage(ChatColor.GOLD + args[0] + " was last seen on " + lastseen + "!"+extramsg);
                 }
             }
         } else {

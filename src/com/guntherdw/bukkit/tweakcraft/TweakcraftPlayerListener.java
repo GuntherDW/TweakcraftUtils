@@ -61,8 +61,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if(pi==null) {
                 pi = new PlayerInfo();
                 pi.setName(player);
-                pi.setNick(nick);
             }
+            pi.setNick(nick);
             plugin.getDatabase().save(pi);
         }
     }
@@ -75,8 +75,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 if(pi==null) {
                     pi = new PlayerInfo();
                     pi.setName(player);
-                    pi.setNick((String)null);
                 }
+                pi.setNick((String)null);
                 plugin.getDatabase().save(pi);
             }
             return true;
@@ -208,8 +208,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String name = p.getName();
         event.getPlayer().setDisplayName(plugin.getNickWithColors(name));
         // p.sendMessage("Ohai thar!");
-        for (String m : plugin.getMOTD())
+        for (String m : plugin.getMOTD()) {
             p.sendMessage(m);
+        }
+
 
         if(plugin.hasNick(name)) {
             event.setJoinMessage(ChatColor.YELLOW + getNick(name) + " joined the game.");
@@ -256,9 +258,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
                         phi = new PlayerHistoryInfo();
                         phi.setNickname(name);
                     }
-                    phi.setDate(cal.getTime())
-                    phi.setAct("");
-                    phi.setChannel("");
+                    phi.setDate(cal.getTime());
+                    phi.setText("");
+                    phi.setAct("QUIT");
+                    phi.setChannel("gameserver");
                     plugin.getDatabase().save(phi);
                 } else {
                     PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", name).findUnique();

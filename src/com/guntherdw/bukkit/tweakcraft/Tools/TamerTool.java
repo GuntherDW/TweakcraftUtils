@@ -65,6 +65,7 @@ public class TamerTool {
         }
         if(wolf.isAngry()) {
             player.sendMessage(ChatColor.AQUA + "This wolf is "+ChatColor.RED+"angry"+ChatColor.AQUA+"!");
+            player.sendMessage(ChatColor.AQUA + "Wolf health : "+wolf.getHealth());
             LivingEntity le = wolf.getTarget();
             String target = "";
             if(le instanceof Player)
