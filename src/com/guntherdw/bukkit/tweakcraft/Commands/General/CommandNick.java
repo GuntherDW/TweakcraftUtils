@@ -48,15 +48,18 @@ public class CommandNick implements Command {
                     plugin.getPlayerListener().removeNick(player.getName());
                 } else {
                     sender.sendMessage(ChatColor.GOLD + "Setting nick to : "+args[0]);
-                    List<Player> find = plugin.getServer().matchPlayer(args[0]);
+                    /* List<Player> find = plugin.getServer().matchPlayer(args[0]);
                     for(Player f : find) {
                         if(f.getName().toLowerCase().equals(args[0].toLowerCase()))
                             throw new CommandException("Nick is already taken!");
-                    }
-                    if(!plugin.getPlayerListener().nickTaken(args[0]))
+                    } */
+                    // if() {
+                    if(!plugin.getPlayerListener().nickTakenPersistance(player.getName(), args[0])
+                            && !plugin.getPlayerListener().nickTaken(args[0]))
                         plugin.getPlayerListener().setNick(player.getName(), args[0]);
                     else
                         throw new CommandException("Nick is already taken!");
+                    // }
                 }
             } else if(args.length==2) {
                 if(!plugin.check(player, "nick.other"))

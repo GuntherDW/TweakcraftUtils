@@ -77,7 +77,7 @@ public class CommandWhois implements Command {
 
     public Player findPlayer(String playername, TweakcraftUtils plugin) {
         for(Player p : plugin.getServer().matchPlayer(playername)) {
-            if(p.getName().toLowerCase().equals(playername.toLowerCase())) {
+            if(p.getName().toLowerCase().contains(playername.toLowerCase())) {
                 return p;
             }
         }

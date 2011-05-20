@@ -69,7 +69,7 @@ public class TeleportHistory {
     public void addHistory(String playername, Location loc) {
         if(plugin.getConfigHandler().enableTPBack) {
             List<Location> locmap;
-            if(loc.getY() > 128 || loc.getY() < 5) { // failsave
+            if(loc.getY() > 128 || loc.getY() < 1) { // failsave
                 loc.setY(130);
             }
             if(historymap.containsKey(playername)) {

@@ -51,6 +51,7 @@ public class ConfigurationHandler {
     public boolean enableZones = false;
     public boolean enableIRC = false;
     public boolean enableTPBack = true;
+    public boolean groupchatEnabled = true;
     public Integer helpPerPage = 10;
     public List<String> extrahelpplugin = new ArrayList<String>();
     public List<String> extrahelphide = new ArrayList<String>();
@@ -77,6 +78,7 @@ public class ConfigurationHandler {
         enableIRC = plugin.getConfiguration().getBoolean("enableIRC", false);
         enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
         extrahelpplugin = new ArrayList<String>();
+        groupchatEnabled = plugin.getConfiguration().getBoolean("enableGroupChat", true);
         usePersistence = plugin.getConfiguration().getBoolean("usePersistence", true);
         useTweakBotSeen = plugin.getConfiguration().getBoolean("useTweakBotSeen", false);
         plugin.getLogger().info("[TweakcraftUtils] Using TweakBot's seen table for /seen!");

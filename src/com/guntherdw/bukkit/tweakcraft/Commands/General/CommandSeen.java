@@ -47,6 +47,7 @@ public class CommandSeen implements Command {
             } else {
                 String seen = "";
                 String extramsg = "";
+                String newline = null;
                 if(!plugin.getConfigHandler().usePersistence)
                     seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
                 else {
@@ -58,9 +59,27 @@ public class CommandSeen implements Command {
                         PlayerHistoryInfo phi = plugin.getDatabase().find(PlayerHistoryInfo.class).where().ieq("nickname", args[0]).findUnique();
                         if(phi!=null) {
                             if(phi.getChannel().equals("gameserver")) {
-                                extramsg = " (Gameserver quit!)";
+                                // extramsg = " (Gamequit!)";
+                                newline = ChatColor.GOLD + "Gameserver quit!";
                             } else {
-                                extramsg = " (IRC/Non gameserver stuff!)";
+                                // extramsg = " (Non gameserver stuff!)";
+                                if(phi.getAct().equals("privmsg")) {
+                                    newline = ChatColor.GOLD +"(IRC) "+ phi.getChannel() + ChatColor.WHITE +": <"+phi.getNickname()+"> ";
+                                    newline+= phi.getText();
+                                } else if(phi.getAct().equals("action")) {
+                                    newline = ChatColor.GOLD +"(IRC) "+phi.getChannel() + ChatColor.WHITE +": * "+phi.getNickname();
+                                    newline+= phi.getText();
+                                } else if(phi.getAct().equals("part")) {
+                                    newline = ChatColor.GOLD +"(IRC) "+phi.getChannel() + ChatColor.WHITE +" :"+ChatColor.YELLOW+" Leaving channel";
+                                } else if(phi.getAct().equals("join")) {
+                                    newline = ChatColor.GOLD +"(IRC) "+phi.getChannel() + ChatColor.WHITE +" :"+ChatColor.YELLOW+" Joined channel";
+                                } else if(phi.getAct().equals("quit")) {
+                                    newline = ChatColor.GOLD +"(IRC) "+ "Quit client "+ ChatColor.WHITE +": "+ ChatColor.YELLOW +phi.getText()+"!";
+                                } else if(phi.getAct().equals("nick")) {
+                                    newline = ChatColor.GOLD + "(IRC) Set nick to " + ChatColor.WHITE+": "+ChatColor.YELLOW+ phi.getText();
+                                } else {
+                                    newline = ChatColor.GOLD + "Unknown other Act method, go nag GuntherDW!";
+                                }
                             }
                             Long l = phi.getDate().getTime();
                             seen = l.toString();
@@ -75,6 +94,9 @@ public class CommandSeen implements Command {
                     Date datelastseen = new Date(Long.parseLong(seen));
                     String lastseen = smf.format(datelastseen);
                     sender.sendMessage(ChatColor.GOLD + args[0] + " was last seen on " + lastseen + "!"+extramsg);
+                    if(newline!=null) {
+                        sender.sendMessage(newline);
+                    }
                 }
             }
         } else {

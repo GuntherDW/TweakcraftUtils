@@ -54,6 +54,9 @@ public class CommandTPBack implements Command {
                         rem = remaining+" TPBack lines left!";
                     }
                     player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
+                    if(back.getY()==130) {
+                        player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
+                    }
                     player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
                     player.teleport(back);
                 }
