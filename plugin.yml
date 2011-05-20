@@ -164,7 +164,7 @@ commands:
     description: What you're reading right now
     usage: /<command>
   tpback:
-    description: Go back to where you once came!
+    description: Go back to where you once came from!
     usage: /<command>
     aliases: [tpb, back]
   debug:
