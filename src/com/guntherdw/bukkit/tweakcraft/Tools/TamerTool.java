@@ -43,7 +43,7 @@ public class TamerTool {
     }
 
     public void getOwner(Player player, Wolf wolf) {
-        if(wolf.isTame()) {
+        if(wolf.isTamed()) {
             AnimalTamer tamer = wolf.getOwner();
             if(tamer instanceof Player) {
                 Player ptamer = (Player) tamer;
@@ -58,7 +58,7 @@ public class TamerTool {
                     player.sendMessage(ChatColor.RED + "You do not have the permission to check the ownership of other wolves!");
                 }
             } else {
-                player.sendMessage(ChatColor.AQUA + "This wolf is owned by an entity!");
+                player.sendMessage(ChatColor.AQUA + "This wolf is owned by an entity/offline player!");
             }
         } else {
             player.sendMessage(ChatColor.AQUA + "This wolf isn't tamed!");
@@ -80,9 +80,9 @@ public class TamerTool {
         if(plugin.check(player, "tamer.tame")) {
             Boolean allowed = true;
             if(tame==null) {
-                tame = !wolf.isTame();
+                tame = !wolf.isTamed();
             }
-            if(wolf.isTame() && !tame) {
+            if(wolf.isTamed() && !tame) {
                 AnimalTamer tamer = wolf.getOwner();
 
                 if(tamer instanceof Player) {
@@ -100,7 +100,7 @@ public class TamerTool {
                 } else {
                     player.sendMessage(ChatColor.RED + "You do not have permission to untame this wolf!");
                 }
-            } else if(!wolf.isTame() && tame) {
+            } else if(!wolf.isTamed() && tame) {
                 if(!plugin.check(player, "tamer.tame.tame"))
                     allowed = false;
                 
@@ -122,7 +122,7 @@ public class TamerTool {
         if(plugin.check(player, "tamer.angry"))
         {
             Boolean allowed = true;
-            if(wolf.isTame()) {
+            if(wolf.isTamed()) {
                 if(wolf.getOwner().equals(player)) {
                     if(!plugin.check(player, "tamer.angry.own"))
                         allowed = false;
@@ -152,7 +152,7 @@ public class TamerTool {
     public void heal(Wolf wolf, Boolean kill, Player player) {
         if(plugin.check(player, "tamer.heal")) {
             Boolean allowed = true;
-            if(wolf.isTame()) {
+            if(wolf.isTamed()) {
                 if(wolf.getOwner().equals(player)) {
                     if(!plugin.check(player, "tamer.heal.own"))
                         allowed = false;

@@ -18,10 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat;
 
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.LocalChat;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.RegionChat;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.ZoneChat;
+import com.guntherdw.bukkit.tweakcraft.Chat.Modes.*;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.entity.Player;
@@ -48,6 +45,7 @@ public class ChatHandler {
         chatmodes.put("local",  new LocalChat(plugin));
         chatmodes.put("region", new RegionChat(plugin));
         chatmodes.put("zones",  new ZoneChat(plugin));
+        chatmodes.put("world",  new WorldChat(plugin));
     }
 
     public ChatMode getChatMode(String mode) throws ChatModeException {

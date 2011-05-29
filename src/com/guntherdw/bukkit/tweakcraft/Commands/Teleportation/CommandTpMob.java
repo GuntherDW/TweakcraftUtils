@@ -90,7 +90,7 @@ public class CommandTpMob implements Command {
                     {
                        Wolf wolf = (Wolf) crea;
                        // System.out.println(wolf);
-                       if(wolf.isAngry() || !wolf.isTame())
+                       if(wolf.isAngry() || !wolf.isTamed())
                             allowed = true;
                        else
                        {

@@ -67,4 +67,9 @@ public class GroupChat implements ChatMode {
     public String getColor() {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public String getPrefix() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

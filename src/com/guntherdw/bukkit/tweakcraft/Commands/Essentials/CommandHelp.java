@@ -92,6 +92,7 @@ public class CommandHelp implements Command {
 
                     if(!plugin.getConfigHandler().extrahelphide.contains(cmd)) {
                         String perm = (String) cmds.get(cmd).get("_permission");
+                        if(perm==null) perm = (String) cmds.get(cmd).get("permissions"); // Added for WorldEdit support
                         if(addExtCommandToList(sender, perm, plugin)) {
                             toadd = ChatColor.GOLD+cmd+ChatColor.WHITE +
                                     " : "+ChatColor.YELLOW+((String)cmds.get(cmd).get("description"));

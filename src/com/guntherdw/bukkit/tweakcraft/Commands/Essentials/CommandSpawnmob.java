@@ -80,6 +80,9 @@ public class CommandSpawnmob implements Command {
                 {
                     try {
                         amount = Integer.parseInt(args[1]);
+                        if(amount>100) {
+                            amount=100; // This should be more than enough before your client starts to lag!
+                        }
                     } catch (NumberFormatException e) {
                         throw new CommandUsageException("I need an amount, not a string!");
                     }

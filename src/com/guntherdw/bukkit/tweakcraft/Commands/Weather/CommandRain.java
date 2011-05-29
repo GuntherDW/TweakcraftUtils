@@ -46,8 +46,8 @@ public class CommandRain implements Command {
         }
 
         if(args.length==0 && sender instanceof Player) {
-            int dur = ((Player)sender).getWorld().getWeatherDuration();
-            sender.sendMessage(ChatColor.YELLOW+"It is now " +(dur>0?"raining":"dry")+"!");
+            boolean rain = ((Player)sender).getWorld().hasStorm();
+            sender.sendMessage(ChatColor.YELLOW+"It is now " +(rain?"raining":"dry")+"!");
         } else if(args.length == 1 && sender instanceof Player) {
             if(args[0].equalsIgnoreCase("on") || args[0].equalsIgnoreCase("off")) {
                 boolean onoff = args[0].equalsIgnoreCase("on");
@@ -56,8 +56,8 @@ public class CommandRain implements Command {
             } else if(plugin.getServer().getWorld(args[0]) != null) {
 
                 World w = plugin.getServer().getWorld(args[0]);
-                int dur = w.getWeatherDuration();
-                sender.sendMessage(ChatColor.YELLOW+"It is now " +(dur>0?"raining":"dry")+"!");
+                boolean rain = w.hasStorm();
+                sender.sendMessage(ChatColor.YELLOW+"It is now " +(rain?"raining":"dry")+"!");
             } else {
                 throw new CommandUsageException("on/off or worldname please!");
             }

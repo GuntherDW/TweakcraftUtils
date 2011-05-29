@@ -85,4 +85,11 @@ public interface ChatMode {
      * @return the color
      */
     public abstract String getColor();
+
+    /**
+     * Returns the ChatMode's prefix
+     *
+     * @return the prefix
+     */
+    public abstract String getPrefix();
 }

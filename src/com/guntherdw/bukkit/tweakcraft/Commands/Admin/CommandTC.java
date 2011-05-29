@@ -61,7 +61,7 @@ public class CommandTC implements Command {
                     p.setDisplayName(plugin.getNickWithColors(p.getName()));
                 }
                 plugin.getPlayerListener().reloadInvisTable();
-                if(plugin.getConfigHandler().usePersistence) {
+                if(plugin.getConfigHandler().enablePersistence) {
                     plugin.getPlayerListener().reloadInfo();
                 }
             }

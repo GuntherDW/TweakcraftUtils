@@ -1,0 +1,42 @@
+invisible-playerlist: []
+
+PlayerHistory:
+    enabled: true
+
+Persistence:
+    enabled: true
+    useTweakBotSeen: false
+
+ChatMode:
+    LocalChat:
+       enabled: true
+       distance: 200
+    RegionChat: true # requires sk89q's WorldGuard plugin
+    ZoneChat: true   # requires Meaglins's Zones plugin
+    WorldChat: true
+    GroupChat: true
+
+CraftIRC:
+    enabled: true
+    adminchannel: mchatadmin
+
+extrahelp:
+    plugins: [TweakWarp, Homes, WorldEdit]
+    hide: []
+
+tamer:
+   enabled: true
+   toolid: 280 # Stick
+
+worlds:
+   enablenether: true
+   netherfolder: 'nether'
+   extraworlds:
+      newbieworld:
+         environment: normal
+         enabled: true
+         pvp: true
+      mobs:
+         environment: normal
+         enabled: true
+         pvp: true

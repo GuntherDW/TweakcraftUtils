@@ -181,4 +181,8 @@ public class RegionChat implements ChatMode {
     public String getColor() {
         return ChatColor.AQUA.toString();
     }
+
+    public String getPrefix() {
+        return this.getColor()+"R";
+    }
 }

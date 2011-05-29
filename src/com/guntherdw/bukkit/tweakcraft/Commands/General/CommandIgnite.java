@@ -123,7 +123,7 @@ public class CommandIgnite implements Command {
                         if(ent instanceof Wolf)
                         {
                             Wolf wolf = (Wolf) ent;
-                            if(wolf.isAngry() || !wolf.isTame())
+                            if(wolf.isAngry() || !wolf.isTamed())
                                 allowed = true;
                             else
                                 allowed = false;

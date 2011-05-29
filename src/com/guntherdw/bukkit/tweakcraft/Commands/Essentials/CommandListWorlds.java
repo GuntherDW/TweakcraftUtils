@@ -41,14 +41,24 @@ public class CommandListWorlds implements Command {
             player.sendMessage(ChatColor.LIGHT_PURPLE + "Listing currently accessible worlds : ");
 
             // String message = "";
+            String col;
 
             for (World w : plugin.getServer().getWorlds()) {
                 if (plugin.check(player, "worlds." + w.getName())) {
-                    player.sendMessage((w.getEnvironment() == World.Environment.NORMAL ? ChatColor.GREEN : ChatColor.RED) + w.getName());
+                    if(w.getEnvironment() == World.Environment.NORMAL)
+                        col =  ChatColor.GREEN.toString();
+                    else if (w.getEnvironment() == World.Environment.NETHER)
+                        col = ChatColor.RED.toString();
+                    else if (w.getEnvironment() == World.Environment.SKYLANDS)
+                        col = ChatColor.AQUA.toString();
+                    else
+                        col = ChatColor.BLACK.toString();
+                    player.sendMessage(col + w.getName());
                 }
             }
+
             player.sendMessage(ChatColor.LIGHT_PURPLE + "Legend: " + ChatColor.RED + "NETHER" + ChatColor.LIGHT_PURPLE + "," +
-                    ChatColor.GREEN + " NORMAL");
+                    ChatColor.GREEN + " NORMAL"+ ChatColor.LIGHT_PURPLE + "," + ChatColor.AQUA + " SKYLANDS");
             player.sendMessage(ChatColor.LIGHT_PURPLE + "Warp to a world by issuing /world <worldname>");
 
 

@@ -71,7 +71,9 @@ public class AdminChat implements ChatMode {
             if(sufx.equals("")) {
                 // System.out.println("bla "+this.plugin.cColorIrcFromName("foreground"));
                 sufx = Character.toString((char) 3)+String.format("%02d", plugin.getCraftIRC().cColorIrcFromName("foreground")); }
-            plugin.getCraftIRC().sendMessageToTag("[A] <" + prex + cleanname + sufx + "> " + message, "mchatadmin");
+            if(plugin.getCraftIRC()!=null) {
+                plugin.getCraftIRC().sendMessageToTag("[A] <" + prex + cleanname + sufx + "> " + message, "mchatadmin");
+            }
         }
 
         if (sender instanceof Player && !isOnList(sender)) {
@@ -194,5 +196,9 @@ public class AdminChat implements ChatMode {
 
     public String getColor() {
         return ChatColor.GREEN.toString();
+    }
+
+    public String getPrefix() {
+        return this.getColor()+"A";
     }
 }

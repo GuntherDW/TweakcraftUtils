@@ -27,6 +27,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,14 +42,15 @@ public class CommandSeen implements Command {
         if (args.length < 1) {
             throw new CommandUsageException("You did not specify a name!");
         }
-        if (plugin.getConfigHandler().getSeenconfig() != null || plugin.getConfigHandler().usePersistence) {
-            if (plugin.getServer().getPlayer(args[0]) != null) {
-                sender.sendMessage(ChatColor.GOLD + args[0] + " is online right now!");
+        if (plugin.getConfigHandler().getSeenconfig() != null || plugin.getConfigHandler().enablePersistence) {
+            Player pla;
+            if ((pla = plugin.getServer().getPlayer(args[0])) != null) {
+                sender.sendMessage(ChatColor.GOLD + pla.getName() + " is online right now!");
             } else {
                 String seen = "";
                 String extramsg = "";
                 String newline = null;
-                if(!plugin.getConfigHandler().usePersistence)
+                if(!plugin.getConfigHandler().enablePersistence)
                     seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
                 else {
                     if(!plugin.getConfigHandler().useTweakBotSeen) {

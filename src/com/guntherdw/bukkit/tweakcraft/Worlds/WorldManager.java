@@ -66,15 +66,25 @@ public class WorldManager {
             if (!worlds.containsKey(node)) {
                 String env = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".environment", "");
                 boolean enabled = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".enabled", false);
+                boolean pvp = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".pvp", false);
                 Environment wenv = null;
-                if (env.equalsIgnoreCase("nether")) {
+                if(env==null || env=="") {
+                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" does not have a valid environment definition, using \"normal\"");
+                    wenv = Environment.NORMAL;
+                } else if (env.equalsIgnoreCase("nether")) {
                     wenv = Environment.NETHER;
                 } else if (env.equalsIgnoreCase("normal")) {
                     wenv = Environment.NORMAL;
+                } else if (env.equalsIgnoreCase("skylands")) {
+                    wenv = Environment.SKYLANDS;
+                } else {
+                    wenv = Environment.valueOf(env);
                 }
+
 
                 if (!(wenv == null)) {
                     plugin.getLogger().info("[TweakcraftUtils] Adding world with name " + node + " and environmenttype " + env + "!");
+                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" has pvp "+(pvp?"enabled":"disabled")+"!");
                     worlds.put(node, new TweakWorld(this, node, wenv, enabled));
                 } else {
                     plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");

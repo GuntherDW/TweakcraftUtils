@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
+import org.bukkit.inventory.ItemStack;
 
 import javax.lang.model.util.ElementScanner6;
 import java.util.*;
@@ -56,7 +57,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void setNick(String player, String nick) {
         nicks.put(player, nick);
-        if(plugin.getConfigHandler().usePersistence) {
+        if(plugin.getConfigHandler().enablePersistence) {
             PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
             if(pi==null) {
                 pi = new PlayerInfo();
@@ -70,7 +71,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     public boolean removeNick(String player) {
         if(nicks.containsKey(player)) {
             nicks.remove(player);
-            if(plugin.getConfigHandler().usePersistence) {
+            if(plugin.getConfigHandler().enablePersistence) {
                 PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
                 if(pi==null) {
                     pi = new PlayerInfo();
@@ -116,7 +117,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public boolean nickTakenPersistance(String playername, String nick) {
-        if(plugin.getConfigHandler().usePersistence) {
+        if(plugin.getConfigHandler().enablePersistence) {
             PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", nick).findUnique();
             if(pi!=null)
             {
@@ -233,9 +234,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
             event.setJoinMessage(null);
             p.sendMessage(ChatColor.AQUA + "You has joined STEALTHILY!");
-            if (plugin.getCraftIRC() != null) {
+            /* if (plugin.getCraftIRC() != null) {
                 plugin.getCraftIRC().sendMessageToTag("STEALTH JOIN : " +event.getPlayer().getName() ,"mchatadmin");
-            }
+            } */
             /* try {
                 ChatHandler ch = plugin.getChathandler();
                 ChatMode    cm = ch.getChatMode("admin");
@@ -260,7 +261,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
         if (plugin.getConfigHandler().enableSeenConfig) {
             Calendar cal = Calendar.getInstance();
-            if(!plugin.getConfigHandler().usePersistence) {
+            if(!plugin.getConfigHandler().enablePersistence) {
                 String time = String.valueOf(cal.getTime().getTime());
                 plugin.getConfigHandler().getSeenconfig().setProperty(name.toLowerCase(), time);
                 plugin.getConfigHandler().getSeenconfig().save();
@@ -303,9 +304,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
         if(getInvisplayers().contains(name)) { // Invisible players do not send out a "left" message
             event.setQuitMessage(null);
-            if (plugin.getCraftIRC() != null) {
+            /* if (plugin.getCraftIRC() != null) {
                 plugin.getCraftIRC().sendMessageToTag("STEALTH QUIT : " +name ,"mchatadmin");
-            }
+            } */
             for(Player play : plugin.getServer().getOnlinePlayers())
             {
                 if(plugin.check(play, "tpinvis"))
@@ -316,6 +317,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
+    /**
+     *  I still don't get why my event.getItem or i keeps on nulling out, if anyone can help, please do
+     */
     public void onPlayerInteract(PlayerInteractEvent event) {
         String playername = event.getPlayer().getName();
         if(plugin.getConfigHandler().getLsbindmap().containsKey(playername)) {
@@ -325,9 +329,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     event.getPlayer().sendMessage(ChatColor.RED+"[TweakcraftUtils] onPlayerInteract Null error!");
                     plugin.getLogger().info("[TweakcraftUtils] "+event.getPlayer().getName()+" triggered a i == null event!");
                 } else {
-                    if((event.getItem()==null
-                            &&i.intValue()==0)
-                            || (event.getItem().getTypeId() == i)) {
+                    if((event.getItem()==null && i.intValue()==0)
+                            || (event.getItem() != null && event.getItem().getTypeId() == i.intValue())) {
                         Action a = event.getAction();
                         if((!bind.get(i) && (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)))
                                 || ( bind.get(i) && (a.equals(Action. LEFT_CLICK_AIR) || a.equals(Action. LEFT_CLICK_BLOCK)))) {

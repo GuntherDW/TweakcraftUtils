@@ -31,12 +31,12 @@ import java.util.List;
 /**
  * @author GuntherDW
  */
-public class LocalChat implements ChatMode {
+public class WorldChat implements ChatMode {
 
     private List<String> subscribers;
     private TweakcraftUtils plugin;
 
-    public LocalChat(TweakcraftUtils instance) {
+    public WorldChat(TweakcraftUtils instance) {
         subscribers = new ArrayList<String>();
         plugin = instance;
     }
@@ -46,12 +46,12 @@ public class LocalChat implements ChatMode {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.YELLOW+"L"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.DARK_GREEN+"W"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
             }
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("L: <" + player.getName() + "> " + message);
+            plugin.getLogger().info("W: ("+player.getWorld().getName()+") <" + player.getName() + "> " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
@@ -68,7 +68,7 @@ public class LocalChat implements ChatMode {
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("L: " + message);
+            plugin.getLogger().info("W: ("+player.getWorld().getName()+") " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
@@ -81,9 +81,9 @@ public class LocalChat implements ChatMode {
             Player player = (Player) sender;
             EntityLocation entityloc = new EntityLocation(player);
             for (Player p : player.getWorld().getPlayers()) {
-                if (entityloc.getDistance(p) < plugin.getConfigHandler().localchatdistance) {
+                // if (entityloc.getDistance(p) < plugin.getConfigHandler().localchatdistance) {
                     recp.add(p);
-                }
+                // }
             }
         }
         return recp;
@@ -107,11 +107,11 @@ public class LocalChat implements ChatMode {
 
     @Override
     public String getDescription() {
-        return "Chat locally ("+plugin.getConfigHandler().localchatdistance+" blocks)";
+        return "World Chat (chat in your current world)";
     }
 
     public boolean isEnabled() {
-        return plugin.getConfigHandler().enableLocalChat && plugin.getConfigHandler().localchatdistance > 0;
+        return plugin.getConfigHandler().enableWorldChat;
     }
 
     public String getColor() {
@@ -119,6 +119,7 @@ public class LocalChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor()+"L";
+        return this.getColor()+"W";
     }
 }
+

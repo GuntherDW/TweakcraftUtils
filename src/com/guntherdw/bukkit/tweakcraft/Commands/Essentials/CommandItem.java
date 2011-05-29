@@ -26,8 +26,9 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Item;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.sk89q.worldedit.blocks.ItemType;
+// import com.sk89q.worldedit.blocks.ItemType;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -98,7 +99,15 @@ public class CommandItem implements Command {
 
             }
 
-            if (ItemType.isValid(itemId)) {
+            boolean isValid = false;
+            Material mat = Material.getMaterial(itemId);
+            // if(ItemType.class == null) {
+            isValid = mat!=null;
+            /* } else {
+                isValid = ItemType.isValid(itemId);
+            } */
+
+            if (isValid) {
                 String recvname = "";
                 String giftfrom = "";
                 if (sender instanceof Player) {
@@ -108,8 +117,9 @@ public class CommandItem implements Command {
                     recvname = receiver.getName();
                     giftfrom = "CONSOLE";
                 }
+                String itemName = mat.toString().toLowerCase().replace('_', ' ');
 
-                sender.sendMessage(ChatColor.YELLOW + "Giving " + recvname + ChatColor.YELLOW + " " + itemAmount + " of " + ItemType.toName(itemId) + "!");
+                sender.sendMessage(ChatColor.YELLOW + "Giving " + recvname + ChatColor.YELLOW + " " + itemAmount + " of " + itemName + "!");
                 if(!(receiver.getName().equals(giftfrom)))
                     receiver.sendMessage(ChatColor.AQUA+"Enjoy your gift! :3");
                 ItemStack stack = new ItemStack(itemId, itemAmount, itemDmg.shortValue());

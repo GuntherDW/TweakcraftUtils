@@ -68,13 +68,15 @@ public class ZoneChat implements ChatMode {
 
             Player player = (Player) sender;
             com.zones.WorldManager wm = plugin.getZones().getWorldManager(player.getWorld());
-            ZoneBase zb = wm.getActiveZone(player.getLocation());
-            if(zb != null) {
-                /* for(Player pl : zb.getCharactersInside().values()) {
-                    zb.revalidateInZone(pl);
-                } */
-                recp.addAll(zb.getCharactersInside().values());
+            List<ZoneBase> zbs = wm.getActiveZones(player.getLocation());
+            for(ZoneBase zb : zbs) {
+                for(Player p : zb.getCharactersInside().values())
+                    if(!recp.contains(p))
+                        recp.add(p);
             }
+            /* if(zb != null) {
+                recp.addAll(zb.getCharactersInside().values());
+            } */
             if(!recp.contains(player)) {
                 recp.add(player);
             }
@@ -145,5 +147,9 @@ public class ZoneChat implements ChatMode {
 
     public String getColor() {
         return ChatColor.DARK_PURPLE.toString();
+    }
+
+    public String getPrefix() {
+        return this.getColor()+"Z";
     }
 }

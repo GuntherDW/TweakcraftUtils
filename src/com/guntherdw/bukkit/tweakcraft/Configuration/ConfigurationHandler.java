@@ -46,19 +46,22 @@ public class ConfigurationHandler {
      * Defaults
      */
     public boolean enableSeenConfig = false;
-    public int localchatdistance = 200;
     public boolean enableWorldGuard = false;
     public boolean enableZones = false;
     public boolean enableIRC = false;
     public boolean enableTPBack = true;
-    public boolean groupchatEnabled = true;
+    public boolean enableGroupChat = true;
+    public boolean enableLocalChat = true;
+    public boolean enableWorldChat = true;
+    public int localchatdistance = 200;
     public Integer helpPerPage = 10;
     public List<String> extrahelpplugin = new ArrayList<String>();
     public List<String> extrahelphide = new ArrayList<String>();
     public boolean enabletamertool = true;
     public int     tamertoolid = Material.STICK.getId();
-    public boolean usePersistence = true;
+    public boolean enablePersistence = true;
     public boolean useTweakBotSeen = false;
+    public String  craftIRCAdminChannel = "mchatadmin";
     // public Map<String, String>
 
     public ConfigurationHandler(TweakcraftUtils instance) {
@@ -71,18 +74,21 @@ public class ConfigurationHandler {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdirs();
         }
-        plugin.getLogger().info("[TweakcraftUtils] Parsing configuration file...");
-        plugin.getConfiguration().load();
-        enableWorldGuard = plugin.getConfiguration().getBoolean("enableWorldGuard", false);
-        enableZones = plugin.getConfiguration().getBoolean("enableZones", false);
-        enableIRC = plugin.getConfiguration().getBoolean("enableIRC", false);
-        enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
-        extrahelpplugin = new ArrayList<String>();
-        groupchatEnabled = plugin.getConfiguration().getBoolean("enableGroupChat", true);
-        usePersistence = plugin.getConfiguration().getBoolean("usePersistence", true);
-        useTweakBotSeen = plugin.getConfiguration().getBoolean("useTweakBotSeen", false);
+        this.plugin.getLogger().info("[TweakcraftUtils] Parsing configuration file...");
+        this.plugin.getConfiguration().load();
+        this.enableLocalChat = plugin.getConfiguration().getBoolean("ChatMode.LocalChat.enabled", false);
+        this.enableLocalChat = plugin.getConfiguration().getBoolean("ChatMode.WorldChat", true);
+        this.enableWorldGuard = plugin.getConfiguration().getBoolean("ChatMode.RegionChat", false);
+        this.enableZones = plugin.getConfiguration().getBoolean("ChatMode.ZoneChat", false);
+        this.enableIRC = plugin.getConfiguration().getBoolean("CraftIRC.enabled", false);
+        this.craftIRCAdminChannel = plugin.getConfiguration().getString("CraftIRC.adminchannel", "mchatadmin");
+        this.enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
+        this.extrahelpplugin = new ArrayList<String>();
+        this.enableGroupChat = plugin.getConfiguration().getBoolean("ChatMode.GroupChat", true);
+        this.enablePersistence = plugin.getConfiguration().getBoolean("Persistence.enabled", true);
+        this.useTweakBotSeen = plugin.getConfiguration().getBoolean("Persistence.useTweakBotSeen", false);
         plugin.getLogger().info("[TweakcraftUtils] Using TweakBot's seen table for /seen!");
-        if(usePersistence) {
+        if(this.enablePersistence) {
             if(!plugin.databaseloaded)
                 plugin.setupDatabase();
         }
@@ -98,18 +104,19 @@ public class ConfigurationHandler {
                 plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
             }
         }
-        extrahelphide = plugin.getConfiguration().getStringList("extrahelp.hide", null);
-        if (plugin.getConfiguration().getBoolean("keepplayerhistory", false)) {
+        this.extrahelphide = plugin.getConfiguration().getStringList("extrahelp.hide", null);
+        if (plugin.getConfiguration().getBoolean("PlayerHistory.enabled", false)) {
             plugin.getLogger().info("[TweakcraftUtils] Keeping player history!");
             File seenFile = new File(plugin.getDataFolder(), "players.yml");
             this.seenconfig = new Configuration(seenFile);
             this.seenconfig.load();
             this.enableSeenConfig = true;
         }
-        this.localchatdistance = plugin.getConfiguration().getInt("maxrange", 200);
+        this.localchatdistance = plugin.getConfiguration().getInt("ChatMode.LocalChat.range", 200);
         this.enabletamertool =  plugin.getConfiguration().getBoolean("tamer.enabled", true);
         this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
-        if(usePersistence) {
+
+        if(this.enablePersistence) {
             plugin.getPlayerListener().reloadInfo();
         }
     }
@@ -149,4 +156,6 @@ public class ConfigurationHandler {
     public Map<String, LockdownLocation> getLockdowns() {
         return lockdowns;
     }
+
+
 }

@@ -1,4 +1,7 @@
 # Itemname, ItemID, ItemData, ItemStack
+# Place this file in your plugins/TweakcraftUtils/ folder
+# This file might update every minecraft version if
+# Notch decides to add new stuff
 air,0,0,64
 stone,1,0,64
 rock,1,0,64
@@ -59,6 +62,11 @@ detectrail,27,0,64
 detecttracks,27,0,64
 web,30,0,64
 spiderweb,30,0,64
+longgrass,31,0,64
+tallgrass,31,0,64
+deadbush,32,0,64
+shrub,32,0,64
+tumbleweed,32,0,64
 cloth,35,0,64
 wool,35,0,64
 whitewool,35,0,64
@@ -219,6 +227,8 @@ delayeron,94,0,64
 redstonerepeateron,94,0,64
 lockedchest,95,0,64
 chestlocked,95,0,64
+trapdoor,96,0,64
+hatch,96,0,64
 ironshovel,256,0,1
 ironpickaxe,257,0,1
 ironpick,257,0,1
