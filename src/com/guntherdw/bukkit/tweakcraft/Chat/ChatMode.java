@@ -52,6 +52,15 @@ public interface ChatMode {
     public abstract void addRecipient(String player);
 
     /**
+     * Broadcasts a message in the current ChatMode
+     *
+     * @param sender
+     * @param message
+     * @return if the broadcast was successful
+     */
+    public abstract boolean broadcastMessage(CommandSender sender, String message);
+
+    /**
      * Tries to remove a recipient
      *
      * @param player

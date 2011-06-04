@@ -398,6 +398,7 @@ bed,355,0,64
 delayer,356,0,64
 diode,356,0,64
 cookie,357,0,64
+map,358,0,1
 redstonerepeater,356,0,64
 golddisc,2256,0,64
 goldrecord,2256,0,64

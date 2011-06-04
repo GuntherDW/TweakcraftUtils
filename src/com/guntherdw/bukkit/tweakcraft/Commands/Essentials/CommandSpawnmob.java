@@ -28,7 +28,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author GuntherDW
@@ -46,14 +50,15 @@ public class CommandSpawnmob implements Command {
             String mobName;
             String mobRider;
             Integer amount = 1;
-            String victim;
+            String victim = null;
             CreatureType type = null;
             CreatureType rider = null;
             Player victimplayer = player;
+            LivingEntity lent = null;
+            List<CreatureType> riders = null;
 
             if (args.length > 0) // only a mobname!
             {
-                // mobName = args[0];
                 mobName = "";
                 amount = 1;
                 if (args[0].length() > 2)
@@ -62,20 +67,6 @@ public class CommandSpawnmob implements Command {
                 if (type == null) {
                     throw new CommandUsageException("Can't find that creature!");
                 }
-                /* if(args.length > 1) // amount or rider
-                {
-                    try {
-                        amount = Integer.parseInt(args[1]);
-                    } catch(NumberFormatException e) {
-                        amount = 1;
-                        mobRider = args[1];
-                        rider = CreatureType.fromName(mobRider);
-                        if(rider == null)
-                        {
-                            throw new CommandUsageException("Can't find rider creature!");
-                        }
-                    }
-                } */
                 if (args.length > 1) // amount
                 {
                     try {
@@ -87,21 +78,66 @@ public class CommandSpawnmob implements Command {
                         throw new CommandUsageException("I need an amount, not a string!");
                     }
                 }
-                if (args.length > 2) // victim!
+                if(args.length > 2) // Riders and/or player!
                 {
-                    victim = plugin.findPlayer(args[2]);
-                    victimplayer = plugin.getServer().getPlayer(victim);
-                    if (victimplayer == null) {
-                        throw new CommandUsageException("Can't find that player!");
+                    riders = new ArrayList<CreatureType>();
+                    CreatureType tmpRider;
+                    String tmpRiderString;
+                    for(int x = 2; x < args.length ; x++) {
+
+                        if(x==args.length-1) {
+                            // Check to see if the last argument contains a playername
+                            victim = plugin.findPlayer(args[args.length-1]);
+                            victimplayer = plugin.getServer().getPlayer(victim);
+                            /* if (victimplayer == null) {
+                               throw new CommandUsageException("Can't find that player!");
+                            } */
+                            if(victimplayer!=null) {
+
+                                loc = victimplayer.getLocation();
+                            }
+                        }
+                        if(x<args.length-1 ||
+                           (x==args.length-1 && victimplayer == null))
+                        {
+                            tmpRiderString = args[x];
+                            if (args[x].length() > 2)
+                                tmpRiderString = args[x].substring(0, 1).toUpperCase() + args[x].substring(1, args[x].length());
+                            rider = CreatureType.fromName(tmpRiderString);
+                            if(rider == null)
+                            {
+                                sender.sendMessage(ChatColor.YELLOW + "Didn't find one of the specified extra riders!");
+                                // throw new CommandUsageException("Can't find rider creature!");
+                            } else {
+                                riders.add(rider);
+                            }
+                        }
                     }
-                    loc = victimplayer.getLocation();
+
                 }
+
+                // if (args.length > 3) // victim!
+                // {
+
+                // }
 
                 // We're finally here
                 // Creature crea = new
+                if(victimplayer == null)
+                    victimplayer = player;
+                
                 if (type != null) {
-                    for (int x = 0; x < amount; x++)
-                        victimplayer.getWorld().spawnCreature(loc, type);
+                    LivingEntity rid = null;
+                    for (int x = 0; x < amount; x++) {
+                        lent = victimplayer.getWorld().spawnCreature(loc, type);
+                        if(riders != null && riders.size()!=0) {
+                            for(CreatureType t : riders) {
+                                rid = victimplayer.getWorld().spawnCreature(loc, t);
+                                if(lent != null) lent.setPassenger(rid);
+                                lent = rid; // This makes the currently added mob the new "to-ride-along" mob
+                            }
+                        }
+                    }
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Error trying to spawn creature!");
                 }

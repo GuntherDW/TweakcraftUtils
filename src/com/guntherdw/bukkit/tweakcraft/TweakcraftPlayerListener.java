@@ -27,7 +27,9 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.block.Action;
@@ -205,6 +207,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 player.sendMessage(ChatColor.RED + "You don't have access to this world!");
             }
         }
+        // if(event)
     }
 
 
@@ -321,13 +324,14 @@ public class TweakcraftPlayerListener extends PlayerListener {
      *  I still don't get why my event.getItem or i keeps on nulling out, if anyone can help, please do
      */
     public void onPlayerInteract(PlayerInteractEvent event) {
-        String playername = event.getPlayer().getName();
+        Player player = event.getPlayer();
+        String playername = player.getName();
         if(plugin.getConfigHandler().getLsbindmap().containsKey(playername)) {
             Map<Integer, Boolean> bind = plugin.getConfigHandler().getLsbindmap().get(playername);
             for(Integer i : bind.keySet()) {
                 if(i == null) {
                     event.getPlayer().sendMessage(ChatColor.RED+"[TweakcraftUtils] onPlayerInteract Null error!");
-                    plugin.getLogger().info("[TweakcraftUtils] "+event.getPlayer().getName()+" triggered a i == null event!");
+                    plugin.getLogger().info("[TweakcraftUtils] "+playername+" triggered a i == null event!");
                 } else {
                     if((event.getItem()==null && i.intValue()==0)
                             || (event.getItem() != null && event.getItem().getTypeId() == i.intValue())) {
@@ -338,7 +342,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                             if(plugin.getConfigHandler().getLockdowns().containsKey(playername)) {
                                 target = plugin.getConfigHandler().getLockdowns().get(playername).getTarget();
                             } else {
-                                Location loc = event.getPlayer().getTargetBlock(null, 200).getLocation();
+                                Location loc = player.getTargetBlock(null, 200).getLocation();
                                 loc.setY(loc.getY()+1);
                                 target = loc.clone();
                             }
@@ -348,8 +352,26 @@ public class TweakcraftPlayerListener extends PlayerListener {
                         }
                     }
                 }
-
             }
+        }
+        if( (event.getItem() != null && event.getItem().getType() == Material.DIAMOND_SWORD)
+        && (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+            // player.sendMessage("Getting Vehicle!");
+            for(LivingEntity ent : player.getWorld().getLivingEntities()) { // There is no easy way, meh
+                Entity passenger = ent.getPassenger();
+                if(passenger!=null)
+                    if(passenger.equals(player)) {
+                        // player.sendMessage("Dropping you!");
+                        ent.eject();
+                    }
+            }
+            /* if(player.getVehicle() != null) {
+                player.sendMessage("Checking if instanceOf LivingEntity!");
+                if(player.getVehicle() instanceof LivingEntity) {
+                    player.sendMessage("It's a livingEntity!!");
+                    player.getVehicle().setPassenger(null);
+                }
+            } */
         }
     }
 
@@ -378,6 +400,18 @@ public class TweakcraftPlayerListener extends PlayerListener {
                         plugin.getTamerTool().handleEvent(player, (Wolf) entity);
                     }
                 }
+            }
+        }
+        if(player.getItemInHand() == null &&
+                entity.getPassenger().equals(player)) {
+            entity.eject();
+        }
+        if(player.getItemInHand() != null &&
+                player.getItemInHand().getType() == Material.SADDLE) {
+            if(entity.isEmpty()) {
+                entity.setPassenger(player);
+            } else if(!entity.isEmpty() && entity.getPassenger().equals(player)) {
+                entity.eject();
             }
         }
     }

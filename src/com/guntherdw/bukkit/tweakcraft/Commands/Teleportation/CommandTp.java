@@ -53,6 +53,7 @@ public class CommandTp implements Command {
                         player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                     } else {
                         boolean refusetp = plugin.getDonottplist().contains(p.getName());
+                        boolean tpsuccess = true;
                         if(plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
                         {
                             if(!plugin.check(player, "tpinvis")) {
@@ -81,7 +82,7 @@ public class CommandTp implements Command {
                             } else {
                                 p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
                                 plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
-                                player.teleport(getTpLocation(p));
+                                tpsuccess = player.teleport(getTpLocation(p));
                                 if (override)
                                     player.sendMessage(ChatColor.RED + "Forced tp!");
                                 plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + p.getName() + "!");

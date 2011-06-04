@@ -60,9 +60,9 @@ public class CommandMe implements Command {
                             plugin.getServer().broadcastMessage("* " + player.getDisplayName() + " " + msg);
                         }
                     } else if (cm instanceof AdminChat) {
-                        ((AdminChat) cm).broadcastMessage(player, "[" + ChatColor.GREEN + "A" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + ChatColor.GREEN + msg);
+                        cm.broadcastMessage(player, "[" + ChatColor.GREEN + "A" + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + ChatColor.GREEN + msg);
                     } else {
-                        ((RegionChat) cm).broadcastMessage(player, "[" + cm.getPrefix() + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
+                        cm.broadcastMessage(player, "[" + cm.getPrefix() + ChatColor.WHITE + "] * " + player.getDisplayName() + " " + msg);
                     }
                 }
 

@@ -41,6 +41,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
+import org.bukkit.event.entity.EntityListener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,6 +63,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected Zones zones = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
+    private final TweakcraftEntityListener entityListener = new TweakcraftEntityListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
     private final ItemDB itemDB = new ItemDB(this);
@@ -231,6 +233,7 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME, entityListener, Priority.Normal, this);
     }
 
     public Logger getLogger() {
