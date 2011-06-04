@@ -39,20 +39,23 @@ public class CommandAdmin implements Command {
             String msg = "";
             for (String m : args)
                 msg += m + " ";
-            if(msg.length()>0)
+            if(msg.length()>0) {
                 msg = msg.substring(0, msg.length() - 1);
 
-            if (sender instanceof Player) {
-                onlist = (cm.getSubscribers().contains(((Player) sender).getName())
-                        || ((AdminChat) cm).getAdminsString().contains(((Player) sender).getName()));
-            } else {
-                onlist = true;
-            }
+                if (sender instanceof Player) {
+                    onlist = (cm.getSubscribers().contains(((Player) sender).getName())
+                            || ((AdminChat) cm).getAdminsString().contains(((Player) sender).getName()));
+                } else {
+                    onlist = true;
+                }
 
-            if (!onlist) {
-                sender.sendMessage(ChatColor.GREEN + "Message sent to admins:");
+                if (!onlist) {
+                    sender.sendMessage(ChatColor.GREEN + "Message sent to admins:");
+                }
+                cm.sendMessage(sender, msg);
+            } else {
+                sender.sendMessage(ChatColor.YELLOW + "You were trying to send an empty message!");
             }
-            cm.sendMessage(sender, msg);
         } catch (ChatModeException e) {
             throw new CommandException("Error occurred while trying to get ChatMode!");
         }
