@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft;
 
-import com.ensifera.animosity.ircplugin.IRCPlugin;
+import com.ensifera.animosity.craftirc.CraftIRC;
 
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
@@ -26,6 +26,7 @@ import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
@@ -59,7 +60,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     protected Permissions perm = null;
     protected WorldGuardPlugin wg = null;
-    protected IRCPlugin circ = null;
+    protected CraftIRC circ = null;
     protected Zones zones = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
@@ -157,12 +158,14 @@ public class TweakcraftUtils extends JavaPlugin {
         List<Class<?>> list = new ArrayList<Class<?>>();
         list.add(PlayerInfo.class);
         list.add(PlayerHistoryInfo.class);
+        list.add(PlayerOptions.class);
         return list;
     }
 
     public void setupDatabase() {
          try {
              getDatabase().find(PlayerInfo.class).findRowCount();
+             getDatabase().find(PlayerOptions.class).findRowCount();
              if(configHandler.useTweakBotSeen)
                  getDatabase().find(PlayerHistoryInfo.class).findRowCount();
          } catch (PersistenceException ex) {
@@ -244,7 +247,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return MOTDLines;
     }
 
-    public IRCPlugin getCraftIRC() {
+    public CraftIRC getCraftIRC() {
         return circ;
     }
 
@@ -313,11 +316,11 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public void setupCraftIRC() {
         if(this.getConfigHandler().enableIRC) {
-            Plugin plugin = this.getServer().getPluginManager().getPlugin("IRCPlugin");
+            Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
 
             if (circ == null) {
                 if (plugin != null) {
-                    circ = (IRCPlugin) plugin;
+                    circ = (CraftIRC) plugin;
                 }
             }
         }

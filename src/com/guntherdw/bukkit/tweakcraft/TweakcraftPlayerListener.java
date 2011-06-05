@@ -23,20 +23,17 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
+import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
-import javax.lang.model.util.ElementScanner6;
 import java.util.*;
 
 /**
@@ -49,7 +46,40 @@ public class TweakcraftPlayerListener extends PlayerListener {
     private List<String> invisplayers;
     private Map<String, String> nicks;
     private List<PlayerInfo> playerinfo = new ArrayList<PlayerInfo>();
+    private List<PlayerOptions> playeroptions = new ArrayList<PlayerOptions>();
+    private List<String> nomount = new ArrayList<String>();
 
+    public List<String> getNomount() {
+        return nomount;
+    }
+
+    public void removeNoMountPersistence(String playername) {
+        if(plugin.getConfigHandler().enablePersistence) {
+            List<PlayerOptions> po = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", playername).ieq("optionname", "nomount").findList();
+            if(po == null || po.isEmpty())
+                return;
+            plugin.getDatabase().delete(po);
+        }
+    }
+
+    public void addNoMountPersistence(String playername) {
+        if(plugin.getConfigHandler().enablePersistence) {
+            // PlayerOptions po = new PlayerOptions();
+            List<PlayerOptions> popts = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", playername).ieq("optionname", "nomount").findList();
+            if(popts != null && !popts.isEmpty())
+                removeNoMountPersistence(playername);
+                
+            // popts = new ArrayList<PlayerOptions>();
+            PlayerOptions po = new PlayerOptions();
+            po.setName(playername);
+            po.setOptionname("nomount");
+            // popts.add(po);
+
+            /* po.setName(playername);
+            po.setOption("nomount"); */
+            plugin.getDatabase().save(po);
+        }
+    }
 
     public TweakcraftPlayerListener(TweakcraftUtils instance) {
         plugin = instance;
@@ -144,7 +174,14 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 nicks.put(pi.getName(), pi.getNick());
             }
         }
-
+        playeroptions = plugin.getDatabase().find(PlayerOptions.class).findList();
+        nomount.clear();
+        for(PlayerOptions po : playeroptions) {
+            if(po.getOptionname().equals("nomount")) {
+                plugin.getLogger().info("[TweakcraftUtils] Setting "+po.getName()+"'s no-ride option!");
+                nomount.add(po.getName());
+            }
+        }
     }
 
     public void onPlayerChat(PlayerChatEvent event) {
@@ -406,10 +443,29 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 entity.getPassenger().equals(player)) {
             entity.eject();
         }
-        if(player.getItemInHand() != null &&
-                player.getItemInHand().getType() == Material.SADDLE) {
+        if(player.getItemInHand() != null
+           && player.getItemInHand().getType() == Material.SADDLE
+           && !(entity instanceof Pig)) {
             if(entity.isEmpty()) {
-                entity.setPassenger(player);
+                boolean allowed = true;
+                if(nomount.contains(player.getName())) {
+                    player.sendMessage(ChatColor.RED+"You don't allow others to sit on you either!");
+                } else {
+                    if(entity instanceof Player) {
+                        allowed = plugin.check(player, "mount.player");
+                        if(allowed) { // TODO: Make extra checks for a "do-not-mount" option
+                            allowed = !nomount.contains(((Player)entity).getName());
+                        }
+                    }
+                    else
+                        allowed = plugin.check(player, "mount.other");
+
+                    if(allowed) {
+                        entity.setPassenger(player);
+                    }
+                    else
+                        player.sendMessage(ChatColor.RED+"You are not allowed to do that!");
+                }
             } else if(!entity.isEmpty() && entity.getPassenger().equals(player)) {
                 entity.eject();
             }

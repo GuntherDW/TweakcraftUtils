@@ -81,6 +81,6 @@ public class CommandAdminAdd implements Command {
 
     @Override
     public String getPermissionSuffix() {
-        return null;
+        return "admon";
     }
 }

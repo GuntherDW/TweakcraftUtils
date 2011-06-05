@@ -81,9 +81,7 @@ public class CommandHandler {
         commandMap.put("time", new CommandTime());
         commandMap.put("unban", new CommandUnban());
         commandMap.put("world", new CommandWorld());
-        commandMap.put("nick", new CommandNick());
-        commandMap.put("whois", new CommandWhois());
-
+        commandMap.put("who", new CommandWho());
 
         /**
          * General commands
@@ -91,13 +89,16 @@ public class CommandHandler {
         commandMap.put("ext", new CommandExt());
         commandMap.put("ignite", new CommandIgnite());
         commandMap.put("seen", new CommandSeen());
-        commandMap.put("who", new CommandWho());
         commandMap.put("broadcast", new CommandBroadcast());
         commandMap.put("lc", new CommandLc());
         commandMap.put("rc", new CommandRc());
         commandMap.put("zc", new CommandZc());
         commandMap.put("chatmode", new CommandChatMode());
         commandMap.put("tamer", new CommandTamer());
+        commandMap.put("nick", new CommandNick());
+        commandMap.put("whois", new CommandWhois());
+        commandMap.put("donotmount", new CommandDoNotMount());
+        commandMap.put("eject", new CommandEject());
 
         /**
          * Teleportation commands

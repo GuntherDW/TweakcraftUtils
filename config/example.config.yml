@@ -5,6 +5,7 @@ PlayerHistory:
 
 Persistence:
     enabled: true
+# This is an internally used method. You can use this to track users on IRC as well.
     useTweakBotSeen: false
 
 ChatMode:
@@ -16,9 +17,15 @@ ChatMode:
     WorldChat: true
     GroupChat: true
 
+# Small note: The default CraftIRC doesn't send %prefix% and %suffix% that well.
+# Therefor it's disabled by default. It sends the § values out to IRC.
 CraftIRC:
-    enabled: true
+    enabled: false
     adminchannel: mchatadmin
+# Support : %name%     -> Sendername
+#           %message%  -> The sent message
+#           The other stuff will get parsed by CraftIRC itself.
+    MessageFormat: '[A] <%name%> %message%'
 
 extrahelp:
     plugins: [TweakWarp, Homes, WorldEdit]
@@ -40,3 +47,7 @@ worlds:
          environment: normal
          enabled: true
          pvp: true
+      sky:
+         environment: skylands
+         enabled: true
+         pvp: false

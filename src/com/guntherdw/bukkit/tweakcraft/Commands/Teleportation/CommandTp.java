@@ -80,12 +80,20 @@ public class CommandTp implements Command {
                                 player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + p.getDisplayName() + ChatColor.RED + "!");
                                 p.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
-                                p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
+
                                 plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
                                 tpsuccess = player.teleport(getTpLocation(p));
-                                if (override)
-                                    player.sendMessage(ChatColor.RED + "Forced tp!");
-                                plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + p.getName() + "!");
+                                if(tpsuccess) {
+                                    p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
+
+                                    if (override)
+                                        player.sendMessage(ChatColor.RED + "Forced tp!");
+                                    plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + p.getName() + "!");
+                                } else {
+                                    p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " failed to teleport to you!");
+                                    plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " failed to teleport to " + p.getName() + "!");
+                                    // This doesn't happen, CraftBukkit has return true; in it's sources!
+                                }
                             }
                         }
                     }

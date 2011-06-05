@@ -60,7 +60,7 @@ public class AdminChat implements ChatMode {
             String w = null;
             String prex = "";
             String sufx = "";
-            if(sender instanceof Player) {
+            /* if(sender instanceof Player) {
                 w = ((Player)sender).getWorld().getName();
                 prex = plugin.getCraftIRC().getPermPrefix(w, cleanname);
                 sufx = plugin.getCraftIRC().getPermSuffix(w, cleanname);
@@ -70,9 +70,13 @@ public class AdminChat implements ChatMode {
             }
             if(sufx.equals("")) {
                 // System.out.println("bla "+this.plugin.cColorIrcFromName("foreground"));
-                sufx = Character.toString((char) 3)+String.format("%02d", plugin.getCraftIRC().cColorIrcFromName("foreground")); }
+                sufx = Character.toString((char) 3)+String.format("%02d", plugin.getCraftIRC().cColorIrcFromName("foreground")); }*/
             if(plugin.getCraftIRC()!=null) {
-                plugin.getCraftIRC().sendMessageToTag("[A] <" + prex + cleanname + sufx + "> " + message, "mchatadmin");
+                String targetmsg = plugin.getConfigHandler().IRCMessageFormat;
+                       targetmsg = targetmsg.replace("%name%", sendername);
+                       targetmsg = targetmsg.replace("%message%", message);
+
+                plugin.getCraftIRC().sendMessageToTag(targetmsg, "mchatadmin");
             }
         }
 

@@ -62,6 +62,7 @@ public class ConfigurationHandler {
     public boolean enablePersistence = true;
     public boolean useTweakBotSeen = false;
     public String  craftIRCAdminChannel = "mchatadmin";
+    public String  IRCMessageFormat = "[A] <%name%> %message%";
     // public Map<String, String>
 
     public ConfigurationHandler(TweakcraftUtils instance) {
@@ -81,6 +82,7 @@ public class ConfigurationHandler {
         this.enableWorldGuard = plugin.getConfiguration().getBoolean("ChatMode.RegionChat", false);
         this.enableZones = plugin.getConfiguration().getBoolean("ChatMode.ZoneChat", false);
         this.enableIRC = plugin.getConfiguration().getBoolean("CraftIRC.enabled", false);
+        this.IRCMessageFormat = plugin.getConfiguration().getString("CraftIRC.MessageFormat");
         this.craftIRCAdminChannel = plugin.getConfiguration().getString("CraftIRC.adminchannel", "mchatadmin");
         this.enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
         this.extrahelpplugin = new ArrayList<String>();

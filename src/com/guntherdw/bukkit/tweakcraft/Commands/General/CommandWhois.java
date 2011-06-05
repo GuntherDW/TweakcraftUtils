@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
+package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Command;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;

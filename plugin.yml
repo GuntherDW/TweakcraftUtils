@@ -1,7 +1,10 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 2.1.1
-authors: GuntherDW, Meaglin, sk89q
+version: 2.2.1a
+authors:
+  - GuntherDW
+  - Meaglin
+  - sk89q
 website: https://github.com/GuntherDW/TweakcraftUtils
 description: A general usage plugin primarily aimed at Tweakcraft, but can be used by any server
 database: true
@@ -186,3 +189,10 @@ commands:
     description: GroupChat control
     usage: /<command>
     aliases: [gc]
+  eject:
+    description: Eject your freeloader!
+    usage: /<command>
+  donotmount:
+    description: Toggle mounting access
+    usage: /<command>
+    aliases: [dnm,nomount]

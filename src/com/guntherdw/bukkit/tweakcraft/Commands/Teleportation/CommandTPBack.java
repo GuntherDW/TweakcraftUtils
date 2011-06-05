@@ -42,23 +42,28 @@ public class CommandTPBack implements Command {
             if(!plugin.check(player, "tpback"))
                 throw new PermissionsException(command);
             if(plugin.getConfigHandler().enableTPBack) {
-                Location back = plugin.getTelehistory().getLastEntry(player.getName());
-                if(back == null) {
-                    player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
+                if(args.length>0 && args[0].equalsIgnoreCase("clear")) {
+                    player.sendMessage(ChatColor.GOLD+"Cleaning your TPBack history!");
+                    plugin.getTelehistory().clearHistory(player.getName());
                 } else {
-                    Integer remaining = plugin.getTelehistory().getRemaining(player.getName());
-                    String rem = "";
-                    if(remaining == null || remaining == 0) {
-                        rem = "Origin! No TPBack lines left!";
+                    Location back = plugin.getTelehistory().getLastEntry(player.getName());
+                    if(back == null) {
+                        player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
                     } else {
-                        rem = remaining+" TPBack lines left!";
+                        Integer remaining = plugin.getTelehistory().getRemaining(player.getName());
+                        String rem = "";
+                        if(remaining == null || remaining == 0) {
+                            rem = "Origin! No TPBack lines left!";
+                        } else {
+                            rem = remaining+" TPBack lines left!";
+                        }
+                        player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
+                        if(back.getY()==130) {
+                            player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
+                        }
+                        player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
+                        player.teleport(back);
                     }
-                    player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
-                    if(back.getY()==130) {
-                        player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
-                    }
-                    player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
-                    player.teleport(back);
                 }
             } else {
                 player.sendMessage(ChatColor.RED+"TP History isn't enabled!");
