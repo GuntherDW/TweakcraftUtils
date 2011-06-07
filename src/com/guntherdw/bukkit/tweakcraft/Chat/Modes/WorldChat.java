@@ -115,7 +115,7 @@ public class WorldChat implements ChatMode {
     }
 
     public String getColor() {
-        return ChatColor.YELLOW.toString();
+        return ChatColor.DARK_GREEN.toString();
     }
 
     public String getPrefix() {

@@ -46,7 +46,7 @@ public class CommandDoNotMount implements Command {
                 }
                 plugin.getPlayerListener().getNomount().remove(player.getName());
             } else {
-                player.sendMessage(ChatColor.GOLD + "They can mount no longer mount you!");
+                player.sendMessage(ChatColor.GOLD + "They can no longer mount you!");
                 if(plugin.getConfigHandler().enablePersistence) {
                     plugin.getPlayerListener().addNoMountPersistence(player.getName());
                 }
