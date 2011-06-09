@@ -63,7 +63,7 @@ public class CommandMute implements Command {
             Player player = plugin.getServer().getPlayer(playername);
             if (player != null) {
 
-                if (!ch.canTalk(playername)) {
+                if (ch.canTalk(playername)) {
 
                     sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName() + (dura!=null?" for "+dura+" minutes!":""));
                     ch.addMute(player.getName().toLowerCase(), dura);
