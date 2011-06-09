@@ -63,6 +63,9 @@ public class ConfigurationHandler {
     public boolean useTweakBotSeen = false;
     public String  craftIRCAdminChannel = "mchatadmin";
     public String  IRCMessageFormat = "[A] <%name%> %message%";
+    public boolean enableDebug = false; /* Verbose messages */
+    public boolean enableAutoTame = false;
+    public boolean paySaddle = true;
     // public Map<String, String>
 
     public ConfigurationHandler(TweakcraftUtils instance) {
@@ -117,7 +120,9 @@ public class ConfigurationHandler {
         this.localchatdistance = plugin.getConfiguration().getInt("ChatMode.LocalChat.range", 200);
         this.enabletamertool =  plugin.getConfiguration().getBoolean("tamer.enabled", true);
         this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
-
+        this.enableAutoTame = plugin.getConfiguration().getBoolean("mount.autotame", false);
+        this.paySaddle = plugin.getConfiguration().getBoolean("mount.paysaddle", true);
+        this.enableDebug = plugin.getConfiguration().getBoolean("debug.enable", false);
         if(this.enablePersistence) {
             plugin.getPlayerListener().reloadInfo();
         }

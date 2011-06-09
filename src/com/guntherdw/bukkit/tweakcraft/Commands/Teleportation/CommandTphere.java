@@ -53,11 +53,19 @@ public class CommandTphere implements Command {
                 if (pto.getName().equals(player.getName())) {
                     player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
                 } else {
-                    player.sendMessage(ChatColor.YELLOW + "Teleporting " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
-                    pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
+                    boolean success = pto.teleport(player);
+                    if(success) {
+                        player.sendMessage(ChatColor.YELLOW + "Teleporting " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
+                        pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
                             + " teleported you to him!");
-                    plugin.getTelehistory().addHistory(pto.getName(), pto.getLocation());
-                    pto.teleport(player);
+                        plugin.getTelehistory().addHistory(pto.getName(), pto.getLocation());
+                    } else {
+                        player.sendMessage(ChatColor.YELLOW + "Failed to teleport " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
+                        pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
+                            + ChatColor.RED + "tried/failed"+ ChatColor.YELLOW +  " teleported you to him!");
+                    }
+
+
                 }
             }
         } else {

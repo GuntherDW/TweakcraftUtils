@@ -170,7 +170,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
         nicks.clear();
         for(PlayerInfo pi : playerinfo) {
             if(pi.getNick()!=null) {
-                plugin.getLogger().info("[TweakcraftUtils] Setting "+pi.getName()+"'s nick to "+pi.getNick());
+                if(plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("[TweakcraftUtils] Setting "+pi.getName()+"'s nick to "+pi.getNick());
                 nicks.put(pi.getName(), pi.getNick());
             }
         }
@@ -178,7 +179,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
         nomount.clear();
         for(PlayerOptions po : playeroptions) {
             if(po.getOptionname().equals("nomount")) {
-                plugin.getLogger().info("[TweakcraftUtils] Setting "+po.getName()+"'s no-ride option!");
+                if(plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("[TweakcraftUtils] Setting "+po.getName()+"'s no-ride option!");
                 nomount.add(po.getName());
             }
         }
@@ -327,7 +329,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     plugin.getDatabase().save(pi);
                 }
             }
-            plugin.getLogger().info("[TweakcraftUtils] Stored " + name + "'s logout!");
+            if(plugin.getConfigHandler().enableDebug)
+                plugin.getLogger().info("[TweakcraftUtils] Stored " + name + "'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());
         try {
@@ -419,9 +422,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
         {
             this.invisplayers.addAll(lijst);
         }
-        for(String s : lijst) {
-            plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
-        }
+        if(plugin.getConfigHandler().enableDebug)
+            for(String s : lijst)
+                plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
     }
 
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
@@ -442,10 +445,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if(player.getItemInHand() == null &&
                 entity.getPassenger().equals(player)) {
             entity.eject();
-        }
+        } else 
         if(player.getItemInHand() != null
-           && player.getItemInHand().getType() == Material.SADDLE
-           && !(entity instanceof Pig)) {
+                && player.getItemInHand().getType() == Material.SADDLE) {
             if(entity.isEmpty()) {
                 boolean allowed = true;
                 if(nomount.contains(player.getName())) {
@@ -456,20 +458,62 @@ public class TweakcraftPlayerListener extends PlayerListener {
                         if(allowed) { // TODO: Make extra checks for a "do-not-mount" option
                             allowed = !nomount.contains(((Player)entity).getName());
                         }
-                    }
-                    else
+                    } else if (entity instanceof Pig) {
+                        Pig pig = (Pig) entity;
+                        if(!plugin.getConfigHandler().paySaddle && !pig.hasSaddle()) {
+                            ItemStack holding = player.getItemInHand();
+                            if(holding!=null) {
+                                if(holding.getType() == Material.SADDLE) {
+                                    holding.setAmount(holding.getAmount()+1);
+                                    player.setItemInHand(holding);
+                                }
+                                else {
+                                    player.getInventory().addItem(new ItemStack(Material.SADDLE, 1));
+                                }
+                            } else {
+                                holding = new ItemStack(Material.SADDLE, 1);
+                                player.setItemInHand(holding);
+                            }
+
+                        }
+                    } else if(entity instanceof Wolf) {
+                        Wolf w = (Wolf) entity;
+                        if(plugin.getConfigHandler().enableAutoTame)
+                            if(!w.isTamed() && plugin.check(player, "mount.autotame")) {
+                                w.setOwner(player);
+                                w.setAngry(false);
+                                w.setSitting(false);
+                                // w.sett
+                            }
+                    } else {
                         allowed = plugin.check(player, "mount.other");
+                    }
+
+
 
                     if(allowed) {
-                        entity.setPassenger(player);
+                        if(plugin.getConfigHandler().paySaddle && !(entity instanceof Pig))
+                        {
+                            ItemStack holding = player.getItemInHand();
+                            holding.setAmount(holding.getAmount()-1);
+                            player.setItemInHand(holding);
+                        }
+                        // boolean nakedpig = entity instanceof Pig && !((Pig)entity).hasSaddle();
+                        /**
+                         * Minecraft handles pig saddle events just fine on its own,
+                         * no need to meddle with it here.
+                         */
+                        if(!(entity instanceof Pig)) entity.setPassenger(player);
                     }
                     else
                         player.sendMessage(ChatColor.RED+"You are not allowed to do that!");
                 }
-            } else if(!entity.isEmpty() && entity.getPassenger().equals(player)) {
+            } else if(!(entity instanceof Pig)
+                   && !entity.isEmpty()
+                   && entity.getPassenger().equals(player)) {
+
                 entity.eject();
             }
         }
     }
-
 }
