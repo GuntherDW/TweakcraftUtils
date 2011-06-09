@@ -42,7 +42,7 @@ public class CommandChatMode implements Command {
             }
             Player player = (Player) sender;
             ChatHandler ch = plugin.getChathandler();
-            if(ch.isMuted(player.getName())) {
+            if(!ch.canTalk(player.getName())) {
                 throw new CommandException("You can't use this while muted!");
             }
             String chatMode = args[0].toLowerCase();

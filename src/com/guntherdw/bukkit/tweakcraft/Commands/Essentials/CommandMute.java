@@ -38,24 +38,35 @@ public class CommandMute implements Command {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "mute"))
                 throw new PermissionsException(command);
-
+        Integer dura = null;
         ChatHandler ch = plugin.getChathandler();
         if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
             sender.sendMessage(ChatColor.LIGHT_PURPLE+"Current list of muted players : ");
             if(ch.getMutedPlayers().isEmpty()) { sender.sendMessage(ChatColor.LIGHT_PURPLE + "List is empty!"); }
             else {
-                for(String s : ch.getMutedPlayers()) {
+                for(String s : ch.getMutedPlayers().keySet()) {
                     sender.sendMessage(plugin.getPlayerColor(s, true)+s);
                 }
             }
-        } else if(args.length == 1) {
+        } else if(args.length >= 1) {
             String playername = plugin.findPlayer(args[0]);
+            if(args.length>2 && args[1].startsWith("t:")) {
+                String duration = args[1].substring(2);
+                if(duration.endsWith("m")) {
+                    try{
+                        dura = Integer.parseInt(duration.substring(0, duration.length()-1));
+                    } catch(NumberFormatException e) {
+                        dura = null;
+                    }
+                }
+            }
             Player player = plugin.getServer().getPlayer(playername);
             if (player != null) {
 
-                if (!ch.getMutedPlayers().contains(player.getName().toLowerCase())) {
-                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName());
-                    ch.addMute(player.getName().toLowerCase());
+                if (!ch.canTalk(playername)) {
+
+                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName() + (dura!=null?" for "+dura+" minutes!":""));
+                    ch.addMute(player.getName().toLowerCase(), dura);
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Unmuting " + player.getDisplayName());
                     ch.removeMute(player.getName().toLowerCase());

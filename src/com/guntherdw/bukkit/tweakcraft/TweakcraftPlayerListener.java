@@ -196,7 +196,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         ChatHandler ch = plugin.getChathandler();
         ChatMode cm = ch.getPlayerChatMode(player);
 
-        if (ch.getMutedPlayers().contains(player.getName().toLowerCase())) {
+        if (!ch.canTalk(player.getName())) {
             player.sendMessage(ChatColor.GOLD + "You are muted! No one can hear you.");
             plugin.getLogger().info("[TweakcraftUtils] Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
             event.setCancelled(true);

@@ -23,10 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author GuntherDW
@@ -36,7 +33,7 @@ public class ChatHandler {
     private TweakcraftUtils plugin;
     public Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
     public Map<String, String> playerchatmode = new HashMap<String, String>();
-    public List<String> mutedPlayers = new ArrayList<String>();
+    public Map<String, Long> mutedPlayers = new HashMap<String, Long>();
 
     public ChatHandler(TweakcraftUtils instance) {
         plugin = instance;
@@ -116,23 +113,36 @@ public class ChatHandler {
 
     }
 
-    public void addMute(String player) {
-        if (!mutedPlayers.contains(player)) {
-            mutedPlayers.add(player);
+    public void addMute(String player, Integer duration) {
+        Long toTime = null;
+        if(duration != null) {
+            toTime = Calendar.getInstance().getTime().getTime()+(duration*1000);
         }
+        mutedPlayers.put(player, toTime);
+    }
+
+    public boolean canTalk(String player) {
+        if(mutedPlayers.containsKey(player.toLowerCase())) {
+            Long checktime = Calendar.getInstance().getTime().getTime();
+            Long muteTime = mutedPlayers.get(player.toLowerCase());
+            if(muteTime == null || muteTime < checktime) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void removeMute(String player) {
-        if (mutedPlayers.contains(player)) {
+        if (mutedPlayers.containsKey(player)) {
             mutedPlayers.remove(player);
         }
     }
 
-    public List<String> getMutedPlayers() {
+    public Map<String, Long> getMutedPlayers() {
         return mutedPlayers;
     }
 
     public boolean isMuted(String playername) {
-        return mutedPlayers.contains(playername.toLowerCase());
+        return mutedPlayers.containsKey(playername.toLowerCase());
     }
 }
