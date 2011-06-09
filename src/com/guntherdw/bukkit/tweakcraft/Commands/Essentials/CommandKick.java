@@ -39,6 +39,12 @@ public class CommandKick implements Command {
 
         String reason = "";
         Player player;
+        String kicker = "";
+        if(sender instanceof Player) {
+            kicker = plugin.getNick(((Player)sender).getName());
+        } else {
+            kicker = "CONSOLE";
+        }
         if (args.length > 0) // No reason set!
         {
             String p = plugin.findPlayer(args[0]);
@@ -54,7 +60,7 @@ public class CommandKick implements Command {
                     reason = reason.substring(0, reason.length() - 1);
 
             }
-            player.kickPlayer(reason);
+            player.kickPlayer(kicker+": "+reason);
         }
 
         return true;

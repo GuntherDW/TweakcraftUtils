@@ -415,6 +415,19 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
+    public void onPlayerKick(PlayerKickEvent event) {
+        if(event.isCancelled())
+            return;
+
+        Player p = event.getPlayer();
+        String nick = getNick(p.getName());
+        if(invisplayers.contains(p.getName())) {
+            event.setLeaveMessage(null);
+        } else if(nick != null) {
+            event.setLeaveMessage(nick + " left the game.");
+        }
+    }
+
     public void reloadInvisTable() {
         List<String> lijst = plugin.getConfiguration().getStringList("invisible-playerlist", null);
         this.invisplayers.clear();
