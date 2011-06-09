@@ -63,7 +63,8 @@ public class ChatHandler {
     public List<String> listChatModes() {
         List<String> l = new ArrayList<String>();
         for(String s : chatmodes.keySet()) {
-            l.add(s);
+            if((chatmodes.get(s)).isEnabled())
+                l.add(s);
         }
         return l;
     }
