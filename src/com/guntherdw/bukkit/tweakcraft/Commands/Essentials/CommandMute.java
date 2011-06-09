@@ -25,9 +25,13 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Util.TimeTool;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.sql.Time;
+import java.util.Calendar;
 
 /**
  * @author GuntherDW
@@ -45,12 +49,16 @@ public class CommandMute implements Command {
             if(ch.getMutedPlayers().isEmpty()) { sender.sendMessage(ChatColor.LIGHT_PURPLE + "List is empty!"); }
             else {
                 for(String s : ch.getMutedPlayers().keySet()) {
-                    sender.sendMessage(plugin.getPlayerColor(s, true)+s);
+                    if(!ch.canTalk(s)) {
+                        Integer minsremain = ch.getRemaining(s);
+                        String rem = (minsremain==null?"forever":(TimeTool.calcLeft(minsremain)));
+                        sender.sendMessage(ChatColor.GOLD + s +ChatColor.WHITE+" - "+ChatColor.GOLD+rem);
+                    }
                 }
             }
-        } else if(args.length >= 1) {
+        } else if(args.length > 0) {
             String playername = plugin.findPlayer(args[0]);
-            if(args.length>2 && args[1].startsWith("t:")) {
+            if(args.length>1 && args[1].startsWith("t:")) {
                 String duration = args[1].substring(2);
                 if(duration.endsWith("m")) {
                     try{
@@ -64,8 +72,7 @@ public class CommandMute implements Command {
             if (player != null) {
 
                 if (ch.canTalk(playername)) {
-
-                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName() + (dura!=null?" for "+dura+" minutes!":""));
+                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName() +ChatColor.YELLOW+ (dura!=null?" for "+dura+" minutes!":""));
                     ch.addMute(player.getName().toLowerCase(), dura);
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Unmuting " + player.getDisplayName());

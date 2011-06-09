@@ -114,10 +114,14 @@ public class ChatHandler {
 
     }
 
+    public void addMute(String player) {
+        addMute(player, null);
+    }
+
     public void addMute(String player, Integer duration) {
         Long toTime = null;
         if(duration != null) {
-            toTime = Calendar.getInstance().getTime().getTime()+(duration*1000);
+            toTime = Calendar.getInstance().getTime().getTime()+(duration*60*1000);
         }
         mutedPlayers.put(player, toTime);
     }
@@ -126,8 +130,11 @@ public class ChatHandler {
         if(mutedPlayers.containsKey(player.toLowerCase())) {
             Long checktime = Calendar.getInstance().getTime().getTime();
             Long muteTime = mutedPlayers.get(player.toLowerCase());
-            if(muteTime == null || muteTime < checktime) {
+            if(muteTime == null || checktime < muteTime) {
                 return false;
+            }
+            if(checktime > muteTime) {
+                removeMute(player);
             }
         }
         return true;
@@ -141,6 +148,15 @@ public class ChatHandler {
 
     public Map<String, Long> getMutedPlayers() {
         return mutedPlayers;
+    }
+
+    public Integer getRemaining(String player) {
+        if(canTalk(player)) return null;
+        Long remain = mutedPlayers.get(player);
+        if(remain == null) return null;
+        Long checktime = Calendar.getInstance().getTime().getTime();
+        Double dres = Math.floor((remain - checktime)/100);
+        return dres.intValue();
     }
 
     public boolean isMuted(String playername) {
