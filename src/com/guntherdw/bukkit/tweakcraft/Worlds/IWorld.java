@@ -31,9 +31,13 @@ public interface IWorld {
 
     public abstract String getName();
 
+    public abstract void loadWorld();
+
     public abstract boolean isEnabled();
 
     public abstract boolean isLoaded();
+
+    public abstract void setEnabled(boolean enabled);
 
     public abstract Configuration getConfiguration();
 }

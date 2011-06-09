@@ -26,9 +26,13 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Worlds.IWorld;
+import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 
 /**
  * @author GuntherDW
@@ -68,6 +72,54 @@ public class CommandTC implements Command {
                     plugin.getPlayerListener().reloadInfo();
                 } */
 
+            } else if(args[0].equalsIgnoreCase("world")) {
+                if(sender instanceof Player)
+                    if(!plugin.check((Player) sender, "admin.world"))
+                        throw new PermissionsException(command);
+                if(args.length>2) {
+                    String modus = args[1];
+                    String world = args[2];
+                    String arg   = args.length>3? args[3] : null;
+                    IWorld iw = plugin.getworldManager().getWorld(world);
+                    if(modus.equalsIgnoreCase("unload")) {
+                        if(iw!=null) {
+                            if(iw.isEnabled()) {
+                                for(Player pl : iw.getBukkitWorld().getPlayers()) {
+                                    pl.sendMessage(ChatColor.RED + "WORLD UNLOADING. Sending you to spawn on the first world.");
+                                    pl.teleport(plugin.getServer().getWorlds().get(0).getSpawnLocation());
+                                }
+                                iw.setEnabled(false);
+                                sender.sendMessage(ChatColor.GOLD + "Unloading world "+iw.getName());
+                                plugin.getServer().unloadWorld(iw.getName(), arg==null?true:Boolean.parseBoolean(arg));
+                            } else {
+                                sender.sendMessage(ChatColor.RED+"That world wasn't enabled!");
+                            }
+                        } else {
+                            sender.sendMessage(ChatColor.RED+"World error, is that world managed by TweakcraftUtils?");
+                        }
+                    } else if(modus.equalsIgnoreCase("create") || modus.equalsIgnoreCase("load")) {
+                        if(arg == null) arg = "normal";
+                        World.Environment env = null;
+                        try { env = World.Environment.valueOf(arg.toUpperCase()); }
+                        catch(IllegalArgumentException ex) { env = World.Environment.NORMAL; } 
+                        if(iw!=null) {
+                            if(iw.isEnabled()) {
+                                sender.sendMessage(ChatColor.RED + "This world already is enabled!");
+                            } else {
+                                sender.sendMessage(ChatColor.GOLD + "Enabling world "+world+" with env "+env.name());
+                                iw.loadWorld();
+                            }
+                        } else {
+                            /**
+                             * NEW WORLD
+                             */
+                            sender.sendMessage(ChatColor.GOLD + "Creating new world "+world+" with env "+env.name());
+                            plugin.getworldManager().getWorlds().put(world, new TweakWorld(plugin.getworldManager(), world, env, true));
+                        }
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.GREEN + "usage: /tc world create|unload");
+                }
             }
         } else {
             throw new CommandUsageException("/tc <" + ChatColor.GREEN + "reload" + ChatColor.YELLOW + "/" + ChatColor.GREEN + "version" + ChatColor.YELLOW + ">");

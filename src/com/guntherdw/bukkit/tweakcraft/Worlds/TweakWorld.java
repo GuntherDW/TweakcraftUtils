@@ -29,6 +29,7 @@ import java.io.IOException;
 public class TweakWorld implements IWorld {
 
     private org.bukkit.World world;
+    private String foldername = null;
     private boolean enabled = false;
     private String worldName = "";
     private org.bukkit.World.Environment environment;
@@ -36,6 +37,8 @@ public class TweakWorld implements IWorld {
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean enabled) {
         this.wm = wm;
+        this.foldername = foldername;
+        this.environment = env;
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
         }
@@ -61,6 +64,11 @@ public class TweakWorld implements IWorld {
         }
     }
 
+    public void loadWorld() {
+        if(world != null) return;
+        loadWorld(wm, foldername, environment, enabled);
+    }
+
     public IWorld getWorld() {
         return this;
     }
@@ -83,6 +91,10 @@ public class TweakWorld implements IWorld {
 
     public boolean isLoaded() {
         return world != null;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Configuration getConfiguration() {
