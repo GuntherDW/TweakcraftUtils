@@ -438,7 +438,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if(invisplayers.contains(p.getName())) {
             event.setLeaveMessage(null);
         } else if(nick != null) {
-            event.setLeaveMessage(nick + " left the game.");
+            event.setLeaveMessage(ChatColor.YELLOW + nick + " left the game.");
         }
     }
 

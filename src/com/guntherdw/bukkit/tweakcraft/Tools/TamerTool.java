@@ -153,7 +153,7 @@ public class TamerTool {
         if(plugin.check(player, "tamer.heal")) {
             Boolean allowed = true;
             if(wolf.isTamed()) {
-                if(wolf.getOwner().equals(player)) {
+                if(wolf.getOwner()!=null && wolf.getOwner().equals(player)) {
                     if(!plugin.check(player, "tamer.heal.own"))
                         allowed = false;
                 } else {

@@ -62,7 +62,7 @@ public class CommandTphere implements Command {
                     } else {
                         player.sendMessage(ChatColor.YELLOW + "Failed to teleport " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
                         pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
-                            + ChatColor.RED + "tried/failed"+ ChatColor.YELLOW +  " teleported you to him!");
+                            + ChatColor.RED + "tried/failed"+ ChatColor.YELLOW +  " to teleport you to him!");
                     }
 
 
