@@ -19,6 +19,8 @@
 package com.guntherdw.bukkit.tweakcraft.Chat;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.*;
+import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.entity.Player;
@@ -118,10 +120,26 @@ public class ChatHandler {
         addMute(player, null);
     }
 
-    public void addMute(String player, Integer duration) {
+    public void updateMute(String player, Long toTime) {
+        mutedPlayers.put(player, toTime);
+    }
+
+    public void addMute(String player, Long duration) {
         Long toTime = null;
         if(duration != null) {
-            toTime = Calendar.getInstance().getTime().getTime()+(duration*60*1000);
+            toTime  = Calendar.getInstance().getTime().getTime();
+            toTime += duration*1000;
+        }
+        if(plugin.getConfigHandler().enablePersistence) {
+            PlayerOptions po = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player).ieq("optionname", "mute").findUnique();
+            if(po==null) {
+                po = new PlayerOptions();
+                po.setName(player);
+                po.setOptionname("mute");
+            }
+            
+            po.setOptionvalue(toTime==null?null:toTime.toString());
+            plugin.getDatabase().save(po);
         }
         mutedPlayers.put(player, toTime);
     }
@@ -134,6 +152,8 @@ public class ChatHandler {
                 return false;
             }
             if(checktime > muteTime) {
+                if(plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("[TweakcraftUtils] Mutes: auto-unmuting "+player+", his mutetime was over!");
                 removeMute(player);
             }
         }
@@ -144,19 +164,24 @@ public class ChatHandler {
         if (mutedPlayers.containsKey(player)) {
             mutedPlayers.remove(player);
         }
+        if(plugin.getConfigHandler().enablePersistence) {
+            PlayerOptions po = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player).ieq("optionname", "mute").findUnique();
+            if(po!=null)
+                plugin.getDatabase().delete(po);
+        }
     }
 
     public Map<String, Long> getMutedPlayers() {
         return mutedPlayers;
     }
 
-    public Integer getRemaining(String player) {
+    public Long getRemaining(String player) {
         if(canTalk(player)) return null;
         Long remain = mutedPlayers.get(player);
         if(remain == null) return null;
         Long checktime = Calendar.getInstance().getTime().getTime();
-        Double dres = Math.floor((remain - checktime)/100);
-        return dres.intValue();
+        Double dres = Math.floor((remain - checktime)/1000);
+        return dres.longValue();
     }
 
     public boolean isMuted(String playername) {

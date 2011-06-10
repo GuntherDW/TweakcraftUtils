@@ -123,6 +123,9 @@ public class ConfigurationHandler {
         this.enableAutoTame = plugin.getConfiguration().getBoolean("mount.autotame", false);
         this.paySaddle = plugin.getConfiguration().getBoolean("mount.paysaddle", true);
         this.enableDebug = plugin.getConfiguration().getBoolean("debug.enable", false);
+        if(this.enableDebug) {
+            plugin.getLogger().info("[TweakcraftUtils] Extra verbose messages enabled!");
+        }
         if(this.enablePersistence) {
             plugin.getPlayerListener().reloadInfo();
         }

@@ -21,6 +21,7 @@ package com.guntherdw.bukkit.tweakcraft;
 import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
+import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
@@ -183,6 +184,19 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     plugin.getLogger().info("[TweakcraftUtils] Setting "+po.getName()+"'s no-ride option!");
                 nomount.add(po.getName());
             }
+            if(po.getOptionname().equals("mute")) {
+                if(plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("[TweakcraftUtils] Setting "+po.getName()+"'s mute option!");
+                Long toTime = null;
+                try{
+                    if(po.getOptionvalue()!=null) {
+                        toTime = Long.parseLong(po.getOptionvalue());
+                    }
+                } catch (NumberFormatException ex) {
+                    toTime = null;
+                }
+                plugin.getChathandler().updateMute(po.getName(), toTime);
+            }
         }
     }
 
@@ -252,8 +266,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void onPlayerLogin(PlayerLoginEvent event) {
         BanHandler handler = plugin.getBanhandler();
-        Ban isBanned = handler.searchBan(event.getPlayer().getName());
-        if (isBanned != null) {
+        Ban isBanned = handler.isBannedBan(event.getPlayer().getName());
+        if (isBanned!=null) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, isBanned.getReason());
         }
     }

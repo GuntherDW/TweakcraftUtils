@@ -25,6 +25,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Util.TimeTool;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,16 +47,30 @@ public class CommandBan implements Command {
         } else {
             String reason = "";
             String playername = args[0];
+            String duration = null;
+            Long dura = null;
+            String toFull = null;
             if (args.length > 1) {
-                for (int x = 1; x < args.length; x++) {
+                boolean skipfirst = false;
+                if(args[1].startsWith("t:")) {
+                    duration = args[1].substring(2);
+                    dura = TimeTool.calcTime(duration);
+                    toFull = TimeTool.getDurationFull(duration);
+                    duration = duration.substring(0, duration.length()-1);
+                }
+                if(dura!=null) skipfirst=true;
+                for (int x = skipfirst?2:1; x < args.length; x++) {
                     reason += args[x] + " ";
                 }
                 if (reason.length() > 1)
                     reason = reason.substring(0, reason.length() - 1);
             }
+            if(dura!=null&&!plugin.getConfigHandler().enablePersistence) {
+                throw new CommandUsageException("ERROR: For timed bans to work, persistence HAS to be enabled!");
+            }
 
-            handler.banPlayer(playername, reason);
-            sender.sendMessage(ChatColor.YELLOW + "Banning " + playername + "!");
+            handler.banPlayer(playername, reason, dura);
+            sender.sendMessage(ChatColor.YELLOW + "Banning " + playername + ChatColor.YELLOW+ (dura!=null?" for "+duration+" "+toFull+"!":""));
 
             Player player = plugin.getServer().getPlayer(plugin.findPlayer(playername));
             if (player != null) {

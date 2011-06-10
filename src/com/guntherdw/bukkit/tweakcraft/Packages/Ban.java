@@ -25,10 +25,18 @@ public class Ban {
 
     String player;
     String reason;
+    Long   toTime;
 
     public Ban(String Player, String Reason) {
         this.player = Player;
         this.reason = Reason;
+        this.toTime = null;
+    }
+
+    public Ban(String Player, String Reason, Long ToTime) {
+        this.player = Player;
+        this.reason = Reason;
+        this.toTime = ToTime;
     }
 
     public String getPlayer() {
@@ -45,5 +53,13 @@ public class Ban {
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public Long getToTime() {
+        return toTime;
+    }
+
+    public void setToTime(Long toTime) {
+        this.toTime = toTime;
     }
 }

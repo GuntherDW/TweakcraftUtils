@@ -18,20 +18,18 @@
 
 package com.guntherdw.bukkit.tweakcraft.Util;
 
-import java.security.PrivateKey;
-
 /**
  * @author GuntherDW
  */
 public class TimeTool {
-    public static String calcLeft(Integer seconds) {
+    public static String calcLeft(Long seconds) {
         if(seconds > Integer.MAX_VALUE)
             return null;
 
         Integer days = 0;
         Integer hours = 0;
         Integer mins = 0;
-        Integer secs = 0;
+        Long secs = 0L;
         while(seconds > 60) {
             if(seconds > 60*60*24) {
                 days++;
@@ -57,7 +55,79 @@ public class TimeTool {
             timerem += secs+" seconds, ";
         if(timerem.length()>2)
             timerem = timerem.substring(0, timerem.length()-2);
+
+        if(timerem.trim().equals(""))
+            timerem = "UNDEFINED";
         
         return timerem;
+    }
+
+    public static Long calcTime(String tstring) {
+        Long l = null;
+        Long multi = 0L;
+        if(tstring.length()>0) {
+            char last = tstring.charAt(tstring.length()-1);
+            switch(last) {
+                case 's':
+                    multi = 1L;
+                    break;
+                case 'm':
+                    multi = 60L;
+                    break;
+                case 'h':
+                    multi = 60L*60L;
+                    break;
+                case 'd':
+                    multi = 60L*60L*24L;
+                    break;
+                case 'w':
+                    multi = 60L*60L*24L*7L;
+                    break;
+                default:
+                    break;
+            }
+            if(multi != 0) {
+                try {
+                    Integer i = Integer.parseInt(tstring.substring(0, tstring.length()-1));
+                    l = i*multi;
+                } catch(NumberFormatException ex) {
+                    l = null;
+                }
+            }
+        }
+        return l;
+    }
+
+    public static String getDurationFull(String tstring) {
+        String res = null;
+        if(tstring.length()>0) {
+            char last = tstring.charAt(tstring.length()-1);
+            switch(last) {
+                case 's':
+                    res = "second";
+                    break;
+                case 'm':
+                    res = "minute";
+                    break;
+                case 'h':
+                    res = "hour";
+                    break;
+                case 'd':
+                    res = "day";
+                    break;
+                case 'w':
+                    res = "week";
+                    break;
+                default:
+                    break;
+            }
+            try {
+                Integer i = Integer.parseInt(tstring.substring(0, tstring.length()-1));
+                if(i>1) res=res+"s";
+            } catch(NumberFormatException ex) {
+                res = null;
+            }
+        }
+        return res;
     }
 }
