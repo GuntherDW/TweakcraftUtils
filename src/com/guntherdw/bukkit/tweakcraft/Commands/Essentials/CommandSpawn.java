@@ -39,8 +39,14 @@ public class CommandSpawn implements Command {
             if (!plugin.check(player, "spawn"))
                 throw new PermissionsException(command);
 
-            sender.sendMessage(ChatColor.YELLOW + "Teleporting you to spawn!");
-            player.teleport(player.getWorld().getSpawnLocation());
+
+            boolean success  = player.teleport(player.getWorld().getSpawnLocation());
+            if(success) {
+                plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
+                sender.sendMessage(ChatColor.YELLOW + "Teleporting you to spawn!");
+            } else {
+                sender.sendMessage(ChatColor.RED + "Failed to teleport you to spawn!");
+            }
         } else {
             throw new CommandSenderException("What do you think you are doing?");
         }

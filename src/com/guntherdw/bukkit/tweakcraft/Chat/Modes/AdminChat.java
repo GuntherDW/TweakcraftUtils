@@ -74,7 +74,7 @@ public class AdminChat implements ChatMode {
             if(plugin.getConfigHandler().AIRCenabled) {
 
                 String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;
-                       targetmsg = targetmsg.replace("%name%", sendername);
+                       targetmsg = targetmsg.replace("%name%", cleanname);
                        targetmsg = targetmsg.replace("%message%", message);
 
                 plugin.getCraftIRC().sendMessageToTag(targetmsg, plugin.getConfigHandler().AIRCtag);
