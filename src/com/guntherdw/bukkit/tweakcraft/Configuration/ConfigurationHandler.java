@@ -61,8 +61,12 @@ public class ConfigurationHandler {
     public int     tamertoolid = Material.STICK.getId();
     public boolean enablePersistence = true;
     public boolean useTweakBotSeen = false;
-    public String  craftIRCAdminChannel = "mchatadmin";
-    public String  IRCMessageFormat = "[A] <%name%> %message%";
+    public String  AIRCtag = "mchatadmin";
+    public String  GIRCtag = "mchat";
+    public String  GIRCMessageFormat = "[A] <%name%> %message%";
+    public String  AIRCMessageFormat = "<%name%> %message%";
+    public boolean GIRCenabled = true;
+    public boolean AIRCenabled = false;
     public boolean enableDebug = false; /* Verbose messages */
     public boolean enableAutoTame = false;
     public boolean paySaddle = true;
@@ -85,9 +89,17 @@ public class ConfigurationHandler {
         this.enableWorldGuard = plugin.getConfiguration().getBoolean("ChatMode.RegionChat", false);
         this.enableZones = plugin.getConfiguration().getBoolean("ChatMode.ZoneChat", false);
         this.enableIRC = plugin.getConfiguration().getBoolean("CraftIRC.enabled", false);
-        this.IRCMessageFormat = plugin.getConfiguration().getString("CraftIRC.MessageFormat");
-        this.craftIRCAdminChannel = plugin.getConfiguration().getString("CraftIRC.adminchannel", "mchatadmin");
+        this.AIRCMessageFormat = plugin.getConfiguration().getString("CraftIRC.admin.MessageFormat");
+        this.AIRCenabled = plugin.getConfiguration().getBoolean("CraftIRC.admin.enabled", false);
+        this.AIRCtag = plugin.getConfiguration().getString("CraftIRC.admin.tag", "mchatadmin");
+        this.GIRCMessageFormat = plugin.getConfiguration().getString("CraftIRC.regular.MessageFormat");
+        this.GIRCtag = plugin.getConfiguration().getString("CraftIRC.regular.tag", "mchatadmin");
+        this.GIRCenabled = plugin.getConfiguration().getBoolean("CraftIRC.regular.enabled", true);
         this.enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
+        this.enableDebug = plugin.getConfiguration().getBoolean("debug.enable", false);
+        if(this.enableDebug) {
+            plugin.getLogger().info("[TweakcraftUtils] Extra verbose messages enabled!");
+        }
         this.extrahelpplugin = new ArrayList<String>();
         this.enableGroupChat = plugin.getConfiguration().getBoolean("ChatMode.GroupChat", true);
         this.enablePersistence = plugin.getConfiguration().getBoolean("Persistence.enabled", true);
@@ -100,7 +112,8 @@ public class ConfigurationHandler {
         for(String plist : plugin.getConfiguration().getStringList("extrahelp.plugins", null)) {
             if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
                 if(!extrahelpplugin.contains(plist)) {
-                    plugin.getLogger().info("[TweakcraftUtils] Adding "+plist+" to the /help addons.");
+                    if(this.enableDebug)
+                        plugin.getLogger().info("[TweakcraftUtils] Adding "+plist+" to the /help addons.");
                     extrahelpplugin.add(plist);
                 } else {
                     plugin.getLogger().info("[TweakcraftUtils] WARNING: "+plist+" is on the extrahelp list multiple times!");
@@ -122,10 +135,6 @@ public class ConfigurationHandler {
         this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
         this.enableAutoTame = plugin.getConfiguration().getBoolean("mount.autotame", false);
         this.paySaddle = plugin.getConfiguration().getBoolean("mount.paysaddle", true);
-        this.enableDebug = plugin.getConfiguration().getBoolean("debug.enable", false);
-        if(this.enableDebug) {
-            plugin.getLogger().info("[TweakcraftUtils] Extra verbose messages enabled!");
-        }
         if(this.enablePersistence) {
             plugin.getPlayerListener().reloadInfo();
         }

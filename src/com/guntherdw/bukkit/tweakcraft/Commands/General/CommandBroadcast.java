@@ -51,6 +51,13 @@ public class CommandBroadcast implements Command {
             p.sendMessage(ChatColor.RED + "[" + ChatColor.GREEN + "Broadcast" + ChatColor.RED + "] " + ChatColor.GREEN + message);
         }
 
+        if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null) {
+            if(plugin.getConfigHandler().GIRCenabled) {
+                String tag = plugin.getConfigHandler().GIRCtag;
+                
+                plugin.getCraftIRC().sendMessageToTag("[Broadcast] "+message, tag);
+            }
+        }
         // plugin.getLogger().info
         plugin.getLogger().info("[Broadcast] " + message);
 

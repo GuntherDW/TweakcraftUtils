@@ -19,13 +19,20 @@ ChatMode:
 
 # Small note: The default CraftIRC doesn't send %prefix% and %suffix% that well.
 # Therefor it's disabled by default. It sends the § values out to IRC.
+# 2.2.3 Splits up admin & regular CraftIRC channels.
 CraftIRC:
     enabled: false
-    adminchannel: mchatadmin
+    admin:
+        enabled: false
+        tag: 'mchatadmin'
 # Support : %name%     -> Sendername
 #           %message%  -> The sent message
 #           The other stuff will get parsed by CraftIRC itself.
-    MessageFormat: '[A] <%name%> %message%'
+        MessageFormat: '[A] <%name%> %message%'
+    regular:
+        enabled: true
+        tag: 'mchat'
+        MessageFormat: '<%name%> %message%'
 
 extrahelp:
     plugins: [TweakWarp, Homes, WorldEdit]
