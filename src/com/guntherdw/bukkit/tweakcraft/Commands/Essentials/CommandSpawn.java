@@ -25,6 +25,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -39,10 +40,10 @@ public class CommandSpawn implements Command {
             if (!plugin.check(player, "spawn"))
                 throw new PermissionsException(command);
 
-
+            Location loc = player.getLocation();
             boolean success  = player.teleport(player.getWorld().getSpawnLocation());
             if(success) {
-                plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
+                plugin.getTelehistory().addHistory(player.getName(), loc);
                 sender.sendMessage(ChatColor.YELLOW + "Teleporting you to spawn!");
             } else {
                 sender.sendMessage(ChatColor.RED + "Failed to teleport you to spawn!");
