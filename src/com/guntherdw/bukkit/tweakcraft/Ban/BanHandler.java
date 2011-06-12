@@ -81,7 +81,8 @@ public class BanHandler {
                 String reason = "";
                 if(tmppo!=null)
                     reason = tmppo.getOptionvalue();
-                bans.put(po.getName(), new Ban(po.getName(), reason, Long.parseLong(po.getOptionvalue())));
+                Long time = po.getOptionvalue()!=null?Long.parseLong(po.getOptionvalue()):null;
+                bans.put(po.getName(), new Ban(po.getName(), reason, time));
             }
         }
 

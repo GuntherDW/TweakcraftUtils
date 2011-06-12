@@ -18,8 +18,10 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
+import com.ensifera.animosity.craftirc.RelayedMessage;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -57,10 +59,10 @@ public class AdminChat implements ChatMode {
         }
         String msg = ChatColor.GREEN + "A: [" + pcolor + sendername + ChatColor.GREEN + "] " + message;
         if (plugin.getConfigHandler().enableIRC && plugin.getCraftIRC() != null) {
-            String w = null;
+            /* String w = null;
             String prex = "";
             String sufx = "";
-            /* if(sender instanceof Player) {
+            if(sender instanceof Player) {
                 w = ((Player)sender).getWorld().getName();
                 prex = plugin.getCraftIRC().getPermPrefix(w, cleanname);
                 sufx = plugin.getCraftIRC().getPermSuffix(w, cleanname);
@@ -76,6 +78,7 @@ public class AdminChat implements ChatMode {
                 String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;
                        targetmsg = targetmsg.replace("%name%", cleanname);
                        targetmsg = targetmsg.replace("%message%", message);
+                       targetmsg = targetmsg.replace("%dispname%", ChatColor.stripColor(sendername));
 
                 plugin.getCraftIRC().sendMessageToTag(targetmsg, plugin.getConfigHandler().AIRCtag);
             }
