@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.zones.model.ZoneBase;
@@ -35,9 +36,11 @@ public class ZoneChat implements ChatMode {
 
     private List<String> subscribers;
     private TweakcraftUtils plugin;
+    private ChatHandler chathandler;
 
-    public ZoneChat(TweakcraftUtils instance) {
-        this.plugin = instance;
+    public ZoneChat(ChatHandler instance) {
+        this.chathandler = instance;
+        this.plugin = chathandler.getTCUtilsInstance();
         this.subscribers = new ArrayList<String>();
     }
 

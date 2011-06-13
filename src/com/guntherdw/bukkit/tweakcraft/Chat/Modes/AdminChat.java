@@ -18,12 +18,10 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
-import com.ensifera.animosity.craftirc.RelayedMessage;
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,10 +35,12 @@ public class AdminChat implements ChatMode {
 
     private List<String> subscribers;
     private TweakcraftUtils plugin;
+    private ChatHandler chathandler;
 
-    public AdminChat(TweakcraftUtils instance) {
+    public AdminChat(ChatHandler instance) {
         subscribers = new ArrayList<String>();
-        plugin = instance;
+        this.chathandler = instance;
+        this.plugin = chathandler.getTCUtilsInstance();
     }
 
     public boolean sendMessage(CommandSender sender, String message) {

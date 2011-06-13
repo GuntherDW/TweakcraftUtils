@@ -40,11 +40,11 @@ public class ChatHandler {
     public ChatHandler(TweakcraftUtils instance) {
         plugin = instance;
         chatmodes.clear();
-        chatmodes.put("admin",  new AdminChat(plugin)); /* This one has a higher priority! */
-        chatmodes.put("local",  new LocalChat(plugin));
-        chatmodes.put("region", new RegionChat(plugin));
-        chatmodes.put("zones",  new ZoneChat(plugin));
-        chatmodes.put("world",  new WorldChat(plugin));
+        chatmodes.put("admin",  new AdminChat(this)); /* This one has a higher priority! */
+        chatmodes.put("local",  new LocalChat(this));
+        chatmodes.put("region", new RegionChat(this));
+        chatmodes.put("zones",  new ZoneChat(this));
+        chatmodes.put("world",  new WorldChat(this));
     }
 
     public ChatMode getChatMode(String mode) throws ChatModeException {
@@ -60,6 +60,10 @@ public class ChatHandler {
             return chatmodes.get(playerchatmode.get(player.getName()));
         }
         return null;
+    }
+
+    public TweakcraftUtils getTCUtilsInstance() {
+        return plugin;
     }
 
     public List<String> listChatModes() {

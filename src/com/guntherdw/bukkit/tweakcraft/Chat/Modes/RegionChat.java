@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.sk89q.worldedit.Vector;
@@ -43,9 +44,11 @@ public class RegionChat implements ChatMode {
 
     private List<String> subscribers;
     private TweakcraftUtils plugin;
+    private ChatHandler chathandler;
 
-    public RegionChat(TweakcraftUtils instance) {
-        this.plugin = instance;
+    public RegionChat(ChatHandler instance) {
+        this.chathandler = instance;
+        this.plugin = chathandler.getTCUtilsInstance();
         this.subscribers = new ArrayList<String>();
     }
 

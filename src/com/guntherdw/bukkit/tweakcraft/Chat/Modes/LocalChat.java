@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.EntityLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
@@ -35,10 +36,12 @@ public class LocalChat implements ChatMode {
 
     private List<String> subscribers;
     private TweakcraftUtils plugin;
+    private ChatHandler chathandler;
 
-    public LocalChat(TweakcraftUtils instance) {
+    public LocalChat(ChatHandler instance) {
         subscribers = new ArrayList<String>();
-        plugin = instance;
+        this.chathandler = instance;
+        this.plugin = chathandler.getTCUtilsInstance();
     }
 
     public boolean sendMessage(CommandSender sender, String message) {

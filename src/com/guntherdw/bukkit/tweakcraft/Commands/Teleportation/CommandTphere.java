@@ -24,6 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -53,12 +54,13 @@ public class CommandTphere implements Command {
                 if (pto.getName().equals(player.getName())) {
                     player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
                 } else {
+                    Location origloc = pto.getLocation();
                     boolean success = pto.teleport(player);
                     if(success) {
                         player.sendMessage(ChatColor.YELLOW + "Teleporting " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
                         pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
                             + " teleported you to him!");
-                        plugin.getTelehistory().addHistory(pto.getName(), pto.getLocation());
+                        plugin.getTelehistory().addHistory(pto.getName(), origloc);
                     } else {
                         player.sendMessage(ChatColor.YELLOW + "Failed to teleport " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
                         pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW

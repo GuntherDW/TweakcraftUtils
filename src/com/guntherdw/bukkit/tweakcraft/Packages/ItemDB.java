@@ -53,10 +53,9 @@ public class ItemDB {
                         Byte damage = Byte.parseByte(split[2]);
                         Integer stacks = Integer.parseInt(split[3]);
                         itemmap.put(itemname, new Item(itemnr, damage, stacks));
-                    } catch (ArrayIndexOutOfBoundsException e) {
+                    } catch (Throwable e) {
                         plugin.getLogger().info("[TweakcraftUtils] Item error at line " + line);
                     }
-
                 }
                 line++;
             }
