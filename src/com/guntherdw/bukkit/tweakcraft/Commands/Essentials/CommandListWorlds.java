@@ -52,13 +52,13 @@ public class CommandListWorlds implements Command {
                     else if (w.getEnvironment() == World.Environment.SKYLANDS)
                         col = ChatColor.AQUA.toString();
                     else
-                        col = ChatColor.BLACK.toString();
+                        col = ChatColor.GRAY.toString();
                     player.sendMessage(col + w.getName());
                 }
             }
 
             player.sendMessage(ChatColor.LIGHT_PURPLE + "Legend: " + ChatColor.RED + "NETHER" + ChatColor.LIGHT_PURPLE + "," +
-                    ChatColor.GREEN + " NORMAL"+ ChatColor.LIGHT_PURPLE + "," + ChatColor.AQUA + " SKYLANDS");
+                    ChatColor.GREEN + " NORMAL"+ ChatColor.LIGHT_PURPLE + "," + ChatColor.AQUA + " SKYLANDS"+ChatColor.LIGHT_PURPLE+","+ChatColor.GRAY+" CUSTOM/OTHER");
             player.sendMessage(ChatColor.LIGHT_PURPLE + "Warp to a world by issuing /world <worldname>");
 
 
