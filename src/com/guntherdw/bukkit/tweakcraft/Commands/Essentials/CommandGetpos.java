@@ -50,7 +50,7 @@ public class CommandGetpos implements Command {
         if(args.length==0 && sender instanceof Player)
             loc = ((Player)sender).getLocation().clone();
         if(args.length>0 && sender instanceof Player)
-            if(!plugin.check((Player)sender, "getposother"))
+            if(!plugin.check((Player)sender, "getpos.other"))
                 throw new PermissionsException(command);
 
         if(args.length>0) {
