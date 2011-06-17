@@ -1,5 +1,22 @@
 invisible-playerlist: []
 
+extra:
+# Set this to true if you want pigs to drop a saddle if you kill them when
+# they have a saddle on them
+# Warning: this can create infini-saddles when you have mount.paysaddle set to false
+    recoverPigSaddle: false
+# This features stops the ignite if you have god mode enabled in WorldGuard.
+# doesn't work flawlessly though.
+    StopGodIgnite: false
+
+mount:
+# Pay a saddle to mount something. When you set this to false, saddling pigs don't charge
+# saddles either.
+    paysaddle: true
+# This config node lets you auto-tame wolves when a player mounts a wolf. They'll still need the correct
+# permission node.
+    autotame: false
+
 PlayerHistory:
     enabled: true
 

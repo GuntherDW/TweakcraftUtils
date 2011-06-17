@@ -18,11 +18,15 @@
 
 package com.guntherdw.bukkit.tweakcraft;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.inventory.ItemStack;
 
 
 /**
@@ -37,7 +41,25 @@ public class TweakcraftEntityListener extends EntityListener {
     }
 
     public void onEntityCombust(EntityCombustEvent event) {
+        Entity ent = event.getEntity();
+        if(ent instanceof Player) {
+            Player player = (Player) ent;
+            if(plugin.getWorldGuard()!=null) {
+                if(plugin.getConfigHandler().stopIgniteWorldGuard && plugin.getWorldGuard().getGlobalConfiguration().hasGodMode(player)) {
+                    event.setCancelled(true);
+                }
+            }
+        }
+    }
 
+    public void onEntityDeath(EntityDeathEvent event) {
+        Entity ent = event.getEntity();
+        if(ent instanceof Pig) {
+            Pig pig = (Pig) ent;
+            if(pig.hasSaddle() && plugin.getConfigHandler().pigRecoverSaddle) {
+                event.getDrops().add(new ItemStack(Material.SADDLE, 1));
+            }
+        }
     }
 
     public void onExplosionPrime(ExplosionPrimeEvent event) {

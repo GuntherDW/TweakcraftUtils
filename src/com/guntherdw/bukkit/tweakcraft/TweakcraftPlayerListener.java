@@ -510,6 +510,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                                 w.setOwner(player);
                                 w.setAngry(false);
                                 w.setSitting(false);
+                                w.setHealth(20);
                                 // w.sett
                             }
                     } else {

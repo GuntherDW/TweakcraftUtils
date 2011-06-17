@@ -42,7 +42,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -229,15 +228,17 @@ public class TweakcraftUtils extends JavaPlugin {
 
 
     private void registerEvents() {
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN,           playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN,            playerListener, Priority.Monitor, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT,            playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK,            playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT,            playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT,        playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT,        playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME, entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH,           entityListener, Priority.Normal, this);
     }
 
     public Logger getLogger() {
@@ -259,7 +260,7 @@ public class TweakcraftUtils extends JavaPlugin {
     public Permissions getPerm() {
         return perm;
     }
-    
+
     public String getPlayerColor(String playername, boolean change) {
 
         String pref = "";
