@@ -8,6 +8,8 @@ extra:
 # This features stops the ignite if you have god mode enabled in WorldGuard.
 # doesn't work flawlessly though.
     StopGodIgnite: false
+# Stops chunks unloading when there's a burning furnace inside of the chunk.
+    stopChunkUnloadBurningFurnace: false
 
 mount:
 # Pay a saddle to mount something. When you set this to false, saddling pigs don't charge

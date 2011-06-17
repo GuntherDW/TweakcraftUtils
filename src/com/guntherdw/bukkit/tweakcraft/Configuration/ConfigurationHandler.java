@@ -70,6 +70,7 @@ public class ConfigurationHandler {
     public boolean enableDebug = false; /* Verbose messages */
     public boolean enableAutoTame = false;
     public boolean paySaddle = true;
+    public boolean stopChunkUnloadBurningFurnace = false;
     /**
      * EXTRA/TEMPORARY STUFF
      */
@@ -140,6 +141,7 @@ public class ConfigurationHandler {
         this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
         this.enableAutoTame = plugin.getConfiguration().getBoolean("mount.autotame", false);
         this.paySaddle = plugin.getConfiguration().getBoolean("mount.paysaddle", true);
+        this.stopChunkUnloadBurningFurnace = plugin.getConfiguration().getBoolean("extra.stopChunkUnloadBurningFurnace", false);
         this.pigRecoverSaddle = plugin.getConfiguration().getBoolean("extra.recoverPigSaddle", true);
         this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.StopGodIgnite", true);
         if(this.enablePersistence) {

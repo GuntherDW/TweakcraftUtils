@@ -64,6 +64,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final TweakcraftEntityListener entityListener = new TweakcraftEntityListener(this);
+    private final TweakcraftWorldListener worldListener = new TweakcraftWorldListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
     private final ItemDB itemDB = new ItemDB(this);
@@ -239,6 +240,11 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH,           entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD,           worldListener , Priority.Normal, this);
+    }
+
+    public TweakcraftWorldListener getWorldListener() {
+        return worldListener;
     }
 
     public Logger getLogger() {
