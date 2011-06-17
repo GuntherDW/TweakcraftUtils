@@ -55,7 +55,7 @@ public class CommandNick implements Command {
                     } */
                     // if() {
                     if(!plugin.getPlayerListener().nickTakenPersistance(player.getName(), args[0])
-                            && !plugin.getPlayerListener().nickTaken(args[0]))
+                            && !plugin.getPlayerListener().nickTakenCheck(player.getName(), args[0]))
                         plugin.getPlayerListener().setNick(player.getName(), args[0]);
                     else
                         throw new CommandException("Nick is already taken!");
@@ -79,7 +79,7 @@ public class CommandNick implements Command {
                             if(f.getName().toLowerCase().equals(args[1].toLowerCase()))
                                 throw new CommandException("Nick is already taken!");
                         }
-                        if(!plugin.getPlayerListener().nickTaken(args[1]))
+                        if(plugin.getPlayerListener().nickTakenCheck(search.get(0).getName(), args[1]))
                             plugin.getPlayerListener().setNick(search.get(0).getName(), args[1]);
                         else
                             throw new CommandException("Nick is already taken!");

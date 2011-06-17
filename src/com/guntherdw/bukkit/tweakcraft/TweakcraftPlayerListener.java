@@ -149,6 +149,16 @@ public class TweakcraftPlayerListener extends PlayerListener {
         return nicks.values().contains(nick);
     }
 
+    public boolean nickTakenCheck(String playername, String nick) {
+        if(nicks.values().contains(nick)) {
+            if(getNick(playername).equals(nick))
+                return false;
+            else
+                return true;
+        }
+        return false;
+    }
+
     public boolean nickTakenPersistance(String playername, String nick) {
         if(plugin.getConfigHandler().enablePersistence) {
             PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", nick).findUnique();
