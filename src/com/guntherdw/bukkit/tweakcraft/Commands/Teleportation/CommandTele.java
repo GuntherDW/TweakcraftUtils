@@ -103,7 +103,7 @@ public class CommandTele implements Command {
             } catch(NumberFormatException ex) {
                 throw new CommandException("I need numbers not strings!");
             }
-            if (args.length == 4) {
+            if (args.length > 3) {
                 try {
                     if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(args[3]))) {
                         world = plugin.getServer().getWorld(args[3]);
@@ -134,9 +134,12 @@ public class CommandTele implements Command {
                 }
             }
             if(victim!=null) {
-                plugin.getTelehistory().addHistory(victim.getName(), victim.getLocation());
+                Location oldloc = victim.getLocation();
+
                 Location loc = new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue());
-                victim.teleport(loc);
+                if(victim.teleport(loc)) {
+                    plugin.getTelehistory().addHistory(victim.getName(), oldloc);
+                }
             }
         } else {
             throw new CommandException("Something went wrong, check the syntax!");
