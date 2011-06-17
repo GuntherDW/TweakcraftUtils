@@ -58,6 +58,8 @@ public class CommandKick implements Command {
                 }
                 if (reason.length() > 1)
                     reason = reason.substring(0, reason.length() - 1);
+                else
+                    reason = "No reason given!";
 
             }
             player.kickPlayer(kicker+": "+reason);
