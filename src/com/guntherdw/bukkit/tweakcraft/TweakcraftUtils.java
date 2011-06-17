@@ -72,15 +72,19 @@ public class TweakcraftUtils extends JavaPlugin {
     private final ConfigurationHandler configHandler = new ConfigurationHandler(this);
     private final TeleportHistory telehistory = new TeleportHistory(this);
     private final TamerTool tamertool = new TamerTool(this);
-
-    public boolean databaseloaded = false;
-    private List<String> MOTDLines;
-    public Map<String, String> playerReplyDB;
     private final ChatHandler chathandler = new ChatHandler(this);
+    
     private List<String> donottplist;
-    public static File datafolder;
+    private List<String> MOTDLines;
 
     protected static final Logger log = Logger.getLogger("Minecraft");
+    protected PluginDescriptionFile pdfFile = null;
+
+    public static File datafolder;
+    public Map<String, String> playerReplyDB;
+    public boolean databaseloaded = false;
+
+
 
     public String findinlist(String find, List<String> list) {
         for (String name : list) {
@@ -422,7 +426,7 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void onEnable() {
-        PluginDescriptionFile pdfFile = this.getDescription();
+        pdfFile = this.getDescription();
 
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
@@ -451,7 +455,8 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void onDisable() {
-        log.info("[TweakcraftUtils] Goodbye world!");
+        log.info("["+pdfFile.getName()+"] Shutting down!");
+        // this.getDatabase().
     }
 
     public ConfigurationHandler getConfigHandler() {

@@ -19,6 +19,10 @@
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
+import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandChatMode;
+import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandLc;
+import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandRc;
+import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandZc;
 import com.guntherdw.bukkit.tweakcraft.Commands.Debug.CommandDebug;
 import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
@@ -90,15 +94,21 @@ public class CommandHandler {
         commandMap.put("ignite", new CommandIgnite());
         commandMap.put("seen", new CommandSeen());
         commandMap.put("broadcast", new CommandBroadcast());
-        commandMap.put("lc", new CommandLc());
-        commandMap.put("rc", new CommandRc());
-        commandMap.put("zc", new CommandZc());
-        commandMap.put("chatmode", new CommandChatMode());
         commandMap.put("tamer", new CommandTamer());
         commandMap.put("nick", new CommandNick());
         commandMap.put("whois", new CommandWhois());
         commandMap.put("donotmount", new CommandDoNotMount());
         commandMap.put("eject", new CommandEject());
+
+        /**
+         * Chat commands
+         */
+
+        commandMap.put("lc", new CommandLc());
+        commandMap.put("rc", new CommandRc());
+        commandMap.put("zc", new CommandZc());
+        commandMap.put("chatmode", new CommandChatMode());
+
 
         /**
          * Teleportation commands
