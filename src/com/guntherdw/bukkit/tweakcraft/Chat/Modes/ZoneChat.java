@@ -73,7 +73,7 @@ public class ZoneChat implements ChatMode {
             com.zones.WorldManager wm = plugin.getZones().getWorldManager(player.getWorld());
             List<ZoneBase> zbs = wm.getActiveZones(player.getLocation());
             for(ZoneBase zb : zbs) {
-                for(Player p : zb.getCharactersInside().values())
+                for(Player p : zb.getPlayersInside())
                     if(!recp.contains(p))
                         recp.add(p);
             }
