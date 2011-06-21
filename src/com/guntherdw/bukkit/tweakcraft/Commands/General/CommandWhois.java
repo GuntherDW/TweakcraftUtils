@@ -68,7 +68,7 @@ public class CommandWhois implements Command {
                         getIP = true;
                 }
                 if(getIP)
-                    sender.sendMessage(ChatColor.YELLOW + "IP: " + who.getAddress().getAddress().getHostName() + " (" + who.getAddress().getAddress().toString() + ")");
+                    sender.sendMessage(ChatColor.YELLOW + "IP: " + who.getAddress().getAddress().getHostName());
             } else {
                 throw new CommandException("Can't find player!");
             }
