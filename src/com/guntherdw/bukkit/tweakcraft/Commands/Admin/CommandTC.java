@@ -108,6 +108,7 @@ public class CommandTC implements Command {
                             } else {
                                 sender.sendMessage(ChatColor.GOLD + "Enabling world "+world+" with env "+env.name());
                                 iw.loadWorld();
+                                iw.setEnabled(true);
                             }
                         } else {
                             /**

@@ -36,6 +36,10 @@ public class CommandLc implements Command {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
+        if(!plugin.getConfigHandler().enableLocalChat) {
+            throw new CommandUsageException("LocalChat not enabled!");
+        }
+        
         if (args.length != 0 && args[0].equalsIgnoreCase("list")) {
 
             if (sender instanceof Player)

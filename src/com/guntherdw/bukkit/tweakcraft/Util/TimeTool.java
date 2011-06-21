@@ -23,7 +23,7 @@ package com.guntherdw.bukkit.tweakcraft.Util;
  */
 public class TimeTool {
     public static String calcLeft(Long seconds) {
-        if(seconds > Integer.MAX_VALUE)
+        if(seconds > Long.MAX_VALUE)
             return null;
 
         Integer days = 0;

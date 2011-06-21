@@ -30,11 +30,15 @@ Persistence:
 ChatMode:
     LocalChat:
        enabled: true
-       distance: 200
-    RegionChat: true # requires sk89q's WorldGuard plugin
-    ZoneChat: true   # requires Meaglins's Zones plugin
-    WorldChat: true
-    GroupChat: true
+       range: 200
+    RegionChat:
+       enabled: true # requires sk89q's WorldGuard plugin
+    ZoneChat:
+       enabled: true # requires Meaglins's Zones plugin
+    WorldChat:
+       enabled: true
+    GroupChat:
+       enabled: true
 
 # Small note: The default CraftIRC doesn't send %prefix% and %suffix% that well.
 # Therefor it's disabled by default. It sends the § values out to IRC.

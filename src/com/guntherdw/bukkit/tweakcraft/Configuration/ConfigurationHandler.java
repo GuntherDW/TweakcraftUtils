@@ -90,10 +90,11 @@ public class ConfigurationHandler {
         }
         this.plugin.getLogger().info("[TweakcraftUtils] Parsing configuration file...");
         this.plugin.getConfiguration().load();
-        this.enableLocalChat = plugin.getConfiguration().getBoolean("ChatMode.LocalChat.enabled", false);
-        this.enableLocalChat = plugin.getConfiguration().getBoolean("ChatMode.WorldChat", true);
-        this.enableWorldGuard = plugin.getConfiguration().getBoolean("ChatMode.RegionChat", false);
-        this.enableZones = plugin.getConfiguration().getBoolean("ChatMode.ZoneChat", false);
+        this.enableLocalChat = plugin.getConfiguration().getBoolean("ChatMode.LocalChat.enabled", true);
+        this.localchatdistance = plugin.getConfiguration().getInt("ChatMode.LocalChat.range", 200);
+        this.enableWorldChat = plugin.getConfiguration().getBoolean("ChatMode.WorldChat.enabled", true);
+        this.enableWorldGuard = plugin.getConfiguration().getBoolean("ChatMode.RegionChat.enabled", false);
+        this.enableZones = plugin.getConfiguration().getBoolean("ChatMode.ZoneChat.enabled", false);
         this.enableIRC = plugin.getConfiguration().getBoolean("CraftIRC.enabled", false);
         this.AIRCMessageFormat = plugin.getConfiguration().getString("CraftIRC.admin.MessageFormat");
         this.AIRCenabled = plugin.getConfiguration().getBoolean("CraftIRC.admin.enabled", false);
@@ -136,7 +137,7 @@ public class ConfigurationHandler {
             this.seenconfig.load();
             this.enableSeenConfig = true;
         }
-        this.localchatdistance = plugin.getConfiguration().getInt("ChatMode.LocalChat.range", 200);
+
         this.enabletamertool =  plugin.getConfiguration().getBoolean("tamer.enabled", true);
         this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
         this.enableAutoTame = plugin.getConfiguration().getBoolean("mount.autotame", false);

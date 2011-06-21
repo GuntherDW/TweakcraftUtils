@@ -125,6 +125,31 @@ public class BanHandler {
         return banned;
     }
 
+    public String getRemainingTime(String playername) {
+        if(this.isBanned(playername)) {
+            Ban b = isBannedBan(playername);
+            if(b.getToTime()==null) {
+                return "forever";
+            } else {
+                Long curTime = Calendar.getInstance().getTime().getTime();
+                Long toTime = b.getToTime();
+                Double timerem = Math.floor((toTime-curTime)/1000);
+                return TimeTool.calcLeft(timerem.longValue());
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public String getReason(String playername) {
+        Ban b = this.isBannedBan(playername);
+        if(b!=null) {
+            return b.getReason();
+        } else {
+            return null;
+        }
+    }
+
     public Ban isBannedBan(String playername) {
         if(isBanned(playername))
             return searchBan(playername);

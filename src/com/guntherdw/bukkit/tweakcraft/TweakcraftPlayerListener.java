@@ -161,7 +161,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public boolean nickTakenPersistance(String playername, String nick) {
         if(plugin.getConfigHandler().enablePersistence) {
-            PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", nick).findUnique();
+            PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("nick", nick).findUnique();
             if(pi!=null)
             {
                 if(!pi.getName().equals(playername)) {
@@ -211,7 +211,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void onPlayerChat(PlayerChatEvent event) {
-
+        if(event.isCancelled()) return;
+        
         Player player = event.getPlayer();
         String message = event.getMessage();
         String name = player.getName();
@@ -224,6 +225,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             player.sendMessage(ChatColor.GOLD + "You are muted! No one can hear you.");
             plugin.getLogger().info("[TweakcraftUtils] Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
             event.setCancelled(true);
+            return;
         } else {
 
 
@@ -232,12 +234,11 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     cm.sendMessage(player, message);
                     event.setCancelled(true);
                 } else {
-                    if(!plugin.hasNick(player.getName())) {
-
-                        event.setMessage(message.substring(1));
-                        message = event.getMessage();
-                    } else {
-                        message = message.substring(1);
+                    message = message.substring(1);
+                    event.setMessage(message);
+                    if(!(message.length()>0)) {
+                        event.setCancelled(true);
+                        return;
                     }
                 }
             } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
@@ -246,7 +247,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             }
         }
 
-        if(!event.isCancelled() && cm!=null) {
+        if(!event.isCancelled() && cm==null) {
             // Log nicks!
             if(getNick(name)!=null) {
                 // plugin.getLogger().info("[TweakcraftUtils] "+getNick(name)+" is "+name);
@@ -261,6 +262,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if(event.isCancelled()) return;
         Location floc = event.getFrom();
         Location tloc = event.getTo();
         if (floc.getWorld() != tloc.getWorld()) { // The world is different, make a check!

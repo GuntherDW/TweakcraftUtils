@@ -31,6 +31,8 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
+import com.nijiko.permissions.Group;
+import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -61,6 +63,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected WorldGuardPlugin wg = null;
     protected CraftIRC circ = null;
     protected Zones zones = null;
+    protected PermissionHandler ph = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final TweakcraftEntityListener entityListener = new TweakcraftEntityListener(this);
@@ -273,14 +276,17 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public String getPlayerColor(String playername, boolean change) {
 
+        Group g = null;
         String pref = "";
         String group = "";
         Player p = this.getServer().getPlayer(playername);
 
+
         try {
             if (p != null) {
-                group = perm.Security.getGroup(p.getWorld().getName(), playername);
-                pref = perm.Security.getGroupPrefix(p.getWorld().getName(), group).replace("&", "§");
+
+                // group = g.getName(); // Not used right now.
+                pref = ph.getUserPrefix(p.getWorld().getName(), p.getName()).replace("&", "§");
             } else {
                 pref = "§f";
             }
@@ -322,6 +328,7 @@ public class TweakcraftUtils extends JavaPlugin {
         if (perm == null) {
             if (plugin != null) {
                 perm = (Permissions) plugin;
+                ph = perm.getHandler();
             }
         }
     }
@@ -405,7 +412,7 @@ public class TweakcraftUtils extends JavaPlugin {
         if (perm == null || player.isOp()) {
             return true;
         } else {
-            return perm.Security.permission(player, "tweakcraftutils." + permNode);
+            return ph.permission(player, "tweakcraftutils." + permNode);
         }
     }
 
@@ -413,8 +420,12 @@ public class TweakcraftUtils extends JavaPlugin {
         if (perm == null || player.isOp()) {
             return true;
         } else {
-            return perm.Security.permission(player, permNode);
+            return ph.permission(player, permNode);
         }
+    }
+
+    public PermissionHandler getPermissionHandler() {
+        return ph;
     }
 
     public BanHandler getBanhandler() {

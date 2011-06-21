@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -38,16 +39,28 @@ public class  CommandBanlist implements Command {
             if (!plugin.check((Player) sender, "ban"))
                 throw new PermissionsException(command);
 
-        String banmsg = ChatColor.YELLOW + "Currently banned players : ";
-        sender.sendMessage(banmsg);
         String banned = "";
+        if(args.length>0) {
+            String tofind = args[0];
+            Ban ban = plugin.getBanhandler().isBannedBan(tofind);
+            if(ban!=null) {
+                banned = ChatColor.YELLOW + tofind + "is still banned for "+plugin.getBanhandler().getRemainingTime(tofind);
+            } else {
+                banned = ChatColor.YELLOW + tofind +" isn't banned!";
+            }
+        } else {
 
-        for (String banname : plugin.getBanhandler().getBans().keySet()) {
-            banned += banname + " ";
+            String banmsg = ChatColor.YELLOW + "Currently banned players : ";
+            sender.sendMessage(banmsg);
+            banned = "";
+
+            for (String banname : plugin.getBanhandler().getBans().keySet()) {
+                banned += banname + " ";
+            }
+            if (banned.length() > 1)
+                banned = banned.substring(0, banned.length() - 1);
+
         }
-        if (banned.length() > 1)
-            banned = banned.substring(0, banned.length() - 1);
-
         sender.sendMessage(banned);
 
         return true;

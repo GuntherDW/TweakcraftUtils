@@ -24,9 +24,12 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.nijiko.permissions.Group;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * @author GuntherDW
@@ -48,19 +51,24 @@ public class CommandWhois implements Command {
         if(args.length==1) {
             Player nick = plugin.getPlayerListener().findPlayerByNick(args[0]);
             // sender.sendMessage(nick.toString());
+            String gname = null;
+            Group  g  = null;
             Player sp = findPlayer(args[0], plugin);
             Player who = nick==null?sp:nick;
 
             if(who != null) {
+                // g = plugin.getPermissionHandler().getGroupObject(who.getWorld().getName(), plugin.getPermissionHandler().getPrimaryGroup(who.getWorld().getName(), who.getName()));
+                gname = plugin.getPermissionHandler().getPrimaryGroup(who.getWorld().getName(), who.getName());
+                g = plugin.getPermissionHandler().getGroupObject(who.getWorld().getName(), gname);
                 sender.sendMessage(ChatColor.YELLOW+"Playername : "+who.getName()+" "+(nick!=null?"("+plugin.getNickWithColors(who.getName())+ChatColor.YELLOW+")":""));
-                String group = plugin.getPerm().Security.getGroup(who.getWorld().getName(), who.getName());
-                sender.sendMessage(ChatColor.YELLOW+"Group : "+group);
+                // String group = plugin.getPermissionHandler.getG(who.getWorld().getName(), who.getName());
+                sender.sendMessage(ChatColor.YELLOW+"Group : "+g.getName());
                 if(!getIP && sender instanceof Player) {
                     if(((Player)sender).getName().equalsIgnoreCase(who.getName()))
                         getIP = true;
                 }
                 if(getIP)
-                    sender.sendMessage(ChatColor.YELLOW+"IP: "+who.getAddress().getAddress().toString());
+                    sender.sendMessage(ChatColor.YELLOW + "IP: " + who.getAddress().getAddress().getHostName() + " (" + who.getAddress().getAddress().toString() + ")");
             } else {
                 throw new CommandException("Can't find player!");
             }
