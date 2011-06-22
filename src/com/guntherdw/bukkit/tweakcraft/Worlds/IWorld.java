@@ -45,6 +45,10 @@ public interface IWorld {
 
     public abstract boolean getAllowMonsters();
 
+    public abstract void setPVP(boolean pvpallowed);
+
+    public abstract boolean getPVP();
+
     public abstract void setAllowMonsters(boolean allowmonsters);
 
     public abstract void setSpawnFlags(boolean allowMonsters, boolean allowAnimals);

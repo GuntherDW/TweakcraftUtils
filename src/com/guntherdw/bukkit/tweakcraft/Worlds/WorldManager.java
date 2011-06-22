@@ -47,7 +47,7 @@ public class WorldManager {
         boolean netherWorldOnline = false;
 
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
-            worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), true));
+            worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), true));
             if (world.getEnvironment() == Environment.NETHER)
                 netherWorldOnline = true;
         }
@@ -88,7 +88,8 @@ public class WorldManager {
                 if (!(wenv == null)) {
                     plugin.getLogger().info("[TweakcraftUtils] Adding world with name " + node + " and environmenttype " + env + "!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" has pvp "+(pvp?"enabled":"disabled")+"!");
-                    worlds.put(node, new TweakWorld(this, node, wenv, enabled, monsters, animals));
+                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" monsters : "+(monsters?"enabled":"disabled")+", animals : "+(animals?"enabled":"disabled")+"!");
+                    worlds.put(node, new TweakWorld(this, node, wenv, pvp, monsters, animals, enabled));
                 } else {
                     plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
                 }

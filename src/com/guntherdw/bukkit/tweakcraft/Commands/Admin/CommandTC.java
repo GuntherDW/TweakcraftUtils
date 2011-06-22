@@ -33,6 +33,9 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * @author GuntherDW
@@ -120,32 +123,97 @@ public class CommandTC implements Command {
                     } else if(modus.equalsIgnoreCase("flag")) {
                         String flagset = args.length>4?args[4]:null;
                         String flag = arg;
+                        boolean tcworld = (iw != null);
+                        World bw = null;
+                        if(!tcworld) {
+                            bw = plugin.getServer().getWorld(world);
+                            if(bw==null)
+                                throw new CommandException("World not found!");
+                        } else {
+                            if(!iw.isEnabled())
+                                throw new CommandException("World is not enabled/active!");
+                        }
+
                         if(flag!=null) {
-                            if(flag.equalsIgnoreCase("monsters") || flag.equalsIgnoreCase("animals")) {
-                                Boolean toSet = flagset!=null?Boolean.parseBoolean(flagset):null;
-                                if(flag.equalsIgnoreCase("monsters")) {
-                                    if(toSet!=null)
+                            Boolean toSet = flagset!=null?Boolean.parseBoolean(flagset):null;
+                            if(flag.equalsIgnoreCase("monsters")) {
+                                if(toSet!=null)
+                                    if(tcworld)
                                         iw.setAllowMonsters(toSet);
-                                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+iw.getName()+ChatColor.LIGHT_PURPLE+"]"
-                                                       + " MONSTERS: "+(iw.getAllowMonsters()?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                                } else if(flag.equalsIgnoreCase("animals")) {
-                                    if(toSet!=null)
+                                    else
+                                        bw.setSpawnFlags(toSet, bw.getAllowAnimals());
+
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
+                                        + " MONSTERS: "+((tcworld? iw.getAllowMonsters() : bw.getAllowMonsters())?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                            } else if(flag.equalsIgnoreCase("animals")) {
+                                if(toSet!=null)
+                                    if(tcworld)
                                         iw.setAllowAnimals(toSet);
-                                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+iw.getName()+ChatColor.LIGHT_PURPLE+"]"
-                                                       + " ANIMALS: "+(iw.getAllowAnimals()?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                                } else if(flag.equalsIgnoreCase("env")) {
-                                    World.Environment wenv = iw.getBukkitWorld().getEnvironment();
-                                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+iw.getName()+ChatColor.LIGHT_PURPLE+"]"
-                                                       + " ENVIRONMENT: "+wenv.name());
-                                }
+                                    else
+                                        bw.setSpawnFlags(bw.getAllowMonsters(), toSet);
+
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
+                                        + " ANIMALS: "+((tcworld? iw.getAllowAnimals() : bw.getAllowAnimals())?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                            } else if(flag.equalsIgnoreCase("pvp")) {
+                                if(toSet!=null)
+                                    if(tcworld)
+                                        iw.setPVP(toSet);
+                                    else
+                                        bw.setPVP(toSet);
+
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
+                                        + " PVP: "+((tcworld? iw.getPVP() : bw.getPVP())?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+
+                            } else if(flag.equalsIgnoreCase("env")) {
+                                World.Environment wenv = tcworld? iw.getBukkitWorld().getEnvironment() : bw.getEnvironment();
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
+                                        + " ENVIRONMENT: "+wenv.name());
+                            } else {
+                                throw new CommandUsageException("No flag by that name found!");
                             }
                         } else {
-                            sender.sendMessage("Set of flags to enable/disable : [monsters|animals|env]");
+                            throw new CommandUsageException("Set of flags to enable/disable : [monsters|animals|env]");
                         }
+                    } else if(modus.equalsIgnoreCase("info")) {
+                        boolean tcworld = (iw!=null);
+                        World bw = null;
+                        World.Environment wenv;
+                        if(!tcworld) {
+                            bw = plugin.getServer().getWorld(world);
+                            if(bw==null)
+                                throw new CommandException("World not found!");
+                            else
+                                wenv = bw.getEnvironment();
+                        } else {
+                            if(!iw.isEnabled())
+                                throw new CommandException("World is not enabled/active!");
+                            
+                            wenv = iw.getBukkitWorld().getEnvironment();
+                        }
+                        boolean monsters = tcworld?iw.getAllowMonsters():bw.getAllowMonsters();
+                        boolean animals = tcworld?iw.getAllowAnimals():bw.getAllowAnimals();
+                        boolean pvp     = tcworld?iw.getPVP():bw.getPVP();
+                        int amountofplayers = tcworld?iw.getBukkitWorld().getPlayers().size():bw.getPlayers().size();
+                        String players = "";
+                        if(amountofplayers<5) {
+                            List<Player> ps = tcworld?iw.getBukkitWorld().getPlayers():bw.getPlayers();
+                            for(Player p : ps) {
+                                players+=p.getDisplayName()+ChatColor.WHITE+",";
+                            }
+                            if(players.length()>0)
+                                players = players.substring(0, players.length()-1);
+                        }
+                        String name = tcworld?iw.getName():bw.getName();
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE+"["+ChatColor.GOLD + name + ChatColor.LIGHT_PURPLE+"]");
+                        sender.sendMessage(ChatColor.RED+"ANIMALS: "+(animals?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                        sender.sendMessage(ChatColor.RED+"MONSTERS: "+(monsters?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                        sender.sendMessage(ChatColor.RED+"PVP: "+(pvp?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                        sender.sendMessage(ChatColor.RED+"ENV: "+wenv);
+                        sender.sendMessage(ChatColor.RED+"PLAYERS: "+amountofplayers + (players.equals("")?"":(" ("+players+ChatColor.RED+")")));
                     }
 
                 } else {
-                    sender.sendMessage(ChatColor.GREEN + "usage: /tc world create|unload|flag");
+                    sender.sendMessage(ChatColor.GREEN + "usage: /tc world create|unload|flag|info");
                 }
             }
         } else {

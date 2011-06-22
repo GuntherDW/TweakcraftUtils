@@ -36,11 +36,28 @@ public class TweakWorld implements IWorld {
     private String worldName = "";
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
+    private boolean pvp = true;
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean enabled) {
         this.wm = wm;
         this.foldername = foldername;
         this.environment = env;
+        this.allowanimals = true;
+        this.allowmonsters = true;
+        this.enabled = enabled;
+        if (enabled) {
+            loadWorld(wm, foldername, env, enabled);
+        }
+    }
+
+    public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean pvp, boolean allowMonsters, boolean allowAnimals, boolean enabled) {
+        this.wm = wm;
+        this.foldername = foldername;
+        this.environment = env;
+        this.pvp = pvp;
+        this.allowanimals = allowAnimals;
+        this.allowmonsters = allowMonsters;
+        this.enabled = enabled;
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
         }
@@ -52,6 +69,7 @@ public class TweakWorld implements IWorld {
         this.environment = env;
         this.allowanimals = allowAnimals;
         this.allowmonsters = allowMonsters;
+        this.enabled = enabled;
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
         }
@@ -135,6 +153,15 @@ public class TweakWorld implements IWorld {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setPVP(boolean pvpallowed) {
+        this.pvp = pvpallowed;
+        this.world.setPVP(pvpallowed);
+    }
+
+    public boolean getPVP() {
+        return this.pvp;
     }
 
     public Configuration getConfiguration() {
