@@ -104,8 +104,6 @@ public class TweakWorld implements IWorld {
     }
 
     public void setAllowAnimals(boolean allowanimals) {
-        this.allowanimals = allowanimals;
-        // this.world.setAllowAnimals(allowanimals);
         this.world.setSpawnFlags(getAllowMonsters(), allowanimals);
     }
 
@@ -114,7 +112,6 @@ public class TweakWorld implements IWorld {
     }
 
     public void setAllowMonsters(boolean allowmonsters) {
-        this.allowmonsters = allowmonsters;
         this.setSpawnFlags(allowmonsters, getAllowAnimals());
     }
 
