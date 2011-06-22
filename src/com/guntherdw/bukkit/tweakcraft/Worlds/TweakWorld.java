@@ -31,6 +31,8 @@ public class TweakWorld implements IWorld {
     private org.bukkit.World world;
     private String foldername = null;
     private boolean enabled = false;
+    private boolean allowmonsters = true;
+    private boolean allowanimals = true;
     private String worldName = "";
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
@@ -39,6 +41,17 @@ public class TweakWorld implements IWorld {
         this.wm = wm;
         this.foldername = foldername;
         this.environment = env;
+        if (enabled) {
+            loadWorld(wm, foldername, env, enabled);
+        }
+    }
+
+    public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean allowMonsters, boolean allowAnimals, boolean enabled) {
+        this.wm = wm;
+        this.foldername = foldername;
+        this.environment = env;
+        this.allowanimals = allowAnimals;
+        this.allowmonsters = allowMonsters;
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
         }
@@ -60,6 +73,7 @@ public class TweakWorld implements IWorld {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] This world already existed!");
                 environment = world.getEnvironment();
             }
+            this.setSpawnFlags(this.allowmonsters, this.allowmonsters);
             this.enabled = true;
         }
     }
@@ -79,6 +93,35 @@ public class TweakWorld implements IWorld {
 
     public org.bukkit.World getBukkitWorld() {
         return world;
+    }
+
+    public boolean getAllowAnimals() {
+        return world.getAllowAnimals();
+    }
+
+    public String getWorldName() {
+        return worldName;
+    }
+
+    public void setAllowAnimals(boolean allowanimals) {
+        this.allowanimals = allowanimals;
+        // this.world.setAllowAnimals(allowanimals);
+        this.world.setSpawnFlags(getAllowMonsters(), allowanimals);
+    }
+
+    public boolean getAllowMonsters() {
+        return world.getAllowMonsters();
+    }
+
+    public void setAllowMonsters(boolean allowmonsters) {
+        this.allowmonsters = allowmonsters;
+        this.setSpawnFlags(allowmonsters, getAllowAnimals());
+    }
+
+    public void setSpawnFlags(boolean allowMonsters, boolean allowAnimals) {
+        this.allowanimals = allowAnimals;
+        this.allowmonsters = allowMonsters;
+        this.world.setSpawnFlags(allowMonsters, allowAnimals);
     }
 
     public String getName() {

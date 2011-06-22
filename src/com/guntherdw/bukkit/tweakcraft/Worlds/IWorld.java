@@ -37,6 +37,18 @@ public interface IWorld {
 
     public abstract boolean isLoaded();
 
+    public abstract boolean getAllowAnimals();
+
+    public abstract String getWorldName();
+
+    public abstract void setAllowAnimals(boolean allowanimals);
+
+    public abstract boolean getAllowMonsters();
+
+    public abstract void setAllowMonsters(boolean allowmonsters);
+
+    public abstract void setSpawnFlags(boolean allowMonsters, boolean allowAnimals);
+
     public abstract void setEnabled(boolean enabled);
 
     public abstract Configuration getConfiguration();

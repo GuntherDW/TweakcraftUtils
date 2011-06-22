@@ -117,9 +117,35 @@ public class CommandTC implements Command {
                             sender.sendMessage(ChatColor.GOLD + "Creating new world "+world+" with env "+env.name());
                             plugin.getworldManager().getWorlds().put(world, new TweakWorld(plugin.getworldManager(), world, env, true));
                         }
+                    } else if(modus.equalsIgnoreCase("flag")) {
+                        String flagset = args.length>4?args[4]:null;
+                        String flag = arg;
+                        if(flag!=null) {
+                            if(flag.equalsIgnoreCase("monsters") || flag.equalsIgnoreCase("animals")) {
+                                Boolean toSet = flagset!=null?Boolean.parseBoolean(flagset):null;
+                                if(flag.equalsIgnoreCase("monsters")) {
+                                    if(toSet!=null)
+                                        iw.setAllowMonsters(toSet);
+                                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+iw.getName()+ChatColor.LIGHT_PURPLE+"]"
+                                                       + " MONSTERS: "+(iw.getAllowMonsters()?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                                } else if(flag.equalsIgnoreCase("animals")) {
+                                    if(toSet!=null)
+                                        iw.setAllowAnimals(toSet);
+                                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+iw.getName()+ChatColor.LIGHT_PURPLE+"]"
+                                                       + " ANIMALS: "+(iw.getAllowAnimals()?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                                } else if(flag.equalsIgnoreCase("env")) {
+                                    World.Environment wenv = iw.getBukkitWorld().getEnvironment();
+                                    sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+iw.getName()+ChatColor.LIGHT_PURPLE+"]"
+                                                       + " ENVIRONMENT: "+wenv.name());
+                                }
+                            }
+                        } else {
+                            sender.sendMessage("Set of flags to enable/disable : [monsters|animals|env]");
+                        }
                     }
+
                 } else {
-                    sender.sendMessage(ChatColor.GREEN + "usage: /tc world create|unload");
+                    sender.sendMessage(ChatColor.GREEN + "usage: /tc world create|unload|flag");
                 }
             }
         } else {

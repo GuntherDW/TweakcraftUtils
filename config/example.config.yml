@@ -73,11 +73,16 @@ worlds:
          environment: normal
          enabled: true
          pvp: true
+         animals: true
+         monsters: false
       mobs:
          environment: normal
          enabled: true
          pvp: true
+         animals: true
       sky:
          environment: skylands
          enabled: true
          pvp: false
+         animals: false
+         monsters: false
