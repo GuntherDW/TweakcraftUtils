@@ -21,10 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.LocalChat;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.RegionChat;
-import com.guntherdw.bukkit.tweakcraft.Chat.Modes.ZoneChat;
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -37,7 +34,7 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandMe implements Command {
+public class CommandMe implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {

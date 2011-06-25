@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Weather;
 
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandThunder implements Command {
+public class CommandThunder implements iCommand {
     @Override
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {

@@ -20,7 +20,7 @@ package com.guntherdw.bukkit.tweakcraft.Commands.Admin;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandAdmon implements Command {
+public class CommandAdmon implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
         if (sender instanceof Player) {

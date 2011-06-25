@@ -20,16 +20,21 @@ package com.guntherdw.bukkit.tweakcraft;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
 
-import com.guntherdw.bukkit.tweakcraft.Ban.BanHandler;
+import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
+import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftEntityListener;
+import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftPlayerListener;
+import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftWorldListener;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
+import com.guntherdw.bukkit.tweakcraft.Util.TeleportHistory;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijiko.permissions.Group;
 import com.nijiko.permissions.PermissionHandler;
@@ -490,7 +495,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
         if (commandHandler.getCommandMap().containsKey(cmd.getName())) {
             try {
-                com.guntherdw.bukkit.tweakcraft.Commands.Command command = commandHandler.getCommand(cmd.getName());
+                iCommand command = commandHandler.getCommand(cmd.getName());
                 // public abstract boolean executeCommand(Server server, CommandSender sender, String command, String[] args, TweakcraftUtils plugin);
                 if (!command.executeCommand(sender, cmd.getName(), args, this)) {
                     sender.sendMessage("This command did not go as intended!");

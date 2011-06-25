@@ -19,7 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.Admin;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
@@ -29,12 +29,13 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandAdmoff implements Command {
+public class CommandAdmoff implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin) throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
+            Player player = (Player) sender;
             try {
                 ChatMode cm = plugin.getChathandler().getChatMode("admin");
-                if (cm.getRecipients(sender).contains(sender)) {
+                if (cm.getRecipients(null).contains(player)) {
                     plugin.getChathandler().setPlayerchatmode(((Player) sender).getName(), null);
                     sender.sendMessage(ChatColor.YELLOW + "You will now chat globally!");
                 } else {

@@ -28,7 +28,7 @@ import org.bukkit.command.CommandSender;
 /**
  * @author GuntherDW
  */
-public interface Command {
+public interface iCommand {
 
     /**
      * Execute a command
@@ -36,8 +36,12 @@ public interface Command {
      * @param sender
      * @param command
      * @param args
-     * @param plugin
-     * @return Wether or not the command went as planned
+     * @param plugin 
+     * @return Whether or not the command went as planned
+     * @throws PermissionsException
+     * @throws CommandSenderException
+     * @throws CommandUsageException
+     * @throws CommandException
      */
     public abstract boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException;

@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Admin;
 
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * @author GuntherDW
  */
-public class CommandClearInventory implements Command {
+public class CommandClearInventory implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
         if(sender instanceof Player)

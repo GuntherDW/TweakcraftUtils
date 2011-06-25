@@ -19,7 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.Debug;
 
 
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 /**
  * @author sk89q, GuntherDW
  */
-public class CommandDebug implements Command {
+public class CommandDebug implements iCommand {
     @Override
     public boolean executeCommand(final CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {

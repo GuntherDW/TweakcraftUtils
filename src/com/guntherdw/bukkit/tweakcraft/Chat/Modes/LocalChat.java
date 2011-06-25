@@ -20,7 +20,7 @@ package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
-import com.guntherdw.bukkit.tweakcraft.EntityLocation;
+import com.guntherdw.bukkit.tweakcraft.Util.EntityLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;

@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public class CommandHandler {
 
-    public Map<String, Command> commandMap = new HashMap<String, Command>();
+    public Map<String, iCommand> commandMap = new HashMap<String, iCommand>();
     private TweakcraftUtils plugin;
 
     public CommandHandler(TweakcraftUtils instance) {
@@ -141,11 +141,11 @@ public class CommandHandler {
         return plugin;
     }
 
-    public Map<String, Command> getCommandMap() {
+    public Map<String, iCommand> getCommandMap() {
         return commandMap;
     }
 
-    public Command getCommand(String command) throws CommandNotFoundException {
+    public iCommand getCommand(String command) throws CommandNotFoundException {
         if (commandMap.containsKey(command)) {
             return commandMap.get(command);
         } else {

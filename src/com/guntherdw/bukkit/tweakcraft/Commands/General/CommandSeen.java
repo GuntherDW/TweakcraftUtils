@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
@@ -35,7 +35,7 @@ import java.util.Date;
 /**
  * @author GuntherDW
  */
-public class CommandSeen implements Command {
+public class CommandSeen implements iCommand {
 
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {

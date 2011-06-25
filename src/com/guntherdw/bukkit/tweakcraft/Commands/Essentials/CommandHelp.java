@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
@@ -28,14 +28,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author GuntherDW
  */
-public class CommandHelp implements Command {
+public class CommandHelp implements iCommand {
 
     @SuppressWarnings("unchecked")
     @Override
@@ -54,7 +53,7 @@ public class CommandHelp implements Command {
         String toadd = "";
         for(String cname : commh.getCommandMap().keySet()) {
             try {
-                Command c = commh.getCommand(cname);
+                iCommand c = commh.getCommand(cname);
 
                 if(addCommandToList(sender, c, plugin)) {
                     /* toadd = String.format(ChatColor.GOLD+"%1$-10s"+ChatColor.WHITE+" : "
@@ -143,7 +142,7 @@ public class CommandHelp implements Command {
         return true;
     }
 
-    protected boolean addCommandToList(CommandSender sender, Command command, TweakcraftUtils plugin) {
+    protected boolean addCommandToList(CommandSender sender, iCommand command, TweakcraftUtils plugin) {
         if(sender instanceof Player) {
             if(command.getPermissionSuffix() == null) {
                 return true;

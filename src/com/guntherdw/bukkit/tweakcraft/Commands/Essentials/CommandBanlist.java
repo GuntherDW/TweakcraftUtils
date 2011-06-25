@@ -18,7 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
-import com.guntherdw.bukkit.tweakcraft.Commands.Command;
+import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -32,7 +32,7 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class  CommandBanlist implements Command {
+public class  CommandBanlist implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
@@ -44,7 +44,7 @@ public class  CommandBanlist implements Command {
             String tofind = args[0];
             Ban ban = plugin.getBanhandler().isBannedBan(tofind);
             if(ban!=null) {
-                banned = ChatColor.YELLOW + tofind + "is still banned for "+plugin.getBanhandler().getRemainingTime(tofind);
+                banned = ChatColor.YELLOW + tofind + " is still banned for "+plugin.getBanhandler().getRemainingTime(tofind);
             } else {
                 banned = ChatColor.YELLOW + tofind +" isn't banned!";
             }
