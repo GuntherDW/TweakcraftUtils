@@ -200,14 +200,14 @@ public class BanHandler {
                 po.setOptionvalue(toTime.toString());
                 plugin.getDatabase().save(po);
                 /* Now we have to save the reason! */
-                po = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", playername).ieq("optionname", "banmsg").findUnique();
+                PlayerOptions banmsg = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", playername).ieq("optionname", "banmsg").findUnique();
                 if(po==null) {
-                    po = new PlayerOptions();
-                    po.setName(playername);
-                    po.setOptionname("banmsg");
+                    banmsg = new PlayerOptions();
+                    banmsg.setName(playername);
+                    banmsg.setOptionname("banmsg");
                 }
-                po.setOptionvalue(reason);
-                plugin.getDatabase().save(po);
+                banmsg.setOptionvalue(reason);
+                plugin.getDatabase().save(banmsg);
                 return true;
             }
         }
