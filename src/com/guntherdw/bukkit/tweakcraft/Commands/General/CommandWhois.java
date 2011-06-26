@@ -25,9 +25,14 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.nijiko.permissions.Group;
+import com.nijiko.permissions.PermissionHandler;
+import com.nijiko.permissions.User;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * @author GuntherDW
@@ -50,22 +55,61 @@ public class CommandWhois implements iCommand {
             Player nick = plugin.getPlayerListener().findPlayerByNick(args[0]);
             // sender.sendMessage(nick.toString());
             String gname = null;
-            Group  g  = null;
+            // Group  g  = null;
             Player sp = findPlayer(args[0], plugin);
             Player who = nick==null?sp:nick;
+            String groups = ""; 
 
-            if(who != null) {
-                // g = plugin.getPermissionHandler().getGroupObject(who.getWorld().getName(), plugin.getPermissionHandler().getPrimaryGroup(who.getWorld().getName(), who.getName()));
-                gname = plugin.getPermissionHandler().getPrimaryGroup(who.getWorld().getName(), who.getName());
-                g = plugin.getPermissionHandler().getGroupObject(who.getWorld().getName(), gname);
-                sender.sendMessage(ChatColor.YELLOW+"Playername : "+who.getName()+" "+(nick!=null?"("+plugin.getNickWithColors(who.getName())+ChatColor.YELLOW+")":""));
+            String playername = null;
+            boolean online = (who!=null);
+
+            if(who==null) { // Is it an offline player? Check permissions
+                if(plugin.getPermissionHandler()!=null) {
+                    PermissionHandler handler = plugin.getPermissionHandler();
+
+                    /* for(World w : plugin.getServer().getWorlds()) {
+                        String groupw = plugin.getPermissionHandler().getPrimaryGroup(w.getName(), args[0]);
+                        if(groupw!=null){
+                            groups+=w.getName()+": "+groupw+",";
+                        }
+                    }
+                    if(groups.length()>0) {
+                        groups = groups.substring(0, groups.length()-1);
+                    } */
+                    String wname = plugin.getServer().getWorlds().get(0).getName();
+                    User user = plugin.getPermissionHandler().getUserObject(wname, args[0]);
+                    // groups = plugin.getPermissionHandler().getPrimaryGroup(wname, args[0]);
+                    if(user!=null) {
+                        playername = user.getName();
+                        groups = plugin.getPermissionHandler().getPrimaryGroup(wname, args[0]);
+                    }
+                }
+            } else {
+                playername = who.getName();
+                if(plugin.getPermissionHandler()!=null) {
+                    /* for(World w : plugin.getServer().getWorlds()) {
+
+                        String groupw = plugin.getPermissionHandler().getPrimaryGroup(w.getName(), args[0]);
+                        if(groupw!=null){
+                            groups+=w.getName()+": "+groupw+",";
+                        }
+                    }
+                    if(groups.length()>0)
+                        groups = groups.substring(0, groups.length()-1); */
+                    String wname = plugin.getServer().getWorlds().get(0).getName();
+                    groups = plugin.getPermissionHandler().getPrimaryGroup(wname, playername);
+                }
+            }
+
+            if(playername!=null) {
+                sender.sendMessage(ChatColor.YELLOW+"Playername : "+playername+" "+(nick!=null?"("+plugin.getNickWithColors(who.getName())+ChatColor.YELLOW+")":""));
                 // String group = plugin.getPermissionHandler.getG(who.getWorld().getName(), who.getName());
-                sender.sendMessage(ChatColor.YELLOW+"Group : "+g.getName());
-                if(!getIP && sender instanceof Player) {
+                sender.sendMessage(ChatColor.YELLOW+"Groups : "+groups);
+                if(!getIP && online) {
                     if(((Player)sender).getName().equalsIgnoreCase(who.getName()))
                         getIP = true;
                 }
-                if(getIP)
+                if(getIP && online)
                     sender.sendMessage(ChatColor.YELLOW + "IP: " + who.getAddress().getAddress().getHostName());
             } else {
                 throw new CommandException("Can't find player!");
