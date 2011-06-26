@@ -180,8 +180,9 @@ public class BanHandler {
         return false;
     }
 
-    public boolean banPlayer(String playername, String reason, Long duration) {
-        if(duration == null) { return banPlayer(playername, reason); } else {
+    public boolean banPlayer(String player, String reason, Long duration) {
+        if(duration == null) { return banPlayer(player.toLowerCase().toLowerCase(), reason); } else {
+            String playername = player.toLowerCase();
             Long toTime = null;
             toTime  = Calendar.getInstance().getTime().getTime();
             toTime += duration*1000;

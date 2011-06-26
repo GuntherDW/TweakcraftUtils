@@ -40,7 +40,7 @@ public class CommandUnban implements iCommand {
                 throw new PermissionsException(command);
         BanHandler handler = plugin.getBanhandler();
         if (args.length > 0) {
-            String target = args[0];
+            String target = args[0].toLowerCase();
             if (handler.isBanned(target)) {
                 sender.sendMessage(ChatColor.YELLOW + "Unbanning player!");
                 handler.unBan(target);

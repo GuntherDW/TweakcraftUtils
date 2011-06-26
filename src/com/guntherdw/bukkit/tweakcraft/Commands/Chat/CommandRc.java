@@ -37,7 +37,7 @@ public class CommandRc implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
-        if(plugin.getConfigHandler().enableWorldGuard==false) {
+        if(!plugin.getConfigHandler().enableWorldGuard) {
             throw new CommandUsageException("WorldGuard not enabled!");
         }
 

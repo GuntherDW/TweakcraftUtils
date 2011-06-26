@@ -44,19 +44,23 @@ public class CommandSeen implements iCommand {
         }
         if (plugin.getConfigHandler().getSeenconfig() != null || plugin.getConfigHandler().enablePersistence) {
             Player pla;
+            String playername = "";
             if ((pla = plugin.getServer().getPlayer(args[0])) != null) {
                 sender.sendMessage(ChatColor.GOLD + pla.getName() + " is online right now!");
             } else {
                 String seen = "";
                 String extramsg = "";
                 String newline = null;
-                if(!plugin.getConfigHandler().enablePersistence)
+                if(!plugin.getConfigHandler().enablePersistence) {
                     seen = plugin.getConfigHandler().getSeenconfig().getString(args[0].toLowerCase(), "");
-                else {
+                    playername = args[0];
+                } else {
                     if(!plugin.getConfigHandler().useTweakBotSeen) {
                         PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", args[0]).findUnique();
-                        if(pi!=null)
+                        if(pi!=null) {
                             seen = pi.getLastseen().toString();
+                            playername = pi.getName();
+                        }
                     } else {
                         PlayerHistoryInfo phi = plugin.getDatabase().find(PlayerHistoryInfo.class).where().ieq("nickname", args[0]).findUnique();
                         if(phi!=null) {
@@ -95,7 +99,7 @@ public class CommandSeen implements iCommand {
                     SimpleDateFormat smf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
                     Date datelastseen = new Date(Long.parseLong(seen));
                     String lastseen = smf.format(datelastseen);
-                    sender.sendMessage(ChatColor.GOLD + args[0] + " was last seen on " + lastseen + "!"+extramsg);
+                    sender.sendMessage(ChatColor.GOLD + playername + " was last seen on " + lastseen + "!"+extramsg);
                     if(newline!=null) {
                         sender.sendMessage(newline);
                     }

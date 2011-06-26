@@ -80,10 +80,9 @@ public class CommandTp implements iCommand {
                                 player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + p.getDisplayName() + ChatColor.RED + "!");
                                 p.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
-
-                                plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
                                 tpsuccess = player.teleport(getTpLocation(p));
                                 if(tpsuccess) {
+                                    plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
                                     p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
 
                                     if (override)

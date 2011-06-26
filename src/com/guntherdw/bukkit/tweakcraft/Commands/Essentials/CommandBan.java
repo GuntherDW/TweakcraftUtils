@@ -69,7 +69,7 @@ public class CommandBan implements iCommand {
                 throw new CommandUsageException("ERROR: For timed bans to work, persistence HAS to be enabled!");
             }
 
-            handler.banPlayer(playername, reason, dura);
+            handler.banPlayer(playername.toLowerCase(), reason, dura);
             sender.sendMessage(ChatColor.YELLOW + "Banning " + playername + ChatColor.YELLOW+ (dura!=null?" for "+duration+" "+toFull+"!":""));
 
             Player player = plugin.getServer().getPlayer(plugin.findPlayer(playername));

@@ -45,8 +45,15 @@ public class CommandTPBack implements iCommand {
                 if(args.length>0 && args[0].equalsIgnoreCase("clear")) {
                     player.sendMessage(ChatColor.GOLD+"Cleaning your TPBack history!");
                     plugin.getTelehistory().clearHistory(player.getName());
+                } else if(args.length>0 && args[0].equalsIgnoreCase("deletelast")) {
+                    if(plugin.getTelehistory().getRemaining(player.getName())!=null) {
+                        player.sendMessage(ChatColor.YELLOW + "Removing last tpback line.");
+                        plugin.getTelehistory().removeLast(player.getName());
+                    } else {
+                        player.sendMessage(ChatColor.YELLOW + "You don't have any tpback lines!");
+                    }
                 } else {
-                    Location back = plugin.getTelehistory().getLastEntry(player.getName());
+                    Location back = plugin.getTelehistory().getLastEntry(player.getName(), false);
                     if(back == null) {
                         player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
                     } else {
@@ -62,7 +69,13 @@ public class CommandTPBack implements iCommand {
                             player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
                         }
                         player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
-                        player.teleport(back);
+                        boolean success = player.teleport(back);
+                        if(success) {
+                            plugin.getTelehistory().removeLast(player.getName());
+                        } else {
+                            player.sendRawMessage(ChatColor.RED+"tpback failure, tpback line NOT removed!");
+                            player.sendRawMessage(ChatColor.RED+"If you want to remove this line yourself, type /tpback deletelast");
+                        }
                     }
                 }
             } else {
