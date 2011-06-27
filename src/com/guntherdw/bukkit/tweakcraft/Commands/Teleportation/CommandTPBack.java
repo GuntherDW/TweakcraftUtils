@@ -45,7 +45,7 @@ public class CommandTPBack implements iCommand {
                 if(args.length>0 && args[0].equalsIgnoreCase("clear")) {
                     player.sendMessage(ChatColor.GOLD+"Cleaning your TPBack history!");
                     plugin.getTelehistory().clearHistory(player.getName());
-                } else if(args.length>0 && args[0].equalsIgnoreCase("deletelast")) {
+                } else if(args.length>0 && args[0].equalsIgnoreCase("remove")) {
                     if(plugin.getTelehistory().getRemaining(player.getName())!=null) {
                         player.sendMessage(ChatColor.YELLOW + "Removing last tpback line.");
                         plugin.getTelehistory().removeLast(player.getName());
@@ -57,24 +57,25 @@ public class CommandTPBack implements iCommand {
                     if(back == null) {
                         player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
                     } else {
-                        Integer remaining = plugin.getTelehistory().getRemaining(player.getName());
-                        String rem = "";
-                        if(remaining == null || remaining == 0) {
-                            rem = "Origin! No TPBack lines left!";
-                        } else {
-                            rem = remaining+" TPBack lines left!";
-                        }
                         player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
                         if(back.getY()==130) {
                             player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
                         }
-                        player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
+
                         boolean success = player.teleport(back);
                         if(success) {
+                            Integer remaining = plugin.getTelehistory().getRemaining(player.getName());
+                            String rem = "";
+                            if(remaining == null || remaining == 0) {
+                                rem = "Origin! No TPBack lines left!";
+                            } else {
+                                rem = remaining+" TPBack lines left!";
+                            }
+                            player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
                             plugin.getTelehistory().removeLast(player.getName());
                         } else {
                             player.sendRawMessage(ChatColor.RED+"tpback failure, tpback line NOT removed!");
-                            player.sendRawMessage(ChatColor.RED+"If you want to remove this line yourself, type /tpback deletelast");
+                            player.sendRawMessage(ChatColor.RED+"To remove this line, type /tpback remove");
                         }
                     }
                 }
