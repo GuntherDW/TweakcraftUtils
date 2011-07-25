@@ -202,11 +202,12 @@ public class BanHandler {
                 plugin.getDatabase().save(po);
                 /* Now we have to save the reason! */
                 PlayerOptions banmsg = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", playername).ieq("optionname", "banmsg").findUnique();
-                if(po==null) {
+                if(banmsg==null) {
                     banmsg = new PlayerOptions();
                     banmsg.setName(playername);
                     banmsg.setOptionname("banmsg");
                 }
+                
                 banmsg.setOptionvalue(reason);
                 plugin.getDatabase().save(banmsg);
                 return true;
@@ -250,7 +251,7 @@ public class BanHandler {
         try {
             BufferedWriter banfilewriter = new BufferedWriter(new FileWriter(banfile));
             for (String bannedplayer : bans.keySet()) {
-                if(bans.get(bannedplayer).getToTime()!=null)
+                if(bans.get(bannedplayer).getToTime()==null)
                 {
                     String line = bannedplayer + "," + bans.get(bannedplayer).getReason() + "\n";
                     banfilewriter.write(line);

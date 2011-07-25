@@ -34,30 +34,28 @@ import org.bukkit.entity.Player;
 public class CommandMotd implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if (sender instanceof Player) {
-            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                if (plugin.check((Player) sender, "motdreload")) {
-                    plugin.reloadMOTD();
-                    sender.sendMessage(ChatColor.YELLOW + "Reloading MOTD");
-                } else {
+
+        if(args.length==1 && args[0].equalsIgnoreCase("reload")) {
+            if(sender instanceof Player)
+                if(!(plugin.check((Player)sender, "motdreload")))
                     throw new PermissionsException(command);
-                }
-            } else {
-                // int x = 0;
-                for (String motdline : plugin.getMOTD()) {
-                    sender.sendMessage(motdline);
-                    // x++;
-                }
-            }
+
+            plugin.reloadMOTD();
+            sender.sendMessage(ChatColor.YELLOW + "Reloading MOTD");
         } else {
-            // consoles?
-            throw new CommandSenderException("Why do consoles need motds?");
+            if(sender instanceof Player)
+                if(!(plugin.check((Player)sender, "motd")))
+                    throw new PermissionsException(command);
+            
+            for(String motdline : plugin.getMOTD()) {
+                sender.sendMessage(motdline);
+            }
         }
         return true;
     }
 
     @Override
     public String getPermissionSuffix() {
-        return null;
+        return "motd";
     }
 }

@@ -64,6 +64,9 @@ public class CommandSeen implements iCommand {
                     } else {
                         PlayerHistoryInfo phi = plugin.getDatabase().find(PlayerHistoryInfo.class).where().ieq("nickname", args[0]).findUnique();
                         if(phi!=null) {
+
+                            playername = phi.getNickname();
+
                             if(phi.getChannel().equals("gameserver")) {
                                 // extramsg = " (Gamequit!)";
                                 newline = ChatColor.GOLD + "Gameserver quit!";

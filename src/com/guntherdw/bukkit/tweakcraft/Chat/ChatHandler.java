@@ -117,7 +117,11 @@ public class ChatHandler {
             }
             playerchatmode.put(player, mode);
         }
-
+        if(plugin.getConfigHandler().enableCUI) {
+            Player p = plugin.getServer().getPlayer(player);
+            if(p!=null)
+                plugin.sendCUIChatMode(p);
+        }
     }
 
     public void addMute(String player) {

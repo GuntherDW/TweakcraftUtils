@@ -73,15 +73,16 @@ public class CommandNick implements iCommand {
                         sender.sendMessage("Resetting "+search.get(0).getName()+"'s nick");
                         plugin.getPlayerListener().removeNick(search.get(0).getName());
                     } else {
+                        Player otherplayer = search.get(0);
                         sender.sendMessage(ChatColor.GOLD + "Setting "+search.get(0).getName()+"'s nick to "+args[1]);
                         List<Player> find = plugin.getServer().matchPlayer(args[0]);
                         for(Player f : find) {
                             if(f.getName().toLowerCase().equals(args[1].toLowerCase()))
                                 throw new CommandException("Nick is already taken!");
                         }
-                        if(!plugin.getPlayerListener().nickTakenPersistance(player.getName(), args[1])
-                            && !plugin.getPlayerListener().nickTakenCheck(player.getName(), args[1]))
-                        plugin.getPlayerListener().setNick(player.getName(), args[1]);
+                        if(!plugin.getPlayerListener().nickTakenPersistance(otherplayer.getName(), args[1])
+                            && !plugin.getPlayerListener().nickTakenCheck(otherplayer.getName(), args[1]))
+                        plugin.getPlayerListener().setNick(otherplayer.getName(), args[1]);
                     else
                         throw new CommandException("Nick is already taken!");
                     }

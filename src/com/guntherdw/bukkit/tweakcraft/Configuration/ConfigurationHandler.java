@@ -71,6 +71,7 @@ public class ConfigurationHandler {
     public boolean enableAutoTame = false;
     public boolean paySaddle = true;
     public boolean stopChunkUnloadBurningFurnace = false;
+    public boolean enableCUI = false;
     /**
      * EXTRA/TEMPORARY STUFF
      */
@@ -145,6 +146,7 @@ public class ConfigurationHandler {
         this.stopChunkUnloadBurningFurnace = plugin.getConfiguration().getBoolean("extra.stopChunkUnloadBurningFurnace", false);
         this.pigRecoverSaddle = plugin.getConfiguration().getBoolean("extra.recoverPigSaddle", true);
         this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.StopGodIgnite", true);
+        this.enableCUI = plugin.getConfiguration().getBoolean("extra.CUI", false);
         if(this.enablePersistence) {
             plugin.getPlayerListener().reloadInfo();
         }

@@ -321,6 +321,13 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } */
         }
+
+        if(plugin.getConfigHandler().enableCUI) {
+            // String CUIPattern =
+
+            plugin.sendCUIHandShake(p);
+            plugin.sendCUIChatMode(p);
+        }
     }
 
     public void onPlayerQuit(PlayerQuitEvent event) {

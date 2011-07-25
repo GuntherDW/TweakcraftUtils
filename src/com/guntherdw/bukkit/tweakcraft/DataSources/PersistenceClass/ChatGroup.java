@@ -41,6 +41,12 @@ public class ChatGroup {
     @Length(max=25)
     private String chanName;
 
+    @Length(max=100)
+    private String joinmsg;
+
+    @Length(max=100)
+    private String leavemsg;
+
     @Length(max=12)
     private String password;
 
@@ -76,5 +82,21 @@ public class ChatGroup {
 
     public void setSubscribers(List<String> subscribers) {
         this.subscribers = subscribers;
+    }
+
+    public String getJoinmsg() {
+        return joinmsg;
+    }
+
+    public void setJoinmsg(String joinmsg) {
+        this.joinmsg = joinmsg;
+    }
+
+    public String getLeavemsg() {
+        return leavemsg;
+    }
+
+    public void setLeavemsg(String leavemsg) {
+        this.leavemsg = leavemsg;
     }
 }

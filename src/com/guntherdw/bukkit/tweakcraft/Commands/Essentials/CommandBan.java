@@ -72,7 +72,7 @@ public class CommandBan implements iCommand {
             handler.banPlayer(playername.toLowerCase(), reason, dura);
             sender.sendMessage(ChatColor.YELLOW + "Banning " + playername + ChatColor.YELLOW+ (dura!=null?" for "+duration+" "+toFull+"!":""));
 
-            Player player = plugin.getServer().getPlayer(plugin.findPlayer(playername));
+            Player player = plugin.getServer().getPlayer(playername);
             if (player != null) {
                 sender.sendMessage(ChatColor.YELLOW + "Kickbanning " + player.getName());
                 player.kickPlayer(reason);

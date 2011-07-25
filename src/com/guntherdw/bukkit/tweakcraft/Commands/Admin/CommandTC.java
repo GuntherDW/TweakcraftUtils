@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Admin;
 
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
@@ -103,7 +104,7 @@ public class CommandTC implements iCommand {
                         if(arg == null) arg = "normal";
                         World.Environment env = null;
                         try { env = World.Environment.valueOf(arg.toUpperCase()); }
-                        catch(IllegalArgumentException ex) { env = World.Environment.NORMAL; } 
+                        catch(IllegalArgumentException ex) { env = World.Environment.NORMAL; }
                         if(iw!=null) {
                             if(iw.isEnabled()) {
                                 sender.sendMessage(ChatColor.RED + "This world already is enabled!");
@@ -186,7 +187,7 @@ public class CommandTC implements iCommand {
                         } else {
                             if(!iw.isEnabled())
                                 throw new CommandException("World is not enabled/active!");
-                            
+
                             wenv = iw.getBukkitWorld().getEnvironment();
                         }
                         boolean monsters = tcworld?iw.getAllowMonsters():bw.getAllowMonsters();
@@ -214,7 +215,19 @@ public class CommandTC implements iCommand {
                 } else {
                     sender.sendMessage(ChatColor.GREEN + "usage: /tc world create|unload|flag|info");
                 }
+            } else if(args[0].equalsIgnoreCase("improvchat")) {
+                if(sender instanceof Player) {
+                    Player player = (Player) sender;
+                    List<Player> lijst = plugin.getCUIPlayers();
+                    if(lijst!=null && !lijst.contains(player)) {
+                        plugin.getLogger().info("[TweakcraftUtils] Adding "+player.getName()+" to the CUI list!");
+                        lijst.add(player);
+                    }
+
+                    plugin.sendCUIChatMode(player);
+                }
             }
+
         } else {
             throw new CommandUsageException("/tc <" + ChatColor.GREEN + "reload" + ChatColor.YELLOW + "/" + ChatColor.GREEN + "version" + ChatColor.YELLOW + ">");
         }

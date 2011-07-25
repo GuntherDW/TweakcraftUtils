@@ -20,6 +20,7 @@ package com.guntherdw.bukkit.tweakcraft;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
 
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
@@ -88,11 +89,35 @@ public class TweakcraftUtils extends JavaPlugin {
     protected static final Logger log = Logger.getLogger("Minecraft");
     protected PluginDescriptionFile pdfFile = null;
 
+    private List<Player> cuiPlayers;
+    public String CUIPattern = "§7§3§3§4";
+
+
     public static File datafolder;
     public Map<String, String> playerReplyDB;
     public boolean databaseloaded = false;
 
 
+    public List<Player> getCUIPlayers() {
+        return cuiPlayers;
+    }
+
+    public void sendCUIChatMode(Player player) {
+        if(this.cuiPlayers != null && this.cuiPlayers.contains(player))
+        {
+            ChatMode cm = getChathandler().getPlayerChatMode(player);
+
+            if(cm==null)
+                player.sendRawMessage(CUIPattern+"null");
+            else
+                player.sendRawMessage(CUIPattern+"["+cm.getPrefix()+ChatColor.WHITE+"]");
+        }
+    }
+
+    public void sendCUIHandShake(Player player) {
+        if(getConfigHandler().enableCUI)
+            player.sendRawMessage(CUIPattern); // HANDSHAKE
+    }
 
     public String findinlist(String find, List<String> list) {
         for (String name : list) {
@@ -448,6 +473,7 @@ public class TweakcraftUtils extends JavaPlugin {
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();
         configHandler.reloadConfig();
+        this.cuiPlayers = new ArrayList<Player>();
         
         this.setupWorldGuard();
         this.setupCraftIRC();
