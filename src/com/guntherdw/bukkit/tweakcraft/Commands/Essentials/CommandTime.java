@@ -50,6 +50,20 @@ public class CommandTime implements iCommand {
                 timeset = 0L;
             } else if (settime.equalsIgnoreCase("night")) {
                 timeset = 13000L;
+            } else {
+                if (settime.length() < 3) {
+                    try {
+                        timeset = Integer.parseInt(settime) * 1000;
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(ChatColor.YELLOW + "You handed me something different than day or night, but it is not a number!");
+                    }
+                } else {
+                    try {
+                        timeset = Long.parseLong(settime);
+                    } catch (NumberFormatException e) {
+                        sender.sendMessage(ChatColor.YELLOW + "You handed me something different than day or night, but it is not a number!");
+                    }
+                }
             }
             if (args.length > 1) { // World?
                 World world = plugin.getServer().getWorld(args[1].toLowerCase());
