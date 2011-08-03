@@ -65,6 +65,12 @@ public class CommandWhois implements iCommand {
 
             if(who==null) { // Is it an offline player? Check permissions
                 if(plugin.getPermissionHandler()!=null) {
+                    // Check for nicks
+                    String pname = args[0];
+                    String findnick = plugin.getPlayerListener().findPlayerNameByNick(pname);
+                    if(findnick != null) pname = findnick;
+
+
                     PermissionHandler handler = plugin.getPermissionHandler();
 
                     /* for(World w : plugin.getServer().getWorlds()) {
@@ -77,11 +83,11 @@ public class CommandWhois implements iCommand {
                         groups = groups.substring(0, groups.length()-1);
                     } */
                     String wname = plugin.getServer().getWorlds().get(0).getName();
-                    User user = plugin.getPermissionHandler().getUserObject(wname, args[0]);
+                    User user = plugin.getPermissionHandler().getUserObject(wname, pname);
                     // groups = plugin.getPermissionHandler().getPrimaryGroup(wname, args[0]);
                     if(user!=null) {
                         playername = user.getName();
-                        groups = plugin.getPermissionHandler().getPrimaryGroup(wname, args[0]);
+                        groups = plugin.getPermissionHandler().getPrimaryGroup(wname, pname);
                     }
                 }
             } else {

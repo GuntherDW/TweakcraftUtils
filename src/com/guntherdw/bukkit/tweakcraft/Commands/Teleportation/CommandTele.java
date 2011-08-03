@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -34,9 +35,13 @@ import org.bukkit.entity.Player;
  */
 public class CommandTele implements iCommand {
 
-    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         boolean isPlayer = false;
+        ArgumentParser ap = new ArgumentParser(realargs);
+        String w = ap.getString("w", null);
+        String p = ap.getString("p", null);
+        String[] args = ap.getNormalArgs();
         if (sender instanceof Player) {
             isPlayer = true;
             if (!plugin.check((Player) sender, "tele"))
@@ -74,9 +79,10 @@ public class CommandTele implements iCommand {
                 } else {
                     y = 129;
                 }
-                if(args.length>4) {
-                    if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(args[4]))) {
-                        world = plugin.getServer().getWorld(args[4]);
+                if(args.length>4 || w!= null) {
+                    if(w==null) w=args[4];
+                    if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(w))) {
+                        world = plugin.getServer().getWorld(w);
                     } else {
                         if(isPlayer)
                             world = ((Player) sender).getWorld();
@@ -102,10 +108,11 @@ public class CommandTele implements iCommand {
             } catch(NumberFormatException ex) {
                 throw new CommandException("I need numbers not strings!");
             }
-            if (args.length > 3) {
+            if (args.length > 3 || w!=null) {
+                if(w==null) w=args[3];
                 try {
-                    if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(args[3]))) {
-                        world = plugin.getServer().getWorld(args[3]);
+                    if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(w))) {
+                        world = plugin.getServer().getWorld(w);
                     } else {
                         if(isPlayer)
                             world = ((Player) sender).getWorld();
@@ -113,16 +120,17 @@ public class CommandTele implements iCommand {
                             throw new CommandException("World not found!");
                     }
                 } catch (Exception e) {
-                    throw new CommandUsageException("Can't find world with name " + args[3]);
+                    throw new CommandUsageException("Can't find world with name " + w);
                 }
             } else {
                 if(isPlayer)
                     world = ((Player) sender).getWorld();
             }
         }
-        if(args.length == 5) // Added victim
+        if(args.length == 5 || p!=null) // Added victim
         {
-            victim = plugin.findPlayerasPlayer(args[4]);
+            if(p==null) p=args[4];
+            victim = plugin.findPlayerasPlayer(p);
         }
         if(world!=null) {
             if(isPlayer) {

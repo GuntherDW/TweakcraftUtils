@@ -254,6 +254,19 @@ public class TweakcraftUtils extends JavaPlugin {
         return nick;
     }
 
+    public List<Player> findPlayerasPlayerList(String partOfName) {
+        // Go for the nicks first!
+        List<Player> players = playerListener.findPlayersByNick(partOfName);
+        for (Player p : this.getServer().getOnlinePlayers()) {
+            if (p.getName().toLowerCase().contains(partOfName.toLowerCase())
+                    && !players.contains(p)) // found, return the fullname!
+                players.add(p);
+        }
+        return players;
+    }
+
+
+
     public String findPlayer(String partOfName) {
         // Go for the nicks first!
         for (Player p : this.getServer().getOnlinePlayers()) {
@@ -370,6 +383,10 @@ public class TweakcraftUtils extends JavaPlugin {
             if (circ == null) {
                 if (plugin != null) {
                     circ = (CraftIRC) plugin;
+                }   else {
+                    this.getConfigHandler().enableIRC = false;
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find CraftIRC, but is enabled in the config.");
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling CraftIRC support.");
                 }
             }
         }
@@ -382,6 +399,10 @@ public class TweakcraftUtils extends JavaPlugin {
             if (wg == null) {
                 if (plugin != null) {
                     wg = (WorldGuardPlugin) plugin;
+                } else {
+                    this.getConfigHandler().enableWorldGuard = false;
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find WorldGuard, but is enabled in the config.");
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling WorldGuard support.");
                 }
             }
         }
@@ -392,8 +413,13 @@ public class TweakcraftUtils extends JavaPlugin {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("Zones");
 
             if(zones == null) {
-                if(plugin != null)
+                if(plugin != null) {
                     zones = (Zones) plugin;
+                }  else {
+                    this.getConfigHandler().enableZones = false;
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find Zones, but is enabled in the config.");
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling Zones support.");
+                }
             }
         }
     }

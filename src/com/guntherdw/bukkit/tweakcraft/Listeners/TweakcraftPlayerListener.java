@@ -145,6 +145,38 @@ public class TweakcraftPlayerListener extends PlayerListener {
         return null;
     }
 
+    public List<Player> findPlayersByNick(String nick) {
+
+        String n = null;
+        List<Player> playerlijst = new ArrayList<Player>();
+        for(String part : nicks.keySet()) {
+            n = nicks.get(part);
+            if(n.toLowerCase().contains(nick.toLowerCase())) {
+                Player player = plugin.getServer().getPlayer(n);
+                if(player!=null) playerlijst.add(player);
+            }
+        }
+        return playerlijst;
+    }
+
+    public String findPlayerNameByNick(String nick) {
+
+            String p = null;
+            String n = null;
+
+            for(String part : nicks.keySet()) {
+                n = nicks.get(part);
+                if(n.toLowerCase().contains(nick.toLowerCase())) {
+                    p = part;
+                }
+            }
+
+            if(p!=null) {
+                return p;
+            }
+            return null;
+        }
+
     public boolean nickTaken(String nick) {
         return nicks.values().contains(nick);
     }

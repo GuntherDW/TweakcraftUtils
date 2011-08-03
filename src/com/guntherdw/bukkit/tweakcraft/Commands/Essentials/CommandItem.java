@@ -25,6 +25,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Item;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 // import com.sk89q.worldedit.blocks.ItemType;
 import org.bukkit.ChatColor;
@@ -37,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
  * @author GuntherDW
  */
 public class CommandItem implements iCommand {
-    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (sender instanceof Player)
@@ -51,6 +52,10 @@ public class CommandItem implements iCommand {
         Integer itemId = null;
         Byte itemDmg = 0;
         Integer itemAmount = null;
+
+        ArgumentParser ap = new ArgumentParser(realargs);
+        String recv = ap.getString("p", null);
+        String[] args = ap.getNormalArgs();
 
         if (args.length > 0) // just the item!
         {
@@ -86,7 +91,7 @@ public class CommandItem implements iCommand {
                     itemAmount = 64;
             }
 
-            if (args.length > 2) { // set Receiver
+            /* if (args.length > 2) { // set Receiver
                 receiver = plugin.getServer().getPlayer(plugin.findPlayer(args[2]));
                 if (receiver == null) {
                     throw new CommandUsageException("Can't find the other player!");
@@ -97,6 +102,18 @@ public class CommandItem implements iCommand {
                 else
                     throw new CommandUsageException("If you're a console you have to specify the receiver!");
 
+            } */
+
+            if(recv != null) {
+                receiver = plugin.getServer().getPlayer(plugin.findPlayer(recv));
+                if (receiver == null) {
+                    throw new CommandUsageException("Can't find the other player!");
+                }
+            } else {
+                if(sender instanceof Player)
+                    receiver = (Player) sender;
+                else
+                    throw new CommandUsageException("If you're a console you have to specify the receiver!");
             }
 
             boolean isValid = false;

@@ -22,6 +22,7 @@ import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,19 +37,32 @@ import java.util.List;
  */
 public class CommandTp implements iCommand {
 
-    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
+
+        ArgumentParser ap = new ArgumentParser(realargs);
+        String p1 = ap.getString("p", null);
+        if(p1==null) p1 = ap.getString("f", null);
+        String p2 = ap.getString("t", null);
+
+        String[] args = ap.getNormalArgs();
+
         if (sender instanceof Player) {
             Player player = (Player) sender;
             if (!plugin.check(player, "tp"))
                 throw new PermissionsException(command);
 
-            if (args.length == 1) {
+            if (args.length == 1 || p1 != null) {
                 if (plugin.getDonottplist().contains(player.getName()) && !plugin.check(player, "forcetp")) {
                     player.sendMessage(ChatColor.RED + "You can't tp when you don't allow others to tp to you!");
                 } else {
                     // List<Player> p = plugin.getServer().matchPlayer(args[0]);
-                    Player p = plugin.findPlayerasPlayer(args[0]);
+                    if(p1==null)p1=args[0];
+                    List<Player> players = plugin.findPlayerasPlayerList(p1);
+                    Player p = null;
+                    if(players.size()==1)
+                        p = players.get(0);
+
                     if (p == null) {
                         player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                     } else {

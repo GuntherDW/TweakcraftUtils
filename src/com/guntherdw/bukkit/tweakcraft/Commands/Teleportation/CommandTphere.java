@@ -28,6 +28,8 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 
 /**
  * @author GuntherDW
@@ -44,8 +46,12 @@ public class CommandTphere implements iCommand {
                 throw new CommandUsageException("You need to give me a name!");
             }
             Player player = (Player) sender;
-            // List<Player> p = plugin.getServer().matchPlayer(args[0]);
-            Player p = plugin.findPlayerasPlayer(args[0]);
+            
+            List<Player> players = plugin.findPlayerasPlayerList(args[0]);
+            Player p = null;
+            if(players.size()==1)
+                p = players.get(0);
+            
             if (p==null) {
                 player.sendMessage(ChatColor.YELLOW + "Can't find player!");
             } else {
