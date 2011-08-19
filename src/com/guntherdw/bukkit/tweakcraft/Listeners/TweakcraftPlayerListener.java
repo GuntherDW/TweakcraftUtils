@@ -429,6 +429,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
      *  I still don't get why my event.getItem or i keeps on nulling out, if anyone can help, please do
      */
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if(event.isCancelled())return;
         Player player = event.getPlayer();
         String playername = player.getName();
         if(plugin.getConfigHandler().getLsbindmap().containsKey(playername)) {

@@ -32,10 +32,14 @@ public class WorldManager {
 
     private Map<String, IWorld> worlds;
     private TweakcraftUtils plugin;
-
+    private int defaultViewDistance;
 
     public Map<String, IWorld> getWorlds() {
         return worlds;
+    }
+    
+    public int getDefaultViewDistance() {
+        return plugin.getServer().getViewDistance();
     }
 
     public WorldManager(TweakcraftUtils instance) {
@@ -62,13 +66,16 @@ public class WorldManager {
         }
         // List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
         List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
+        int defaultviewdistance = this.getDefaultViewDistance();
         for (String node : extraworlds) {
             if (!worlds.containsKey(node)) {
+
                 String env = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".environment", "");
                 boolean enabled = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".enabled", false);
                 boolean pvp = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".pvp", false);
                 boolean monsters = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".monsters", true);
                 boolean animals = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".animals", true);
+                int viewdistance = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
 
                 Environment wenv = null;
                 if(env==null || env=="") {
@@ -89,7 +96,7 @@ public class WorldManager {
                     plugin.getLogger().info("[TweakcraftUtils] Adding world with name " + node + " and environmenttype " + env + "!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" has pvp "+(pvp?"enabled":"disabled")+"!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" monsters : "+(monsters?"enabled":"disabled")+", animals : "+(animals?"enabled":"disabled")+"!");
-                    worlds.put(node, new TweakWorld(this, node, wenv, pvp, monsters, animals, enabled));
+                    worlds.put(node, new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, enabled));
                 } else {
                     plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
                 }

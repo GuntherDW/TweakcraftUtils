@@ -37,6 +37,7 @@ public class TweakWorld implements IWorld {
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
     private boolean pvp = true;
+    private int viewdistance = 10;
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean enabled) {
         this.wm = wm;
@@ -58,6 +59,23 @@ public class TweakWorld implements IWorld {
         this.allowanimals = allowAnimals;
         this.allowmonsters = allowMonsters;
         this.enabled = enabled;
+        if (enabled) {
+            loadWorld(wm, foldername, env, enabled);
+        }
+    }
+
+    public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean pvp, boolean allowMonsters, boolean allowAnimals, int viewdistance, boolean enabled) {
+        this.wm = wm;
+        this.foldername = foldername;
+        this.environment = env;
+        this.pvp = pvp;
+        this.allowanimals = allowAnimals;
+        this.allowmonsters = allowMonsters;
+        this.enabled = enabled;
+        if(viewdistance>3 && viewdistance<16)
+            this.viewdistance = viewdistance;
+        else
+            this.viewdistance = wm.getDefaultViewDistance();
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
         }
@@ -91,6 +109,8 @@ public class TweakWorld implements IWorld {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] This world already existed!");
                 environment = world.getEnvironment();
             }
+            // TODO: Re-enable after it's been added again!
+            // world.setViewDistance(this.viewdistance);
             this.setSpawnFlags(this.allowmonsters, this.allowmonsters);
             this.enabled = true;
         }
@@ -162,6 +182,14 @@ public class TweakWorld implements IWorld {
 
     public boolean getPVP() {
         return this.pvp;
+    }
+
+    public int getViewDistance() {
+        return viewdistance;
+    }
+
+    public void setViewDistance(int viewdistance) {
+        this.viewdistance = viewdistance;
     }
 
     public Configuration getConfiguration() {

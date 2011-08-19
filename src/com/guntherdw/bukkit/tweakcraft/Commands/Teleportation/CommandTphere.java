@@ -28,6 +28,9 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -42,38 +45,60 @@ public class CommandTphere implements iCommand {
             if (!plugin.check((Player) sender, "tphere"))
                 throw new PermissionsException(command);
 
+            
             if (args.length < 1) {
                 throw new CommandUsageException("You need to give me a name!");
             }
+            
+            List<Player> victims = null;
+            List<Player> players = null;
+
             Player player = (Player) sender;
+
+            if(args.length == 1 && args[0].equals("*")) {
+                victims = Arrays.asList(plugin.getServer().getOnlinePlayers());
+                if(victims.contains(player))
+                    victims.remove(player); // remove the origin player!
+            }
             
-            List<Player> players = plugin.findPlayerasPlayerList(args[0]);
-            Player p = null;
+            if(victims==null) {
+                for(String plstring : args) {
+                    players = plugin.findPlayerasPlayerList(plstring);
+                    if(players.size()==1) {
+                        if(victims==null)victims=new ArrayList<Player>();
+                        victims.add(players.get(0));
+                    }
+                }
+
+            }
+            
+            /* Player p = null;
             if(players.size()==1)
-                p = players.get(0);
+                p = players.get(0); */
             
-            if (p==null) {
-                player.sendMessage(ChatColor.YELLOW + "Can't find player!");
+            if (victims==null) {
+                player.sendMessage(ChatColor.YELLOW + "Can't find player(s)!");
             } else {
                 // Player pto = p.get(0);
-                Player pto = p;
-                if (pto.getName().equals(player.getName())) {
-                    player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
-                } else {
-                    Location origloc = pto.getLocation();
-                    boolean success = pto.teleport(player);
-                    if(success) {
-                        player.sendMessage(ChatColor.YELLOW + "Teleporting " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
-                        pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
-                            + " teleported you to him!");
-                        plugin.getTelehistory().addHistory(pto.getName(), origloc);
+                for(Player pto : victims) {
+                    if (pto.getName().equals(player.getName())) {
+                        player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
                     } else {
-                        player.sendMessage(ChatColor.YELLOW + "Failed to teleport " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
-                        pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
-                            + ChatColor.RED + "tried/failed"+ ChatColor.YELLOW +  " to teleport you to him!");
+                        Location origloc = pto.getLocation();
+                        boolean success = pto.teleport(player);
+                        if(success) {
+                            player.sendMessage(ChatColor.YELLOW + "Teleporting " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
+                            pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
+                                    + " teleported you to him!");
+                            plugin.getTelehistory().addHistory(pto.getName(), origloc);
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "Failed to teleport " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
+                            pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
+                                    + ChatColor.RED + "tried/failed"+ ChatColor.YELLOW +  " to teleport you to him!");
+                        }
+
+
                     }
-
-
                 }
             }
         } else {

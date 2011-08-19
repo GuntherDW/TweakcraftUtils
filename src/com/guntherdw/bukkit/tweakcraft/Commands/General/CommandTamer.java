@@ -77,6 +77,12 @@ public class CommandTamer implements iCommand {
                 }
                 mode = new TamerMode(state, TamerMode.TamerModes.HEAL);
                 player.sendMessage(ChatColor.GREEN+"TamerTool HEAL MODE selected!");
+            } else if(args.length>0 && args[0].equalsIgnoreCase("sit")) {
+                if(args.length>1) {
+                    state = Boolean.parseBoolean(args[1]);
+                }
+                mode = new TamerMode(state, TamerMode.TamerModes.SIT);
+                player.sendMessage(ChatColor.GREEN+"TamerTool SIT MODE selected!");
             }
             
             if(mode == null) {

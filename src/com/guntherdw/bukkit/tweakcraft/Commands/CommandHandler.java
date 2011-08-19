@@ -19,10 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
-import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandChatMode;
-import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandLc;
-import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandRc;
-import com.guntherdw.bukkit.tweakcraft.Commands.Chat.CommandZc;
+import com.guntherdw.bukkit.tweakcraft.Commands.Chat.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.Debug.CommandDebug;
 import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
 import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
@@ -61,6 +58,7 @@ public class CommandHandler {
         commandMap.put("tplist", new CommandTpList());
         commandMap.put("tweakcraft", new CommandTC());
         commandMap.put("clearinventory", new CommandClearInventory());
+        commandMap.put("viewdistance", new CommandViewDistance());
 
         /**
          * Essential commands
@@ -106,6 +104,7 @@ public class CommandHandler {
 
         commandMap.put("lc", new CommandLc());
         commandMap.put("rc", new CommandRc());
+        commandMap.put("wc", new CommandWc());
         commandMap.put("zc", new CommandZc());
         commandMap.put("chatmode", new CommandChatMode());
 

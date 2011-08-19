@@ -61,6 +61,9 @@ commands:
   rc:
     description: Toggle region chat
     usage: /<command>
+  wc:
+    description: Toggle WorldChat
+    usage: /<command>
   zc:
     description: Toggle ZoneChat
     usage: /<command>
@@ -197,3 +200,6 @@ commands:
     description: Toggle mounting access
     usage: /<command>
     aliases: [dnm,nomount]
+  viewdistance:
+    desciption: ViewDistance control!
+    usage: /<command> [p:<player>] [distance]

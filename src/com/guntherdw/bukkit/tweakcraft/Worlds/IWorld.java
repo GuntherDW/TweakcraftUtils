@@ -44,7 +44,11 @@ public interface IWorld {
     public abstract void setAllowAnimals(boolean allowanimals);
 
     public abstract boolean getAllowMonsters();
+    
+    public abstract int getViewDistance();
 
+    public abstract void setViewDistance(int viewDistance);
+    
     public abstract void setPVP(boolean pvpallowed);
 
     public abstract boolean getPVP();

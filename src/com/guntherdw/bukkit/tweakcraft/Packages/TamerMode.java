@@ -31,6 +31,7 @@ public class TamerMode {
         TAME,
         ANGRY,
         HEAL,
+        SIT,
         NONE
     }
 

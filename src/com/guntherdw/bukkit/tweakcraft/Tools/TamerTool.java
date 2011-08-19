@@ -148,6 +148,31 @@ public class TamerTool {
             player.sendMessage(ChatColor.RED + "You do not have permission to anger wolves!");
         }
     }
+    
+    public void sit(Wolf wolf, Boolean sit, Player player) {
+        if(plugin.check(player, "tamer.sit")) {
+            Boolean allowed = true;
+            if(wolf.isSitting()) {
+                if(wolf.getOwner()!=null && wolf.getOwner().equals(player)) {
+                    if(!plugin.check(player, "tamer.sit.own"))
+                        allowed = false;
+                } else {
+                    if(!plugin.check(player, "tamer.sit.other"))
+                        allowed = false;
+                }
+            } else {
+                if(!plugin.check(player, "tamer.sit.wild"))
+                    allowed = false;
+            }
+
+            if(allowed)
+                wolf.setSitting(sit);
+            else
+                player.sendMessage(ChatColor.RED + "You do not have permission to command this wolf!");
+        } else {
+            player.sendMessage(ChatColor.RED + "You do not have permission to command wolves!");
+        }
+    }
 
     public void heal(Wolf wolf, Boolean kill, Player player) {
         if(plugin.check(player, "tamer.heal")) {
@@ -189,6 +214,8 @@ public class TamerTool {
             case ANGRY:
                 this.setAngry(wolf, tamermode.getState(), player);
                 break;
+            case SIT:
+                this.sit(wolf, tamermode.getState(), player);
             case HEAL:
                 this.heal(wolf, tamermode.getState(), player);
                 break;
