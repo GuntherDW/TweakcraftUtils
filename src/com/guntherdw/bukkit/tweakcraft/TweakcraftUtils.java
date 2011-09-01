@@ -82,7 +82,7 @@ public class TweakcraftUtils extends JavaPlugin {
     private final TeleportHistory telehistory = new TeleportHistory(this);
     private final TamerTool tamertool = new TamerTool(this);
     private final ChatHandler chathandler = new ChatHandler(this);
-    
+
     private List<String> donottplist;
     private List<String> MOTDLines;
 
@@ -242,6 +242,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public Player findPlayerasPlayer(String partOfName) {
         // Go for the nicks first!
+        partOfName = stripColorCodes(partOfName);
         Player nick = playerListener.findPlayerByNick(partOfName);
         if(nick==null) {
             for (Player p : this.getServer().getOnlinePlayers()) {
@@ -256,6 +257,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public List<Player> findPlayerasPlayerList(String partOfName) {
         // Go for the nicks first!
+        partOfName = stripColorCodes(partOfName);
         List<Player> players = playerListener.findPlayersByNick(partOfName);
         for (Player p : this.getServer().getOnlinePlayers()) {
             if (p.getName().toLowerCase().contains(partOfName.toLowerCase())
@@ -456,7 +458,7 @@ public class TweakcraftUtils extends JavaPlugin {
         if(nick == null) nick = realname;
         return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
     }
-    
+
     public String getNick(String player) {
         String nick = playerListener.getNick(player);
         String realname = player;
@@ -500,7 +502,7 @@ public class TweakcraftUtils extends JavaPlugin {
         this.reloadMOTD();
         configHandler.reloadConfig();
         this.cuiPlayers = new ArrayList<Player>();
-        
+
         this.setupWorldGuard();
         this.setupCraftIRC();
         this.setupZones();
@@ -593,5 +595,16 @@ public class TweakcraftUtils extends JavaPlugin {
             }
         }
         return false;
+    }
+
+    public String stripColorCodes(String input) {
+        String[] parts = input.split("§");
+        input = parts[0];
+        if (parts.length > 1) {
+            for (int i = 1; i < parts.length; i++) {
+                input.concat(parts[i].substring(1));
+            }
+        }
+        return input;
     }
 }
