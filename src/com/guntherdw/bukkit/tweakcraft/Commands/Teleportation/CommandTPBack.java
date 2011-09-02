@@ -74,8 +74,8 @@ public class CommandTPBack implements iCommand {
                             player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
                             plugin.getTelehistory().removeLast(player.getName());
                         } else {
-                            player.sendRawMessage(ChatColor.RED+"tpback failure, tpback line NOT removed!");
-                            player.sendRawMessage(ChatColor.RED+"To remove this line, type /tpback remove");
+                            player.sendMessage(ChatColor.RED+"tpback failure, tpback line NOT removed!");
+                            player.sendMessage(ChatColor.RED+"To remove this line, type /tpback remove");
                         }
                     }
                 }

@@ -89,7 +89,6 @@ public class CommandTpMob implements iCommand {
                     if(crea instanceof Wolf)
                     {
                        Wolf wolf = (Wolf) crea;
-                       // System.out.println(wolf);
                        if(wolf.isAngry() || !wolf.isTamed())
                             allowed = true;
                        else

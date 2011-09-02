@@ -44,7 +44,7 @@ public class CommandMute implements iCommand {
         ChatHandler ch = plugin.getChathandler();
         if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
             sender.sendMessage(ChatColor.LIGHT_PURPLE+"Current list of muted players : ");
-            if(ch.getMutedPlayers().isEmpty()) { sender.sendMessage(ChatColor.LIGHT_PURPLE + "List is empty!"); }
+            if(ch.getMutedPlayers()==null || ch.getMutedPlayers().size()==0) { sender.sendMessage(ChatColor.LIGHT_PURPLE + "List is empty!"); }
             else {
                 for(String s : ch.getMutedPlayers().keySet()) {
                     if(!ch.canTalk(s)) {

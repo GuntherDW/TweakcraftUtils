@@ -59,20 +59,6 @@ public class AdminChat implements ChatMode {
         }
         String msg = ChatColor.GREEN + "A: [" + pcolor + sendername + ChatColor.GREEN + "] " + message;
         if (plugin.getConfigHandler().enableIRC && plugin.getCraftIRC() != null) {
-            /* String w = null;
-            String prex = "";
-            String sufx = "";
-            if(sender instanceof Player) {
-                w = ((Player)sender).getWorld().getName();
-                prex = plugin.getCraftIRC().getPermPrefix(w, cleanname);
-                sufx = plugin.getCraftIRC().getPermSuffix(w, cleanname);
-            } else {
-                prex = Character.toString((char) 3)+String.format("%02d", plugin.getCraftIRC().cColorIrcFromName("magenta"));
-                sufx = "";
-            }
-            if(sufx.equals("")) {
-                // System.out.println("bla "+this.plugin.cColorIrcFromName("foreground"));
-                sufx = Character.toString((char) 3)+String.format("%02d", plugin.getCraftIRC().cColorIrcFromName("foreground")); }*/
             if(plugin.getConfigHandler().AIRCenabled) {
 
                 String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;

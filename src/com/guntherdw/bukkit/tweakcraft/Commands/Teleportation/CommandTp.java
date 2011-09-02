@@ -145,7 +145,7 @@ public class CommandTp implements iCommand {
     }
 
     private void tpfromto(TweakcraftUtils plugin, CommandSender sender, String p1, String p2) {
-        List<Player> pfind = plugin.getServer().matchPlayer(p1);
+        List<Player> pfind = plugin.findPlayerasPlayerList(p1);
         Player pfrom, pto;
         if (pfind.size() == 1) {
             pfrom = pfind.get(0);
@@ -153,7 +153,8 @@ public class CommandTp implements iCommand {
             sender.sendMessage(ChatColor.DARK_GREEN + "Can't find source player!");
             return;
         }
-        pfind = plugin.getServer().matchPlayer(p2);
+        
+        pfind = plugin.findPlayerasPlayerList(p2);
         if (pfind.size() != 0) {
             pto = pfind.get(0);
         } else {

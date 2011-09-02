@@ -22,22 +22,48 @@ import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author GuntherDW
  */
 public class CommandBroadcast implements iCommand {
-    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "broadcast"))
                 throw new PermissionsException(command);
 
         String message = "";
+        ArgumentParser ap = new ArgumentParser(realargs);
+        String grouparg = ap.getString("g", null);
+        String[] groups = null;
+        List<Player> recipients = new ArrayList<Player>();
+
+        if(grouparg!=null) {
+            groups = grouparg.split(",");
+            for(String gr : groups) {
+                for(Player p : plugin.getServer().getOnlinePlayers()) {
+                    if(plugin.getPermissionHandler().getPrimaryGroup("world", p.getName()).equals(gr)) {
+                        if(!recipients.contains(p))
+                            recipients.add(p);
+                    }
+                }
+            }
+        } else
+            recipients = Arrays.asList(plugin.getServer().getOnlinePlayers());
+
+        String[] args = ap.getNormalArgs();
+        
         if (args.length < 1) {
             throw new CommandUsageException("You did not specify a message!");
         } else {
@@ -47,11 +73,13 @@ public class CommandBroadcast implements iCommand {
             message = message.substring(0, message.length() - 1);
         }
 
-        for (Player p : plugin.getServer().getOnlinePlayers()) {
-            p.sendMessage(ChatColor.RED + "[" + ChatColor.GREEN + "Broadcast" + ChatColor.RED + "] " + ChatColor.GREEN + message);
-        }
 
-        if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null) {
+        if(recipients!=null)
+            for (Player p : recipients) {
+                p.sendMessage(ChatColor.RED + "[" + ChatColor.GREEN + "Broadcast" + ChatColor.RED + "] " + ChatColor.GREEN + message);
+            }
+
+        if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null && groups==null ) {
             if(plugin.getConfigHandler().GIRCenabled) {
                 String tag = plugin.getConfigHandler().GIRCtag;
                 
@@ -59,7 +87,7 @@ public class CommandBroadcast implements iCommand {
             }
         }
         // plugin.getLogger().info
-        plugin.getLogger().info("[Broadcast] " + message);
+        plugin.getLogger().info("[Broadcast] " + (groups==null?"":"("+grouparg+") ") + message);
 
         return true;
     }

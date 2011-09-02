@@ -19,6 +19,13 @@ mount:
 # permission node.
     autotame: false
 
+spamcontrol:
+    enable: true
+    checkTime: 5
+    muteTime: 5
+    maxMessages: 5
+    muteMessage: '{displayname} has been auto-muted for {mins} mins for spamming!'
+
 PlayerHistory:
     enabled: true
 
@@ -66,6 +73,7 @@ tamer:
    toolid: 280 # Stick
 
 worlds:
+   enable: true
    enablenether: true
    netherfolder: 'nether'
    extraworlds:

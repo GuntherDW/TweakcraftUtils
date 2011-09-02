@@ -86,14 +86,14 @@ public class TweakcraftUtils extends JavaPlugin {
     private List<String> donottplist;
     private List<String> MOTDLines;
 
-    protected static final Logger log = Logger.getLogger("Minecraft");
+    protected final Logger log = Logger.getLogger("Minecraft");
     protected PluginDescriptionFile pdfFile = null;
 
     private List<Player> cuiPlayers;
     public String CUIPattern = "§7§3§3§4";
 
 
-    public static File datafolder;
+    public File datafolder;
     public Map<String, String> playerReplyDB;
     public boolean databaseloaded = false;
 

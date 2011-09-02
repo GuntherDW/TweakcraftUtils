@@ -27,9 +27,11 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOption
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Util.TimeTool;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
@@ -152,7 +154,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         for(String part : nicks.keySet()) {
             n = nicks.get(part);
             if(n.toLowerCase().contains(nick.toLowerCase())) {
-                Player player = plugin.getServer().getPlayer(n);
+                Player player = plugin.getServer().getPlayer(part);
                 if(player!=null) playerlijst.add(player);
             }
         }
@@ -260,6 +262,30 @@ public class TweakcraftPlayerListener extends PlayerListener {
             return;
         } else {
 
+            if(plugin.getConfigHandler().enableSpamControl) {
+                int counter = 0;
+                counter = ch.getAntiSpam().checkSpam(player, message);
+
+                if(counter>(plugin.getConfigHandler().spamMaxMessages-1)) {
+                    plugin.getLogger().info("[TweakcraftUtils] "+player.getName()+" has been auto-muted for spamming!");
+                    long until = plugin.getConfigHandler().spamMuteMinutes*60;
+                    ch.addMute(player.getName().toLowerCase(), until);
+                    String msg = plugin.getConfigHandler().spamMuteMessage.trim();
+                    if(!msg.equals("")) {
+
+                        msg = msg.replace("{name}", name);
+                        msg = msg.replace("{displayname}", player.getDisplayName());
+                        msg = msg.replace("{mins}", plugin.getConfigHandler().spamMuteMinutes+"");
+                        msg = msg.replace("&&", "{orly}");
+                        msg = msg.replace("&", "§");
+                        msg = msg.replace("{orly}", "&");
+                        
+                        plugin.getServer().broadcastMessage(msg);
+                    }
+                    event.setCancelled(true);
+                    return;
+                }
+            }
 
             if (cm != null) {
                 if (!message.startsWith(plugin.getChathandler().getBypassChar())) {
@@ -429,7 +455,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
      *  I still don't get why my event.getItem or i keeps on nulling out, if anyone can help, please do
      */
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if(event.isCancelled())return;
+
         Player player = event.getPlayer();
         String playername = player.getName();
         if(plugin.getConfigHandler().getLsbindmap().containsKey(playername)) {
@@ -439,6 +465,19 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     event.getPlayer().sendMessage(ChatColor.RED+"[TweakcraftUtils] onPlayerInteract Null error!");
                     plugin.getLogger().info("[TweakcraftUtils] "+playername+" triggered a i == null event!");
                 } else {
+
+                    if(event.isCancelled()) {
+                        if(event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+                            int blockid = event.getClickedBlock().getTypeId();
+                            if(blockid == Material.CHEST.getId()
+                                    ||blockid == Material.FURNACE.getId()
+                                    ||blockid == Material.DIODE_BLOCK_OFF.getId()
+                                    ||blockid == Material.DIODE_BLOCK_ON.getId()
+                                    ||blockid == Material.DISPENSER.getId())
+                                return;
+                        }
+                    }
+
                     if((event.getItem()==null && i.intValue()==0)
                             || (event.getItem() != null && event.getItem().getTypeId() == i.intValue())) {
                         Action a = event.getAction();

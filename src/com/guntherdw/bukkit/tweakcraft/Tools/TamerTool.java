@@ -164,6 +164,8 @@ public class TamerTool {
                 if(!plugin.check(player, "tamer.sit.wild"))
                     allowed = false;
             }
+            if(sit==null)
+                sit = !wolf.isSitting();
 
             if(allowed)
                 wolf.setSitting(sit);

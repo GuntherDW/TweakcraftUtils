@@ -55,11 +55,12 @@ public class CommandItem implements iCommand {
 
         ArgumentParser ap = new ArgumentParser(realargs);
         String recv = ap.getString("p", null);
+        int dmgval = ap.getInteger("d", -1);
         String[] args = ap.getNormalArgs();
 
         if (args.length > 0) // just the item!
         {
-            String[] split = args[0].split(":");
+            String[] split = args[0].split(";");
             if (split.length > 1) {
                 try {
                     itemId = Integer.parseInt(split[0]);
@@ -103,6 +104,10 @@ public class CommandItem implements iCommand {
                     throw new CommandUsageException("If you're a console you have to specify the receiver!");
 
             } */
+            
+            if(dmgval>-1&&dmgval<16) {
+                itemDmg = (byte)dmgval;
+            }
 
             if(recv != null) {
                 receiver = plugin.getServer().getPlayer(plugin.findPlayer(recv));

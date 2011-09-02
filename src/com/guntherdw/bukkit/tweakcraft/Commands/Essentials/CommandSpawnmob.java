@@ -23,13 +23,13 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.CreatureType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ import java.util.List;
  * @author GuntherDW
  */
 public class CommandSpawnmob implements iCommand {
-    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -46,6 +46,15 @@ public class CommandSpawnmob implements iCommand {
                 throw new PermissionsException(command);
 
             Location loc = player.getTargetBlock(null, 200).getLocation();
+            ArgumentParser ap = new ArgumentParser(realargs);
+            String[] args = ap.getNormalArgs();
+
+            int slimesize = ap.getInteger("s", -1);
+            int health = ap.getInteger("h", -1);
+            boolean powered = ap.getBoolean("p", false);
+            boolean shoven = ap.getBoolean("sh", false);
+            String sheepcolor = ap.getString("sc", null);
+
             loc.setY(loc.getY() + 1); // Do not spawn them into the ground, silly!
             String mobName;
             String mobRider;
@@ -130,6 +139,24 @@ public class CommandSpawnmob implements iCommand {
                     LivingEntity rid = null;
                     for (int x = 0; x < amount; x++) {
                         lent = victimplayer.getWorld().spawnCreature(loc, type);
+                        if(health>0)
+                            lent.setHealth(health);
+                        
+                        if(lent instanceof Slime && slimesize > 0)
+                            ((Slime)lent).setSize(slimesize);
+
+                        if(lent instanceof Creeper && powered)
+                            ((Creeper)lent).setPowered(powered);
+                        
+                        if(lent instanceof Sheep && shoven || sheepcolor!=null) {
+                            ((Sheep)lent).setSheared(shoven);
+
+                            if(sheepcolor!=null) {
+                                DyeColor dc = DyeColor.valueOf(sheepcolor.toUpperCase());
+                                if(dc!=null)((Sheep)lent).setColor(dc);
+                            }
+                        }
+                        
                         if(riders != null && riders.size()!=0) {
                             for(CreatureType t : riders) {
                                 rid = victimplayer.getWorld().spawnCreature(loc, t);

@@ -72,6 +72,15 @@ public class ConfigurationHandler {
     public boolean paySaddle = true;
     public boolean stopChunkUnloadBurningFurnace = false;
     public boolean enableCUI = false;
+
+
+    public boolean enableSpamControl = false;
+    public long spamCheckTime = 500L;
+    public int spamMuteMinutes = 5;
+    public int spamMaxMessages = 5;
+    public String spamMuteMessage = "{name} has been auto-muted for spamming!";
+
+
     /**
      * EXTRA/TEMPORARY STUFF
      */
@@ -147,6 +156,17 @@ public class ConfigurationHandler {
         this.pigRecoverSaddle = plugin.getConfiguration().getBoolean("extra.recoverPigSaddle", true);
         this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.StopGodIgnite", true);
         this.enableCUI = plugin.getConfiguration().getBoolean("extra.CUI", false);
+
+        this.enableSpamControl = plugin.getConfiguration().getBoolean("spamcontrol.enable", false);
+        if(this.enableSpamControl) {
+            plugin.getLogger().info("[TweakcraftUtils] Enabling spam control!");
+            plugin.getChathandler().enableAntiSpam();
+        }
+        this.spamCheckTime = plugin.getConfiguration().getInt("spamcontrol.checkTime", 5)*100;
+        this.spamMuteMinutes = plugin.getConfiguration().getInt("spamcontrol.muteTime", 5);
+        this.spamMaxMessages = plugin.getConfiguration().getInt("spamcontrol.maxMessages", 5);
+        this.spamMuteMessage = plugin.getConfiguration().getString("spamcontrol.muteMessage", "{name} has been auto-muted for spamming!");
+
         if(this.enablePersistence) {
             plugin.getPlayerListener().reloadInfo();
         }

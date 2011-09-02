@@ -33,9 +33,11 @@ import java.util.*;
 public class ChatHandler {
 
     private TweakcraftUtils plugin;
+    private AntiSpam antispam = null;
     public Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
     public Map<String, String> playerchatmode = new HashMap<String, String>();
     public Map<String, Long> mutedPlayers = new HashMap<String, Long>();
+    
 
     public ChatHandler(TweakcraftUtils instance) {
         plugin = instance;
@@ -45,6 +47,11 @@ public class ChatHandler {
         chatmodes.put("region", new RegionChat(this));
         chatmodes.put("zones",  new ZoneChat(this));
         chatmodes.put("world",  new WorldChat(this));
+    }
+
+    public void enableAntiSpam() {
+        if(plugin.getConfigHandler().enableSpamControl && antispam==null)
+            this.antispam = new AntiSpam(this, plugin.getConfigHandler());
     }
 
     public ChatMode getChatMode(String mode) throws ChatModeException {
@@ -132,8 +139,16 @@ public class ChatHandler {
         mutedPlayers.put(player, toTime);
     }
 
+    public AntiSpam getAntiSpam() {
+        return this.antispam;
+    }
+
     public void addMute(String player, Long duration) {
         Long toTime = null;
+        
+        if(player!=null) player = player.toLowerCase(); /* Sanity checks */
+        else return;
+
         if(duration != null) {
             toTime  = Calendar.getInstance().getTime().getTime();
             toTime += duration*1000;
