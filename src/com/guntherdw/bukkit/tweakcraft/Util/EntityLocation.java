@@ -37,7 +37,7 @@ public class EntityLocation {
         Integer xdiff, zdiff;
         Integer xdiffi, zdiffi;
         dloc = entity.getLocation();
-        if (dloc.getWorld() == entityLocation.getWorld())
+        if (dloc.getWorld() != entityLocation.getWorld())
             return null; // Different world, different result!
 
         
