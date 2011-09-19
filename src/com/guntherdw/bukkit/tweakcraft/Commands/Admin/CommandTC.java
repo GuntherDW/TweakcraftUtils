@@ -226,6 +226,17 @@ public class CommandTC implements iCommand {
 
                     plugin.sendCUIChatMode(player);
                 }
+            } else if(args[0].equalsIgnoreCase("tooldura")) {
+                if(sender instanceof Player) {
+                    Player player = (Player) sender;
+                    List<Player> lijst = plugin.getMod_InfDuraplayers();
+                    if(lijst!=null && !lijst.contains(player)) {
+                        plugin.getLogger().info("[TweakcraftUtils] Adding "+player.getName()+" to the mod_InfDura list!");
+                        lijst.add(player);
+                    }
+
+                    plugin.sendToolDuraMode(player);
+                }
             }
 
         } else {

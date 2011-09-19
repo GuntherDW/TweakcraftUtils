@@ -29,9 +29,19 @@ public interface IWorld {
 
     public abstract org.bukkit.World getBukkitWorld();
 
+    public abstract org.bukkit.World getNetherWorld();
+
     public abstract String getName();
 
     public abstract void loadWorld();
+
+    public boolean isDurabilityEnabled();
+
+    public void setDurabilityEnabled(boolean state);
+
+    public void addNether();
+
+    public boolean isNetherEnabled();
 
     public abstract boolean isEnabled();
 

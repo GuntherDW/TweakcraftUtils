@@ -72,6 +72,7 @@ public class ConfigurationHandler {
     public boolean paySaddle = true;
     public boolean stopChunkUnloadBurningFurnace = false;
     public boolean enableCUI = false;
+    public boolean enablemod_InfDura = false;
 
 
     public boolean enableSpamControl = false;
@@ -156,6 +157,7 @@ public class ConfigurationHandler {
         this.pigRecoverSaddle = plugin.getConfiguration().getBoolean("extra.recoverPigSaddle", true);
         this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.StopGodIgnite", true);
         this.enableCUI = plugin.getConfiguration().getBoolean("extra.CUI", false);
+        this.enablemod_InfDura = plugin.getConfiguration().getBoolean("extra.mod_InfDura", false);
 
         this.enableSpamControl = plugin.getConfiguration().getBoolean("spamcontrol.enable", false);
         if(this.enableSpamControl) {

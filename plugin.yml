@@ -1,6 +1,6 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
-version: 2.2.5a
+version: 2.2.5-rc1
 authors:
   - GuntherDW
   - Meaglin
@@ -37,6 +37,10 @@ commands:
     description: List of currently connected players
     usage: /<command>
     aliases: playerlist
+  lwho:
+    description: List of currently connected players in-range (localchat)
+    usage: /<command>
+    aliases: localwho
   tp:
     description: Teleports you to another player
     usage: /<command> <player>

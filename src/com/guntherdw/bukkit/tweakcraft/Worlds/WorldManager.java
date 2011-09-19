@@ -50,11 +50,15 @@ public class WorldManager {
     public void setupWorlds() {
         boolean netherWorldOnline = false;
 
+        Boolean worldInfDura = plugin.getConfiguration().getBoolean("worlds.durability", true);
+        int defaultviewdistance = this.getDefaultViewDistance();
+        
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
-            worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), true));
+            worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true));
             if (world.getEnvironment() == Environment.NETHER)
                 netherWorldOnline = true;
         }
+        
         if (netherWorldOnline == false && plugin.getConfiguration().getBoolean("worlds.enablenether", false)) {
             String netherfolder = plugin.getConfiguration().getString("worlds.netherfolder", "nether");
             if (!netherfolder.equalsIgnoreCase("")) {
@@ -66,7 +70,7 @@ public class WorldManager {
         }
         // List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
         List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
-        int defaultviewdistance = this.getDefaultViewDistance();
+
         for (String node : extraworlds) {
             if (!worlds.containsKey(node)) {
 
@@ -75,7 +79,10 @@ public class WorldManager {
                 boolean pvp = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".pvp", false);
                 boolean monsters = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".monsters", true);
                 boolean animals = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".animals", true);
+                boolean durability = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".durability", true);
+                boolean addnether = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".addnether", false);
                 int viewdistance = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
+
 
                 Environment wenv = null;
                 if(env==null || env=="") {
@@ -96,7 +103,12 @@ public class WorldManager {
                     plugin.getLogger().info("[TweakcraftUtils] Adding world with name " + node + " and environmenttype " + env + "!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" has pvp "+(pvp?"enabled":"disabled")+"!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" monsters : "+(monsters?"enabled":"disabled")+", animals : "+(animals?"enabled":"disabled")+"!");
-                    worlds.put(node, new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, enabled));
+                    if(addnether) plugin.getLogger().info("[TweakcraftUtils] World "+node+" added nether world!");
+                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" Tool Durability : "+(durability?"enabled":"disabled"));
+                    TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, enabled);
+                    if(addnether) tw.addNether();
+                    worlds.put(node, tw);
+
                 } else {
                     plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
                 }

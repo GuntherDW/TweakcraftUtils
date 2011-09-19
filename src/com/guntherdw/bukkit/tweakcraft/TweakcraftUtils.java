@@ -45,6 +45,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
 
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -91,6 +92,8 @@ public class TweakcraftUtils extends JavaPlugin {
 
     private List<Player> cuiPlayers;
     public String CUIPattern = "§7§3§3§4";
+    private List<Player> mod_InfDuraplayers;
+    public String ToolDuraPattern = "§1§1§1§1";
 
 
     public File datafolder;
@@ -98,6 +101,10 @@ public class TweakcraftUtils extends JavaPlugin {
     public boolean databaseloaded = false;
 
 
+    public List<Player> getMod_InfDuraplayers() {
+        return mod_InfDuraplayers;
+    }
+    
     public List<Player> getCUIPlayers() {
         return cuiPlayers;
     }
@@ -115,8 +122,29 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void sendCUIHandShake(Player player) {
-        if(getConfigHandler().enableCUI)
+        if(getConfigHandler().enableCUI) {
             player.sendRawMessage(CUIPattern); // HANDSHAKE
+        }
+    }
+    
+    public void sendToolDuraMode(Player player) {
+        if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
+        {
+            player.sendRawMessage(ToolDuraPattern+player.getWorld().getToolDurability());
+        }
+    }
+
+    public void sendToolDuraMode(Player player, World to) {
+            if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
+            {
+                player.sendRawMessage(ToolDuraPattern+to.getToolDurability());
+            }
+        }
+    
+    public void sendmod_InfDuraHandshake(Player player) {
+        if(getConfigHandler().enablemod_InfDura) {
+            player.sendRawMessage(ToolDuraPattern);
+        }
     }
 
     public String findinlist(String find, List<String> list) {
@@ -287,6 +315,7 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT,        playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT,        playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_PORTAL,          playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH,           entityListener, Priority.Normal, this);
@@ -500,6 +529,7 @@ public class TweakcraftUtils extends JavaPlugin {
         this.reloadMOTD();
         configHandler.reloadConfig();
         this.cuiPlayers = new ArrayList<Player>();
+        this.mod_InfDuraplayers = new ArrayList<Player>();
         
         this.setupWorldGuard();
         this.setupCraftIRC();

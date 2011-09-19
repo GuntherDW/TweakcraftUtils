@@ -87,7 +87,9 @@ public class LocalChat implements ChatMode {
                 Integer distance = entityloc.getDistance(p);
                 if (distance != null && distance < plugin.getConfigHandler().localchatdistance) {
                     recp.add(p);
-                }
+                } /* else {
+                    sender.sendMessage(distance+"");
+                } */
             }
         }
         return recp;

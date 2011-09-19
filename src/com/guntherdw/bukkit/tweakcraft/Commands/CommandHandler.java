@@ -94,6 +94,7 @@ public class CommandHandler {
         commandMap.put("broadcast", new CommandBroadcast());
         commandMap.put("tamer", new CommandTamer());
         commandMap.put("nick", new CommandNick());
+        commandMap.put("lwho", new CommandLocalWho());
         commandMap.put("whois", new CommandWhois());
         commandMap.put("donotmount", new CommandDoNotMount());
         commandMap.put("eject", new CommandEject());

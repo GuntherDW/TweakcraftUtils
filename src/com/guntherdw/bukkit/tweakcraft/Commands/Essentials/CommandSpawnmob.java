@@ -33,6 +33,7 @@ import org.bukkit.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author GuntherDW
@@ -48,6 +49,7 @@ public class CommandSpawnmob implements iCommand {
             Location loc = player.getTargetBlock(null, 200).getLocation();
             ArgumentParser ap = new ArgumentParser(realargs);
             String[] args = ap.getNormalArgs();
+            Random rnd = new Random();
 
             int slimesize = ap.getInteger("s", -1);
             int health = ap.getInteger("h", -1);
@@ -74,6 +76,7 @@ public class CommandSpawnmob implements iCommand {
                     mobName = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].length());
                 type = CreatureType.fromName(mobName);
                 if (type == null) {
+                    sender.sendMessage("Tried : "+mobName);
                     throw new CommandUsageException("Can't find that creature!");
                 }
                 if (args.length > 1) // amount
@@ -152,7 +155,12 @@ public class CommandSpawnmob implements iCommand {
                             ((Sheep)lent).setSheared(shoven);
 
                             if(sheepcolor!=null) {
-                                DyeColor dc = DyeColor.valueOf(sheepcolor.toUpperCase());
+                                DyeColor dc = null;
+                                if(sheepcolor.equalsIgnoreCase("random")) {
+                                    dc = DyeColor.getByData((byte) rnd.nextInt(16));
+                                } else {
+                                    dc = DyeColor.valueOf(sheepcolor.toUpperCase());
+                                }
                                 if(dc!=null)((Sheep)lent).setColor(dc);
                             }
                         }

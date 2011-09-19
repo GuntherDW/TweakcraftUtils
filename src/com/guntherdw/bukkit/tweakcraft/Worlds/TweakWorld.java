@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
+import org.bukkit.World;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -29,10 +30,13 @@ import java.io.IOException;
 public class TweakWorld implements IWorld {
 
     private org.bukkit.World world;
+    private org.bukkit.World nether;
     private String foldername = null;
     private boolean enabled = false;
     private boolean allowmonsters = true;
     private boolean allowanimals = true;
+    private boolean tooldurability = true;
+    private boolean netherenabled = false;
     private String worldName = "";
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
@@ -45,6 +49,7 @@ public class TweakWorld implements IWorld {
         this.environment = env;
         this.allowanimals = true;
         this.allowmonsters = true;
+        this.tooldurability = true;
         this.enabled = enabled;
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
@@ -58,6 +63,7 @@ public class TweakWorld implements IWorld {
         this.pvp = pvp;
         this.allowanimals = allowAnimals;
         this.allowmonsters = allowMonsters;
+        this.tooldurability = true;
         this.enabled = enabled;
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
@@ -65,6 +71,24 @@ public class TweakWorld implements IWorld {
     }
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean pvp, boolean allowMonsters, boolean allowAnimals, int viewdistance, boolean enabled) {
+            this.wm = wm;
+            this.foldername = foldername;
+            this.environment = env;
+            this.pvp = pvp;
+            this.allowanimals = allowAnimals;
+            this.allowmonsters = allowMonsters;
+            this.enabled = enabled;
+            this.tooldurability = true;
+            if(viewdistance>3 && viewdistance<16)
+                this.viewdistance = viewdistance;
+            else
+                this.viewdistance = wm.getDefaultViewDistance();
+            if (enabled) {
+                loadWorld(wm, foldername, env, enabled);
+            }
+        }
+
+    public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean pvp, boolean allowMonsters, boolean allowAnimals, int viewdistance, boolean tooldurability, boolean enabled) {
         this.wm = wm;
         this.foldername = foldername;
         this.environment = env;
@@ -72,6 +96,7 @@ public class TweakWorld implements IWorld {
         this.allowanimals = allowAnimals;
         this.allowmonsters = allowMonsters;
         this.enabled = enabled;
+        this.tooldurability = tooldurability;
         if(viewdistance>3 && viewdistance<16)
             this.viewdistance = viewdistance;
         else
@@ -87,10 +112,29 @@ public class TweakWorld implements IWorld {
         this.environment = env;
         this.allowanimals = allowAnimals;
         this.allowmonsters = allowMonsters;
+        this.tooldurability = true;
         this.enabled = enabled;
         if (enabled) {
             loadWorld(wm, foldername, env, enabled);
         }
+    }
+    
+    public void setDurabilityEnabled(boolean state) {
+        if(wm.getPlugin().getConfigHandler().enablemod_InfDura)
+            world.setToolDurability(state);
+        else {
+            wm.getPlugin().getLogger().severe("[TweakcraftUtils] Tried to enable/disable tool durability for world "+world.getName()+",");
+            wm.getPlugin().getLogger().severe("[TweakcraftUtils] But either your Bukkit is not modded, or you forgot to enable it in the config!");
+        }
+        
+    }
+
+    public boolean isDurabilityEnabled() {
+        return world.getToolDurability();
+    }
+
+    public boolean isNetherEnabled() {
+        return this.netherenabled;
     }
 
     public void loadWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean enabled) {
@@ -112,6 +156,7 @@ public class TweakWorld implements IWorld {
             // TODO: Re-enable after it's been added again!
             // world.setViewDistance(this.viewdistance);
             this.setSpawnFlags(this.allowmonsters, this.allowmonsters);
+            this.setDurabilityEnabled(tooldurability);
             this.enabled = true;
         }
     }
@@ -133,8 +178,26 @@ public class TweakWorld implements IWorld {
         return world;
     }
 
+    @Override
+    public World getNetherWorld() {
+        if(!isNetherEnabled()) return null;
+        return nether;
+    }
+
     public boolean getAllowAnimals() {
         return world.getAllowAnimals();
+    }
+
+    public void addNether() {
+        World nw = wm.getPlugin().getServer().getWorld(this.world.getName()+"_nether");
+        if(nw == null)
+        {
+            nw = wm.getPlugin().getServer().createWorld(this.world.getName()+"_nether", World.Environment.NETHER);
+        }
+        nw.setSpawnFlags(this.allowmonsters, this.allowanimals);
+        nw.setToolDurability(this.tooldurability);
+        this.netherenabled = true;
+        this.nether = nw;
     }
 
     public String getWorldName() {

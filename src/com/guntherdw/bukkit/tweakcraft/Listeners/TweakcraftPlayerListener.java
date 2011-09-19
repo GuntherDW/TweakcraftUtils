@@ -28,9 +28,12 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Util.TimeTool;
+import com.guntherdw.bukkit.tweakcraft.Worlds.IWorld;
+import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
@@ -321,11 +324,12 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if(event.isCancelled()) return;
-        Location floc = event.getFrom();
-        Location tloc = event.getTo();
-        if (floc.getWorld() != tloc.getWorld()) { // The world is different, make a check!
+        if (event.getFrom().getWorld() != event.getTo().getWorld()) { // The world is different, make a check!
             Player player = event.getPlayer();
-            if (!plugin.check(player, "worlds." + tloc.getWorld().getName())) {
+            if(plugin.getConfigHandler().enablemod_InfDura) {
+                plugin.sendToolDuraMode(player, event.getTo().getWorld());
+            }
+            if (!plugin.check(player, "worlds." + event.getTo().getWorld().getName())) {
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.RED + "You don't have access to this world!");
             }
@@ -382,9 +386,15 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
         if(plugin.getConfigHandler().enableCUI) {
             // String CUIPattern =
-
             plugin.sendCUIHandShake(p);
             plugin.sendCUIChatMode(p);
+        }
+
+        if(plugin.getConfigHandler().enablemod_InfDura) {
+            if(!plugin.getMod_InfDuraplayers().contains(p)) {
+                plugin.sendmod_InfDuraHandshake(p);
+            }
+            plugin.sendmod_InfDuraHandshake(p);
         }
     }
 
@@ -521,8 +531,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void onPlayerKick(PlayerKickEvent event) {
-        if(event.isCancelled())
-            return;
+        if(event.isCancelled()) return;
 
         Player p = event.getPlayer();
         String nick = getNick(p.getName());
@@ -543,6 +552,30 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if(plugin.getConfigHandler().enableDebug)
             for(String s : lijst)
                 plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
+    }
+
+
+    public void onPlayerPortal(PlayerPortalEvent event) {
+        if(event.isCancelled()) return;
+        
+        Player p = event.getPlayer();
+        String fromworld = event.getFrom().getWorld().getName();
+        boolean isnether = fromworld.endsWith("_nether");
+        if(isnether) fromworld = fromworld.substring(0, fromworld.length()-7); // MINUS _nether
+        IWorld w = plugin.getworldManager().getWorld(fromworld);
+        
+        if(w!=null) {
+            
+            if(!w.isNetherEnabled()) return;
+
+            org.bukkit.Location to = event.getFrom();
+            if(isnether)  to.setWorld(w.getBukkitWorld());
+            else          to.setWorld(w.getNetherWorld());
+
+
+            event.setTo(to);
+
+        }
     }
 
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
