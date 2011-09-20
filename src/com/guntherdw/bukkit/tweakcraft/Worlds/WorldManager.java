@@ -49,12 +49,17 @@ public class WorldManager {
 
     public void setupWorlds() {
         boolean netherWorldOnline = false;
-
+        List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
+        
         Boolean worldInfDura = plugin.getConfiguration().getBoolean("worlds.durability", true);
         int defaultviewdistance = this.getDefaultViewDistance();
         
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
-            worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true));
+            // catch a /reload!
+            // IWorld iw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
+            if(!extraworlds.contains(world.getName())) {
+                worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true));
+            }
             if (world.getEnvironment() == Environment.NETHER)
                 netherWorldOnline = true;
         }
@@ -69,7 +74,7 @@ public class WorldManager {
             }
         }
         // List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
-        List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
+
 
         for (String node : extraworlds) {
             if (!worlds.containsKey(node)) {

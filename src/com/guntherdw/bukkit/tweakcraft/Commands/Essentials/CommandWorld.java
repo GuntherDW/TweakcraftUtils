@@ -19,12 +19,15 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
+import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,12 +56,41 @@ public class CommandWorld implements iCommand {
                     throw new CommandUsageException(ChatColor.YELLOW + "Can't find that world!");
                 }
                 if (world != null) {
+                    if(world.getName().equals(player.getWorld().getName())) {
+                        throw new CommandUsageException("You already are on that world!");
+                    }
                     if (!plugin.check(player, "worlds." + world.getName())) {
                         throw new PermissionsException(command);
                     }
                     else {
-                        plugin.getTelehistory().addHistory(player.getName(), player.getLocation());
-                        player.teleport(world.getSpawnLocation());
+                        Location oldlocation = player.getLocation();
+                        Location toLocation = world.getSpawnLocation();
+                        String locString = "";
+                        plugin.getTelehistory().addHistory(player.getName(), oldlocation);
+                        if(plugin.getConfigHandler().enablePersistence) {
+                            List<PlayerOptions> plist = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player.getName()).ieq("optionname", "worldpos").findList();
+                            PlayerOptions po = null;
+                            if(plist.size()>0) {
+                                for(PlayerOptions popts : plist) {
+                                    Location tloc = this.parseLocationString(popts.getOptionvalue());
+                                    if(tloc!=null) {
+                                        if(tloc.getWorld().getName().equals(player.getWorld().getName())) {
+                                            po = popts;
+                                        } else if(tloc.getWorld().getName().equals(world.getName())) {
+                                            toLocation = tloc;
+                                        }
+                                    }
+                                }
+                            }
+                            if(po==null) {
+                                po = new PlayerOptions();
+                                po.setOptionname("worldpos");
+                                po.setName(player.getName());
+                            }
+                            po.setOptionvalue(this.exportLocationString(player.getLocation()));
+                            plugin.getDatabase().save(po);
+                        }
+                        player.teleport(toLocation);
                     }
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Can't find that world!");
@@ -75,5 +107,30 @@ public class CommandWorld implements iCommand {
     @Override
     public String getPermissionSuffix() {
         return null;
+    }
+
+    // x=0.25,y=30,z=30,w=survival,yaw=40,pit=40
+    public Location parseLocationString(String locstring) {
+        try{
+            String[] stuff = locstring.split(",");
+            Double x = Double.parseDouble(stuff[0].substring(2));
+            Double y = Double.parseDouble(stuff[1].substring(2));
+            Double z = Double.parseDouble(stuff[2].substring(2));
+            World world = Bukkit.getServer().getWorld(stuff[3].substring(2));
+            Float yaw = Float.parseFloat(stuff[4].substring(4));
+            Float pitch = Float.parseFloat(stuff[5].substring(4));
+            if(world==null) return null;
+
+            return new Location(world, x, y, z, yaw, pitch);
+
+
+        } catch(NumberFormatException ex) {
+            return null;
+        }
+    }
+    
+    public String exportLocationString(Location loc) {
+        return "x="+loc.getX()+",y="+loc.getY()+",z="+loc.getZ()+",w="+loc.getWorld().getName()+",yaw="+loc.getYaw()+",pit="+loc.getPitch();
+        // return null;
     }
 }

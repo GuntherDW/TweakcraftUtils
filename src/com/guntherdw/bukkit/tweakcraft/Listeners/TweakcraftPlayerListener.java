@@ -569,8 +569,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if(!w.isNetherEnabled()) return;
 
             org.bukkit.Location to = event.getFrom();
-            if(isnether)  to.setWorld(w.getBukkitWorld());
-            else          to.setWorld(w.getNetherWorld());
+            if(isnether)  { to.setWorld(w.getBukkitWorld()); to.setX(to.getX()*8); to.setZ(to.getZ()*8); }
+            else          { to.setWorld(w.getNetherWorld()); to.setX(to.getX()/8); to.setZ(to.getZ()/8);}
 
 
             event.setTo(to);
