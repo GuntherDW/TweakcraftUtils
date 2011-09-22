@@ -87,6 +87,11 @@ public class CommandTp implements iCommand {
                          override = true; */
                         }
 
+                        if(!player.getWorld().getName().equals(p.getWorld().getName())) {
+                            if(!plugin.check(player, "worlds."+p.getWorld().getName()+".tp"))
+                                throw new PermissionsException("You don't have permission to TP to someone in that world!");
+                        }
+
                         if (p.getName().equals(player.getName())) {
                             player.sendMessage(ChatColor.YELLOW + "You're already there!");
                         } else {

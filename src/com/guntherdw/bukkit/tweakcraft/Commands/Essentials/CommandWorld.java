@@ -59,8 +59,8 @@ public class CommandWorld implements iCommand {
                     if(world.getName().equals(player.getWorld().getName())) {
                         throw new CommandUsageException("You already are on that world!");
                     }
-                    if (!plugin.check(player, "worlds." + world.getName())) {
-                        throw new PermissionsException(command);
+                    if (!plugin.check(player, "worlds." + world.getName()+".world")) {
+                        throw new PermissionsException("You don't have permission to /world to that world!");
                     }
                     else {
                         Location oldlocation = player.getLocation();

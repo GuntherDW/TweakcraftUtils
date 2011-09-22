@@ -73,6 +73,10 @@ public class ConfigurationHandler {
     public boolean stopChunkUnloadBurningFurnace = false;
     public boolean enableCUI = false;
     public boolean enablemod_InfDura = false;
+    public boolean enableExperienceOrbsHalt = false;
+
+    public boolean enableRespawnHook = false;
+    public boolean enableRespawnHeal = false;
 
 
     public boolean enableSpamControl = false;
@@ -118,6 +122,11 @@ public class ConfigurationHandler {
         if(this.enableDebug) {
             plugin.getLogger().info("[TweakcraftUtils] Extra verbose messages enabled!");
         }
+
+        this.enableRespawnHook = plugin.getConfiguration().getBoolean("respawn.enableHook", false);
+        this.enableRespawnHeal = plugin.getConfiguration().getBoolean("respawn.healOnRespawn", false);
+
+
         this.extrahelpplugin = new ArrayList<String>();
         this.enableGroupChat = plugin.getConfiguration().getBoolean("ChatMode.GroupChat", true);
         this.enablePersistence = plugin.getConfiguration().getBoolean("Persistence.enabled", true);
@@ -158,6 +167,7 @@ public class ConfigurationHandler {
         this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.StopGodIgnite", true);
         this.enableCUI = plugin.getConfiguration().getBoolean("extra.CUI", false);
         this.enablemod_InfDura = plugin.getConfiguration().getBoolean("extra.mod_InfDura", false);
+        this.enableExperienceOrbsHalt = plugin.getConfiguration().getBoolean("extra.stopExperienceOrbs", false);
 
         this.enableSpamControl = plugin.getConfiguration().getBoolean("spamcontrol.enable", false);
         if(this.enableSpamControl) {

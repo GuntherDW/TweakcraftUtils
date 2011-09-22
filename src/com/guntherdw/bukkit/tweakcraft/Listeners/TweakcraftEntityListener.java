@@ -41,6 +41,10 @@ public class TweakcraftEntityListener extends EntityListener {
         this.plugin = instance;
     }
 
+    /* public void onEntityDeath(EntityDeathEvent event) {
+
+    } */
+
     public void onEntityCombust(EntityCombustEvent event) {
         Entity ent = event.getEntity();
         if(ent instanceof Player) {
@@ -60,6 +64,10 @@ public class TweakcraftEntityListener extends EntityListener {
             if(pig.hasSaddle() && plugin.getConfigHandler().pigRecoverSaddle) {
                 event.getDrops().add(new ItemStack(Material.SADDLE, 1));
             }
+        }
+        
+        if(plugin.getConfigHandler().enableExperienceOrbsHalt) {
+            event.setDroppedExp(0);
         }
     }
 

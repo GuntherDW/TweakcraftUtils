@@ -321,6 +321,33 @@ public class TweakcraftPlayerListener extends PlayerListener {
             }
         }
     }
+    
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        // if(event.isBedSpawn())
+        if(!plugin.getConfigHandler().enableRespawnHook) return;
+        
+        Player p = event.getPlayer();
+        String fromworld = event.getPlayer().getWorld().getName();
+        boolean isnether = fromworld.endsWith("_nether");
+        if(isnether) fromworld = fromworld.substring(0, fromworld.length()-7); // MINUS _nether
+        World w = plugin.getServer().getWorld(fromworld);
+        if(w!=null) {
+            if(event.isBedSpawn()) {
+                if(!event.getRespawnLocation().getWorld().getName().equals(w.getName())) {
+                    p.sendMessage(ChatColor.AQUA+"Your bed was in another world, sending you to spawn!");
+                    event.setRespawnLocation(w.getSpawnLocation());
+                }
+            } else {
+                if(!event.getRespawnLocation().getWorld().getName().equals(w.getName())) {
+                    p.sendMessage(ChatColor.AQUA+"Your respawn place was in another world, sending you to spawn!");
+                    event.setRespawnLocation(w.getSpawnLocation()); // Removed isNether() check
+                }
+                
+            }
+        }
+        if(plugin.getConfigHandler().enableRespawnHeal)
+            p.setHealth(20);
+    }
 
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if(event.isCancelled()) return;

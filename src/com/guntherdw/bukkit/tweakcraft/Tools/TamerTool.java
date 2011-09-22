@@ -21,6 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Tools;
 import com.guntherdw.bukkit.tweakcraft.Packages.TamerMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.*;
 
 import java.util.HashMap;
@@ -45,15 +46,20 @@ public class TamerTool {
     public void getOwner(Player player, Wolf wolf) {
         if(wolf.isTamed()) {
             AnimalTamer tamer = wolf.getOwner();
-            if(tamer instanceof Player) {
-                Player ptamer = (Player) tamer;
+            if(tamer instanceof Player || tamer instanceof OfflinePlayer) {
+                // Player ptamer = (Player) tamer;
+                boolean online = false;
+                Player ptamer=null; OfflinePlayer offlinetamer=null;
+                if(tamer instanceof Player) { ptamer = (Player) tamer; online = true; }
+                else                        { offlinetamer = (OfflinePlayer) tamer; online = false; }
+                    
                 boolean allowed = true;
-                if(!ptamer.equals(player)) {
+                if(online && !ptamer.equals(player)) {
                     if(!plugin.check(player, "tamer.info.other"))
                         allowed = false;
                 }
                 if(allowed) {
-                    player.sendMessage(ChatColor.AQUA + "Wolf owner : "+ptamer.getDisplayName());
+                    player.sendMessage(ChatColor.AQUA + "Wolf owner : "+(online?ptamer.getDisplayName():offlinetamer.getName()));
                 } else {
                     player.sendMessage(ChatColor.RED + "You do not have the permission to check the ownership of other wolves!");
                 }

@@ -62,6 +62,7 @@ public class CommandExt implements iCommand {
         if (modus == ExtMode.SELF) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
+                if(!plugin.check(player, "ext.self"))
                 if (player.getFireTicks() != 0) {
                     player.setFireTicks(0);
                     player.sendMessage(ChatColor.YELLOW + "You have been extinguished!");
@@ -83,7 +84,7 @@ public class CommandExt implements iCommand {
             }
         } else if (modus == ExtMode.MOBS) {
             if (sender instanceof Player) {
-                if (!plugin.check((Player) sender, "extother"))
+                if (!plugin.check((Player) sender, "ext.other"))
                     throw new PermissionsException(command);
             }
 
@@ -171,7 +172,7 @@ public class CommandExt implements iCommand {
 
     @Override
     public String getPermissionSuffix() {
-        return null;
+        return "ext";
     }
 
 }
