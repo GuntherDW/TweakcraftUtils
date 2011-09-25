@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
+import com.ensifera.animosity.craftirc.RelayedMessage;
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -28,7 +29,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -81,9 +81,12 @@ public class CommandBroadcast implements iCommand {
 
         if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null && groups==null ) {
             if(plugin.getConfigHandler().GIRCenabled) {
-                String tag = plugin.getConfigHandler().GIRCtag;
+                // String tag = ;
                 
-                plugin.getCraftIRC().sendMessageToTag("[Broadcast] "+message, tag);
+                // plugin.getCraftIRC(). ("[Broadcast] "+message, tag);
+                RelayedMessage rm = plugin.getCraftIRC().newMsgToTag(plugin.getEndPoint(), plugin.getConfigHandler().GIRCtag, "generic");
+                rm.setField("message", "[Broadcast] "+message);
+                rm.post();
             }
         }
         // plugin.getLogger().info

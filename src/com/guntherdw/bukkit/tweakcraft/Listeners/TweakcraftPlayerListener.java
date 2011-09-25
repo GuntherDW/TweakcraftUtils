@@ -18,23 +18,20 @@
 
 package com.guntherdw.bukkit.tweakcraft.Listeners;
 
-import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
+import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.guntherdw.bukkit.tweakcraft.Util.TimeTool;
 import com.guntherdw.bukkit.tweakcraft.Worlds.IWorld;
-import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
@@ -305,19 +302,6 @@ public class TweakcraftPlayerListener extends PlayerListener {
             } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
                 event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
                 event.setCancelled(true);
-            }
-        }
-
-        if(!event.isCancelled() && cm==null) {
-            // Log nicks!
-            if(getNick(name)!=null) {
-                // plugin.getLogger().info("[TweakcraftUtils] "+getNick(name)+" is "+name);
-                event.setCancelled(true);
-                plugin.getLogger().info("("+player.getName()+")  <"+player.getDisplayName()+"> "+message);
-                /* if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null) {
-                    plugin.getCraftIRC().sendMessageToTag();
-                } */
-                plugin.getServer().broadcastMessage(ChatColor.WHITE+"<"+player.getDisplayName()+ChatColor.WHITE+"> "+message);
             }
         }
     }

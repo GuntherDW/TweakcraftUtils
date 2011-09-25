@@ -18,6 +18,8 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
+import com.ensifera.animosity.craftirc.CraftIRC;
+import com.ensifera.animosity.craftirc.RelayedMessage;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
@@ -33,14 +35,21 @@ import java.util.List;
  */
 public class AdminChat implements ChatMode {
 
+    /* TweakcraftUtils stuff */
+
     private List<String> subscribers;
     private TweakcraftUtils plugin;
     private ChatHandler chathandler;
+    private CraftIRC circ;
 
     public AdminChat(ChatHandler instance) {
         subscribers = new ArrayList<String>();
         this.chathandler = instance;
         this.plugin = chathandler.getTCUtilsInstance();
+        if(plugin.getConfigHandler().enableIRC) {
+            this.circ = plugin.getCraftIRC();
+            circ.registerEndPoint("tcutilsadmin", plugin.getAdminEndPoint());
+        }
     }
 
     public boolean sendMessage(CommandSender sender, String message) {
@@ -66,7 +75,22 @@ public class AdminChat implements ChatMode {
                        targetmsg = targetmsg.replace("%message%", message);
                        targetmsg = targetmsg.replace("%dispname%", ChatColor.stripColor(sendername));
 
-                plugin.getCraftIRC().sendMessageToTag(targetmsg, plugin.getConfigHandler().AIRCtag);
+                // plugin.getCraftIRC().sendMessageToTag(targetmsg, plugin.getConfigHandler().AIRCtag);
+                /// plugin.getCraftIRC().newMsgToTag(this, plugin.getConfigHandler().AIRCtag, targetmsg);
+
+                RelayedMessage rmsg = plugin.getCraftIRC().newMsgToTag(plugin.getAdminEndPoint(), plugin.getConfigHandler().AIRCtag, "generic");
+                rmsg.setField("sender", pcolor+sendername);
+                rmsg.setField("realSender", cleanname);
+                rmsg.setField("message", targetmsg);
+                if(sender instanceof Player) {
+                    Player p = (Player) sender;
+                    // World w = p.getWorld();
+                    rmsg.setField("world", p.getWorld().getName());
+                    rmsg.setField("prefix", plugin.getPermissionHandler().getUserPrefix(p.getWorld().getName(), p.getName()));
+                    rmsg.setField("suffix", plugin.getPermissionHandler().getUserSuffix(p.getWorld().getName(), p.getName()));
+                }
+                rmsg.post();
+
             }
         }
 

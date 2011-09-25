@@ -9,6 +9,7 @@ authors:
 website: https://github.com/GuntherDW/TweakcraftUtils
 description: A general usage plugin primarily aimed at Tweakcraft, but can be used by any server
 database: true
+softdepend: ['CraftIRC']
 commands:
   tweakcraft:
     description: General tweakcraftutils command

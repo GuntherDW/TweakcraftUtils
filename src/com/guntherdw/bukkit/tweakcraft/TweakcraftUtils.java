@@ -19,13 +19,13 @@
 package com.guntherdw.bukkit.tweakcraft;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
-
-import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
-import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
+import com.ensifera.animosity.craftirc.EndPoint;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
+import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
@@ -33,6 +33,8 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftEntityListener;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftPlayerListener;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftWorldListener;
+import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCAdminEndPoint;
+import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Util.TeleportHistory;
@@ -40,10 +42,8 @@ import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijiko.permissions.Group;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
-
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -57,8 +57,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.persistence.PersistenceException;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+
+// import com.ensifera.animosity.craftirc.EndPoint;
 
 /**
  * @author GuntherDW
@@ -83,6 +88,10 @@ public class TweakcraftUtils extends JavaPlugin {
     private final TeleportHistory telehistory = new TeleportHistory(this);
     private final TamerTool tamertool = new TamerTool(this);
     private final ChatHandler chathandler = new ChatHandler(this);
+
+    private Object circendpoint = null;
+    private Object circadminendpoint = null;
+
     
     private List<String> donottplist;
     private List<String> MOTDLines;
@@ -414,7 +423,7 @@ public class TweakcraftUtils extends JavaPlugin {
             if (circ == null) {
                 if (plugin != null) {
                     circ = (CraftIRC) plugin;
-                }   else {
+                }  else {
                     this.getConfigHandler().enableIRC = false;
                     this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find CraftIRC, but is enabled in the config.");
                     this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling CraftIRC support.");
@@ -446,7 +455,7 @@ public class TweakcraftUtils extends JavaPlugin {
             if(zones == null) {
                 if(plugin != null) {
                     zones = (Zones) plugin;
-                }  else {
+                } else {
                     this.getConfigHandler().enableZones = false;
                     this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find Zones, but is enabled in the config.");
                     this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling Zones support.");
@@ -544,10 +553,24 @@ public class TweakcraftUtils extends JavaPlugin {
         itemDB.loadDataBase();
         worldmanager.setupWorlds();
         banhandler.reloadBans();
+
+        if(configHandler.enableIRC) {
+            circendpoint = new CraftIRCEndPoint(this);
+            circadminendpoint = new CraftIRCAdminEndPoint(this);
+        }
+
         /* itemDB.writeDB(); */
 
         playerListener.reloadInvisTable();
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+    }
+    
+    public EndPoint getEndPoint() {
+        return (EndPoint) circendpoint;
+    }
+    
+    public EndPoint getAdminEndPoint() {
+        return (EndPoint) circadminendpoint;
     }
 
     public List<String> getDonottplist() {
