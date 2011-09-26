@@ -98,6 +98,7 @@ public class CommandHandler {
         commandMap.put("whois", new CommandWhois());
         commandMap.put("donotmount", new CommandDoNotMount());
         commandMap.put("eject", new CommandEject());
+        commandMap.put("getspawn", new CommandGetSpawn());
 
         /**
          * Chat commands

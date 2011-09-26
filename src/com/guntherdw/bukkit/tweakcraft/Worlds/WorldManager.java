@@ -58,7 +58,9 @@ public class WorldManager {
             // catch a /reload!
             // IWorld iw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
             if(!extraworlds.contains(world.getName())) {
-                worlds.put(world.getName(), new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true));
+                TweakWorld tw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
+                tw.setSpawnChunksActive(world.getKeepSpawnInMemory());
+                worlds.put(world.getName(), tw);
             }
             if (world.getEnvironment() == Environment.NETHER)
                 netherWorldOnline = true;
@@ -86,7 +88,9 @@ public class WorldManager {
                 boolean animals = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".animals", true);
                 boolean durability = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".durability", true);
                 boolean addnether = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".addnether", false);
+                boolean spawnchunksactive = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".spawnchunksactive", false);
                 int viewdistance = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
+
 
 
                 Environment wenv = null;
@@ -112,6 +116,7 @@ public class WorldManager {
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" Tool Durability : "+(durability?"enabled":"disabled"));
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, enabled);
                     if(addnether) tw.addNether();
+                    tw.setSpawnChunksActive(spawnchunksactive);
                     worlds.put(node, tw);
 
                 } else {

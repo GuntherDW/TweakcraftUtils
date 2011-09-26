@@ -37,6 +37,7 @@ public class TweakWorld implements IWorld {
     private boolean allowanimals = true;
     private boolean tooldurability = true;
     private boolean netherenabled = false;
+    private boolean keepspawnactive = false;
     private String worldName = "";
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
@@ -172,6 +173,15 @@ public class TweakWorld implements IWorld {
 
     public org.bukkit.World.Environment getEnvironment() {
         return environment;
+    }
+    
+    public void setSpawnChunksActive(boolean state) {
+        this.world.setKeepSpawnInMemory(state);
+        this.keepspawnactive = state;
+    }
+
+    public boolean getSpawnChunksActive() {
+        return this.keepspawnactive;
     }
 
     public org.bukkit.World getBukkitWorld() {

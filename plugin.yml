@@ -130,6 +130,9 @@ commands:
   spawn:
     description: Sends you to the spawn of the world you're in
     usage: /<command>
+  getspawn:
+    description: Gets the spawn location for the world
+    usage: /<command>
   setspawn:
     description: Sets the spawn of the current world
     usage: /<command>
