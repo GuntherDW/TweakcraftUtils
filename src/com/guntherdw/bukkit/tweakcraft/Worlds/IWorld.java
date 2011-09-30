@@ -31,6 +31,10 @@ public interface IWorld {
 
     public abstract org.bukkit.World getNetherWorld();
 
+    public abstract int getPortalSearchWidth();
+
+    public abstract void setPortalSearchWidth(int searchWidth);
+
     public abstract String getName();
 
     public abstract void loadWorld();

@@ -77,7 +77,7 @@ public class ConfigurationHandler {
 
     public boolean enableRespawnHook = false;
     public boolean enableRespawnHeal = false;
-
+    // public int     portalSearchRadius = 128;
 
     public boolean enableSpamControl = false;
     public long spamCheckTime = 500L;
@@ -164,7 +164,7 @@ public class ConfigurationHandler {
         this.paySaddle = plugin.getConfiguration().getBoolean("mount.paysaddle", true);
         this.stopChunkUnloadBurningFurnace = plugin.getConfiguration().getBoolean("extra.stopChunkUnloadBurningFurnace", false);
         this.pigRecoverSaddle = plugin.getConfiguration().getBoolean("extra.recoverPigSaddle", true);
-        this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.StopGodIgnite", true);
+        this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.stopGodIgnite", false);
         this.enableCUI = plugin.getConfiguration().getBoolean("extra.CUI", false);
         this.enablemod_InfDura = plugin.getConfiguration().getBoolean("extra.mod_InfDura", false);
         this.enableExperienceOrbsHalt = plugin.getConfiguration().getBoolean("extra.stopExperienceOrbs", false);

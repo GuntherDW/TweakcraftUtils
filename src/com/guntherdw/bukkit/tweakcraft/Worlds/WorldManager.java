@@ -90,6 +90,7 @@ public class WorldManager {
                 boolean addnether = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".addnether", false);
                 boolean spawnchunksactive = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".spawnchunksactive", false);
                 int viewdistance = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
+                int portalSearchRadius = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
 
 
 
@@ -117,6 +118,7 @@ public class WorldManager {
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, enabled);
                     if(addnether) tw.addNether();
                     tw.setSpawnChunksActive(spawnchunksactive);
+                    tw.setPortalSearchWidth(portalSearchRadius);
                     worlds.put(node, tw);
 
                 } else {

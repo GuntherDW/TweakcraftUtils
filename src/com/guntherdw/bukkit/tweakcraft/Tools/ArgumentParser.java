@@ -56,6 +56,19 @@ public class ArgumentParser {
     }
 
     public ArgumentParser() { }
+    
+    public void setUsed(String argName, boolean state) {
+        Argument arg = null;
+        // First the named argument map, this is the easiest one.
+        arg = _namedargs.get(argName);
+        if(arg!=null) arg.set_used(state);
+
+        // Second the List<Argument> one, this'll require a for loop
+        for(int x=0; x<_args.size(); x++) {
+            arg = _args.get(x);
+            if(arg.getArgname() != null && arg.getArgname().equals(argName)) arg.set_used(state);
+        }
+    }
 
     public int getSize() {
         return _args.size();
@@ -66,48 +79,57 @@ public class ArgumentParser {
             return null;
         else if(pos>this.getSize())
             return null;
-        else
-            return _args.get(pos);
+        else {
+            this.setUsed(_args.get(pos).getArgname(), true);
+            return _args.get(pos).getArgvalue();
+        }
     }
 
     public Boolean getBoolean(String argname, Boolean defaultval) {
-        if(_namedargs.containsKey(argname))
+        if(_namedargs.containsKey(argname)) {
+            this.setUsed(argname, true);
             return Boolean.parseBoolean((String) _namedargs.get(argname).getArgvalue());
-        else
+        } else
             return defaultval;
     }
 
     public Integer getInteger(String argname, Integer defaultval) {
-        if(_namedargs.containsKey(argname))
+        if(_namedargs.containsKey(argname)) {
+            this.setUsed(argname, true);
             return Integer.parseInt((String) _namedargs.get(argname).getArgvalue());
-        else
+        } else
             return defaultval;
     }
 
     public Boolean getBoolean(int pos, Boolean defaultval) {
-        if(pos >=0 && this.getSize()>pos)
+        if(pos >=0 && this.getSize()>pos) {
+            this.setUsed(_args.get(pos).getArgname(), true);
             return Boolean.parseBoolean((String) _args.get(pos).getArgvalue());
-        else
+        } else
             return defaultval;
     }
 
     public Integer getInteger(int pos, Integer defaultval) {
-        if(pos >=0 && this.getSize()>pos)
+        if(pos >=0 && this.getSize()>pos) {
+            this.setUsed(_args.get(pos).getArgname(), true);
             return Integer.parseInt((String)_args.get(pos).getArgvalue());
-        else
+        } else
             return defaultval;
     }
 
     public String getString(int pos, String defaultval) {
-        if(pos >=0 && this.getSize()>pos)
+        if(pos >=0 && this.getSize()>pos) {
+            this.setUsed(_args.get(pos).getArgname(), true);
             return (String)_args.get(pos).getArgvalue();
-        else
+        } else
             return defaultval;
     }
 
     public String getString(String argname, String defaultval) {
-        if(_namedargs.containsKey(argname))
+        if(_namedargs.containsKey(argname)) {
+            this.setUsed(argname, true);
             return (String) _namedargs.get(argname).getArgvalue();
+        }
         else
             return defaultval;
     }
@@ -119,6 +141,29 @@ public class ArgumentParser {
                 vals.add(arg);
         }
         return vals;
+    }
+
+    public List<Argument> getUnusedArgsList() {
+        List<Argument> vals = new ArrayList<Argument>();
+        for(Argument arg : _args) {
+            if(arg.getArgname()==null || !arg.is_used())
+                vals.add(arg);
+        }
+        return vals;
+    }
+
+    public String[] getUnusedArgs() {
+        // return (String[]) this.getUnusedArgsList().toArray();
+        List<Argument> als = this.getUnusedArgsList();
+        String[] args = new String[als.size()];
+        for(int x=0; x<als.size(); x++) {
+            String tmp = "";
+            Argument arg = als.get(x);
+            if(arg.getArgname()!=null) { tmp+=arg.getArgname()+":"; }
+            if(arg.getArgvalue()!=null) tmp+=(String)arg.getArgvalue();
+            args[x] = tmp;
+        }
+        return args;
     }
 
     public String[] getNormalArgs() {

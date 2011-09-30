@@ -62,7 +62,7 @@ public class CommandBroadcast implements iCommand {
         } else
             recipients = Arrays.asList(plugin.getServer().getOnlinePlayers());
 
-        String[] args = ap.getNormalArgs();
+        String[] args = ap.getUnusedArgs();
         
         if (args.length < 1) {
             throw new CommandUsageException("You did not specify a message!");

@@ -28,10 +28,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.IWorld;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
@@ -250,7 +247,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
         Player player = event.getPlayer();
         String message = event.getMessage();
         String name = player.getName();
-        player.setDisplayName(plugin.getNickWithColors(player.getName()));
+        String displayName = plugin.getNickWithColors(player.getName());
+        player.setDisplayName(displayName);
+        if(displayName.length()<16)
+            player.setListName(displayName);
 
         ChatHandler ch = plugin.getChathandler();
         ChatMode cm = ch.getPlayerChatMode(player);
@@ -361,7 +361,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         String name = p.getName();
-        event.getPlayer().setDisplayName(plugin.getNickWithColors(name));
+        String displayName = plugin.getNickWithColors(p.getName());
+        p.setDisplayName(displayName);
+        if(displayName.length()<16)
+            p.setListName(displayName);
         // p.sendMessage("Ohai thar!");
         for (String m : plugin.getMOTD()) {
             p.sendMessage(m);
@@ -580,11 +583,25 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if(!w.isNetherEnabled()) return;
 
             org.bukkit.Location to = event.getFrom();
-            if(isnether)  { to.setWorld(w.getBukkitWorld()); to.setX(to.getX()*8); to.setZ(to.getZ()*8); }
-            else          { to.setWorld(w.getNetherWorld()); to.setX(to.getX()/8); to.setZ(to.getZ()/8);}
+            // System.out.println("from : "+event.getFrom());
+            if(isnether)  { to.setWorld(w.getBukkitWorld()); to.setX(Math.floor(to.getX()*8)); to.setZ(Math.floor(to.getZ()*8)); }
+            else          { to.setWorld(w.getNetherWorld()); to.setX(Math.floor(to.getX()/8)); to.setZ(Math.floor(to.getZ()/8));}
 
+            // TweakWorld tw = plugin.getworldManager().getWorld()
 
+            TravelAgent agent = event.getPortalTravelAgent();
             event.setTo(to);
+            event.useTravelAgent(true);
+
+            // System.out.println("to   : "+to);
+
+            int radius = w.getPortalSearchWidth();
+
+            // System.out.println("Searching in a "+radius+" radius!");
+            agent.setSearchRadius(radius);
+            // System.out.println("After travelagent : "+event.getTo());
+
+
 
         }
     }

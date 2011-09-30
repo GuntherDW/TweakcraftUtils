@@ -18,9 +18,8 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Admin;
 
-import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
-import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
+import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -65,7 +64,10 @@ public class CommandTC implements iCommand {
                 for (Player p : plugin.getServer().getOnlinePlayers()) {
                     String name = p.getName();
                     // p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
-                    p.setDisplayName(plugin.getNickWithColors(p.getName()));
+                    String displayName = plugin.getNickWithColors(p.getName());
+                    p.setDisplayName(displayName);
+                    if(displayName.length()<16)
+                        p.setListName(displayName);
                 }
                 plugin.getPlayerListener().reloadInvisTable();
                 /**

@@ -22,8 +22,10 @@ import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,10 +39,24 @@ import java.util.List;
  */
 public class CommandWho implements iCommand {
 
-    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException {
 
-        List<Player> list = Arrays.asList(plugin.getServer().getOnlinePlayers());
+
+        ArgumentParser ap = new ArgumentParser(realargs);
+        String world = ap.getString("w", null);
+        String[] args = ap.getUnusedArgs();
+        World w = null;
+        
+        if(world!=null) {
+            w=plugin.getServer().getWorld(world);
+            if(w==null) throw new CommandUsageException("World not found!");
+        }
+        
+        List<Player> list = null;
+        
+        if(w==null) list = Arrays.asList(plugin.getServer().getOnlinePlayers());
+        else        list = w.getPlayers();
         Integer amountofinvis = 0;
         for(Player p : list)
         {
@@ -53,7 +69,7 @@ public class CommandWho implements iCommand {
             else
                 hasperm = true;
 
-        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (list.size()-amountofinvis) + "/" + plugin.getServer().getMaxPlayers() + "): ";
+        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (w==null? (list.size()-amountofinvis) + "/" + plugin.getServer().getMaxPlayers() : ChatColor.GREEN+w.getName() + ChatColor.LIGHT_PURPLE) + "): ";
         if(amountofinvis>0) {
             if(hasperm)
                 msg += ChatColor.AQUA+" ["+list.size()+"/"+plugin.getServer().getMaxPlayers()+"]";
@@ -73,11 +89,11 @@ public class CommandWho implements iCommand {
             toadd = "";
             check = plugin.getPlayerListener().getInvisplayers().contains(p.getName());
 
-            if (!(sender instanceof Player)) { // console won't show gold colors? shame!
+            if (!(sender instanceof Player)) { // console won't show gold colors? shame! // THIS HAS BEEN FIXED LONG AGO!
                 if(check)
                     toadd = ChatColor.AQUA+"[";
 
-                toadd += p.getDisplayName().replace(ChatColor.GOLD.toString(), ChatColor.YELLOW.toString());
+                toadd += p.getDisplayName(); // .replace(ChatColor.GOLD.toString(), ChatColor.YELLOW.toString());
                 
                 if(check)
                     toadd += ChatColor.AQUA+"]";

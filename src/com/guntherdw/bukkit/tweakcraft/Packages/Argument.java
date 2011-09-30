@@ -25,6 +25,7 @@ public class Argument {
     private Integer id;
     private String argname;
     private Object argvalue;
+    private boolean _used;
 
     public Argument(Integer position, String argname, Object argvalue) {
         this.id = position; this.argname = argname; this.argvalue = argvalue;
@@ -56,5 +57,13 @@ public class Argument {
 
     public void setArgvalue(Object argvalue) {
         this.argvalue = argvalue;
+    }
+
+    public boolean is_used() {
+        return _used;
+    }
+    
+    public void set_used(boolean state) {
+        this._used = state;
     }
 }

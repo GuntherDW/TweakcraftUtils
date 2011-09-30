@@ -53,7 +53,7 @@ public class CommandListWorlds implements iCommand {
                         col = ChatColor.AQUA.toString();
                     else
                         col = ChatColor.GRAY.toString();
-                    player.sendMessage(col + w.getName());
+                    player.sendMessage(ChatColor.LIGHT_PURPLE+ "(" + w.getPlayers().size()+") " + col + w.getName());
                 }
             }
 
@@ -66,7 +66,7 @@ public class CommandListWorlds implements iCommand {
             sender.sendMessage("Currently enabled worlds : ");
             String message = "";
             for (World w : plugin.getServer().getWorlds()) {
-                message += w.getName() + ", ";
+                message += w.getName() + " ("+w.getPlayers().size()+"), ";
             }
             if (message.length() > 1)
                 message = message.substring(0, message.length() - 2);

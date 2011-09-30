@@ -38,6 +38,7 @@ public class TweakWorld implements IWorld {
     private boolean tooldurability = true;
     private boolean netherenabled = false;
     private boolean keepspawnactive = false;
+    private int    portalSearchWidth = 128;
     private String worldName = "";
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
@@ -150,6 +151,7 @@ public class TweakWorld implements IWorld {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] Creating new world!");
                 environment = env;
                 world = wm.getPlugin().getServer().createWorld(worldName, environment);
+                world.setKeepSpawnInMemory(this.getSpawnChunksActive());
             } else {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] This world already existed!");
                 environment = world.getEnvironment();
@@ -176,7 +178,8 @@ public class TweakWorld implements IWorld {
     }
     
     public void setSpawnChunksActive(boolean state) {
-        this.world.setKeepSpawnInMemory(state);
+        // this.world.setKeepSpawnInMemory(state);
+        if(world!=null) this.world.setKeepSpawnInMemory(state);
         this.keepspawnactive = state;
     }
 
@@ -186,6 +189,14 @@ public class TweakWorld implements IWorld {
 
     public org.bukkit.World getBukkitWorld() {
         return world;
+    }
+    
+    public int getPortalSearchWidth() {
+        return this.portalSearchWidth;
+    }
+
+    public void setPortalSearchWidth(int searchWidth) {
+        this.portalSearchWidth = searchWidth;
     }
 
     @Override
