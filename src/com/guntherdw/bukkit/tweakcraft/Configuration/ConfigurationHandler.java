@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Configuration;
 
 import com.guntherdw.bukkit.tweakcraft.Packages.LockdownLocation;
+import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -74,6 +75,8 @@ public class ConfigurationHandler {
     public boolean enableCUI = false;
     public boolean enablemod_InfDura = false;
     public boolean enableExperienceOrbsHalt = false;
+
+    public PermissionsResolver.PermissionResolvingMode permissoinsResolvingMode = null;
 
     public boolean enableRespawnHook = false;
     public boolean enableRespawnHeal = false;
@@ -149,6 +152,26 @@ public class ConfigurationHandler {
                 plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
             }
         }
+        /* this.enableBukkitPermissions = plugin.getConfiguration().getBoolean("Permissions.BukkitPerms", false);
+        if(this.enableBukkitPermissions)
+            plugin.getLogger().warning("[TweakcraftUtils] Enabling Bukkit perms resolving, this is an experimental feature, expect bugs!"); */
+        String presolver = plugin.getConfiguration().getString("Permissions.resolver", null);
+        if(presolver==null) presolver = "permissions";
+
+        if(presolver.equals("permissions")) {
+            permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.NIJIPERMS;
+        } else if(presolver.equals("permissionsex")) {
+            permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.PERMISSIONSEX;
+        } else if(presolver.equals("bukkitperms")) {
+            permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.BUKKIT;
+        }
+        plugin.getPermissionsResolver().setMode(permissoinsResolvingMode);
+        
+        if(permissoinsResolvingMode!= PermissionsResolver.PermissionResolvingMode.NIJIPERMS) {
+            plugin.getLogger().warning("[TweakcraftUtils] Other permissions resolver selected than Nijokun's Permissiosn plugin, this is experimental!");
+        }
+
+
         this.extrahelphide = plugin.getConfiguration().getStringList("extrahelp.hide", null);
         if (plugin.getConfiguration().getBoolean("PlayerHistory.enabled", false)) {
             plugin.getLogger().info("[TweakcraftUtils] Keeping player history!");

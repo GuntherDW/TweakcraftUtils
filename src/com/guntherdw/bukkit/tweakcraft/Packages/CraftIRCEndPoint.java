@@ -42,7 +42,7 @@ public class CraftIRCEndPoint implements EndPoint {
     
     @Override
     public Type getType() {
-        return EndPoint.Type.MINECRAFT;
+        return EndPoint.Type.IRC;
     }
 
     @Override

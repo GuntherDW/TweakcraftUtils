@@ -86,8 +86,8 @@ public class AdminChat implements ChatMode {
                     Player p = (Player) sender;
                     // World w = p.getWorld();
                     rmsg.setField("world", p.getWorld().getName());
-                    rmsg.setField("prefix", plugin.getPermissionHandler().getUserPrefix(p.getWorld().getName(), p.getName()));
-                    rmsg.setField("suffix", plugin.getPermissionHandler().getUserSuffix(p.getWorld().getName(), p.getName()));
+                    rmsg.setField("prefix", plugin.getPermissionsResolver().getUserPrefix(p.getWorld().getName(), p));
+                    rmsg.setField("suffix", plugin.getPermissionsResolver().getUserSuffix(p.getWorld().getName(), p));
                 }
                 rmsg.post();
 

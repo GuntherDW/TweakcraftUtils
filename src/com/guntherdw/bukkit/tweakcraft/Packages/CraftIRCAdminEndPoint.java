@@ -80,8 +80,8 @@ public class CraftIRCAdminEndPoint implements EndPoint {
                 if(found) {
                     World w = offline?plugin.getServer().getWorlds().get(0):p.getWorld();
                     String name = offline?op.getName():p.getName();
-                    relayedMessage.setField("prefix", plugin.getPermissionHandler().getUserPrefix(w.getName(), name).replace('&', '§'));
-                    relayedMessage.setField("suffix", plugin.getPermissionHandler().getUserSuffix(w.getName(), name).replace('&', '§'));
+                    relayedMessage.setField("prefix", plugin.getPermissionsResolver().getUserPrefix(w.getName(), name));
+                    relayedMessage.setField("suffix", plugin.getPermissionsResolver().getUserSuffix(w.getName(), name));
                 }
             }
             ac.broadcastMessage(relayedMessage.getMessage(this));
@@ -91,7 +91,7 @@ public class CraftIRCAdminEndPoint implements EndPoint {
 
     @Override
     public Type getType() {
-        return EndPoint.Type.MINECRAFT;
+        return EndPoint.Type.IRC;
     }
 
     @Override

@@ -36,11 +36,10 @@ import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftWorldListener;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCAdminEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
+import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Util.TeleportHistory;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
-import com.nijiko.permissions.Group;
-import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
@@ -75,7 +74,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected WorldGuardPlugin wg = null;
     protected CraftIRC circ = null;
     protected Zones zones = null;
-    protected PermissionHandler ph = null;
+    // protected PermissionHandler ph = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final TweakcraftEntityListener entityListener = new TweakcraftEntityListener(this);
@@ -88,6 +87,7 @@ public class TweakcraftUtils extends JavaPlugin {
     private final TeleportHistory telehistory = new TeleportHistory(this);
     private final TamerTool tamertool = new TamerTool(this);
     private final ChatHandler chathandler = new ChatHandler(this);
+    private final PermissionsResolver permsResolver = new PermissionsResolver(this);
 
     private Object circendpoint = null;
     private Object circadminendpoint = null;
@@ -112,6 +112,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public List<Player> getMod_InfDuraplayers() {
         return mod_InfDuraplayers;
+    }
+    
+    public PermissionsResolver getPermissionsResolver() {
+        return this.permsResolver;
     }
     
     public List<Player> getCUIPlayers() {
@@ -353,27 +357,12 @@ public class TweakcraftUtils extends JavaPlugin {
         return wg;
     }
 
-    public Permissions getPerm() {
-        return perm;
-    }
-
     public String getPlayerColor(String playername, boolean change) {
-
-        Group g = null;
         String pref = "";
-        String group = "";
-        Player p = this.getServer().getPlayer(playername);
-
-
-        try {
-            if (p != null) {
-
-                // group = g.getName(); // Not used right now.
-                pref = ph.getUserPrefix(p.getWorld().getName(), p.getName()).replace("&", "§");
-            } else {
-                pref = "§f";
-            }
-
+        Player p = null;
+        try{
+            p = this.getServer().getPlayer(playername);
+            pref = this.getPermissionsResolver().getUserPrefix(p.getWorld().getName(), p);
         } catch (NullPointerException e) {
             pref = "§f";
         }
@@ -405,17 +394,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return lijst;
     }
 
-    public void setupPermissions() {
-        Plugin plugin = this.getServer().getPluginManager().getPlugin("Permissions");
-
-        if (perm == null) {
-            if (plugin != null) {
-                perm = (Permissions) plugin;
-                ph = perm.getHandler();
-            }
-        }
-    }
-
+    
     public void setupCraftIRC() {
         if(this.getConfigHandler().enableIRC) {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
@@ -505,23 +484,13 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public boolean check(Player player, String permNode) {
-        if (perm == null || player.isOp()) {
-            return true;
-        } else {
-            return ph.permission(player, "tweakcraftutils." + permNode);
-        }
+        return player.isOp() ||
+               this.permsResolver.hasPermission(player.getWorld().getName(), player, "tweakcraftutils."+permNode);
     }
 
     public boolean checkfull(Player player, String permNode) {
-        if (perm == null || player.isOp()) {
-            return true;
-        } else {
-            return ph.permission(player, permNode);
-        }
-    }
-
-    public PermissionHandler getPermissionHandler() {
-        return ph;
+        return player.isOp() ||
+               this.permsResolver.hasPermission(player.getWorld().getName(), player, permNode);
     }
 
     public BanHandler getBanhandler() {
@@ -548,7 +517,6 @@ public class TweakcraftUtils extends JavaPlugin {
 
         playerReplyDB = new HashMap<String, String>();
         this.registerEvents();
-        this.setupPermissions();
 
         itemDB.loadDataBase();
         worldmanager.setupWorlds();

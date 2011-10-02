@@ -24,15 +24,8 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.nijiko.permissions.Group;
-import com.nijiko.permissions.PermissionHandler;
-import com.nijiko.permissions.User;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 /**
  * @author GuntherDW
@@ -64,7 +57,7 @@ public class CommandWhois implements iCommand {
             boolean online = (who!=null);
 
             if(who==null) { // Is it an offline player? Check permissions
-                if(plugin.getPermissionHandler()!=null) {
+                /* if(plugin.getPermissionHandler()!=null) {
                     // Check for nicks
                     String pname = args[0];
                     String findnick = plugin.getPlayerListener().findPlayerNameByNick(pname);
@@ -72,16 +65,6 @@ public class CommandWhois implements iCommand {
 
 
                     PermissionHandler handler = plugin.getPermissionHandler();
-
-                    /* for(World w : plugin.getServer().getWorlds()) {
-                        String groupw = plugin.getPermissionHandler().getPrimaryGroup(w.getName(), args[0]);
-                        if(groupw!=null){
-                            groups+=w.getName()+": "+groupw+",";
-                        }
-                    }
-                    if(groups.length()>0) {
-                        groups = groups.substring(0, groups.length()-1);
-                    } */
                     String wname = plugin.getServer().getWorlds().get(0).getName();
                     User user = plugin.getPermissionHandler().getUserObject(wname, pname);
                     // groups = plugin.getPermissionHandler().getPrimaryGroup(wname, args[0]);
@@ -93,15 +76,7 @@ public class CommandWhois implements iCommand {
             } else {
                 playername = who.getName();
                 if(plugin.getPermissionHandler()!=null) {
-                    /* for(World w : plugin.getServer().getWorlds()) {
 
-                        String groupw = plugin.getPermissionHandler().getPrimaryGroup(w.getName(), args[0]);
-                        if(groupw!=null){
-                            groups+=w.getName()+": "+groupw+",";
-                        }
-                    }
-                    if(groups.length()>0)
-                        groups = groups.substring(0, groups.length()-1); */
                     String wname = plugin.getServer().getWorlds().get(0).getName();
                     groups = plugin.getPermissionHandler().getPrimaryGroup(wname, playername);
                 }
@@ -119,7 +94,7 @@ public class CommandWhois implements iCommand {
                     sender.sendMessage(ChatColor.YELLOW + "IP: " + who.getAddress().getAddress().getHostName());
             } else {
                 throw new CommandException("Can't find player!");
-            }
+            */ }
         } else {
             throw new CommandUsageException("I need a player!");
         }

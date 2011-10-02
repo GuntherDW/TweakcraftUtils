@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
@@ -36,37 +37,65 @@ import org.bukkit.entity.Player;
 public class CommandGetSpawn implements iCommand {
     @Override
     public boolean executeCommand(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
-                throws PermissionsException, CommandSenderException, CommandUsageException {
+            throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
-        if(sender instanceof Player)
-            if(!plugin.check((Player)sender, getPermissionSuffix()))
-                throw new PermissionsException(command);
 
         ArgumentParser ap = new ArgumentParser(realargs);
         String world = ap.getString("w", null);
+        String player = ap.getString("p", null);
         String[] args = ap.getNormalArgs();
-        float x,y,z;
 
-        
+        String permString = this.getPermissionSuffix();
+
+        float x,y,z;
+        Player pl = player!=null?plugin.findPlayerasPlayer(player):null;
         World w = null;
-        
-        if(world!=null)
-             w = plugin.getServer().getWorld(world);
-        else {
-            if(sender instanceof Player)
-                w = ((Player)sender).getWorld();
+        boolean playerMode = pl!=null;
+
+        if(sender instanceof Player) {
+
+            // Default mode : self-spawn
+            if(player==null && world==null) {
+                playerMode = true;
+                pl = (Player) sender;
+            }
+
+            if(playerMode && pl.getName().equals(((Player)sender).getName())) permString+=".self";
+            if(!plugin.check((Player)sender, permString))
+                throw new PermissionsException(command);
         }
 
-        if(w==null)
-            throw new CommandUsageException("I didn't get a good world to fetch?");
-        
-        sender.sendMessage(ChatColor.YELLOW + "Spawn position for "+w.getName());
-        Location spawn = w.getSpawnLocation();
+
+        if(!playerMode) {
+            if(world!=null)
+                w = plugin.getServer().getWorld(world);
+            else {
+                if(sender instanceof Player)
+                    w = ((Player)sender).getWorld();
+            }
+        }
+
+        if(w==null && pl==null)
+            throw new CommandUsageException("I didn't get a good world/player to fetch?");
+
+        sender.sendMessage(ChatColor.YELLOW + "Spawn position for "+(w!=null?w.getName():pl.getDisplayName()));
+        // Location spawn = w.getSpawnLocation();
+        Location spawn = null;
+        if(w  != null)  spawn = w.getSpawnLocation();
+        if(pl != null) {
+            spawn = pl.getBedSpawnLocation();
+            if(spawn==null) {// NO BED
+                throw new CommandException("That player doesn't have a custom bed spawn location.");
+            }
+        }
+
         x = Math.round((float) spawn.getX());
         y = Math.round((float) spawn.getY());
         z = Math.round((float) spawn.getZ());
         sender.sendMessage(ChatColor.YELLOW+ "X:"+x+" Y:"+y+" Z:"+z);
-        
+        if(playerMode)
+            sender.sendMessage(ChatColor.YELLOW+"World : "+spawn.getWorld().getName());
+
         return true;
     }
 
