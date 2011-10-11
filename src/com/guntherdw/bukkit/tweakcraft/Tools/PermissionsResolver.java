@@ -20,9 +20,12 @@ package com.guntherdw.bukkit.tweakcraft.Tools;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.nijiko.permissions.PermissionHandler;
+import com.nijiko.permissions.User;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -43,6 +46,13 @@ public class PermissionsResolver {
     public PermissionsResolver(TweakcraftUtils instance) {
         this.plugin = instance;
     }
+
+    public String getUserPrefix(String player) {
+        World world = plugin.getServer().getWorlds().get(0);
+        if(world!=null) return this.getUserPrefix(world.getName(), player);
+        return null;
+        // return this.getUserPrefix(world, player.getName());
+    }
     
     public String getUserPrefix(String world, Player player) {
         return this.getUserPrefix(world, player.getName());
@@ -52,7 +62,10 @@ public class PermissionsResolver {
         String prefix = null;
 
         if     (resolvmode == PermissionResolvingMode.BUKKIT)    prefix = "§f";
-        else if(resolvmode == PermissionResolvingMode.NIJIPERMS) prefix = permshandler.getUserPrefix(world, player);
+        else if(resolvmode == PermissionResolvingMode.NIJIPERMS) { 
+            User user = permshandler.getUserObject(world, player);
+            if(user!=null) prefix = permshandler.getUserPrefix(world, player);
+        }
         else if(resolvmode == PermissionResolvingMode.PERMISSIONSEX) {
             PermissionUser puser = permsManager.getUser(player);
             if(puser!=null) prefix = puser.getPrefix(world);
@@ -61,6 +74,28 @@ public class PermissionsResolver {
         return prefix!=null?prefix.replace("&", "§"):null;
 
     }
+    
+    public String getPrimaryUserGroup(String world, String player) {
+        String grp = null;
+        if     (resolvmode == PermissionResolvingMode.BUKKIT) grp = null;
+        else if(resolvmode == PermissionResolvingMode.NIJIPERMS) {
+            User user = permshandler.getUserObject(world, player);
+            if(user!=null) {
+                return permshandler.getPrimaryGroupObject(world, user.getName()).getName();
+            }
+        }
+        else if(resolvmode == PermissionResolvingMode.PERMISSIONSEX) {
+            PermissionUser puser = permsManager.getUser(player);
+            if(puser!=null) {
+                PermissionGroup[] groups = puser.getGroups();
+                if(groups.length>0) grp = groups[0].getName();
+            }
+        }
+        
+        return grp;
+    }
+
+    
 
     public String getUserSuffix(String world, Player player) {
         return this.getUserSuffix(world, player.getName());
@@ -127,12 +162,14 @@ public class PermissionsResolver {
     }
     
     private void registerermissionsEx() {
-        /* Plugin plg = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
-        if(this.permsManager==null)
-            if(plg!=null)
-                permsManager = ((PermissionsEx)plg).getPermissionManager(); */
-        if(this.permsManager==null)
-            permsManager = PermissionsEx.getPermissionManager();
+        if(this.permsManager==null) {
+            try {
+                permsManager = PermissionsEx.getPermissionManager();
+            } catch(Exception ex) {
+                plugin.getLogger().severe("[TweakcraftUtils] Couldn't find PermissionsEx plugin!");
+                this.resolvmode = PermissionResolvingMode.BUKKIT;
+            }
+        }
     }
     
     private void registerNijiPerms() {
@@ -140,6 +177,10 @@ public class PermissionsResolver {
         if(this.permshandler==null)
             if(plg!=null)
                 permshandler = ((Permissions)plg).getHandler();
+            else {
+                plugin.getLogger().severe("[TweakcraftUtils] Couldn't find Nijiko's Permissions plugin!");
+                this.resolvmode = PermissionResolvingMode.BUKKIT;
+            }
     }
 
 }

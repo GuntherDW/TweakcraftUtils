@@ -91,7 +91,7 @@ public class CraftIRCAdminEndPoint implements EndPoint {
 
     @Override
     public Type getType() {
-        return EndPoint.Type.IRC;
+        return EndPoint.Type.MINECRAFT;
     }
 
     @Override

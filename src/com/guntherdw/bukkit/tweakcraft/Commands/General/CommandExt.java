@@ -62,12 +62,15 @@ public class CommandExt implements iCommand {
         if (modus == ExtMode.SELF) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                if(!plugin.check(player, "ext.self"))
-                if (player.getFireTicks() != 0) {
-                    player.setFireTicks(0);
-                    player.sendMessage(ChatColor.YELLOW + "You have been extinguished!");
+                if(plugin.check(player, "ext.self")) {
+                    if (player.getFireTicks() != 0) {
+                        player.setFireTicks(0);
+                        player.sendMessage(ChatColor.YELLOW + "You have been extinguished!");
+                    } else {
+                        player.sendMessage(ChatColor.YELLOW + "You're not on fire!");
+                    }
                 } else {
-                    player.sendMessage(ChatColor.YELLOW + "You're not on fire!");
+                    throw new PermissionsException(command);
                 }
             } else {
                 sender.sendMessage("A console can't be on fire, right?");

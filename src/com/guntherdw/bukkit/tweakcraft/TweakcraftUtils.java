@@ -473,7 +473,8 @@ public class TweakcraftUtils extends JavaPlugin {
         String nick = playerListener.getNick(player);
         String realname = player;
         if(nick == null) nick = realname;
-        return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
+        /// return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
+        return permsResolver.getUserPrefix(player) + nick + ChatColor.WHITE;
     }
     
     public String getNick(String player) {
@@ -586,7 +587,7 @@ public class TweakcraftUtils extends JavaPlugin {
                 }
 
                 if (sender instanceof Player)
-                    log.info("[TweakcraftUtils] " + ((Player) sender).getName() + " issued: /" + cmd.getName() + " " + mess);
+                    log.info("[TweakcraftUtils] " + sender.getName() + " issued: /" + cmd.getName() + " " + mess);
                 else
                     log.info("[TweakcraftUtils] CONSOLE issued: /" + cmd.getName() + " " + mess);
                 return true;

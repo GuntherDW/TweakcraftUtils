@@ -32,6 +32,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -46,7 +47,7 @@ public class CommandSpawnmob implements iCommand {
             if (!plugin.check(player, "spawnmob"))
                 throw new PermissionsException(command);
 
-            Location loc = player.getTargetBlock(null, 200).getLocation();
+            Location loc = player.getTargetBlock((HashSet<Byte>)null, 200).getLocation();
             ArgumentParser ap = new ArgumentParser(realargs);
             String[] args = ap.getNormalArgs();
             Random rnd = new Random();

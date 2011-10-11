@@ -26,7 +26,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.guntherdw.bukkit.tweakcraft.Worlds.IWorld;
+import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -67,8 +67,8 @@ public class CommandTC implements iCommand {
                     String displayName = plugin.getNickWithColors(p.getName());
                     String ldisplayname = displayName.substring(0, displayName.length()-2);
                     p.setDisplayName(displayName);
-                    if(ldisplayname.length()<16)
-                        p.setListName(ldisplayname);
+                    if(ldisplayname.length()<=16)
+                        p.setPlayerListName(ldisplayname);
                 }
                 plugin.getPlayerListener().reloadInvisTable();
                 /**
@@ -86,7 +86,7 @@ public class CommandTC implements iCommand {
                     String modus = args[1];
                     String world = args[2];
                     String arg   = args.length>3? args[3] : null;
-                    IWorld iw = plugin.getworldManager().getWorld(world);
+                    iWorld iw = plugin.getworldManager().getWorld(world);
                     if(modus.equalsIgnoreCase("unload")) {
                         if(iw!=null) {
                             if(iw.isEnabled()) {

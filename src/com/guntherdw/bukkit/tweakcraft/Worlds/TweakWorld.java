@@ -27,7 +27,7 @@ import java.io.IOException;
 /**
  * @author GuntherDW
  */
-public class TweakWorld implements IWorld {
+public class TweakWorld implements iWorld {
 
     private org.bukkit.World world;
     private org.bukkit.World nether;
@@ -169,7 +169,7 @@ public class TweakWorld implements IWorld {
         loadWorld(wm, foldername, environment, enabled);
     }
 
-    public IWorld getWorld() {
+    public iWorld getWorld() {
         return this;
     }
 

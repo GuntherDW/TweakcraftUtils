@@ -66,6 +66,7 @@ public class ConfigurationHandler {
     public String  GIRCtag = "mchat";
     public String  GIRCMessageFormat = "[A] <%name%> %message%";
     public String  AIRCMessageFormat = "<%name%> %message%";
+    public boolean cancelNickChat = true;
     public boolean GIRCenabled = true;
     public boolean AIRCenabled = false;
     public boolean enableDebug = false; /* Verbose messages */
@@ -191,6 +192,7 @@ public class ConfigurationHandler {
         this.enableCUI = plugin.getConfiguration().getBoolean("extra.CUI", false);
         this.enablemod_InfDura = plugin.getConfiguration().getBoolean("extra.mod_InfDura", false);
         this.enableExperienceOrbsHalt = plugin.getConfiguration().getBoolean("extra.stopExperienceOrbs", false);
+        this.cancelNickChat = plugin.getConfiguration().getBoolean("extra.cancelNickChat", true);
 
         this.enableSpamControl = plugin.getConfiguration().getBoolean("spamcontrol.enable", false);
         if(this.enableSpamControl) {

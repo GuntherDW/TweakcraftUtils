@@ -29,6 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -44,7 +45,7 @@ public class CommandLightning implements iCommand {
         }
         Location loc = null;
         if(args.length==0 && sender instanceof Player) {
-            loc = ((Player)sender).getTargetBlock(null, 200).getLocation();
+            loc = ((Player)sender).getTargetBlock((HashSet<Byte>)null, 200).getLocation();
             loc.setY(loc.getY()+1);
             // sender.sendMessage(ChatColor.RED+"*CCCRRREEAAAAAAAACK*");
         } else if(args.length == 1) {

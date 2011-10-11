@@ -1,4 +1,7 @@
-invisible-playerlist: []
+# This is a special feature of TCUtils, where a player_join and kick/quit even will be invisible.
+# It will also be impossible for players that do not have the required permission to teleport to
+# him and/or show up in /who
+invisible-playerlist: [ 'notch' ]
 
 extra:
 # Set this to true if you want pigs to drop a saddle if you kill them when
@@ -7,9 +10,17 @@ extra:
     recoverPigSaddle: false
 # This features stops the ignite if you have god mode enabled in WorldGuard.
 # doesn't work flawlessly though.
-    StopGodIgnite: false
+    stopGodIgnite: false
 # Stops chunks unloading when there's a burning furnace inside of the chunk.
     stopChunkUnloadBurningFurnace: false
+# Enables the Support for our ImprovedChat fork, to display your current chatmode in your chat bar
+    CUI: false
+# This enables support for our Bukkit tool durability per-world status mod.
+# Needs a custom diff to work. Will send you the diff if you need it
+    mod_InfDura: false
+# This is mostly for the older Bukkit builds where exp orbs would lag your server
+    stopExperienceOrbs: false
+
 
 mount:
 # Pay a saddle to mount something. When you set this to false, saddling pigs don't charge
@@ -57,12 +68,30 @@ CraftIRC:
         tag: 'mchatadmin'
 # Support : %name%     -> Sendername
 #           %message%  -> The sent message
+#           %clearcolor%> ((char) 3) char
 #           The other stuff will get parsed by CraftIRC itself.
-        MessageFormat: '[A] <%name%> %message%'
+        MessageFormat: '[A] <%sender%%clearcolors%> %message%'
     regular:
-        enabled: true
+        enabled: false
         tag: 'mchat'
         MessageFormat: '<%name%> %message%'
+
+
+# Pretty rudimentary spam control, should be self explanitory?
+spamcontrol:
+    enable: false
+    checkTime: 10
+    muteTime: 5
+    maxMessages: 5
+    muteMessage: '{displayname} has been auto-muted for {mins} mins for spamming!'
+
+
+# This will enable a respawn hook, that will set your respawn point to the world
+# you died in (and drop you from its nether if you were in one)
+# Will also heal you to full HP if enabled
+respawn:
+    enableHook: false
+    healOnRespawn: false
 
 extrahelp:
     plugins: [TweakWarp, Homes, WorldEdit]
@@ -83,6 +112,10 @@ worlds:
          pvp: true
          animals: true
          monsters: false
+# This flag needs extra.mod_InfDura set to true, and a custom patch installed!
+         durability: false
+         addnether: false
+         portalSearchRadius: 32
       mobs:
          environment: normal
          enabled: true

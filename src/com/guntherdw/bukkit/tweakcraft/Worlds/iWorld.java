@@ -23,9 +23,9 @@ import org.bukkit.util.config.Configuration;
 /**
  * @author GuntherDW
  */
-public interface IWorld {
+public interface iWorld {
 
-    public abstract IWorld getWorld();
+    public abstract iWorld getWorld();
 
     public abstract org.bukkit.World getBukkitWorld();
 

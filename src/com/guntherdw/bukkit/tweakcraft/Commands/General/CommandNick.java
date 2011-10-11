@@ -48,18 +48,11 @@ public class CommandNick implements iCommand {
                     plugin.getPlayerListener().removeNick(player.getName());
                 } else {
                     sender.sendMessage(ChatColor.GOLD + "Setting nick to : "+args[0]);
-                    /* List<Player> find = plugin.getServer().matchPlayer(args[0]);
-                    for(Player f : find) {
-                        if(f.getName().toLowerCase().equals(args[0].toLowerCase()))
-                            throw new CommandException("Nick is already taken!");
-                    } */
-                    // if() {
                     if(!plugin.getPlayerListener().nickTakenPersistance(player.getName(), args[0])
                             && !plugin.getPlayerListener().nickTakenCheck(player.getName(), args[0]))
                         plugin.getPlayerListener().setNick(player.getName(), args[0]);
                     else
                         throw new CommandException("Nick is already taken!");
-                    // }
                 }
             } else if(args.length==2) {
                 if(!plugin.check(player, "nick.other"))
@@ -81,10 +74,10 @@ public class CommandNick implements iCommand {
                                 throw new CommandException("Nick is already taken!");
                         }
                         if(!plugin.getPlayerListener().nickTakenPersistance(otherplayer.getName(), args[1])
-                            && !plugin.getPlayerListener().nickTakenCheck(otherplayer.getName(), args[1]))
-                        plugin.getPlayerListener().setNick(otherplayer.getName(), args[1]);
-                    else
-                        throw new CommandException("Nick is already taken!");
+                                && !plugin.getPlayerListener().nickTakenCheck(otherplayer.getName(), args[1]))
+                            plugin.getPlayerListener().setNick(otherplayer.getName(), args[1]);
+                        else
+                            throw new CommandException("Nick is already taken!");
                     }
                 }
             } else {

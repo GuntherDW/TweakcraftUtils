@@ -30,11 +30,11 @@ import java.util.Map;
  */
 public class WorldManager {
 
-    private Map<String, IWorld> worlds;
+    private Map<String, iWorld> worlds;
     private TweakcraftUtils plugin;
     private int defaultViewDistance;
 
-    public Map<String, IWorld> getWorlds() {
+    public Map<String, iWorld> getWorlds() {
         return worlds;
     }
     
@@ -44,7 +44,7 @@ public class WorldManager {
 
     public WorldManager(TweakcraftUtils instance) {
         this.plugin = instance;
-        worlds = new HashMap<String, IWorld>();
+        worlds = new HashMap<String, iWorld>();
     }
 
     public void setupWorlds() {
@@ -131,7 +131,7 @@ public class WorldManager {
 
     }
 
-    public IWorld getWorld(String name) {
+    public iWorld getWorld(String name) {
         if (worlds.containsKey(name)) {
             return worlds.get(name);
         } else {

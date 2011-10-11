@@ -32,6 +32,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +80,7 @@ public class CommandStrikeBind implements iCommand {
                         }
                     }
                 } else {
-                    lockdownloc = player.getTargetBlock(null, 200).getLocation();
+                    lockdownloc = player.getTargetBlock((HashSet<Byte>)null, 200).getLocation();
                     lockdownloc.setY(lockdownloc.getY()+1);
                     lockdownlocation = new LockdownLocation(lockdownloc, null, false);
                     sender.sendMessage(ChatColor.YELLOW+"Lockdown to current cursor position!");

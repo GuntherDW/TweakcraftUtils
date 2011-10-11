@@ -27,7 +27,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOption
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import com.guntherdw.bukkit.tweakcraft.Worlds.IWorld;
+import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
@@ -170,10 +170,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             }
         }
 
-        if(p!=null) {
-            return p;
-        }
-        return null;
+        return p;
     }
 
     public boolean nickTaken(String nick) {
@@ -250,8 +247,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String displayName = plugin.getNickWithColors(player.getName());
         String ldisplayname = displayName.substring(0, displayName.length()-2);
         player.setDisplayName(displayName);
-        if(ldisplayname.length()<16)
-            player.setListName(ldisplayname);
+        if(ldisplayname.length()<=16)
+            player.setPlayerListName(ldisplayname);
 
         ChatHandler ch = plugin.getChathandler();
         ChatMode cm = ch.getPlayerChatMode(player);
@@ -309,13 +306,14 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if(!event.isCancelled() && cm==null) {
             // Log nicks!
             if(getNick(name)!=null) {
-                // plugin.getLogger().info("[TweakcraftUtils] "+getNick(name)+" is "+name);
-                event.setCancelled(true);
-                plugin.getLogger().info("("+player.getName()+")  <"+player.getDisplayName()+"> "+message);
-                /* if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null) {
-                   plugin.getCraftIRC().sendMessageToTag();
-               } */
-                plugin.getServer().broadcastMessage(ChatColor.WHITE+"<"+player.getDisplayName()+ChatColor.WHITE+"> "+message);
+                boolean c = plugin.getConfigHandler().cancelNickChat;
+                if(c) {
+                    event.setCancelled(true);
+                    plugin.getLogger().info("("+player.getName()+")  <"+player.getDisplayName()+"> "+message);
+                    // plugin.getServer().broadcastMessage(ChatColor.WHITE+"<"+player.getDisplayName()+ChatColor.WHITE+"> "+message);
+                    for(Player p : plugin.getServer().getOnlinePlayers())
+                        p.sendMessage(ChatColor.WHITE + "<" + player.getDisplayName() + ChatColor.WHITE + "> " + message);
+                } 
             }
         }
     }
@@ -378,8 +376,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String displayName = plugin.getNickWithColors(p.getName());
         String ldisplayname = displayName.substring(0, displayName.length()-2);
         p.setDisplayName(displayName);
-        if(ldisplayname.length()<16)
-            p.setListName(ldisplayname);
+        if(ldisplayname.length()<=16)
+            p.setPlayerListName(ldisplayname);
         // p.sendMessage("Ohai thar!");
         for (String m : plugin.getMOTD()) {
             p.sendMessage(m);
@@ -526,7 +524,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                             if(plugin.getConfigHandler().getLockdowns().containsKey(playername)) {
                                 target = plugin.getConfigHandler().getLockdowns().get(playername).getTarget();
                             } else {
-                                Location loc = player.getTargetBlock(null, 200).getLocation();
+                                Location loc = player.getTargetBlock((HashSet<Byte>)null, 200).getLocation();
                                 loc.setY(loc.getY()+1);
                                 target = loc.clone();
                             }
@@ -591,7 +589,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String fromworld = event.getFrom().getWorld().getName();
         boolean isnether = fromworld.endsWith("_nether");
         if(isnether) fromworld = fromworld.substring(0, fromworld.length()-7); // MINUS _nether
-        IWorld w = plugin.getworldManager().getWorld(fromworld);
+        iWorld w = plugin.getworldManager().getWorld(fromworld);
 
         if(w!=null) {
 
