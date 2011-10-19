@@ -29,6 +29,7 @@ import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.*;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
@@ -51,6 +52,34 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public List<String> getNomount() {
         return nomount;
+    }
+
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if(event.isCancelled()) return;
+        if(!plugin.getConfigHandler().extraLogging) return;
+        // List<String> aliases = null;
+        String line = event.getMessage();
+        String cmd = event.getMessage();
+        // String vars = "";
+        if(line.contains(" ")) {
+            String c[] = cmd.split(" ");
+            cmd = c[0];
+            /* for(int i=1; i<c.length; i++)
+          vars+=" "+c[i]; */
+        }
+        if(cmd.startsWith("/") && cmd.length()>1)
+            cmd = cmd.substring(1);
+
+        // System.out.println("Trying "+cmd);
+        boolean go = true;
+        PluginCommand pcmd = this.plugin.getCommand(cmd);
+
+        if(pcmd!=null && plugin.getCommandHandler().getCommandMap().containsKey(pcmd.getName()))
+            go=false;
+
+        if(go) {
+            plugin.getLogger().info("[TweakLog] "+event.getPlayer().getName()+" issued: "+line);
+        }
     }
 
     public void removeNoMountPersistence(String playername) {
@@ -547,13 +576,6 @@ public class TweakcraftPlayerListener extends PlayerListener {
                         ent.eject();
                     }
             }
-            /* if(player.getVehicle() != null) {
-                player.sendMessage("Checking if instanceOf LivingEntity!");
-                if(player.getVehicle() instanceof LivingEntity) {
-                    player.sendMessage("It's a livingEntity!!");
-                    player.getVehicle().setPassenger(null);
-                }
-            } */
         }
     }
 
@@ -593,7 +615,13 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
         if(w!=null) {
 
-            if(!w.isNetherEnabled()) return;
+            if(!w.isNetherEnabled()) {
+                if(plugin.getConfigHandler().cancelNetherPortal) event.setCancelled(true);
+                event.getPlayer().sendMessage(ChatColor.RED+"This world doesn't have an extra nether!");
+                
+                return;
+            }
+
 
             org.bukkit.Location to = event.getFrom();
             // System.out.println("from : "+event.getFrom());

@@ -39,13 +39,21 @@ public interface iWorld {
 
     public abstract void loadWorld();
 
-    public boolean isDurabilityEnabled();
+    public abstract String getChunkGen();
 
-    public void setDurabilityEnabled(boolean state);
+    public abstract void setChunkGen(String chunkGen);
 
-    public void addNether();
+    public abstract Long getSeed(boolean netherseed);
 
-    public boolean isNetherEnabled();
+    public abstract void setSeed(long seed, boolean netherseed);
+
+    public abstract boolean isDurabilityEnabled();
+
+    public abstract void setDurabilityEnabled(boolean state);
+
+    public abstract void addNether();
+
+    public abstract boolean isNetherEnabled();
 
     public abstract boolean isEnabled();
 

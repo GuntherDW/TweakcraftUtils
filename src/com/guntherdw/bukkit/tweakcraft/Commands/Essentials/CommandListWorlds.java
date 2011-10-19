@@ -24,6 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -45,11 +46,20 @@ public class CommandListWorlds implements iCommand {
 
             for (World w : plugin.getServer().getWorlds()) {
                 if (plugin.check(player, "worlds." + w.getName())) {
-                    if(w.getEnvironment() == World.Environment.NORMAL)
+
+                    World.Environment env = w.getEnvironment();
+                    iWorld tw = plugin.getworldManager().getWorld(w.getName());
+                    if(tw!=null) {
+                        if(tw.getChunkGen()!=null)
+                            env=null;
+                    }
+                    if(env == null)
+                        col = ChatColor.GRAY.toString();
+                    else if(env == World.Environment.NORMAL)
                         col =  ChatColor.GREEN.toString();
-                    else if (w.getEnvironment() == World.Environment.NETHER)
+                    else if (env == World.Environment.NETHER)
                         col = ChatColor.RED.toString();
-                    else if (w.getEnvironment() == World.Environment.SKYLANDS)
+                    else if (env == World.Environment.SKYLANDS)
                         col = ChatColor.AQUA.toString();
                     else
                         col = ChatColor.GRAY.toString();

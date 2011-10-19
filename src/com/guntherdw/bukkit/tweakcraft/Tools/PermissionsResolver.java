@@ -35,7 +35,7 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
  */
 public class PermissionsResolver {
 
-    public enum PermissionResolvingMode { BUKKIT, NIJIPERMS, PERMISSIONSEX };
+    public static enum PermissionResolvingMode { BUKKIT, NIJIPERMS, PERMISSIONSEX };
 
     public TweakcraftUtils plugin;
     private PermissionHandler permshandler = null;

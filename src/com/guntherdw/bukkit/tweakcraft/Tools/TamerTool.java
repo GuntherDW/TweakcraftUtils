@@ -22,7 +22,10 @@ import com.guntherdw.bukkit.tweakcraft.Packages.TamerMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -18,8 +18,8 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
 
-import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
+import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;

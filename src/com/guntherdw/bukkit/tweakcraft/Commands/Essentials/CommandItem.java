@@ -27,12 +27,13 @@ import com.guntherdw.bukkit.tweakcraft.Packages.Item;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-// import com.sk89q.worldedit.blocks.ItemType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+// import com.sk89q.worldedit.blocks.ItemType;
 
 /**
  * @author GuntherDW

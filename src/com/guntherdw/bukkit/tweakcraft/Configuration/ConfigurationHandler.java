@@ -36,7 +36,7 @@ import java.util.Map;
  */
 public class ConfigurationHandler {
 
-    private Configuration globalconfig, userconfig;
+    private Configuration globalconfig;
     private TweakcraftUtils plugin;
     private Configuration seenconfig;
     private Map<String, Map<Integer, Boolean>> lsbindmap;
@@ -96,6 +96,8 @@ public class ConfigurationHandler {
     public boolean pigRecoverSaddle = true;
     public boolean stopIgniteWorldGuard = true;
     // public Map<String, String>
+    public boolean cancelNetherPortal = false;
+    public boolean extraLogging = false;
 
     public ConfigurationHandler(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -107,40 +109,43 @@ public class ConfigurationHandler {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdirs();
         }
+
+        if(this.globalconfig==null) globalconfig=plugin.getConfiguration();
+
         this.plugin.getLogger().info("[TweakcraftUtils] Parsing configuration file...");
-        this.plugin.getConfiguration().load();
-        this.enableLocalChat = plugin.getConfiguration().getBoolean("ChatMode.LocalChat.enabled", true);
-        this.localchatdistance = plugin.getConfiguration().getInt("ChatMode.LocalChat.range", 200);
-        this.enableWorldChat = plugin.getConfiguration().getBoolean("ChatMode.WorldChat.enabled", true);
-        this.enableWorldGuard = plugin.getConfiguration().getBoolean("ChatMode.RegionChat.enabled", false);
-        this.enableZones = plugin.getConfiguration().getBoolean("ChatMode.ZoneChat.enabled", false);
-        this.enableIRC = plugin.getConfiguration().getBoolean("CraftIRC.enabled", false);
-        this.AIRCMessageFormat = plugin.getConfiguration().getString("CraftIRC.admin.MessageFormat");
-        this.AIRCenabled = plugin.getConfiguration().getBoolean("CraftIRC.admin.enabled", false);
-        this.AIRCtag = plugin.getConfiguration().getString("CraftIRC.admin.tag", "mchatadmin");
-        this.GIRCMessageFormat = plugin.getConfiguration().getString("CraftIRC.regular.MessageFormat");
-        this.GIRCtag = plugin.getConfiguration().getString("CraftIRC.regular.tag", "mchatadmin");
-        this.GIRCenabled = plugin.getConfiguration().getBoolean("CraftIRC.regular.enabled", true);
-        this.enableTPBack = plugin.getConfiguration().getBoolean("enableTPBack", true);
-        this.enableDebug = plugin.getConfiguration().getBoolean("debug.enable", false);
+        this.globalconfig.load();
+        this.enableLocalChat = globalconfig.getBoolean("ChatMode.LocalChat.enabled", true);
+        this.localchatdistance = globalconfig.getInt("ChatMode.LocalChat.range", 200);
+        this.enableWorldChat = globalconfig.getBoolean("ChatMode.WorldChat.enabled", true);
+        this.enableWorldGuard = globalconfig.getBoolean("ChatMode.RegionChat.enabled", false);
+        this.enableZones = globalconfig.getBoolean("ChatMode.ZoneChat.enabled", false);
+        this.enableIRC = globalconfig.getBoolean("CraftIRC.enabled", false);
+        this.AIRCMessageFormat = globalconfig.getString("CraftIRC.admin.MessageFormat");
+        this.AIRCenabled = globalconfig.getBoolean("CraftIRC.admin.enabled", false);
+        this.AIRCtag = globalconfig.getString("CraftIRC.admin.tag", "mchatadmin");
+        this.GIRCMessageFormat = globalconfig.getString("CraftIRC.regular.MessageFormat");
+        this.GIRCtag = globalconfig.getString("CraftIRC.regular.tag", "mchatadmin");
+        this.GIRCenabled = globalconfig.getBoolean("CraftIRC.regular.enabled", true);
+        this.enableTPBack = globalconfig.getBoolean("enableTPBack", true);
+        this.enableDebug = globalconfig.getBoolean("debug.enable", false);
         if(this.enableDebug) {
             plugin.getLogger().info("[TweakcraftUtils] Extra verbose messages enabled!");
         }
 
-        this.enableRespawnHook = plugin.getConfiguration().getBoolean("respawn.enableHook", false);
-        this.enableRespawnHeal = plugin.getConfiguration().getBoolean("respawn.healOnRespawn", false);
+        this.enableRespawnHook = globalconfig.getBoolean("respawn.enableHook", false);
+        this.enableRespawnHeal = globalconfig.getBoolean("respawn.healOnRespawn", false);
 
 
         this.extrahelpplugin = new ArrayList<String>();
-        this.enableGroupChat = plugin.getConfiguration().getBoolean("ChatMode.GroupChat", true);
-        this.enablePersistence = plugin.getConfiguration().getBoolean("Persistence.enabled", true);
-        this.useTweakBotSeen = plugin.getConfiguration().getBoolean("Persistence.useTweakBotSeen", false);
+        this.enableGroupChat = globalconfig.getBoolean("ChatMode.GroupChat", true);
+        this.enablePersistence = globalconfig.getBoolean("Persistence.enabled", true);
+        this.useTweakBotSeen = globalconfig.getBoolean("Persistence.useTweakBotSeen", false);
         plugin.getLogger().info("[TweakcraftUtils] Using TweakBot's seen table for /seen!");
         if(this.enablePersistence) {
             if(!plugin.databaseloaded)
                 plugin.setupDatabase();
         }
-        for(String plist : plugin.getConfiguration().getStringList("extrahelp.plugins", null)) {
+        for(String plist : globalconfig.getStringList("extrahelp.plugins", null)) {
             if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
                 if(!extrahelpplugin.contains(plist)) {
                     if(this.enableDebug)
@@ -153,10 +158,11 @@ public class ConfigurationHandler {
                 plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
             }
         }
-        /* this.enableBukkitPermissions = plugin.getConfiguration().getBoolean("Permissions.BukkitPerms", false);
+        this.cancelNetherPortal = globalconfig.getBoolean("worlds.cancelportal", false);
+        /* this.enableBukkitPermissions = globalconfig.getBoolean("Permissions.BukkitPerms", false);
         if(this.enableBukkitPermissions)
             plugin.getLogger().warning("[TweakcraftUtils] Enabling Bukkit perms resolving, this is an experimental feature, expect bugs!"); */
-        String presolver = plugin.getConfiguration().getString("Permissions.resolver", null);
+        String presolver = globalconfig.getString("Permissions.resolver", null);
         if(presolver==null) presolver = "permissions";
 
         if(presolver.equals("permissions")) {
@@ -173,8 +179,8 @@ public class ConfigurationHandler {
         }
 
 
-        this.extrahelphide = plugin.getConfiguration().getStringList("extrahelp.hide", null);
-        if (plugin.getConfiguration().getBoolean("PlayerHistory.enabled", false)) {
+        this.extrahelphide = globalconfig.getStringList("extrahelp.hide", null);
+        if (globalconfig.getBoolean("PlayerHistory.enabled", false)) {
             plugin.getLogger().info("[TweakcraftUtils] Keeping player history!");
             File seenFile = new File(plugin.getDataFolder(), "players.yml");
             this.seenconfig = new Configuration(seenFile);
@@ -182,27 +188,28 @@ public class ConfigurationHandler {
             this.enableSeenConfig = true;
         }
 
-        this.enabletamertool =  plugin.getConfiguration().getBoolean("tamer.enabled", true);
-        this.tamertoolid = plugin.getConfiguration().getInt("tamer.toolid", Material.STICK.getId());
-        this.enableAutoTame = plugin.getConfiguration().getBoolean("mount.autotame", false);
-        this.paySaddle = plugin.getConfiguration().getBoolean("mount.paysaddle", true);
-        this.stopChunkUnloadBurningFurnace = plugin.getConfiguration().getBoolean("extra.stopChunkUnloadBurningFurnace", false);
-        this.pigRecoverSaddle = plugin.getConfiguration().getBoolean("extra.recoverPigSaddle", true);
-        this.stopIgniteWorldGuard = plugin.getConfiguration().getBoolean("extra.stopGodIgnite", false);
-        this.enableCUI = plugin.getConfiguration().getBoolean("extra.CUI", false);
-        this.enablemod_InfDura = plugin.getConfiguration().getBoolean("extra.mod_InfDura", false);
-        this.enableExperienceOrbsHalt = plugin.getConfiguration().getBoolean("extra.stopExperienceOrbs", false);
-        this.cancelNickChat = plugin.getConfiguration().getBoolean("extra.cancelNickChat", true);
+        this.enabletamertool =  globalconfig.getBoolean("tamer.enabled", true);
+        this.tamertoolid = globalconfig.getInt("tamer.toolid", Material.STICK.getId());
+        this.enableAutoTame = globalconfig.getBoolean("mount.autotame", false);
+        this.paySaddle = globalconfig.getBoolean("mount.paysaddle", true);
+        this.stopChunkUnloadBurningFurnace = globalconfig.getBoolean("extra.stopChunkUnloadBurningFurnace", false);
+        this.pigRecoverSaddle = globalconfig.getBoolean("extra.recoverPigSaddle", true);
+        this.stopIgniteWorldGuard = globalconfig.getBoolean("extra.stopGodIgnite", false);
+        this.enableCUI = globalconfig.getBoolean("extra.CUI", false);
+        this.enablemod_InfDura = globalconfig.getBoolean("extra.mod_InfDura", false);
+        this.enableExperienceOrbsHalt = globalconfig.getBoolean("extra.stopExperienceOrbs", false);
+        this.cancelNickChat = globalconfig.getBoolean("extra.cancelNickChat", true);
+        this.extraLogging = globalconfig.getBoolean("extra.extraLogging", false);
 
-        this.enableSpamControl = plugin.getConfiguration().getBoolean("spamcontrol.enable", false);
+        this.enableSpamControl = globalconfig.getBoolean("spamcontrol.enable", false);
         if(this.enableSpamControl) {
             plugin.getLogger().info("[TweakcraftUtils] Enabling spam control!");
             plugin.getChathandler().enableAntiSpam();
         }
-        this.spamCheckTime = plugin.getConfiguration().getInt("spamcontrol.checkTime", 5)*100;
-        this.spamMuteMinutes = plugin.getConfiguration().getInt("spamcontrol.muteTime", 5);
-        this.spamMaxMessages = plugin.getConfiguration().getInt("spamcontrol.maxMessages", 5);
-        this.spamMuteMessage = plugin.getConfiguration().getString("spamcontrol.muteMessage", "{name} has been auto-muted for spamming!");
+        this.spamCheckTime = globalconfig.getInt("spamcontrol.checkTime", 5)*100;
+        this.spamMuteMinutes = globalconfig.getInt("spamcontrol.muteTime", 5);
+        this.spamMaxMessages = globalconfig.getInt("spamcontrol.maxMessages", 5);
+        this.spamMuteMessage = globalconfig.getString("spamcontrol.muteMessage", "{name} has been auto-muted for spamming!");
 
         if(this.enablePersistence) {
             plugin.getPlayerListener().reloadInfo();
@@ -211,10 +218,6 @@ public class ConfigurationHandler {
 
     public Configuration getGlobalconfig() {
         return globalconfig;
-    }
-
-    public Configuration getUserconfig() {
-        return userconfig;
     }
 
     public boolean isEnableZones() {
@@ -244,6 +247,4 @@ public class ConfigurationHandler {
     public Map<String, LockdownLocation> getLockdowns() {
         return lockdowns;
     }
-
-
 }

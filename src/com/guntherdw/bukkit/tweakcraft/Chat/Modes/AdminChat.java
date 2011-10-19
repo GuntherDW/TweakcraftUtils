@@ -67,33 +67,31 @@ public class AdminChat implements ChatMode {
             pcolor = ChatColor.LIGHT_PURPLE.toString();
         }
         String msg = ChatColor.GREEN + "A: [" + pcolor + sendername + ChatColor.GREEN + "] " + message;
-        if (plugin.getConfigHandler().enableIRC && plugin.getCraftIRC() != null) {
-            if(plugin.getConfigHandler().AIRCenabled) {
+        if (plugin.getConfigHandler().enableIRC && plugin.getCraftIRC() != null && plugin.getConfigHandler().AIRCenabled) {
 
-                String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;
-                       targetmsg = targetmsg.replace("%name%", cleanname);
-                       targetmsg = targetmsg.replace("%message%", message);
-                       targetmsg = targetmsg.replace("%dispname%", ChatColor.stripColor(sendername));
 
-                       targetmsg = targetmsg.replace("%clearcolors%", Character.toString((char) 3));
+            String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;
+                   targetmsg = targetmsg.replace("%name%", cleanname);
+                   targetmsg = targetmsg.replace("%message%", message);
+                   targetmsg = targetmsg.replace("%dispname%", ChatColor.stripColor(sendername));
 
-                // plugin.getCraftIRC().sendMessageToTag(targetmsg, plugin.getConfigHandler().AIRCtag);
-                /// plugin.getCraftIRC().newMsgToTag(this, plugin.getConfigHandler().AIRCtag, targetmsg);
+            targetmsg = targetmsg.replace("%clearcolors%", Character.toString((char) 3));
 
-                RelayedMessage rmsg = plugin.getCraftIRC().newMsgToTag(plugin.getAdminEndPoint(), plugin.getConfigHandler().AIRCtag, "generic");
-                rmsg.setField("sender", pcolor+sendername);
-                rmsg.setField("realSender", cleanname);
-                rmsg.setField("message", targetmsg);
-                if(sender instanceof Player) {
-                    Player p = (Player) sender;
-                    // World w = p.getWorld();
-                    rmsg.setField("world", p.getWorld().getName());
-                    rmsg.setField("prefix", plugin.getPermissionsResolver().getUserPrefix(p.getWorld().getName(), p));
-                    rmsg.setField("suffix", plugin.getPermissionsResolver().getUserSuffix(p.getWorld().getName(), p));
-                }
-                rmsg.post();
+            // plugin.getCraftIRC().sendMessageToTag(targetmsg, plugin.getConfigHandler().AIRCtag);
+            /// plugin.getCraftIRC().newMsgToTag(this, plugin.getConfigHandler().AIRCtag, targetmsg);
 
+            RelayedMessage rmsg = plugin.getCraftIRC().newMsgToTag(plugin.getAdminEndPoint(), plugin.getConfigHandler().AIRCtag, "generic");
+            rmsg.setField("sender", pcolor+sendername);
+            rmsg.setField("realSender", cleanname);
+            rmsg.setField("message", targetmsg);
+            if(sender instanceof Player) {
+                Player p = (Player) sender;
+                // World w = p.getWorld();
+                rmsg.setField("world", p.getWorld().getName());
+                rmsg.setField("prefix", plugin.getPermissionsResolver().getUserPrefix(p.getWorld().getName(), p));
+                rmsg.setField("suffix", plugin.getPermissionsResolver().getUserSuffix(p.getWorld().getName(), p));
             }
+            rmsg.post();
         }
 
         if (sender instanceof Player && !isOnList(sender)) {

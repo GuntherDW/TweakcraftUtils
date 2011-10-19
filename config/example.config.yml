@@ -103,8 +103,9 @@ tamer:
 
 worlds:
    enable: true
-   enablenether: true
+   enablenether: false
    netherfolder: 'nether'
+   cancelportal: false
    extraworlds:
       newbieworld:
          environment: normal

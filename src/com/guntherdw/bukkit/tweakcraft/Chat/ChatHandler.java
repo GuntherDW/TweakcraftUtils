@@ -19,7 +19,6 @@
 package com.guntherdw.bukkit.tweakcraft.Chat;
 
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.*;
-import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;

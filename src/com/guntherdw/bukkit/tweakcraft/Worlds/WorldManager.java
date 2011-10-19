@@ -89,11 +89,12 @@ public class WorldManager {
                 boolean durability = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".durability", true);
                 boolean addnether = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".addnether", false);
                 boolean spawnchunksactive = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".spawnchunksactive", false);
+                String chunkGen = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".chunkGenerator", null);
                 int viewdistance = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
                 int portalSearchRadius = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
-
-
-
+                long seed = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".seed", -1);
+                long nseed = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".netherseed", -1);
+                
                 Environment wenv = null;
                 if(env==null || env=="") {
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" does not have a valid environment definition, using \"normal\"");
@@ -115,10 +116,24 @@ public class WorldManager {
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" monsters : "+(monsters?"enabled":"disabled")+", animals : "+(animals?"enabled":"disabled")+"!");
                     if(addnether) plugin.getLogger().info("[TweakcraftUtils] World "+node+" added nether world!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" Tool Durability : "+(durability?"enabled":"disabled"));
-                    TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, enabled);
-                    if(addnether) tw.addNether();
-                    tw.setSpawnChunksActive(spawnchunksactive);
-                    tw.setPortalSearchWidth(portalSearchRadius);
+                    TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
+                    if(chunkGen!=null) {
+                        plugin.getLogger().info("[TweakcraftUtils] World "+node+" is using a custom chunkGen!");
+                        tw.setChunkGen(chunkGen);
+                    }
+                    tw.setEnabled(enabled);
+                    if(enabled) {
+
+                        tw.loadWorld();
+                        if(seed != -1) tw.setSeed(seed, false);
+                        if(addnether) {
+                            if(nseed != -1) tw.setSeed(seed, true);
+                            tw.addNether();
+                            tw.setSpawnChunksActive(spawnchunksactive);
+                            tw.setPortalSearchWidth(portalSearchRadius);
+                        }
+                    }
+
                     worlds.put(node, tw);
 
                 } else {

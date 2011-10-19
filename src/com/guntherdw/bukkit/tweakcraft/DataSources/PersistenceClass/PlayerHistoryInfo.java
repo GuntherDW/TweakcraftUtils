@@ -18,12 +18,10 @@
 
 package com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass;
 
-import com.avaje.ebean.Query;
 import com.avaje.ebean.validation.Length;
 import com.sun.istack.internal.NotNull;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 /**

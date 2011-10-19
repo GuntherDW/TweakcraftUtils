@@ -37,54 +37,56 @@ public class CommandNick implements iCommand {
     @Override
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player) {
+        if(sender instanceof Player)
             if(!plugin.check((Player)sender, "nick"))
                 throw new PermissionsException(command);
 
-            Player player = (Player) sender;
-            if(args.length==1) {
-                if(args[0].equalsIgnoreCase("reset")) {
-                    sender.sendMessage(ChatColor.GOLD + "Resetting nick to your real name.");
-                    plugin.getPlayerListener().removeNick(player.getName());
+        // Player player = (Player) sender;
+
+        if(args.length==1 && !(sender instanceof Player))
+            throw new CommandUsageException("If you're only giving me one var, give me a player!");
+
+        if(args.length==1) {
+            if(args[0].equalsIgnoreCase("reset")) {
+                sender.sendMessage(ChatColor.GOLD + "Resetting nick to your real name.");
+                plugin.getPlayerListener().removeNick(((Player)sender).getName());
+            } else {
+                sender.sendMessage(ChatColor.GOLD + "Setting nick to : "+args[0]);
+                if(!plugin.getPlayerListener().nickTakenPersistance(((Player)sender).getName(), args[0])
+                        && !plugin.getPlayerListener().nickTakenCheck(((Player)sender).getName(), args[0]))
+                    plugin.getPlayerListener().setNick(((Player)sender).getName(), args[0]);
+                else
+                    throw new CommandException("Nick is already taken!");
+            }
+        } else if(args.length==2) {
+            if(sender instanceof Player)
+                if(!plugin.check((Player)sender, "nick.other"))
+                    throw new PermissionsException(command);
+
+            List<Player> search = plugin.getServer().matchPlayer(args[0]);
+            if(search.size()!=1) {
+                throw new CommandException("Can't find the other player!");
+            } else {
+                if(args[1].equalsIgnoreCase("reset")) {
+                    sender.sendMessage("Resetting "+search.get(0).getName()+"'s nick");
+                    plugin.getPlayerListener().removeNick(search.get(0).getName());
                 } else {
-                    sender.sendMessage(ChatColor.GOLD + "Setting nick to : "+args[0]);
-                    if(!plugin.getPlayerListener().nickTakenPersistance(player.getName(), args[0])
-                            && !plugin.getPlayerListener().nickTakenCheck(player.getName(), args[0]))
-                        plugin.getPlayerListener().setNick(player.getName(), args[0]);
+                    Player otherplayer = search.get(0);
+                    sender.sendMessage(ChatColor.GOLD + "Setting "+search.get(0).getName()+"'s nick to "+args[1]);
+                    List<Player> find = plugin.getServer().matchPlayer(args[0]);
+                    for(Player f : find) {
+                        if(f.getName().toLowerCase().equals(args[1].toLowerCase()))
+                            throw new CommandException("Nick is already taken!");
+                    }
+                    if(!plugin.getPlayerListener().nickTakenPersistance(otherplayer.getName(), args[1])
+                            && !plugin.getPlayerListener().nickTakenCheck(otherplayer.getName(), args[1]))
+                        plugin.getPlayerListener().setNick(otherplayer.getName(), args[1]);
                     else
                         throw new CommandException("Nick is already taken!");
                 }
-            } else if(args.length==2) {
-                if(!plugin.check(player, "nick.other"))
-                    throw new PermissionsException(command);
-
-                List<Player> search = plugin.getServer().matchPlayer(args[0]);
-                if(search.size()!=1) {
-                    throw new CommandException("Can't find the other player!");
-                } else {
-                    if(args[1].equalsIgnoreCase("reset")) {
-                        sender.sendMessage("Resetting "+search.get(0).getName()+"'s nick");
-                        plugin.getPlayerListener().removeNick(search.get(0).getName());
-                    } else {
-                        Player otherplayer = search.get(0);
-                        sender.sendMessage(ChatColor.GOLD + "Setting "+search.get(0).getName()+"'s nick to "+args[1]);
-                        List<Player> find = plugin.getServer().matchPlayer(args[0]);
-                        for(Player f : find) {
-                            if(f.getName().toLowerCase().equals(args[1].toLowerCase()))
-                                throw new CommandException("Nick is already taken!");
-                        }
-                        if(!plugin.getPlayerListener().nickTakenPersistance(otherplayer.getName(), args[1])
-                                && !plugin.getPlayerListener().nickTakenCheck(otherplayer.getName(), args[1]))
-                            plugin.getPlayerListener().setNick(otherplayer.getName(), args[1]);
-                        else
-                            throw new CommandException("Nick is already taken!");
-                    }
-                }
-            } else {
-                throw new CommandUsageException("I need a nick!");
             }
         } else {
-            throw new CommandSenderException("Not yet implemented!");
+            throw new CommandUsageException("I need a nick!");
         }
         return true;
     }

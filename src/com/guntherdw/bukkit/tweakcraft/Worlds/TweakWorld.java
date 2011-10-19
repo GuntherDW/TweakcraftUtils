@@ -18,7 +18,10 @@
 
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
+import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -38,8 +41,11 @@ public class TweakWorld implements iWorld {
     private boolean tooldurability = true;
     private boolean netherenabled = false;
     private boolean keepspawnactive = false;
+    private Long seed=null;
+    private Long netherseed=null;
     private int    portalSearchWidth = 128;
     private String worldName = "";
+    private String chunkGen = null;
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
     private boolean pvp = true;
@@ -73,22 +79,22 @@ public class TweakWorld implements iWorld {
     }
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean pvp, boolean allowMonsters, boolean allowAnimals, int viewdistance, boolean enabled) {
-            this.wm = wm;
-            this.foldername = foldername;
-            this.environment = env;
-            this.pvp = pvp;
-            this.allowanimals = allowAnimals;
-            this.allowmonsters = allowMonsters;
-            this.enabled = enabled;
-            this.tooldurability = true;
-            if(viewdistance>3 && viewdistance<16)
-                this.viewdistance = viewdistance;
-            else
-                this.viewdistance = wm.getDefaultViewDistance();
-            if (enabled) {
-                loadWorld(wm, foldername, env, enabled);
-            }
+        this.wm = wm;
+        this.foldername = foldername;
+        this.environment = env;
+        this.pvp = pvp;
+        this.allowanimals = allowAnimals;
+        this.allowmonsters = allowMonsters;
+        this.enabled = enabled;
+        this.tooldurability = true;
+        if(viewdistance>3 && viewdistance<16)
+            this.viewdistance = viewdistance;
+        else
+            this.viewdistance = wm.getDefaultViewDistance();
+        if (enabled) {
+            loadWorld(wm, foldername, env, enabled);
         }
+    }
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean pvp, boolean allowMonsters, boolean allowAnimals, int viewdistance, boolean tooldurability, boolean enabled) {
         this.wm = wm;
@@ -131,6 +137,27 @@ public class TweakWorld implements iWorld {
         
     }
 
+    public Long getSeed(boolean netherseed) {
+        if(netherseed && !netherenabled) return null;
+        if(netherseed) return nether.getSeed();
+
+        return world.getSeed();
+    }
+
+    public void setSeed(long seed, boolean netherseed) {
+        if(netherseed&&!netherenabled) return;
+        if(netherseed) this.netherseed = seed;
+        else this.seed = seed;
+    }
+
+    public String getChunkGen() {
+        return chunkGen;
+    }
+
+    public void setChunkGen(String chunkGen) {
+        this.chunkGen = chunkGen;
+    }
+
     public boolean isDurabilityEnabled() {
         return world.getToolDurability();
     }
@@ -150,7 +177,52 @@ public class TweakWorld implements iWorld {
             if ((world = wm.getPlugin().getServer().getWorld(worldName)) == null) {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] Creating new world!");
                 environment = env;
-                world = wm.getPlugin().getServer().createWorld(worldName, environment);
+                if(chunkGen!=null) {
+                    try {
+                        Class clazz = Class.forName(chunkGen);
+                        if(clazz!=null) {
+                            Object c = clazz.newInstance();
+                            if(c instanceof ChunkGenerator) {
+                                ChunkGenerator cg = (ChunkGenerator) c;
+                                if(c instanceof FlatGen) {
+                                    FlatGen fg = (FlatGen) cg;
+                                    int mh = wm.getPlugin().getConfiguration().getInt("worlds.extraworlds." + worldName + ".flatGen.mapHeight", 12);
+                                    byte toplayer = (byte)wm.getPlugin().getConfiguration().getInt("worlds.extraworlds." + worldName + ".flatGen.toplayer", Material.GRASS.getId());
+                                    byte normal = (byte)wm.getPlugin().getConfiguration().getInt("worlds.extraworlds." + worldName + ".flatGen.normal", Material.DIRT.getId());
+                                    fg.setmapHeight(mh);
+                                    fg.setNormal(normal);
+                                    fg.setToplayer(toplayer);
+                                    fg.assignWorldManager(wm);
+                                    if(seed!=null)
+                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, seed, fg);
+                                    else
+                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, fg);
+                                } else {
+                                    if(seed!=null)
+                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, seed, cg);
+                                    else
+                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, cg);
+                                }
+                            } else {
+                                this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world"+worldName+"! "+chunkGen+" isn't a Chunk Generator class!");
+                            }
+                        }
+                    } catch (ClassNotFoundException e) {
+                        this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world"+worldName+"! Can't find class with name "+chunkGen);
+                        enabled=false;
+                    } catch (InstantiationException e) {
+                        enabled=false;
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    } catch (IllegalAccessException e) {
+                        enabled=false;
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                } else {
+                    if(seed!=null)
+                        world = wm.getPlugin().getServer().createWorld(worldName, environment, seed);
+                     else
+                        world = wm.getPlugin().getServer().createWorld(worldName, environment);
+                }
                 world.setKeepSpawnInMemory(this.getSpawnChunksActive());
             } else {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] This world already existed!");
@@ -201,6 +273,7 @@ public class TweakWorld implements iWorld {
 
     @Override
     public World getNetherWorld() {
+        if(!isEnabled()) return null;
         if(!isNetherEnabled()) return null;
         return nether;
     }
@@ -210,10 +283,15 @@ public class TweakWorld implements iWorld {
     }
 
     public void addNether() {
+        if(!isEnabled()) return;
         World nw = wm.getPlugin().getServer().getWorld(this.world.getName()+"_nether");
         if(nw == null)
         {
-            nw = wm.getPlugin().getServer().createWorld(this.world.getName()+"_nether", World.Environment.NETHER);
+            if(netherseed != null) {
+                nw = wm.getPlugin().getServer().createWorld(this.world.getName()+"_nether", World.Environment.NETHER, netherseed);
+            } else {
+                nw = wm.getPlugin().getServer().createWorld(this.world.getName()+"_nether", World.Environment.NETHER);
+            }
         }
         nw.setSpawnFlags(this.allowmonsters, this.allowanimals);
         nw.setToolDurability(this.tooldurability);

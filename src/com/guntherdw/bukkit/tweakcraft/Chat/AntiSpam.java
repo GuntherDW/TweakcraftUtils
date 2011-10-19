@@ -20,7 +20,6 @@ package com.guntherdw.bukkit.tweakcraft.Chat;
 
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
-import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
