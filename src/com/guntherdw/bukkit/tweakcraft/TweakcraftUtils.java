@@ -36,11 +36,13 @@ import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftWorldListener;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCAdminEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Util.TeleportHistory;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.nijikokun.bukkit.Permissions.Permissions;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
 import org.bukkit.ChatColor;
@@ -74,6 +76,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected WorldGuardPlugin wg = null;
     protected CraftIRC circ = null;
     protected Zones zones = null;
+    protected WorldEditPlugin we = null;
     // protected PermissionHandler ph = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
@@ -88,6 +91,9 @@ public class TweakcraftUtils extends JavaPlugin {
     private final TamerTool tamertool = new TamerTool(this);
     private final ChatHandler chathandler = new ChatHandler(this);
     private final PermissionsResolver permsResolver = new PermissionsResolver(this);
+
+
+    private HashMap<String, LocalPlayer> localPlayers = new HashMap<String, LocalPlayer>();
 
     private Object circendpoint = null;
     private Object circadminendpoint = null;
@@ -114,7 +120,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return mod_InfDuraplayers;
     }
     
-    public PermissionsResolver getPermissionsResolver() {
+    public PermissionsResolver getPermissions() {
         return this.permsResolver;
     }
     
@@ -132,6 +138,17 @@ public class TweakcraftUtils extends JavaPlugin {
             else
                 player.sendRawMessage(CUIPattern+"["+cm.getPrefix()+ChatColor.WHITE+"]");
         }
+    }
+    
+    public LocalPlayer wrapPlayer(Player player) {
+        return wrapPlayer(player.getName());
+    }
+    
+    public LocalPlayer wrapPlayer(String player) {
+        if(!this.localPlayers.containsKey(player))
+            this.localPlayers.put(player, new LocalPlayer(player));
+        
+        return this.localPlayers.get(player);
     }
 
     public void sendCUIHandShake(Player player) {
@@ -354,6 +371,10 @@ public class TweakcraftUtils extends JavaPlugin {
         return circ;
     }
 
+    public WorldEditPlugin getWorldEdit() {
+        return we;
+    }
+
     public WorldGuardPlugin getWorldGuard() {
         return wg;
     }
@@ -363,7 +384,7 @@ public class TweakcraftUtils extends JavaPlugin {
         Player p = null;
         try{
             p = this.getServer().getPlayer(playername);
-            pref = this.getPermissionsResolver().getUserPrefix(p.getWorld().getName(), p);
+            pref = this.getPermissions().getResolver().getUserPrefix(p.getWorld().getName(), p);
         } catch (NullPointerException e) {
             pref = "§f";
         }
@@ -444,6 +465,16 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
+    public void setupWorldEdit() {
+        Plugin plugin = this.getServer().getPluginManager().getPlugin("Zones");
+
+        if(we == null) {
+            if(plugin != null) {
+                we = (WorldEditPlugin) plugin;
+            } /* We don't care if it failed because it's mostly a fallback for permissions. */
+        }
+    }
+
     public Zones getZones() {
         return zones;
     }
@@ -475,7 +506,7 @@ public class TweakcraftUtils extends JavaPlugin {
         String realname = player;
         if(nick == null) nick = realname;
         /// return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
-        return permsResolver.getUserPrefix(player) + nick + ChatColor.WHITE;
+        return this.getPermissions().getResolver().getUserPrefix(player) + nick + ChatColor.WHITE;
     }
     
     public String getNick(String player) {
@@ -487,12 +518,12 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public boolean check(Player player, String permNode) {
         return player.isOp() ||
-               this.permsResolver.hasPermission(player.getWorld().getName(), player, "tweakcraftutils."+permNode);
+                this.getPermissions().getResolver().hasPermission(player.getWorld().getName(), player, "tweakcraftutils."+permNode);
     }
 
     public boolean checkfull(Player player, String permNode) {
         return player.isOp() ||
-               this.permsResolver.hasPermission(player.getWorld().getName(), player, permNode);
+                this.getPermissions().getResolver().hasPermission(player.getWorld().getName(), player, permNode);
     }
 
     public BanHandler getBanhandler() {

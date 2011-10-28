@@ -53,7 +53,7 @@ public class CommandBroadcast implements iCommand {
             groups = grouparg.split(",");
             for(String gr : groups) {
                 for(Player p : plugin.getServer().getOnlinePlayers()) {
-                    if(plugin.getPermissionsResolver().inSingleGroup("world", gr, p)) {
+                    if(plugin.getPermissions().getResolver().inSingleGroup("world", gr, p)) {
                         if(!recipients.contains(p))
                             recipients.add(p);
                     }

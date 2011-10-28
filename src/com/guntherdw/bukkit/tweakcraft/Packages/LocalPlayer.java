@@ -18,14 +18,35 @@
 
 package com.guntherdw.bukkit.tweakcraft.Packages;
 
+import org.bukkit.entity.Player;
+
 /**
  * @author GuntherDW
  */
 public class LocalPlayer {
 
     private String player;
+    private Player bukkitPlayer;
+    private boolean afk;
     private int spamcounter;
     private long lastmessagetime;
+
+
+    public Player getBukkitPlayer() {
+        return bukkitPlayer;
+    }
+
+    public void setBukkitPlayer(Player bukkitPlayer) {
+        this.bukkitPlayer = bukkitPlayer;
+    }
+
+    public boolean isAfk() {
+        return afk;
+    }
+
+    public void setAfk(boolean afk) {
+        this.afk = afk;
+    }
 
     public long getLastmessagetime() {
         return lastmessagetime;

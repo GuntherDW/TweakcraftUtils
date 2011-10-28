@@ -29,6 +29,7 @@ import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -197,6 +198,9 @@ public class CommandTC implements iCommand {
                         boolean animals = tcworld?iw.getAllowAnimals():bw.getAllowAnimals();
                         boolean pvp     = tcworld?iw.getPVP():bw.getPVP();
                         int amountofplayers = tcworld?iw.getBukkitWorld().getPlayers().size():bw.getPlayers().size();
+                        boolean customChunkGen = tcworld?iw.getChunkGen()!=null:bw.getGenerator()!=null;
+                        boolean tooldura = tcworld?iw.isDurabilityEnabled():bw.getToolDurability();
+                        GameMode gm = tcworld?iw.getGameMode():null;
                         String players = "";
                         if(amountofplayers<5) {
                             List<Player> ps = tcworld?iw.getBukkitWorld().getPlayers():bw.getPlayers();
@@ -213,6 +217,14 @@ public class CommandTC implements iCommand {
                         sender.sendMessage(ChatColor.RED+"PVP: "+(pvp?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
                         sender.sendMessage(ChatColor.RED+"ENV: "+wenv);
                         sender.sendMessage(ChatColor.RED+"PLAYERS: "+amountofplayers + (players.equals("")?"":(" ("+players+ChatColor.RED+")")));
+                        sender.sendMessage(ChatColor.RED+"TOOL DURABILITY: "+(tooldura?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                        if(gm!=null)
+                            sender.sendMessage(ChatColor.RED+"GAMEMODE: "+gm.toString().toLowerCase());
+                        if(customChunkGen) {
+                            String ChunkGen = tcworld?iw.getChunkGen():bw.getGenerator().getClass().getName();
+                            sender.sendMessage(ChatColor.RED+"CHUNKGEN: "+ChunkGen);
+                        }
+                        
                     }
 
                 } else {

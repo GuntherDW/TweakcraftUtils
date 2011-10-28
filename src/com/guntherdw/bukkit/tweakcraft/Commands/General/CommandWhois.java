@@ -62,7 +62,7 @@ public class CommandWhois implements iCommand {
             boolean online = (who!=null);
 
             if(who==null) { // Is it an offline player? Check permissions
-                if(plugin.getPermissionsResolver()!=null) {
+                if(plugin.getPermissions().getResolver()!=null) {
                     // Check for nicks
                     // String pname = args[0];
                     OfflinePlayer offlineplayer = plugin.getServer().getOfflinePlayer(nick_origplayer!=null?nick_origplayer:args[0]);
@@ -73,7 +73,7 @@ public class CommandWhois implements iCommand {
                         wname = defworld.getName();
                     }
 
-                    groups = plugin.getPermissionsResolver().getPrimaryUserGroup(wname, pname);
+                    groups = plugin.getPermissions().getResolver().getPrimaryUserGroup(wname, pname);
                     if(groups!=null) {
                         String n = plugin.getNickWithColors(pname);
                         if(n!=null) {
@@ -94,7 +94,7 @@ public class CommandWhois implements iCommand {
                     wname = defworld.getName();
                 }
 
-                groups = plugin.getPermissionsResolver().getPrimaryUserGroup(wname, playername);
+                groups = plugin.getPermissions().getResolver().getPrimaryUserGroup(wname, playername);
                 // Check for a nick!
                 String n = plugin.getNickWithColors(playername);
                 if(n!=null) {

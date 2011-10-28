@@ -19,8 +19,10 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.config.Configuration;
 
@@ -50,6 +52,7 @@ public class TweakWorld implements iWorld {
     private WorldManager wm;
     private boolean pvp = true;
     private int viewdistance = 10;
+    private GameMode gamemode = null;
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean enabled) {
         this.wm = wm;
@@ -158,6 +161,19 @@ public class TweakWorld implements iWorld {
         this.chunkGen = chunkGen;
     }
 
+    @Override
+    public GameMode getGameMode() {
+        if(this.gamemode==null)
+            return GameMode.SURVIVAL;
+
+        return gamemode;
+    }
+
+    @Override
+    public void setGameMode(GameMode mode) {
+        this.gamemode = mode;
+    }
+
     public boolean isDurabilityEnabled() {
         return world.getToolDurability();
     }
@@ -174,9 +190,11 @@ public class TweakWorld implements iWorld {
             worldName = null;
         } else {
             worldName = foldername.trim();
+            WorldCreator worldCreator = new WorldCreator(worldName);
             if ((world = wm.getPlugin().getServer().getWorld(worldName)) == null) {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] Creating new world!");
                 environment = env;
+
                 if(chunkGen!=null) {
                     try {
                         Class clazz = Class.forName(chunkGen);
@@ -193,15 +211,18 @@ public class TweakWorld implements iWorld {
                                     fg.setNormal(normal);
                                     fg.setToplayer(toplayer);
                                     fg.assignWorldManager(wm);
-                                    if(seed!=null)
+                                    /* if(seed!=null)
                                         world = wm.getPlugin().getServer().createWorld(worldName, environment, seed, fg);
                                     else
-                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, fg);
+                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, fg); */
+                                    // world = wm.getPlugin().getServer().createWorld()
+                                    worldCreator.generator(fg);
+
                                 } else {
-                                    if(seed!=null)
-                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, seed, cg);
-                                    else
-                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, cg);
+                                    /* if(seed!=null)
+                                         world = wm.getPlugin().getServer().createWorld(worldName, environment, seed, cg); */
+                                    // else
+                                    worldCreator.generator(cg);
                                 }
                             } else {
                                 this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world"+worldName+"! "+chunkGen+" isn't a Chunk Generator class!");
@@ -217,16 +238,21 @@ public class TweakWorld implements iWorld {
                         enabled=false;
                         e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                     }
-                } else {
-                    if(seed!=null)
-                        world = wm.getPlugin().getServer().createWorld(worldName, environment, seed);
-                     else
-                        world = wm.getPlugin().getServer().createWorld(worldName, environment);
                 }
-                world.setKeepSpawnInMemory(this.getSpawnChunksActive());
+
             } else {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] This world already existed!");
                 environment = world.getEnvironment();
+            }
+            
+            if(seed!=null)
+                worldCreator.seed(seed.longValue());
+            
+            if(enabled) {
+                worldCreator.environment(env);
+                world = worldCreator.createWorld();
+                world.setKeepSpawnInMemory(this.getSpawnChunksActive());
+                world.setPVP(pvp);
             }
             // TODO: Re-enable after it's been added again!
             // world.setViewDistance(this.viewdistance);
@@ -284,17 +310,21 @@ public class TweakWorld implements iWorld {
 
     public void addNether() {
         if(!isEnabled()) return;
+        WorldCreator wc = new WorldCreator(this.world.getName()+"_nether");
         World nw = wm.getPlugin().getServer().getWorld(this.world.getName()+"_nether");
         if(nw == null)
         {
-            if(netherseed != null) {
+            /* if(netherseed != null) {
                 nw = wm.getPlugin().getServer().createWorld(this.world.getName()+"_nether", World.Environment.NETHER, netherseed);
             } else {
                 nw = wm.getPlugin().getServer().createWorld(this.world.getName()+"_nether", World.Environment.NETHER);
-            }
+            } */
+            if(netherseed!=null) wc.seed(netherseed);
+            nw = wc.environment(World.Environment.NETHER).createWorld();
         }
         nw.setSpawnFlags(this.allowmonsters, this.allowanimals);
         nw.setToolDurability(this.tooldurability);
+        
         this.netherenabled = true;
         this.nether = nw;
     }

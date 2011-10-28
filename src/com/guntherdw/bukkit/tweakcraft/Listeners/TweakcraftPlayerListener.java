@@ -385,6 +385,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.RED + "You don't have access to this world!");
             }
+            iWorld tw = plugin.getworldManager().getWorld(event.getTo().getWorld().getName(), true);
+            if(tw!=null && !tw.getGameMode().equals(player.getGameMode())) {
+                player.setGameMode(tw.getGameMode());
+            }
         }
         // if(event)
     }

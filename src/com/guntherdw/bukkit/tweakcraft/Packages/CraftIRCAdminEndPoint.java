@@ -80,8 +80,8 @@ public class CraftIRCAdminEndPoint implements EndPoint {
                 if(found) {
                     World w = offline?plugin.getServer().getWorlds().get(0):p.getWorld();
                     String name = offline?op.getName():p.getName();
-                    relayedMessage.setField("prefix", plugin.getPermissionsResolver().getUserPrefix(w.getName(), name));
-                    relayedMessage.setField("suffix", plugin.getPermissionsResolver().getUserSuffix(w.getName(), name));
+                    relayedMessage.setField("prefix", plugin.getPermissions().getResolver().getUserPrefix(w.getName(), name));
+                    relayedMessage.setField("suffix", plugin.getPermissions().getResolver().getUserSuffix(w.getName(), name));
                 }
             }
             ac.broadcastMessage(relayedMessage.getMessage(this));

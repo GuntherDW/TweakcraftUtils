@@ -64,14 +64,14 @@ public class CommandTPBack implements iCommand {
 
                         boolean success = player.teleport(back);
                         if(success) {
-                            Integer remaining = plugin.getTelehistory().getRemaining(player.getName());
+                            /* Integer remaining = plugin.getTelehistory().getRemaining(player.getName());
                             String rem = "";
                             if(remaining == null || remaining == 0) {
                                 rem = "Origin! No TPBack lines left!";
                             } else {
                                 rem = remaining+" TPBack lines left!";
-                            }
-                            player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
+                            } */
+                            //  player.sendMessage(ChatColor.GOLD+"Amount of TPBack lines left : "+rem);
                             plugin.getTelehistory().removeLast(player.getName());
                         } else {
                             player.sendMessage(ChatColor.RED+"tpback failure, tpback line NOT removed!");

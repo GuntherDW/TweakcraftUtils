@@ -30,8 +30,8 @@ import java.util.List;
  * @author GuntherDW
  */
 @Entity()
-@Table(name="tcutils_chatgroup")
-public class ChatGroup {
+@Table(name="tcutils_chatchannel")
+public class ChatChannel {
 
     @Id
     @NotNull

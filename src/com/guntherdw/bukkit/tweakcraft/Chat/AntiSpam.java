@@ -46,13 +46,10 @@ public class AntiSpam {
 
     public int checkSpam(Player player, String message) {
         if(!ch.getTCUtilsInstance().check(player, "spam")) {
-            LocalPlayer lp = null;
+
+            LocalPlayer lp = ch.getTCUtilsInstance().wrapPlayer(player);
+            
             String playername = player.getName().toLowerCase();
-            if(!playerlist.containsKey(playername)) {
-                lp = new LocalPlayer(playername);
-            } else {
-                lp = playerlist.get(playername);
-            }
 
             long currenttime = System.currentTimeMillis();
             int oldspamcounter = lp.getSpamcounter();
@@ -62,16 +59,6 @@ public class AntiSpam {
                 lp.setSpamcounter(0);
             }
             lp.setLastmessagetime(currenttime);
-
-            
-            /* if(lp.getSpamcounter()!=0) {
-                this.playerlist.put(playername, lp);
-            } else {
-                if(this.playerlist.containsKey(playername))
-                    this.playerlist.remove(playername);
-            } */
-
-            this.playerlist.put(playername, lp);
             
             return lp.getSpamcounter();
         }

@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
+import org.bukkit.GameMode;
 import org.bukkit.util.config.Configuration;
 
 /**
@@ -25,61 +26,65 @@ import org.bukkit.util.config.Configuration;
  */
 public interface iWorld {
 
-    public abstract iWorld getWorld();
+    public iWorld getWorld();
 
-    public abstract org.bukkit.World getBukkitWorld();
+    public org.bukkit.World getBukkitWorld();
 
-    public abstract org.bukkit.World getNetherWorld();
+    public org.bukkit.World getNetherWorld();
 
-    public abstract int getPortalSearchWidth();
+    public int getPortalSearchWidth();
 
-    public abstract void setPortalSearchWidth(int searchWidth);
+    public void setPortalSearchWidth(int searchWidth);
 
-    public abstract String getName();
+    public String getName();
 
-    public abstract void loadWorld();
+    public void loadWorld();
 
-    public abstract String getChunkGen();
+    public String getChunkGen();
 
-    public abstract void setChunkGen(String chunkGen);
-
-    public abstract Long getSeed(boolean netherseed);
-
-    public abstract void setSeed(long seed, boolean netherseed);
-
-    public abstract boolean isDurabilityEnabled();
-
-    public abstract void setDurabilityEnabled(boolean state);
-
-    public abstract void addNether();
-
-    public abstract boolean isNetherEnabled();
-
-    public abstract boolean isEnabled();
-
-    public abstract boolean isLoaded();
-
-    public abstract boolean getAllowAnimals();
-
-    public abstract String getWorldName();
-
-    public abstract void setAllowAnimals(boolean allowanimals);
-
-    public abstract boolean getAllowMonsters();
+    public void setChunkGen(String chunkGen);
     
-    public abstract int getViewDistance();
-
-    public abstract void setViewDistance(int viewDistance);
+    public GameMode getGameMode();
     
-    public abstract void setPVP(boolean pvpallowed);
+    public void setGameMode(GameMode mode);
 
-    public abstract boolean getPVP();
+    public Long getSeed(boolean netherseed);
 
-    public abstract void setAllowMonsters(boolean allowmonsters);
+    public void setSeed(long seed, boolean netherseed);
 
-    public abstract void setSpawnFlags(boolean allowMonsters, boolean allowAnimals);
+    public boolean isDurabilityEnabled();
 
-    public abstract void setEnabled(boolean enabled);
+    public void setDurabilityEnabled(boolean state);
 
-    public abstract Configuration getConfiguration();
+    public void addNether();
+
+    public boolean isNetherEnabled();
+
+    public boolean isEnabled();
+
+    public boolean isLoaded();
+
+    public boolean getAllowAnimals();
+
+    public String getWorldName();
+
+    public void setAllowAnimals(boolean allowanimals);
+
+    public boolean getAllowMonsters();
+    
+    public int getViewDistance();
+
+    public void setViewDistance(int viewDistance);
+    
+    public void setPVP(boolean pvpallowed);
+
+    public boolean getPVP();
+
+    public void setAllowMonsters(boolean allowmonsters);
+
+    public void setSpawnFlags(boolean allowMonsters, boolean allowAnimals);
+
+    public void setEnabled(boolean enabled);
+
+    public Configuration getConfiguration();
 }

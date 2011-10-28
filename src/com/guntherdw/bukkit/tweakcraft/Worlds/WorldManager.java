@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
 
 import java.util.HashMap;
@@ -95,6 +96,13 @@ public class WorldManager {
                 long seed = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".seed", -1);
                 long nseed = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".netherseed", -1);
                 
+                String gameMode = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".gamemode", null);
+                GameMode gm = gameMode!=null?GameMode.valueOf(gameMode.toUpperCase()):null;
+
+                /* if(gameMode==null || gameMode.equals("")) {
+                    gm=GameMode.SURVIVAL;
+                } */
+
                 Environment wenv = null;
                 if(env==null || env=="") {
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" does not have a valid environment definition, using \"normal\"");
@@ -106,7 +114,7 @@ public class WorldManager {
                 } else if (env.equalsIgnoreCase("skylands")) {
                     wenv = Environment.SKYLANDS;
                 } else {
-                    wenv = Environment.valueOf(env);
+                    wenv = Environment.valueOf(env.toUpperCase());
                 }
 
 
@@ -116,7 +124,9 @@ public class WorldManager {
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" monsters : "+(monsters?"enabled":"disabled")+", animals : "+(animals?"enabled":"disabled")+"!");
                     if(addnether) plugin.getLogger().info("[TweakcraftUtils] World "+node+" added nether world!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" Tool Durability : "+(durability?"enabled":"disabled"));
+                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" GameMode : "+(gm!=null?gm.toString().toLowerCase():"Survival"));
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
+                    if(gm!=null) tw.setGameMode(gm);
                     if(chunkGen!=null) {
                         plugin.getLogger().info("[TweakcraftUtils] World "+node+" is using a custom chunkGen!");
                         tw.setChunkGen(chunkGen);
@@ -147,6 +157,14 @@ public class WorldManager {
     }
 
     public iWorld getWorld(String name) {
+        return this.getWorld(name, false);
+    }
+
+    public iWorld getWorld(String name, boolean filterNether) {
+        if(filterNether) {
+            boolean isnether = name.endsWith("_nether");
+            if(isnether) name = name.substring(0, name.length()-7); // MINUS _nether
+        }
         if (worlds.containsKey(name)) {
             return worlds.get(name);
         } else {

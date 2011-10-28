@@ -19,7 +19,6 @@
 package com.guntherdw.bukkit.tweakcraft.Configuration;
 
 import com.guntherdw.bukkit.tweakcraft.Packages.LockdownLocation;
-import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -77,7 +76,7 @@ public class ConfigurationHandler {
     public boolean enablemod_InfDura = false;
     public boolean enableExperienceOrbsHalt = false;
 
-    public PermissionsResolver.PermissionResolvingMode permissoinsResolvingMode = null;
+    // public PermissionsResolver.PermissionResolvingMode permissoinsResolvingMode = null;
 
     public boolean enableRespawnHook = false;
     public boolean enableRespawnHeal = false;
@@ -165,7 +164,8 @@ public class ConfigurationHandler {
         String presolver = globalconfig.getString("Permissions.resolver", null);
         if(presolver==null) presolver = "permissions";
 
-        if(presolver.equals("permissions")) {
+        /* This is done fully automatic now! */
+        /* if(presolver.equals("permissions")) {
             permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.NIJIPERMS;
         } else if(presolver.equals("permissionsex")) {
             permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.PERMISSIONSEX;
@@ -176,7 +176,7 @@ public class ConfigurationHandler {
         
         if(permissoinsResolvingMode!= PermissionsResolver.PermissionResolvingMode.NIJIPERMS) {
             plugin.getLogger().warning("[TweakcraftUtils] Other permissions resolver selected than Nijokun's Permissiosn plugin, this is experimental!");
-        }
+        } */
 
 
         this.extrahelphide = globalconfig.getStringList("extrahelp.hide", null);

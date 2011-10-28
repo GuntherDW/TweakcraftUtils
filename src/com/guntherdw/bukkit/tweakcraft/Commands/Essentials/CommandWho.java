@@ -22,6 +22,7 @@ import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
@@ -47,14 +48,14 @@ public class CommandWho implements iCommand {
         String world = ap.getString("w", null);
         String[] args = ap.getUnusedArgs();
         World w = null;
-        
+
         if(world!=null) {
             w=plugin.getServer().getWorld(world);
             if(w==null) throw new CommandUsageException("World not found!");
         }
-        
+
         List<Player> list = null;
-        
+
         if(w==null) list = Arrays.asList(plugin.getServer().getOnlinePlayers());
         else        list = w.getPlayers();
         Integer amountofinvis = 0;
@@ -65,9 +66,9 @@ public class CommandWho implements iCommand {
         }
         boolean hasperm;
         if(sender instanceof Player)
-                hasperm = plugin.check((Player)sender, "tpinvis");
-            else
-                hasperm = true;
+            hasperm = plugin.check((Player)sender, "tpinvis");
+        else
+            hasperm = true;
 
         String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (w==null? (list.size()-amountofinvis) + "/" + plugin.getServer().getMaxPlayers() : ChatColor.GREEN+w.getName() + ChatColor.LIGHT_PURPLE) + "): ";
         if(amountofinvis>0) {
@@ -84,12 +85,13 @@ public class CommandWho implements iCommand {
         sender.sendMessage(msg);
         msg = " ";
         boolean check;
-        
+
         for (Player p : list) {
+            LocalPlayer lp = plugin.wrapPlayer(p);
             toadd = "";
             check = plugin.getPlayerListener().getInvisplayers().contains(p.getName());
 
-            if (!(sender instanceof Player)) { // console won't show gold colors? shame! // THIS HAS BEEN FIXED LONG AGO!
+            /* if (!(sender instanceof Player)) { // console won't show gold colors? shame! // THIS HAS BEEN FIXED LONG AGO!
                 if(check)
                     toadd = ChatColor.AQUA+"[";
 
@@ -99,14 +101,14 @@ public class CommandWho implements iCommand {
                     toadd += ChatColor.AQUA+"]";
 
                 toadd+=ChatColor.WHITE+", ";
-            } else {
-                if(check && hasperm)
-                {
-                    toadd = ChatColor.AQUA+"["+p.getDisplayName() + ChatColor.AQUA + "]"+ChatColor.WHITE+", ";
-                } else if(!check) {
-                    toadd = p.getDisplayName() + ChatColor.WHITE + ", ";
-                }
+            } else { */
+            if(check && hasperm)
+            {
+                toadd = ChatColor.AQUA+"["+p.getDisplayName() + ChatColor.AQUA + "]"+ (lp.isAfk()?ChatColor.RED+" [AFK]":"") +ChatColor.WHITE+", ";
+            } else if(!check) {
+                toadd = p.getDisplayName() +  (lp.isAfk()?ChatColor.RED+" [AFK]":"") + ChatColor.WHITE + ", ";
             }
+            // }
             msg += toadd;
         }
         if (!msg.trim().isEmpty()) {
