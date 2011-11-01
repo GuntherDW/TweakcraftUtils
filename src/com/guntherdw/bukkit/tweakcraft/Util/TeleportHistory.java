@@ -61,12 +61,10 @@ public class TeleportHistory {
         if(!historymap.containsKey(player)) return null;
         return historymap.get(player);
     }
-    
+
     // public int get
 
     public void setHistoryOffset(String player, Integer pos) {
-        // if(!historymap.containsKey(player))
-        System.out.println("Setting to "+pos);
         if((pos==null || pos < 0)
                 && historyoffset.containsKey(player)) {
             historyoffset.remove(player);
@@ -76,11 +74,11 @@ public class TeleportHistory {
     }
 
     public int getOffset(String player) {
-        int offs = -1;
+        Integer offs = -1;
         if(historyoffset.containsKey(player)) {
             offs = historyoffset.get(player);
         }
-        return offs;
+        return offs!=null?offs:0;
     }
 
     public Location get(String player, int position, Boolean back) {
@@ -90,20 +88,10 @@ public class TeleportHistory {
 
         if(position<0 || position>=locList.size()) return null;
 
-        int offset = -1;
-        int oldoffset = 0;
         if(back!=null) {
-            offset = getOffset(player);
-            oldoffset = offset;
+            int offset = getOffset(player);
             offset = offset + (back? 1 : -1);
             setHistoryOffset(player, offset);
-        }
-
-        System.out.println("offSet : "+oldoffset + "("+getOffset(player)+") position : "+position+" size : "+locList.size());
-        int p = 0;
-        for(Location l : locList) {
-            System.out.println((p==position?" -> ": "") + l);
-            p++;
         }
 
         return locList.get(position);
@@ -141,18 +129,20 @@ public class TeleportHistory {
             if(loc.getY() > 128 || loc.getY() < 1) { // failsafe
                 loc.setY(130);
             }
+
+
             if(historymap.containsKey(playername)) {
                 locmap = historymap.get(playername);
-                /* if(getOffset(playername) > 0) {
-                    int pos = locmap.size()-getOffset(playername);
-                    System.out.println("removing "+pos+" to "+locmap.size());
-                    locmap.removeAll(locmap.subList(pos, locmap.size()));
-                } */
-                setHistoryOffset(playername, null);
 
-                if(!locmap.get(locmap.size()-1).equals(loc)) { // Do not save identical tpback issues
-                    locmap.add(loc);
+                if(historyoffset.containsKey(playername) && getOffset(playername) > 0) {
+
+                    int siz = locmap.size();
+                    int pos = siz-getOffset(playername)+1;
+
+                    locmap.removeAll(locmap.subList(pos, siz));
+                    setHistoryOffset(playername, null);
                 }
+                if(!locmap.get(locmap.size()-1).equals(loc)) locmap.add(loc);
             } else {
                 locmap = new ArrayList<Location>();
                 locmap.add(loc);

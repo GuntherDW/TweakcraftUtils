@@ -625,28 +625,15 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 return;
             }
 
-
             org.bukkit.Location to = event.getFrom();
-            // System.out.println("from : "+event.getFrom());
             if(isnether)  { to.setWorld(w.getBukkitWorld()); to.setX(Math.floor(to.getX()*8)); to.setZ(Math.floor(to.getZ()*8)); }
             else          { to.setWorld(w.getNetherWorld()); to.setX(Math.floor(to.getX()/8)); to.setZ(Math.floor(to.getZ()/8));}
-
-            // TweakWorld tw = plugin.getworldManager().getWorld()
 
             TravelAgent agent = event.getPortalTravelAgent();
             event.setTo(to);
             event.useTravelAgent(true);
-
-            // System.out.println("to   : "+to);
-
             int radius = w.getPortalSearchWidth();
-
-            // System.out.println("Searching in a "+radius+" radius!");
             agent.setSearchRadius(radius);
-            // System.out.println("After travelagent : "+event.getTo());
-
-
-
         }
     }
 

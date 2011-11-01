@@ -65,7 +65,6 @@ public class CommandTPForward implements iCommand {
                     int offSet = plugin.getTelehistory().getOffset(player.getName());
                     int size = plugin.getTelehistory().getRemaining(player.getName()) - 1;
                     int pos = (size - (offSet>0?offSet:0)) + 2;
-                    System.out.println("Getting "+pos + " (offset : "+offSet+" size : "+size);
                     Location back = plugin.getTelehistory().get(player.getName(), pos, false);
                     if(back == null) {
                         player.sendMessage(ChatColor.GOLD+"You don't have any future issues yet/left!");

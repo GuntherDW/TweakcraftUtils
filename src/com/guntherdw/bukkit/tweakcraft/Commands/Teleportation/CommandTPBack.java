@@ -85,9 +85,7 @@ public class CommandTPBack implements iCommand {
                             if(atOrigin) {
                                 player.sendMessage(ChatColor.GOLD+"You are at your starting point!");
                             }
-                            // System.out.println("offset : "+offSet);
                             if(offSet==-1) {
-                                System.out.println("Adding "+oldLocation);
                                 plugin.getTelehistory().addHistory(player.getName(), oldLocation);
                                 plugin.getTelehistory().setHistoryOffset(player.getName(), 2);
                             }
