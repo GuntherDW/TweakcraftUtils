@@ -19,6 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Tools.Permissions;
 
 import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
+import com.nijiko.permissions.Group;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijiko.permissions.User;
 import org.bukkit.World;
@@ -54,7 +55,9 @@ public class NijiPerms extends Permissions {
     public String getPrimaryUserGroup(String world, String player) {
         User user = permshandler.getUserObject(world, player);
         if(user!=null) {
-            return permshandler.getPrimaryGroupObject(world, user.getName()).getName();
+            // return permshandler.getPrimaryGroupObject(world, user.getName()).getName();
+            Group grp = permshandler.getPrimaryGroupObject(world, user.getName());
+            if(grp!=null) return grp.getName();
         }
         return null;
     }

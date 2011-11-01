@@ -23,11 +23,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.util.config.Configuration;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author GuntherDW
@@ -233,10 +230,10 @@ public class TweakWorld implements iWorld {
                         enabled=false;
                     } catch (InstantiationException e) {
                         enabled=false;
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        e.printStackTrace();
                     } catch (IllegalAccessException e) {
                         enabled=false;
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        e.printStackTrace();
                     }
                 }
 
@@ -384,8 +381,8 @@ public class TweakWorld implements iWorld {
         this.viewdistance = viewdistance;
     }
 
-    public Configuration getConfiguration() {
-        File f = new File(wm.getPlugin().datafolder, "worlds/" + worldName + ".yml");
+    public FileConfiguration getConfiguration() {
+        /* File f = new File(wm.getPlugin().datafolder, "worlds/" + worldName + ".yml");
         if (!f.exists()) {
             try {
                 f.mkdirs();
@@ -395,8 +392,9 @@ public class TweakWorld implements iWorld {
                 return null;
             }
         }
-        Configuration config = new Configuration(f);
+        FileConfiguration config = new FileConfiguration(f);
 
-        return config;
+        return config; */
+        return null;
     }
 }

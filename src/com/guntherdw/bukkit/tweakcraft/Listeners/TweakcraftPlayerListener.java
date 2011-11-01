@@ -26,6 +26,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.*;
@@ -57,20 +58,16 @@ public class TweakcraftPlayerListener extends PlayerListener {
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if(event.isCancelled()) return;
         if(!plugin.getConfigHandler().extraLogging) return;
-        // List<String> aliases = null;
+
         String line = event.getMessage();
         String cmd = event.getMessage();
-        // String vars = "";
         if(line.contains(" ")) {
             String c[] = cmd.split(" ");
             cmd = c[0];
-            /* for(int i=1; i<c.length; i++)
-          vars+=" "+c[i]; */
         }
         if(cmd.startsWith("/") && cmd.length()>1)
             cmd = cmd.substring(1);
 
-        // System.out.println("Trying "+cmd);
         boolean go = true;
         PluginCommand pcmd = this.plugin.getCommand(cmd);
 
@@ -102,10 +99,6 @@ public class TweakcraftPlayerListener extends PlayerListener {
             PlayerOptions po = new PlayerOptions();
             po.setName(playername);
             po.setOptionname("nomount");
-            // popts.add(po);
-
-            /* po.setName(playername);
-            po.setOption("nomount"); */
             plugin.getDatabase().save(po);
         }
     }
@@ -118,6 +111,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void setNick(String player, String nick) {
         nicks.put(player, nick);
+        LocalPlayer lp = plugin.wrapPlayer(player);
+        lp.setNick(nick);
         if(plugin.getConfigHandler().enablePersistence) {
             PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
             if(pi==null) {
@@ -130,7 +125,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public boolean removeNick(String player) {
-        if(nicks.containsKey(player)) {
+        LocalPlayer lp = plugin.wrapPlayer(player);
+
+        if(lp.hasNick()) {
             nicks.remove(player);
             if(plugin.getConfigHandler().enablePersistence) {
                 PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
@@ -139,12 +136,11 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     pi.setName(player);
                 }
                 pi.setNick((String)null);
+                lp.setNick(null);
                 plugin.getDatabase().save(pi);
             }
             return true;
-        } else {
-            return false;
-        }
+        } else { return false; }
     }
 
     public String getNick(String player) {
@@ -235,12 +231,15 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void reloadInfo() {
         playerinfo = plugin.getDatabase().find(PlayerInfo.class).findList();
+
         nicks.clear();
         for(PlayerInfo pi : playerinfo) {
+            LocalPlayer lp = plugin.wrapPlayer(pi.getName());
             if(pi.getNick()!=null) {
                 if(plugin.getConfigHandler().enableDebug)
                     plugin.getLogger().info("[TweakcraftUtils] Setting "+pi.getName()+"'s nick to "+pi.getNick());
                 nicks.put(pi.getName(), pi.getNick());
+                pi.setNick(pi.getNick());
             }
         }
         playeroptions = plugin.getDatabase().find(PlayerOptions.class).findList();
@@ -440,7 +439,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             }
             // am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
             /* } catch (ChatModeException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             } */
         }
 

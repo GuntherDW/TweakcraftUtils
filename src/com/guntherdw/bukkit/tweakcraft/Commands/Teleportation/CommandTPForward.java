@@ -33,7 +33,7 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandTPBack implements iCommand {
+public class CommandTPForward implements iCommand {
     @Override
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
@@ -42,18 +42,17 @@ public class CommandTPBack implements iCommand {
             if(!plugin.check(player, "tpback"))
                 throw new PermissionsException(command);
             if(plugin.getConfigHandler().enableTPBack) {
-
                 boolean go = true;
-
                 if(args.length>0) {
+
                     if(args[0].equalsIgnoreCase("clear")) {
-                        player.sendMessage(ChatColor.GOLD+"Cleaning your TPBack history!");
-                        plugin.getTelehistory().clearHistory(player.getName());
+                        player.sendMessage(ChatColor.GOLD+"Cleaning your TPBack future!");
+                        plugin.getTelehistory().clearFuture(player.getName());
                         go=false;
                     } else if(args[0].equalsIgnoreCase("remove")) {
                         if(plugin.getTelehistory().getRemaining(player.getName())>0) {
-                            player.sendMessage(ChatColor.YELLOW + "Removing last tpback line.");
-                            plugin.getTelehistory().removeLast(player.getName());
+                            player.sendMessage(ChatColor.YELLOW + "Removing next tpback line.");
+                            plugin.getTelehistory().removeNext(player.getName());
                         } else {
                             player.sendMessage(ChatColor.YELLOW + "You don't have any tpback lines!");
                         }
@@ -61,41 +60,23 @@ public class CommandTPBack implements iCommand {
                     }
                 }
 
-
                 if(go){
-                    boolean atOrigin = plugin.getTelehistory().atOrigin(player.getName());
+                    // boolean atOrigin = plugin.getTelehistory().atOrigin(player.getName());
                     int offSet = plugin.getTelehistory().getOffset(player.getName());
-                    int size = plugin.getTelehistory().getRemaining(player.getName()) -1;
-                    int pos = size - (offSet>0?offSet:0);
-                    // Location back = plugin.getTelehistory().getLastEntry(player.getName(), false);
-                    Location back = plugin.getTelehistory().get(player.getName(), pos, true); // getLastEntry(player.getName(), false)
-                    Location oldLocation = player.getLocation().clone();
+                    int size = plugin.getTelehistory().getRemaining(player.getName()) - 1;
+                    int pos = (size - (offSet>0?offSet:0)) + 2;
+                    System.out.println("Getting "+pos + " (offset : "+offSet+" size : "+size);
+                    Location back = plugin.getTelehistory().get(player.getName(), pos, false);
                     if(back == null) {
-                        if(atOrigin) player.sendMessage(ChatColor.GOLD+"You don't have any history issues left!");
-                        else player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
-
+                        player.sendMessage(ChatColor.GOLD+"You don't have any future issues yet/left!");
                     } else {
-                        player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
+                        player.sendMessage(ChatColor.GOLD+"Teleporting you back to your future position!");
                         if(back.getY()==130) {
                             player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
                         }
 
                         boolean success = player.teleport(back);
-                        if(success) {
-                            if(atOrigin) {
-                                player.sendMessage(ChatColor.GOLD+"You are at your starting point!");
-                            }
-                            // System.out.println("offset : "+offSet);
-                            if(offSet==-1) {
-                                System.out.println("Adding "+oldLocation);
-                                plugin.getTelehistory().addHistory(player.getName(), oldLocation);
-                                plugin.getTelehistory().setHistoryOffset(player.getName(), 2);
-                            }
-
-                        } else {
-                            player.sendMessage(ChatColor.RED+"tpback failure, tpback line NOT removed!");
-                            player.sendMessage(ChatColor.RED+"To remove this line, type /tpback remove");
-                        }
+                        if(success) {}
                     }
                 }
             } else {

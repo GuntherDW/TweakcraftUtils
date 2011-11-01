@@ -30,51 +30,51 @@ import java.util.List;
 public class GroupChat implements ChatMode {
     @Override
     public boolean sendMessage(CommandSender sender, String message) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public List<Player> getRecipients(CommandSender sender) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public void addRecipient(String player) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public void removeRecipient(String player) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     @Override
     public List<String> getSubscribers() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public String getDescription() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public String getColor() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
     public String getPrefix() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }

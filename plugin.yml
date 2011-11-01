@@ -185,6 +185,10 @@ commands:
     description: Go back to where you once came from!
     usage: /<command>
     aliases: [tpb, back]
+  tpforward:
+    description: Go back to where you once backed from!
+    usage: /<command>
+    aliases: [tpf, forward]
   debug:
     description: Various debug commands
     usage: /<command> <test>
@@ -211,3 +215,6 @@ commands:
   viewdistance:
     desciption: ViewDistance control!
     usage: /<command> [p:<player>] [distance]
+  afk:
+    description: Manually toggle your AFK status
+    usage: /<command>

@@ -19,72 +19,41 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import org.bukkit.GameMode;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.file.FileConfiguration;
 
 /**
  * @author GuntherDW
  */
 public interface iWorld {
-
     public iWorld getWorld();
-
     public org.bukkit.World getBukkitWorld();
-
     public org.bukkit.World getNetherWorld();
-
     public int getPortalSearchWidth();
-
     public void setPortalSearchWidth(int searchWidth);
-
     public String getName();
-
     public void loadWorld();
-
     public String getChunkGen();
-
     public void setChunkGen(String chunkGen);
-    
     public GameMode getGameMode();
-    
     public void setGameMode(GameMode mode);
-
     public Long getSeed(boolean netherseed);
-
     public void setSeed(long seed, boolean netherseed);
-
     public boolean isDurabilityEnabled();
-
     public void setDurabilityEnabled(boolean state);
-
     public void addNether();
-
     public boolean isNetherEnabled();
-
     public boolean isEnabled();
-
     public boolean isLoaded();
-
     public boolean getAllowAnimals();
-
     public String getWorldName();
-
     public void setAllowAnimals(boolean allowanimals);
-
     public boolean getAllowMonsters();
-    
     public int getViewDistance();
-
     public void setViewDistance(int viewDistance);
-    
     public void setPVP(boolean pvpallowed);
-
     public boolean getPVP();
-
     public void setAllowMonsters(boolean allowmonsters);
-
     public void setSpawnFlags(boolean allowMonsters, boolean allowAnimals);
-
     public void setEnabled(boolean enabled);
-
-    public Configuration getConfiguration();
+    public FileConfiguration getConfiguration();
 }

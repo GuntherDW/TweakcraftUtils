@@ -33,40 +33,82 @@ public class TeleportHistory {
 
     private TweakcraftUtils plugin;
     private Map<String, List<Location>> historymap = new HashMap<String, List<Location>>();
+    private Map<String, Integer> historyoffset = new HashMap<String, Integer>();
 
     public TeleportHistory(TweakcraftUtils instance) {
         this.plugin = instance;
+        this.historymap.clear();
+        this.historyoffset.clear();
     }
 
-    public Integer getRemaining(String playername) {
+    public int getRemaining(String playername) {
         if(!historymap.containsKey(playername)) {
-            return null;
+            return 0;
         } else {
             return historymap.get(playername).size();
         }
     }
 
-    public Location getLastEntry(String playername, boolean deletelast) {
-        if(plugin.getConfigHandler().enableTPBack) {
-            Location loc = null;
-            if(!historymap.containsKey(playername)) {
-                return null;
-            } else {
-                List<Location> locmap = historymap.get(playername);
-                loc = locmap.get(locmap.size()-1);
-                if(deletelast)
-                    locmap.remove(locmap.size()-1);
-                if(locmap.size()==0) {
-                    historymap.remove(playername);
-                } else {
-                    historymap.put(playername, locmap);
-                }
-            }
-            return loc;
+    public boolean atOrigin(String player) {
+        if(!historymap.containsKey(player)) return true;
+        int size = historymap.get(player).size()-1;
+        int position = 0;
+        if(historyoffset.containsKey(player)) { Integer i = historyoffset.get(player);position+=(i!=null?i:0); }
+        return position==size;
+    }
+
+    public List<Location> getHistoryList(String player) {
+        if(!historymap.containsKey(player)) return null;
+        return historymap.get(player);
+    }
+    
+    // public int get
+
+    public void setHistoryOffset(String player, Integer pos) {
+        // if(!historymap.containsKey(player))
+        System.out.println("Setting to "+pos);
+        if((pos==null || pos < 0)
+                && historyoffset.containsKey(player)) {
+            historyoffset.remove(player);
         } else {
-            return null;
+            historyoffset.put(player, pos);
         }
     }
+
+    public int getOffset(String player) {
+        int offs = -1;
+        if(historyoffset.containsKey(player)) {
+            offs = historyoffset.get(player);
+        }
+        return offs;
+    }
+
+    public Location get(String player, int position, Boolean back) {
+        if(!plugin.getConfigHandler().enableTPBack) return null;
+        if(!historymap.containsKey(player)) return null;
+        List<Location> locList = historymap.get(player);
+
+        if(position<0 || position>=locList.size()) return null;
+
+        int offset = -1;
+        int oldoffset = 0;
+        if(back!=null) {
+            offset = getOffset(player);
+            oldoffset = offset;
+            offset = offset + (back? 1 : -1);
+            setHistoryOffset(player, offset);
+        }
+
+        System.out.println("offSet : "+oldoffset + "("+getOffset(player)+") position : "+position+" size : "+locList.size());
+        int p = 0;
+        for(Location l : locList) {
+            System.out.println((p==position?" -> ": "") + l);
+            p++;
+        }
+
+        return locList.get(position);
+    }
+
 
     public void removeLast(String playername) {
         if(historymap.containsKey(playername)) {
@@ -80,14 +122,34 @@ public class TeleportHistory {
         }
     }
 
+    public void removeNext(String playername) {
+        if(historymap.containsKey(playername) && historyoffset.containsKey(playername)) {
+            List<Location> locmap = historymap.get(playername);
+            int pos = locmap.size() - getOffset(playername);
+            locmap.remove(pos);
+            if(locmap.size()==0) {
+                historymap.remove(playername);
+            } else {
+                historymap.put(playername, locmap);
+            }
+        }
+    }
+
     public void addHistory(String playername, Location loc) {
         if(plugin.getConfigHandler().enableTPBack) {
             List<Location> locmap;
-            if(loc.getY() > 128 || loc.getY() < 1) { // failsave
+            if(loc.getY() > 128 || loc.getY() < 1) { // failsafe
                 loc.setY(130);
             }
             if(historymap.containsKey(playername)) {
-                 locmap = historymap.get(playername);
+                locmap = historymap.get(playername);
+                /* if(getOffset(playername) > 0) {
+                    int pos = locmap.size()-getOffset(playername);
+                    System.out.println("removing "+pos+" to "+locmap.size());
+                    locmap.removeAll(locmap.subList(pos, locmap.size()));
+                } */
+                setHistoryOffset(playername, null);
+
                 if(!locmap.get(locmap.size()-1).equals(loc)) { // Do not save identical tpback issues
                     locmap.add(loc);
                 }
@@ -101,13 +163,27 @@ public class TeleportHistory {
 
     public void clearHistory() {
         plugin.getLogger().info("[TweakcraftUtils] Clearing complete TPBack history!");
-        historymap.clear();
+        this.historymap.clear();
+        this.historyoffset.clear();
+    }
+
+    public void clearFuture(String playername) {
+        plugin.getLogger().info("[TweakcraftUtils] Clearing TPBack future for player "+playername+"!");
+        if(historymap.containsKey(playername) && historyoffset.containsKey(playername)) {
+            List<Location> loclist = historymap.get(playername);
+            loclist.removeAll(loclist.subList(loclist.size()-getOffset(playername), loclist.size()));
+            historymap.put(playername, loclist);
+            setHistoryOffset(playername, null);
+        }
     }
 
     public void clearHistory(String playername) {
         plugin.getLogger().info("[TweakcraftUtils] Clearing TPBack history for player "+playername+"!");
         if(historymap.containsKey(playername)) {
             historymap.remove(playername);
+        }
+        if(historyoffset.containsKey(playername)) {
+            historyoffset.remove(playername);
         }
     }
 }

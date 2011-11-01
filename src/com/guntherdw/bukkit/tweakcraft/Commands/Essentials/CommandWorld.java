@@ -63,10 +63,10 @@ public class CommandWorld implements iCommand {
                         throw new PermissionsException("You don't have permission to /world to that world!");
                     }
                     else {
-                        Location oldlocation = player.getLocation();
+                        Location oldlocation = player.getLocation().clone();
                         Location toLocation = world.getSpawnLocation();
-                        String locString = "";
-                        plugin.getTelehistory().addHistory(player.getName(), oldlocation);
+                        // String locString = "";
+
                         if(plugin.getConfigHandler().enablePersistence) {
                             List<PlayerOptions> plist = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player.getName()).ieq("optionname", "worldpos").findList();
                             PlayerOptions po = null;
@@ -90,7 +90,8 @@ public class CommandWorld implements iCommand {
                             po.setOptionvalue(this.exportLocationString(player.getLocation()));
                             plugin.getDatabase().save(po);
                         }
-                        player.teleport(toLocation);
+                        if(player.teleport(toLocation))
+                            plugin.getTelehistory().addHistory(player.getName(), oldlocation);
                     }
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Can't find that world!");

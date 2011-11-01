@@ -51,7 +51,7 @@ public class CommandRain implements iCommand {
         } else if(args.length == 1 && sender instanceof Player) {
             if(args[0].equalsIgnoreCase("on") || args[0].equalsIgnoreCase("off")) {
                 boolean onoff = args[0].equalsIgnoreCase("on");
-                sender.sendMessage(ChatColor.YELLOW + "Setting weather in world!");
+                sender.sendMessage(ChatColor.YELLOW + "Setting weather in "+((Player)sender).getWorld().getName()+"!");
                 ((Player)sender).getWorld().setStorm(onoff);
             } else if(plugin.getServer().getWorld(args[0]) != null) {
 

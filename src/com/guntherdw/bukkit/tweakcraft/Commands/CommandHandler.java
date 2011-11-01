@@ -98,6 +98,7 @@ public class CommandHandler {
         commandMap.put("whois", new CommandWhois());
         commandMap.put("donotmount", new CommandDoNotMount());
         commandMap.put("eject", new CommandEject());
+        commandMap.put("afk", new CommandAFK());
         commandMap.put("getspawn", new CommandGetSpawn());
 
         /**
@@ -117,6 +118,7 @@ public class CommandHandler {
         commandMap.put("tele", new CommandTele());
         commandMap.put("tp", new CommandTp());
         commandMap.put("tpback", new CommandTPBack());
+        commandMap.put("tpforward", new CommandTPForward());
         commandMap.put("tphere", new CommandTphere());
         commandMap.put("tpoff", new CommandTpOff());
         commandMap.put("tpon", new CommandTpOn());

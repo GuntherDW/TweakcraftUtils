@@ -53,7 +53,7 @@ public class CommandDebug implements iCommand {
                 }
                 expected = Math.min(30, Math.max(1, iex));
             }
-            
+
             final World world = plugin.getServer().getWorlds().get(0);
             final double expectedTime = expected * 1000;
             final double expectedSecs = expected;

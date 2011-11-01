@@ -30,7 +30,20 @@ public class LocalPlayer {
     private boolean afk;
     private int spamcounter;
     private long lastmessagetime;
+    private String nick=null;
 
+    
+    public boolean hasNick() {
+        return nick!=null;
+    }
+    
+    public String getNick() {
+        return this.nick;
+    }
+    
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
 
     public Player getBukkitPlayer() {
         return bukkitPlayer;

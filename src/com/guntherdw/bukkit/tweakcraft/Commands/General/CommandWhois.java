@@ -124,7 +124,7 @@ public class CommandWhois implements iCommand {
 
     @Override
     public String getPermissionSuffix() {
-        return "whois";  //To change body of implemented methods use File | Settings | File Templates.
+        return "whois";
     }
 
     public Player findPlayer(String playername, TweakcraftUtils plugin) {

@@ -42,11 +42,13 @@ public class TweakcraftEntityListener extends EntityListener {
     }
 
     public void onEntityCombust(EntityCombustEvent event) {
+        if(!plugin.getConfigHandler().stopIgniteWorldGuard) return;
         Entity ent = event.getEntity();
+
         if(ent instanceof Player) {
             Player player = (Player) ent;
             if(plugin.getWorldGuard()!=null) {
-                if(plugin.getConfigHandler().stopIgniteWorldGuard && plugin.getWorldGuard().getGlobalConfiguration().hasGodMode(player)) {
+                if(plugin.getWorldGuard().getGlobalConfiguration().hasGodMode(player)) {
                     event.setCancelled(true);
                 }
             }
@@ -61,8 +63,6 @@ public class TweakcraftEntityListener extends EntityListener {
                 event.getDrops().add(new ItemStack(Material.SADDLE, 1));
             }
         }
-        
-        //b System.exit(1);
         
         if(plugin.getConfigHandler().enableExperienceOrbsHalt) {
             event.setDroppedExp(0);
