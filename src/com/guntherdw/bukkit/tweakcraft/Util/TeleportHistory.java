@@ -138,11 +138,12 @@ public class TeleportHistory {
 
                     int siz = locmap.size();
                     int pos = siz-getOffset(playername)+1;
-
-                    locmap.removeAll(locmap.subList(pos, siz));
+                    /* List<Location> toRemove = */ locmap.subList(pos, siz).clear();
+                    // locmap.en
+                    // locmap.removeAll(toRemove);
                     setHistoryOffset(playername, null);
                 }
-                if(!locmap.get(locmap.size()-1).equals(loc)) locmap.add(loc);
+                if(locmap.size()>0&&!locmap.get(locmap.size()-1).equals(loc)) locmap.add(loc);
             } else {
                 locmap = new ArrayList<Location>();
                 locmap.add(loc);
@@ -161,7 +162,10 @@ public class TeleportHistory {
         plugin.getLogger().info("[TweakcraftUtils] Clearing TPBack future for player "+playername+"!");
         if(historymap.containsKey(playername) && historyoffset.containsKey(playername)) {
             List<Location> loclist = historymap.get(playername);
-            loclist.removeAll(loclist.subList(loclist.size()-getOffset(playername), loclist.size()));
+            int size = loclist.size();
+            // loclist.removeAll();
+            /* List<Location> toRemove = */ loclist.subList(size - getOffset(playername), size).clear();
+            /* loclist.removeAll(toRemove); */
             historymap.put(playername, loclist);
             setHistoryOffset(playername, null);
         }

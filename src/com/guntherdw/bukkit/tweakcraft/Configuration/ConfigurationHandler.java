@@ -75,6 +75,7 @@ public class ConfigurationHandler {
     public boolean enableCUI = false;
     public boolean enablemod_InfDura = false;
     public boolean enableExperienceOrbsHalt = false;
+    public boolean enableTargetIgnoreAFKPlayers = false;
 
     // public PermissionsResolver.PermissionResolvingMode permissoinsResolvingMode = null;
 
@@ -198,6 +199,7 @@ public class ConfigurationHandler {
         this.enableCUI = globalconfig.getBoolean("extra.CUI", false);
         this.enablemod_InfDura = globalconfig.getBoolean("extra.mod_InfDura", false);
         this.enableExperienceOrbsHalt = globalconfig.getBoolean("extra.stopExperienceOrbs", false);
+        this.enableTargetIgnoreAFKPlayers = globalconfig.getBoolean("extra.targetIgnoreAFK", false);
         this.cancelNickChat = globalconfig.getBoolean("extra.cancelNickChat", true);
         this.extraLogging = globalconfig.getBoolean("extra.extraLogging", false);
 

@@ -139,9 +139,13 @@ public class TweakcraftUtils extends JavaPlugin {
                 player.sendRawMessage(CUIPattern+"["+cm.getPrefix()+ChatColor.WHITE+"]");
         }
     }
-    
+
     public LocalPlayer wrapPlayer(Player player) {
-        return wrapPlayer(player.getName());
+        LocalPlayer p = this.wrapPlayer(player.getName());
+        if(p.getBukkitPlayerSafe()==null)
+            p.setBukkitPlayer(player);
+
+        return p;
     }
     
     public LocalPlayer wrapPlayer(String player) {
@@ -311,6 +315,20 @@ public class TweakcraftUtils extends JavaPlugin {
         // not found, just return partOfName
         return nick;
     }
+    
+    /* public String getDisplayName(String name) {
+        return this.getNickWithColors(name);
+    } */
+    
+    public Player getPlayer(String nick, boolean findNick) {
+        Player p = findNick?getPlayerByNick(nick):null;
+        if(p==null) p = this.getServer().getPlayerExact(nick);
+        return p;
+    }
+    
+    public Player getPlayerByNick(String nick) {
+        return playerListener.findPlayerByNick(nick, true);
+    }
 
     public List<Player> findPlayerasPlayerList(String partOfName) {
         // Go for the nicks first!
@@ -350,6 +368,7 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN,         playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET,          entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH,           entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD,           worldListener , Priority.Normal, this);
 

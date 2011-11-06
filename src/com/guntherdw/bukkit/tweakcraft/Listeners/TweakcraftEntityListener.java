@@ -18,15 +18,13 @@
 
 package com.guntherdw.bukkit.tweakcraft.Listeners;
 
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityCombustEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityListener;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -39,6 +37,17 @@ public class TweakcraftEntityListener extends EntityListener {
 
     public TweakcraftEntityListener(TweakcraftUtils instance) {
         this.plugin = instance;
+    }
+
+    public void onEntityTarget(EntityTargetEvent event) {
+        if(!plugin.getConfigHandler().enableTargetIgnoreAFKPlayers) return;
+        if(event.isCancelled()) return;
+        if(!(event.getTarget() instanceof Player)) return;
+        LocalPlayer lp = plugin.wrapPlayer((Player) event.getTarget());
+        if(event.getReason().equals(EntityTargetEvent.TargetReason.CLOSEST_PLAYER)
+                || event.getReason().equals(EntityTargetEvent.TargetReason.RANDOM_TARGET)) {
+            if(lp.isAfk()) event.setCancelled(true);
+        }
     }
 
     public void onEntityCombust(EntityCombustEvent event) {
@@ -63,7 +72,7 @@ public class TweakcraftEntityListener extends EntityListener {
                 event.getDrops().add(new ItemStack(Material.SADDLE, 1));
             }
         }
-        
+
         if(plugin.getConfigHandler().enableExperienceOrbsHalt) {
             event.setDroppedExp(0);
         }
@@ -72,7 +81,7 @@ public class TweakcraftEntityListener extends EntityListener {
     public void onExplosionPrime(ExplosionPrimeEvent event) {
         if(event.isCancelled())
             return;
-        
+
         Entity ent = event.getEntity();
         if(ent != null)
         {

@@ -28,7 +28,7 @@ public abstract class Permissions {
     public abstract String getUserPrefix(String player);
 
     public String getUserPrefix(String world, Player player)
-        {return getPrimaryUserGroup(world, player.getName());}
+        {return getUserPrefix(world, player.getName());}
 
     public abstract String getUserPrefix(String world, String player);
 

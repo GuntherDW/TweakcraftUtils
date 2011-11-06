@@ -151,14 +151,18 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
-    public Player findPlayerByNick(String nick) {
+    public Player findPlayerByNick(String nick) { return findPlayerByNick(nick, false); }
+    
+    public String findPlayerNameByNick(String nick) { return findPlayerNameByNick(nick, false); }
+    
+    public Player findPlayerByNick(String nick, boolean exact) {
 
         String p = null;
         String n = null;
 
         for(String part : nicks.keySet()) {
             n = nicks.get(part);
-            if(n.toLowerCase().contains(nick.toLowerCase())) {
+            if(exact ? n.toLowerCase().equals(nick.toLowerCase()) : n.toLowerCase().contains(nick.toLowerCase())) {
                 p = part;
             }
         }
@@ -183,15 +187,16 @@ public class TweakcraftPlayerListener extends PlayerListener {
         return playerlijst;
     }
 
-    public String findPlayerNameByNick(String nick) {
+    public String findPlayerNameByNick(String nick, boolean strict) {
 
         String p = null;
         String n = null;
 
         for(String part : nicks.keySet()) {
             n = nicks.get(part);
-            if(n.toLowerCase().contains(nick.toLowerCase())) {
+            if(strict? n.toLowerCase().equals(nick.toLowerCase()) : n.toLowerCase().contains(nick.toLowerCase())) {
                 p = part;
+                if(strict) return p;
             }
         }
 
@@ -276,7 +281,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String ldisplayname = displayName.substring(0, displayName.length()-2);
         player.setDisplayName(displayName);
         if(ldisplayname.length()<=16)
-            player.setPlayerListName(ldisplayname);
+            try{ player.setPlayerListName(ldisplayname); } catch(IllegalArgumentException ex) { ; }
 
         ChatHandler ch = plugin.getChathandler();
         ChatMode cm = ch.getPlayerChatMode(player);
@@ -409,7 +414,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         String ldisplayname = displayName.substring(0, displayName.length()-2);
         p.setDisplayName(displayName);
         if(ldisplayname.length()<=16)
-            p.setPlayerListName(ldisplayname);
+            try{ p.setPlayerListName(ldisplayname); } catch(IllegalArgumentException ex) { ; }
         // p.sendMessage("Ohai thar!");
         for (String m : plugin.getMOTD()) {
             p.sendMessage(m);

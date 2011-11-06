@@ -26,9 +26,6 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -69,20 +66,9 @@ public class CraftIRCAdminEndPoint implements EndPoint {
         if(event.equals("chat") || event.equals("action")) {
             String pname = relayedMessage.getField("sender");
             if(pname!=null) {
-                Player p = plugin.getServer().getPlayer(pname);
-                OfflinePlayer op = null;
-                boolean offline = p==null;
-                if(offline) {
-                    op = plugin.getServer().getOfflinePlayer(pname);
-                }
-
-                boolean found = p!=null || op!=null;
-                if(found) {
-                    World w = offline?plugin.getServer().getWorlds().get(0):p.getWorld();
-                    String name = offline?op.getName():p.getName();
-                    relayedMessage.setField("prefix", plugin.getPermissions().getResolver().getUserPrefix(w.getName(), name));
-                    relayedMessage.setField("suffix", plugin.getPermissions().getResolver().getUserSuffix(w.getName(), name));
-                }
+                String name = relayedMessage.getField("sender");
+                String nick = plugin.getPlayerListener().findPlayerNameByNick(name, true);
+                relayedMessage.setField("sender", plugin.getNickWithColors(nick==null?name:nick));
             }
             ac.broadcastMessage(relayedMessage.getMessage(this));
         }

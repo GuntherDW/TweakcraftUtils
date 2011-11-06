@@ -68,8 +68,9 @@ public class CommandTC implements iCommand {
                     String displayName = plugin.getNickWithColors(p.getName());
                     String ldisplayname = displayName.substring(0, displayName.length()-2);
                     p.setDisplayName(displayName);
-                    if(ldisplayname.length()<=16)
-                        p.setPlayerListName(ldisplayname);
+                    if(ldisplayname.length()<=16) {
+                        try{ p.setPlayerListName(ldisplayname); } catch(IllegalArgumentException ex) { ; }
+                    }
                 }
                 plugin.getPlayerListener().reloadInvisTable();
                 /**

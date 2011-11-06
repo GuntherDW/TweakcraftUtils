@@ -29,6 +29,8 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 
 /**
  * @author GuntherDW
@@ -58,6 +60,22 @@ public class CommandTPBack implements iCommand {
                             player.sendMessage(ChatColor.YELLOW + "You don't have any tpback lines!");
                         }
                         go=false;
+                    } else if(args[0].equalsIgnoreCase("debug")) {
+                        int pos = 0;
+                        String s = "";
+                        int offs = plugin.getTelehistory().getOffset(player.getName());
+                        List<Location> loclist = plugin.getTelehistory().getHistoryList(player.getName());
+                        if(loclist!=null) {
+                            // player.sendMessage(ChatColor.GOLD + "offs : "+offs);
+                            if(offs==-1) offs = loclist.size()-1; else offs = loclist.size()-offs;
+                            // player.sendMessage(ChatColor.GOLD +"size : "+loclist.size());
+                            for(Location l : loclist) {
+                                s = "world: "+l.getWorld().getName()+" x:"+Math.floor(l.getX())+" y:"+Math.floor(l.getY())+" z:"+Math.floor(l.getZ());
+                                player.sendMessage( (pos==offs?"--> ":"") +ChatColor.GOLD + s);
+                                pos++;
+                            }
+                        }
+                        go = false;
                     }
                 }
 

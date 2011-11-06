@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Packages;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -44,8 +45,17 @@ public class LocalPlayer {
     public void setNick(String nick) {
         this.nick = nick;
     }
+    
+    public Player getBukkitPlayerSafe() {
+        return bukkitPlayer;
+    }
 
     public Player getBukkitPlayer() {
+        if(this.bukkitPlayer == null) {
+            Player p = Bukkit.getPlayerExact(player);
+            if(p!=null) bukkitPlayer=p;
+        }
+            
         return bukkitPlayer;
     }
 
