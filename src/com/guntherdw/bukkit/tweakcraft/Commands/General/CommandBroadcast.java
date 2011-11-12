@@ -67,10 +67,8 @@ public class CommandBroadcast implements iCommand {
         if (args.length < 1) {
             throw new CommandUsageException("You did not specify a message!");
         } else {
-            for (String m : args) {
-                message += m + " ";
-            }
-            message = message.substring(0, message.length() - 1);
+            for(int x = 0; x < args.length; x++)
+                message += args[x] + (x<args.length?" ":"");
         }
 
 

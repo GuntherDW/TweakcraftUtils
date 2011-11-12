@@ -98,7 +98,6 @@ public class TweakcraftUtils extends JavaPlugin {
     private Object circendpoint = null;
     private Object circadminendpoint = null;
 
-    
     private List<String> donottplist;
     private List<String> MOTDLines;
 
@@ -110,6 +109,7 @@ public class TweakcraftUtils extends JavaPlugin {
     private List<Player> mod_InfDuraplayers;
     public String ToolDuraPattern = "§1§1§1§1";
 
+    public static TweakcraftUtils instance = null;
 
     public File datafolder;
     public Map<String, String> playerReplyDB;
@@ -119,13 +119,22 @@ public class TweakcraftUtils extends JavaPlugin {
     public List<Player> getMod_InfDuraplayers() {
         return mod_InfDuraplayers;
     }
-    
+
     public PermissionsResolver getPermissions() {
         return this.permsResolver;
     }
-    
+
     public List<Player> getCUIPlayers() {
         return cuiPlayers;
+    }
+
+    public static TweakcraftUtils getInstance() {
+        /* Do not create a new instance, could be dangerous! */
+        /* if(instance==null)
+            instance = new TweakcraftUtils(); */
+
+        return instance;
+        // return instance;
     }
 
     public void sendCUIChatMode(Player player) {
@@ -142,17 +151,17 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public LocalPlayer wrapPlayer(Player player) {
         LocalPlayer p = this.wrapPlayer(player.getName());
-        if(p.getBukkitPlayerSafe()==null)
+        if(p.getBukkitPlayer()==null)
             p.setBukkitPlayer(player);
 
         return p;
     }
-    
+
     public LocalPlayer wrapPlayer(String player) {
-        if(!this.localPlayers.containsKey(player))
-            this.localPlayers.put(player, new LocalPlayer(player));
-        
-        return this.localPlayers.get(player);
+        if(!this.localPlayers.containsKey(player.toLowerCase()))
+            this.localPlayers.put(player.toLowerCase(), new LocalPlayer(player));
+
+        return this.localPlayers.get(player.toLowerCase());
     }
 
     public void sendCUIHandShake(Player player) {
@@ -160,7 +169,7 @@ public class TweakcraftUtils extends JavaPlugin {
             player.sendRawMessage(CUIPattern); // HANDSHAKE
         }
     }
-    
+
     public void sendToolDuraMode(Player player) {
         if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
         {
@@ -169,12 +178,12 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void sendToolDuraMode(Player player, World to) {
-            if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
-            {
-                player.sendRawMessage(ToolDuraPattern+to.getToolDurability());
-            }
+        if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
+        {
+            player.sendRawMessage(ToolDuraPattern+to.getToolDurability());
         }
-    
+    }
+
     public void sendmod_InfDuraHandshake(Player player) {
         if(getConfigHandler().enablemod_InfDura) {
             player.sendRawMessage(ToolDuraPattern);
@@ -262,31 +271,31 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void setupDatabase() {
-         try {
-             getDatabase().find(PlayerInfo.class).findRowCount();
-             getDatabase().find(PlayerOptions.class).findRowCount();
-             if(configHandler.useTweakBotSeen)
-                 getDatabase().find(PlayerHistoryInfo.class).findRowCount();
-         } catch (PersistenceException ex) {
-             log.info("[TweakcraftUtils] Installing database for " + getDescription().getName() + " due to first time usage");
-             if(configHandler.useTweakBotSeen)
-                 log.info("[TweakcraftUtils] Also creating the TweakBot !seen helpen table");
-             installDDL();
-         }
-         databaseloaded = true;
+        try {
+            getDatabase().find(PlayerInfo.class).findRowCount();
+            getDatabase().find(PlayerOptions.class).findRowCount();
+            if(configHandler.useTweakBotSeen)
+                getDatabase().find(PlayerHistoryInfo.class).findRowCount();
+        } catch (PersistenceException ex) {
+            log.info("[TweakcraftUtils] Installing database for " + getDescription().getName() + " due to first time usage");
+            if(configHandler.useTweakBotSeen)
+                log.info("[TweakcraftUtils] Also creating the TweakBot !seen helpen table");
+            installDDL();
+        }
+        databaseloaded = true;
     }
 
     public String listToString(List<String> lijst) {
-        String res = "";
-        if (lijst.size() != 0) {
-            for (String s : lijst) {
-                res += s + ",";
+        StringBuilder builder = new StringBuilder();
+        int c=0;
+        if(lijst.size()!=0) {
+            while(c<lijst.size()) {
+                builder.append(lijst.get(c));
+                if(c!=lijst.size()-1) builder.append(",");
+                c++;
             }
-            res = res.substring(0, res.length() - 1);
-        } else {
-            res = "";
         }
-        return res;
+        return builder.toString();
     }
 
     private List<String> toList(String str) {
@@ -302,6 +311,14 @@ public class TweakcraftUtils extends JavaPlugin {
         return result;
     }
 
+    public static List<Player> findPlayerByNick(String part) {
+        /* return  getPlayerListener().findPlayerNameByNick(part); */
+        if(getInstance()!=null)
+            return getInstance().findPlayerasPlayerList(part);
+        else
+            return null;
+    }
+
     public Player findPlayerasPlayer(String partOfName) {
         // Go for the nicks first!
         Player nick = playerListener.findPlayerByNick(partOfName);
@@ -315,17 +332,17 @@ public class TweakcraftUtils extends JavaPlugin {
         // not found, just return partOfName
         return nick;
     }
-    
+
     /* public String getDisplayName(String name) {
         return this.getNickWithColors(name);
     } */
-    
+
     public Player getPlayer(String nick, boolean findNick) {
         Player p = findNick?getPlayerByNick(nick):null;
         if(p==null) p = this.getServer().getPlayerExact(nick);
         return p;
     }
-    
+
     public Player getPlayerByNick(String nick) {
         return playerListener.findPlayerByNick(nick, true);
     }
@@ -360,12 +377,13 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT,            playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK,            playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT,            playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT,        playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT,        playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT,        playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS,        playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_PORTAL,          playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN,         playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_PORTAL,          playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN,         playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD,   playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET,          entityListener, Priority.Normal, this);
@@ -435,7 +453,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return lijst;
     }
 
-    
+
     public void setupCraftIRC() {
         if(this.getConfigHandler().enableIRC) {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
@@ -527,7 +545,7 @@ public class TweakcraftUtils extends JavaPlugin {
         /// return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
         return this.getPermissions().getResolver().getUserPrefix(player) + nick + ChatColor.WHITE;
     }
-    
+
     public String getNick(String player) {
         String nick = playerListener.getNick(player);
         String realname = player;
@@ -555,6 +573,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public void onEnable() {
         pdfFile = this.getDescription();
+        instance = this;
 
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
@@ -562,7 +581,7 @@ public class TweakcraftUtils extends JavaPlugin {
         configHandler.reloadConfig();
         this.cuiPlayers = new ArrayList<Player>();
         this.mod_InfDuraplayers = new ArrayList<Player>();
-        
+
         this.setupWorldGuard();
         this.setupCraftIRC();
         this.setupZones();
@@ -584,11 +603,11 @@ public class TweakcraftUtils extends JavaPlugin {
         playerListener.reloadInvisTable();
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }
-    
+
     public EndPoint getEndPoint() {
         return (EndPoint) circendpoint;
     }
-    
+
     public EndPoint getAdminEndPoint() {
         return (EndPoint) circadminendpoint;
     }
@@ -598,6 +617,7 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void onDisable() {
+        instance = null;
         log.info("["+pdfFile.getName()+"] Shutting down!");
         // this.getDatabase().
     }

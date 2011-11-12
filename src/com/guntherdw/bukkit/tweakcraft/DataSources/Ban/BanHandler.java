@@ -69,11 +69,8 @@ public class BanHandler {
                 }
             }
             banfilereader.close();
-        } catch (FileNotFoundException e) {
-            plugin.getLogger().info("[TweakcraftUtils] Ban file not found!");
-        } catch (IOException e) {
-
-        }
+        } catch (FileNotFoundException e) { plugin.getLogger().warning("[TweakcraftUtils] Ban file not found!");
+        } catch (IOException e) { plugin.getLogger().info("[TweakcraftUtils] Ban file I/O error!"); }
         if(plugin.getConfigHandler().enablePersistence) {
             List<PlayerOptions> popts = plugin.getDatabase(). find(PlayerOptions.class).where().ieq("optionname", "ban").findList();
             for(PlayerOptions po : popts) {

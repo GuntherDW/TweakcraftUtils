@@ -76,6 +76,7 @@ public class ConfigurationHandler {
     public boolean enablemod_InfDura = false;
     public boolean enableExperienceOrbsHalt = false;
     public boolean enableTargetIgnoreAFKPlayers = false;
+    public boolean enableWorldMOTD = false;
 
     // public PermissionsResolver.PermissionResolvingMode permissoinsResolvingMode = null;
 
@@ -135,7 +136,6 @@ public class ConfigurationHandler {
         this.enableRespawnHook = globalconfig.getBoolean("respawn.enableHook", false);
         this.enableRespawnHeal = globalconfig.getBoolean("respawn.healOnRespawn", false);
 
-
         this.extrahelpplugin = new ArrayList<String>();
         this.enableGroupChat = globalconfig.getBoolean("ChatMode.GroupChat", true);
         this.enablePersistence = globalconfig.getBoolean("Persistence.enabled", true);
@@ -159,26 +159,6 @@ public class ConfigurationHandler {
             }
         }
         this.cancelNetherPortal = globalconfig.getBoolean("worlds.cancelportal", false);
-        /* this.enableBukkitPermissions = globalconfig.getBoolean("Permissions.BukkitPerms", false);
-        if(this.enableBukkitPermissions)
-            plugin.getLogger().warning("[TweakcraftUtils] Enabling Bukkit perms resolving, this is an experimental feature, expect bugs!"); */
-        String presolver = globalconfig.getString("Permissions.resolver", null);
-        if(presolver==null) presolver = "permissions";
-
-        /* This is done fully automatic now! */
-        /* if(presolver.equals("permissions")) {
-            permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.NIJIPERMS;
-        } else if(presolver.equals("permissionsex")) {
-            permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.PERMISSIONSEX;
-        } else if(presolver.equals("bukkitperms")) {
-            permissoinsResolvingMode = PermissionsResolver.PermissionResolvingMode.BUKKIT;
-        }
-        plugin.getPermissionsResolver().setMode(permissoinsResolvingMode);
-        
-        if(permissoinsResolvingMode!= PermissionsResolver.PermissionResolvingMode.NIJIPERMS) {
-            plugin.getLogger().warning("[TweakcraftUtils] Other permissions resolver selected than Nijokun's Permissiosn plugin, this is experimental!");
-        } */
-
 
         this.extrahelphide = globalconfig.getStringList("extrahelp.hide", null);
         if (globalconfig.getBoolean("PlayerHistory.enabled", false)) {
@@ -202,6 +182,8 @@ public class ConfigurationHandler {
         this.enableTargetIgnoreAFKPlayers = globalconfig.getBoolean("extra.targetIgnoreAFK", false);
         this.cancelNickChat = globalconfig.getBoolean("extra.cancelNickChat", true);
         this.extraLogging = globalconfig.getBoolean("extra.extraLogging", false);
+
+        this.enableWorldMOTD = globalconfig.getBoolean("worlds.worldMOTD", false);
 
         this.enableSpamControl = globalconfig.getBoolean("spamcontrol.enable", false);
         if(this.enableSpamControl) {
@@ -248,5 +230,9 @@ public class ConfigurationHandler {
 
     public Map<String, LockdownLocation> getLockdowns() {
         return lockdowns;
+    }
+    
+    public String getDirSeperator() {
+        return System.getProperty("file.separator");
     }
 }

@@ -45,7 +45,7 @@ public class CommandTp implements iCommand {
         if(p1==null) p1 = ap.getString("f", null);
         String p2 = ap.getString("t", null);
 
-        String[] args = ap.getNormalArgs();
+        String[] args = ap.getUnusedArgs();
 
         if (sender instanceof Player) {
             Player player = (Player) sender;

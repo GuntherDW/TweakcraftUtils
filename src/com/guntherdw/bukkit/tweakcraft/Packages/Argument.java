@@ -25,6 +25,7 @@ public class Argument {
     private Integer id;
     private String argname;
     private Object argvalue;
+    private boolean argType; /* arg:argvalue or Flag */
     private boolean _used;
 
     public Argument(Integer position, String argname, Object argvalue) {
@@ -65,5 +66,13 @@ public class Argument {
     
     public void set_used(boolean state) {
         this._used = state;
+    }
+
+    public boolean isArgType() {
+        return argType;
+    }
+
+    public void setArgType(boolean argtype) {
+        this.argType = argtype;
     }
 }

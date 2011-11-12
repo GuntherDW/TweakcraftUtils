@@ -32,30 +32,46 @@ public class LocalPlayer {
     private int spamcounter;
     private long lastmessagetime;
     private String nick=null;
+    private boolean invisible=false;
+    private String replyTo=null;
 
-    
+    public boolean isInvisible() {
+        return this.invisible;
+    }
+
+    public void setInvisible(boolean state) {
+        this.invisible = state;
+    }
+
     public boolean hasNick() {
         return nick!=null;
     }
-    
+
     public String getNick() {
         return this.nick;
     }
-    
+
+    public String getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(String replyTo) {
+        this.replyTo = replyTo;
+    }
+
     public void setNick(String nick) {
         this.nick = nick;
     }
-    
-    public Player getBukkitPlayerSafe() {
-        return bukkitPlayer;
-    }
 
-    public Player getBukkitPlayer() {
+    public Player getBukkitPlayerSafe() {
         if(this.bukkitPlayer == null) {
             Player p = Bukkit.getPlayerExact(player);
             if(p!=null) bukkitPlayer=p;
         }
-            
+        return bukkitPlayer;
+    }
+
+    public Player getBukkitPlayer() {
         return bukkitPlayer;
     }
 

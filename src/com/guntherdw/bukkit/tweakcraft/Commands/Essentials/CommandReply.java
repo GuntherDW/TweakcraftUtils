@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,26 +37,26 @@ public class CommandReply implements iCommand {
         if (sender instanceof Player) {
             if (args.length > 0) {
                 Player player = (Player) sender;
-                String replyto = plugin.getPlayerReply(((Player) sender).getName());
-                // String replyto = player.getName();
-
+                LocalPlayer lp = plugin.wrapPlayer(player);
+                String replyTo = lp.getReplyTo();
                 String message = "";
-                for (int x = 0; x < args.length; x++) {
-                    message += args[x] + " ";
-                }
-                if (message.length() > 1) {
-                    message = message.substring(0, message.length() - 1);
-                }
-                if (replyto == null)
+
+                if (replyTo == null)
                     throw new CommandException("Can't find the player to reply to!");
 
-                Player playerto = plugin.findPlayerasPlayer(replyto);
+                for (int x = 0; x < args.length; x++) {
+                    message += args[x] + (x<args.length?" ":"");
+                }
+
+                LocalPlayer lpTo = plugin.wrapPlayer(replyTo);
+                Player playerto = lp.getBukkitPlayerSafe();
                 if (playerto == null)
                     throw new CommandException("That player is no longer online!");
 
                 sender.sendMessage("[Me -> " + playerto.getDisplayName() + "] " + message);
                 playerto.sendMessage("[" + player.getDisplayName() + " -> Me] " + message);
-                plugin.setPlayerReply(playerto.getName(), player.getName());
+                lpTo.setReplyTo(player.getName());
+                // plugin.setPlayerReply(playerto.getName(), player.getName());
                 plugin.getLogger().info("[TweakcraftUtils] (MSG) " + player.getName() + " -> " + playerto.getName() + " : " + message);
             } else if (args.length == 0) {
                 throw new CommandUsageException("I need a message!");

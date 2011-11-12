@@ -21,7 +21,10 @@ package com.guntherdw.bukkit.tweakcraft.Worlds;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
+import org.bukkit.util.config.Configuration;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ public class WorldManager {
     private Map<String, iWorld> worlds;
     private TweakcraftUtils plugin;
     private int defaultViewDistance;
+    private Configuration globalConfig = null;
 
     public Map<String, iWorld> getWorlds() {
         return worlds;
@@ -42,6 +46,30 @@ public class WorldManager {
     public int getDefaultViewDistance() {
         return plugin.getServer().getViewDistance();
     }
+    
+    
+    public void loadMotd(String worldname) {
+        if(!plugin.getConfigHandler().enableWorldMOTD || !worlds.containsKey(worldname)) return;
+        
+        try{
+            File motd = new File(plugin.getDataFolder()+plugin.getConfigHandler().getDirSeperator()+"motd-"+worldname+".txt");
+            if(!motd.exists()) return;
+            BufferedReader fr = new BufferedReader(new FileReader(motd));
+            String line = null;
+            List<String> lines = new ArrayList<String>();
+            while((line = fr.readLine()) != null) {
+                lines.add(line.replace('&', '§'));
+            }
+
+            iWorld w = worlds.get(worldname);
+            w.setMOTD(lines.toArray(new String[0]));
+            plugin.getLogger().info("[TweakcraftUtils] Loaded MOTD for world "+worldname+"!");
+        } catch (FileNotFoundException e) {
+            plugin.getLogger().warning("[TweakcraftUtils] Couldn't find MOTD for world "+worldname+"!");
+        } catch (IOException e) {
+            plugin.getLogger().warning("[TweakcraftUtils] Error while reading MOTD for world "+worldname+"!");
+        }
+    }
 
     public WorldManager(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -49,10 +77,13 @@ public class WorldManager {
     }
 
     public void setupWorlds() {
+
+        if(globalConfig==null) globalConfig = plugin.getConfigHandler().getGlobalconfig();
+
         boolean netherWorldOnline = false;
-        List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
+        List<String> extraworlds = globalConfig.getKeys("worlds.extraworlds");
         
-        Boolean worldInfDura = plugin.getConfiguration().getBoolean("worlds.durability", true);
+        Boolean worldInfDura = globalConfig.getBoolean("worlds.durability", true);
         int defaultviewdistance = this.getDefaultViewDistance();
         
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
@@ -67,8 +98,8 @@ public class WorldManager {
                 netherWorldOnline = true;
         }
         
-        if (netherWorldOnline == false && plugin.getConfiguration().getBoolean("worlds.enablenether", false)) {
-            String netherfolder = plugin.getConfiguration().getString("worlds.netherfolder", "nether");
+        if (netherWorldOnline == false && globalConfig.getBoolean("worlds.enablenether", false)) {
+            String netherfolder = globalConfig.getString("worlds.netherfolder", "nether");
             if (!netherfolder.equalsIgnoreCase("")) {
                 plugin.getLogger().info("[TweakcraftUtils] Loading the netherworld!");
                 worlds.put(netherfolder, new TweakWorld(this, netherfolder, Environment.NETHER, true));
@@ -76,27 +107,25 @@ public class WorldManager {
                 plugin.getLogger().info("[TweakcraftUtils] The nether's folder name can't be empty!");
             }
         }
-        // List<String> extraworlds = plugin.getConfiguration().getKeys("worlds.extraworlds");
-
 
         for (String node : extraworlds) {
             if (!worlds.containsKey(node)) {
 
-                String env = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".environment", "");
-                boolean enabled = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".enabled", false);
-                boolean pvp = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".pvp", false);
-                boolean monsters = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".monsters", true);
-                boolean animals = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".animals", true);
-                boolean durability = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".durability", true);
-                boolean addnether = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".addnether", false);
-                boolean spawnchunksactive = plugin.getConfiguration().getBoolean("worlds.extraworlds." + node + ".spawnchunksactive", false);
-                String chunkGen = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".chunkGenerator", null);
-                int viewdistance = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
-                int portalSearchRadius = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
-                long seed = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".seed", -1);
-                long nseed = plugin.getConfiguration().getInt("worlds.extraworlds." + node + ".netherseed", -1);
+                String env = globalConfig.getString("worlds.extraworlds." + node + ".environment", "");
+                boolean enabled = globalConfig.getBoolean("worlds.extraworlds." + node + ".enabled", false);
+                boolean pvp = globalConfig.getBoolean("worlds.extraworlds." + node + ".pvp", false);
+                boolean monsters = globalConfig.getBoolean("worlds.extraworlds." + node + ".monsters", true);
+                boolean animals = globalConfig.getBoolean("worlds.extraworlds." + node + ".animals", true);
+                boolean durability = globalConfig.getBoolean("worlds.extraworlds." + node + ".durability", true);
+                boolean addnether = globalConfig.getBoolean("worlds.extraworlds." + node + ".addnether", false);
+                boolean spawnchunksactive = globalConfig.getBoolean("worlds.extraworlds." + node + ".spawnchunksactive", false);
+                String chunkGen = globalConfig.getString("worlds.extraworlds." + node + ".chunkGenerator", null);
+                int viewdistance = globalConfig.getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
+                int portalSearchRadius = globalConfig.getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
+                long seed = globalConfig.getInt("worlds.extraworlds." + node + ".seed", -1);
+                long nseed = globalConfig.getInt("worlds.extraworlds." + node + ".netherseed", -1);
                 
-                String gameMode = plugin.getConfiguration().getString("worlds.extraworlds." + node + ".gamemode", null);
+                String gameMode = globalConfig.getString("worlds.extraworlds." + node + ".gamemode", null);
                 GameMode gm = gameMode!=null?GameMode.valueOf(gameMode.toUpperCase()):null;
 
                 /* if(gameMode==null || gameMode.equals("")) {
@@ -145,7 +174,7 @@ public class WorldManager {
                     }
 
                     worlds.put(node, tw);
-
+                    this.loadMotd(tw.getName());
                 } else {
                     plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
                 }

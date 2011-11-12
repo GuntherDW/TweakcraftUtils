@@ -39,9 +39,12 @@ public class CommandTele implements iCommand {
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         boolean isPlayer = false;
         ArgumentParser ap = new ArgumentParser(realargs);
+        Integer x = ap.getInteger("x", null);
+        Integer y = ap.getInteger("y", null);
+        Integer z = ap.getInteger("z", null);
         String w = ap.getString("w", null);
         String p = ap.getString("p", null);
-        String[] args = ap.getNormalArgs();
+        String[] args = ap.getUnusedArgs();
         if (sender instanceof Player) {
             isPlayer = true;
             if (!plugin.check((Player) sender, "tele"))
@@ -52,9 +55,9 @@ public class CommandTele implements iCommand {
 
 
         // Player player = (Player) sender;
-        Integer x = null;
+        /* Integer x = null;
         Integer y = null;
-        Integer z = null;
+        Integer z = null; */
         World world = null;
 
         if(args.length == 0) {
@@ -98,10 +101,10 @@ public class CommandTele implements iCommand {
             }
         } else {
             try{
-                x = Integer.parseInt(args[0]);
-                z = Integer.parseInt(args[1]);
+                if (x==null) x = Integer.parseInt(args[0]);
+                if (z==null) z = Integer.parseInt(args[1]);
                 if (args.length == 3) {
-                    y = Integer.parseInt(args[2]);
+                    if (y==null) y = Integer.parseInt(args[2]);
                 } else {
                     y = 129;
                 }

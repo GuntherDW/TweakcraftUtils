@@ -27,6 +27,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
+import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -71,6 +72,10 @@ public class CommandTC implements iCommand {
                     if(ldisplayname.length()<=16) {
                         try{ p.setPlayerListName(ldisplayname); } catch(IllegalArgumentException ex) { ; }
                     }
+                }
+                WorldManager wm = plugin.getworldManager();
+                for(String worldname : wm.getWorlds().keySet()) {
+                    wm.loadMotd(worldname);
                 }
                 plugin.getPlayerListener().reloadInvisTable();
                 /**

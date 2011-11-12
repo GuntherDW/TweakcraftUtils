@@ -55,5 +55,8 @@ public interface iWorld {
     public void setAllowMonsters(boolean allowmonsters);
     public void setSpawnFlags(boolean allowMonsters, boolean allowAnimals);
     public void setEnabled(boolean enabled);
+    public void setMOTD(String[] lines);
+    public String[] getMOTD();
+    public boolean hasWorldMOTD();
     public FileConfiguration getConfiguration();
 }

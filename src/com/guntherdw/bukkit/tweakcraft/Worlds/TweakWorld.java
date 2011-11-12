@@ -50,6 +50,7 @@ public class TweakWorld implements iWorld {
     private boolean pvp = true;
     private int viewdistance = 10;
     private GameMode gamemode = null;
+    private String[] motd;
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean enabled) {
         this.wm = wm;
@@ -208,25 +209,16 @@ public class TweakWorld implements iWorld {
                                     fg.setNormal(normal);
                                     fg.setToplayer(toplayer);
                                     fg.assignWorldManager(wm);
-                                    /* if(seed!=null)
-                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, seed, fg);
-                                    else
-                                        world = wm.getPlugin().getServer().createWorld(worldName, environment, fg); */
-                                    // world = wm.getPlugin().getServer().createWorld()
                                     worldCreator.generator(fg);
-
                                 } else {
-                                    /* if(seed!=null)
-                                         world = wm.getPlugin().getServer().createWorld(worldName, environment, seed, cg); */
-                                    // else
                                     worldCreator.generator(cg);
                                 }
                             } else {
-                                this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world"+worldName+"! "+chunkGen+" isn't a Chunk Generator class!");
+                                this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world "+worldName+"! "+chunkGen+" isn't a Chunk Generator class!");
                             }
                         }
                     } catch (ClassNotFoundException e) {
-                        this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world"+worldName+"! Can't find class with name "+chunkGen);
+                        this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world "+worldName+"! Can't find class with name "+chunkGen);
                         enabled=false;
                     } catch (InstantiationException e) {
                         enabled=false;
@@ -362,6 +354,18 @@ public class TweakWorld implements iWorld {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public void setMOTD(String[] lines) {
+        this.motd = lines;
+    }
+
+    public String[] getMOTD() {
+        return this.motd;
+    }
+
+    public boolean hasWorldMOTD() {
+        return this.motd!=null && this.motd.length>0;
     }
 
     public void setPVP(boolean pvpallowed) {

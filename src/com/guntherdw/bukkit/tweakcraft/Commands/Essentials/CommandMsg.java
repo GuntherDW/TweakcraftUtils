@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -50,18 +51,18 @@ public class CommandMsg implements iCommand {
 
             String message = "";
             for (int x = 1; x < args.length; x++) {
-                message += args[x] + " ";
-            }
-            if (message.length() > 1) {
-                message = message.substring(0, message.length() - 1);
+                message += args[x] + (x<args.length?" ":"");
             }
             if (playerto == null)
                 throw new CommandException("Can't find that player!");
 
             sender.sendMessage("[Me -> " + playerto.getDisplayName() + "] " + message);
             playerto.sendMessage("[" + senderName + " -> Me] " + message);
-            if (sender instanceof Player)
-                plugin.setPlayerReply(playerto.getName(), ((Player) sender).getName());
+            if (sender instanceof Player) {
+                LocalPlayer lp = plugin.wrapPlayer((Player)sender);
+                lp.setReplyTo(playerto.getName());
+                // plugin.setPlayerReply(playerto.getName(), ((Player) sender).getName());
+            }
 
             plugin.getLogger().info("[TweakcraftUtils] (MSG) " + clearName + " -> " + playerto.getName() + " : " + message);
         } else if (args.length == 1) {

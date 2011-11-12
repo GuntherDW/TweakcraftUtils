@@ -43,7 +43,7 @@ public class CommandGetSpawn implements iCommand {
         ArgumentParser ap = new ArgumentParser(realargs);
         String world = ap.getString("w", null);
         String player = ap.getString("p", null);
-        String[] args = ap.getNormalArgs();
+        String[] args = ap.getUnusedArgs();
 
         String permString = this.getPermissionSuffix();
 

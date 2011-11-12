@@ -40,9 +40,9 @@ public class TweakcraftEntityListener extends EntityListener {
     }
 
     public void onEntityTarget(EntityTargetEvent event) {
-        if(!plugin.getConfigHandler().enableTargetIgnoreAFKPlayers) return;
-        if(event.isCancelled()) return;
-        if(!(event.getTarget() instanceof Player)) return;
+        if(!plugin.getConfigHandler().enableTargetIgnoreAFKPlayers
+                || event.isCancelled() || !(event.getTarget() instanceof Player)) return;
+        
         LocalPlayer lp = plugin.wrapPlayer((Player) event.getTarget());
         if(event.getReason().equals(EntityTargetEvent.TargetReason.CLOSEST_PLAYER)
                 || event.getReason().equals(EntityTargetEvent.TargetReason.RANDOM_TARGET)) {
@@ -56,10 +56,8 @@ public class TweakcraftEntityListener extends EntityListener {
 
         if(ent instanceof Player) {
             Player player = (Player) ent;
-            if(plugin.getWorldGuard()!=null) {
-                if(plugin.getWorldGuard().getGlobalConfiguration().hasGodMode(player)) {
-                    event.setCancelled(true);
-                }
+            if(plugin.getWorldGuard()!=null&&plugin.getWorldGuard().getGlobalConfiguration().hasGodMode(player)) {
+                event.setCancelled(true);
             }
         }
     }
@@ -79,17 +77,11 @@ public class TweakcraftEntityListener extends EntityListener {
     }
 
     public void onExplosionPrime(ExplosionPrimeEvent event) {
-        if(event.isCancelled())
-            return;
+        if(event.isCancelled()) return;
 
         Entity ent = event.getEntity();
-        if(ent != null)
-        {
-            if(!ent.isEmpty()) {
-                if(ent.getPassenger() instanceof Player) {
-                    event.setCancelled(true);
-                }
-            }
+        if(ent != null && !ent.isEmpty() && ent.getPassenger() instanceof Player) {
+            event.setCancelled(true);
         }
     }
 

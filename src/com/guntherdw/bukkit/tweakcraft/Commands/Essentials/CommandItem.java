@@ -57,7 +57,7 @@ public class CommandItem implements iCommand {
         ArgumentParser ap = new ArgumentParser(realargs);
         String recv = ap.getString("p", null);
         int dmgval = ap.getInteger("d", -1);
-        String[] args = ap.getNormalArgs();
+        String[] args = ap.getUnusedArgs();
 
         if (args.length > 0) // just the item!
         {

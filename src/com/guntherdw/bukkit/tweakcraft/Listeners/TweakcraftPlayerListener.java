@@ -28,6 +28,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.*;
 import org.bukkit.command.PluginCommand;
@@ -152,9 +153,9 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public Player findPlayerByNick(String nick) { return findPlayerByNick(nick, false); }
-    
+
     public String findPlayerNameByNick(String nick) { return findPlayerNameByNick(nick, false); }
-    
+
     public Player findPlayerByNick(String nick, boolean exact) {
 
         String p = null;
@@ -180,7 +181,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         for(String part : nicks.keySet()) {
             n = nicks.get(part);
             if(n.toLowerCase().contains(nick.toLowerCase())) {
-                Player player = plugin.getServer().getPlayer(part);
+                Player player = plugin.getServer().getPlayerExact(part);
                 if(player!=null) playerlijst.add(player);
             }
         }
@@ -291,49 +292,48 @@ public class TweakcraftPlayerListener extends PlayerListener {
             plugin.getLogger().info("[TweakcraftUtils] Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
             event.setCancelled(true);
             return;
-        } else {
+        }
 
-            if(plugin.getConfigHandler().enableSpamControl) {
-                int counter = 0;
-                counter = ch.getAntiSpam().checkSpam(player, message);
+        if(plugin.getConfigHandler().enableSpamControl) {
+            int counter = 0;
+            counter = ch.getAntiSpam().checkSpam(player, message);
 
-                if(counter>(plugin.getConfigHandler().spamMaxMessages-1)) {
-                    plugin.getLogger().info("[TweakcraftUtils] "+player.getName()+" has been auto-muted for spamming!");
-                    long until = plugin.getConfigHandler().spamMuteMinutes*60;
-                    ch.addMute(player.getName().toLowerCase(), until);
-                    String msg = plugin.getConfigHandler().spamMuteMessage.trim();
-                    if(!msg.equals("")) {
+            if(counter>(plugin.getConfigHandler().spamMaxMessages-1)) {
+                plugin.getLogger().info("[TweakcraftUtils] "+player.getName()+" has been auto-muted for spamming!");
+                long until = plugin.getConfigHandler().spamMuteMinutes*60;
+                ch.addMute(player.getName().toLowerCase(), until);
+                String msg = plugin.getConfigHandler().spamMuteMessage.trim();
+                if(!msg.equals("")) {
 
-                        msg = msg.replace("{name}", name);
-                        msg = msg.replace("{displayname}", player.getDisplayName());
-                        msg = msg.replace("{mins}", plugin.getConfigHandler().spamMuteMinutes+"");
-                        msg = msg.replace("&&", "{orly}");
-                        msg = msg.replace("&", "§");
-                        msg = msg.replace("{orly}", "&");
+                    msg = msg.replace("{name}", name);
+                    msg = msg.replace("{displayname}", player.getDisplayName());
+                    msg = msg.replace("{mins}", plugin.getConfigHandler().spamMuteMinutes+"");
+                    msg = msg.replace("&&", "{orly}");
+                    msg = msg.replace("&", "§");
+                    msg = msg.replace("{orly}", "&");
 
-                        plugin.getServer().broadcastMessage(msg);
-                    }
+                    plugin.getServer().broadcastMessage(msg);
+                }
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        if (cm != null) {
+            if (!message.startsWith(plugin.getChathandler().getBypassChar())) {
+                cm.sendMessage(player, message);
+                event.setCancelled(true);
+            } else {
+                message = message.substring(1);
+                event.setMessage(message);
+                if(!(message.length()>0)) {
                     event.setCancelled(true);
                     return;
                 }
             }
-
-            if (cm != null) {
-                if (!message.startsWith(plugin.getChathandler().getBypassChar())) {
-                    cm.sendMessage(player, message);
-                    event.setCancelled(true);
-                } else {
-                    message = message.substring(1);
-                    event.setMessage(message);
-                    if(!(message.length()>0)) {
-                        event.setCancelled(true);
-                        return;
-                    }
-                }
-            } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
-                event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
-                event.setCancelled(true);
-            }
+        } else if(cm == null && getInvisplayers().contains(event.getPlayer().getName())) {
+            event.getPlayer().sendMessage(ChatColor.RED + "Are you insane? You're invisible, set a chatmode!");
+            event.setCancelled(true);
         }
 
         if(!event.isCancelled() && cm==null) {
@@ -346,7 +346,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     // plugin.getServer().broadcastMessage(ChatColor.WHITE+"<"+player.getDisplayName()+ChatColor.WHITE+"> "+message);
                     for(Player p : plugin.getServer().getOnlinePlayers())
                         p.sendMessage(ChatColor.WHITE + "<" + player.getDisplayName() + ChatColor.WHITE + "> " + message);
-                } 
+                }
             }
         }
     }
@@ -379,7 +379,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if(event.isCancelled()) return;
+        if (event.isCancelled()) return;
         if (event.getFrom().getWorld() != event.getTo().getWorld()) { // The world is different, make a check!
             Player player = event.getPlayer();
             if(plugin.getConfigHandler().enablemod_InfDura) {
@@ -388,13 +388,13 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if (!plugin.check(player, "worlds." + event.getTo().getWorld().getName())) {
                 event.setCancelled(true);
                 player.sendMessage(ChatColor.RED + "You don't have access to this world!");
+                return;
             }
             iWorld tw = plugin.getworldManager().getWorld(event.getTo().getWorld().getName(), true);
             if(tw!=null && !tw.getGameMode().equals(player.getGameMode())) {
                 player.setGameMode(tw.getGameMode());
             }
         }
-        // if(event)
     }
 
 
@@ -428,24 +428,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if(getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
             event.setJoinMessage(null);
             p.sendMessage(ChatColor.AQUA + "You has joined STEALTHILY!");
-            /* if (plugin.getCraftIRC() != null) {
-                plugin.getCraftIRC().sendMessageToTag("STEALTH JOIN : " +event.getPlayer().getName() ,"mchatadmin");
-            } */
-            /* try {
-                ChatHandler ch = plugin.getChathandler();
-                ChatMode    cm = ch.getChatMode("admin");
-                AdminChat   am = (AdminChat) cm; */
             for(Player play : plugin.getServer().getOnlinePlayers())
             {
-                if(plugin.check(play, "tpinvis"))
-                {
-                    play.sendMessage(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
-                }
+                if(plugin.check(play, "tpinvis")) play.sendMessage(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
             }
-            // am.broadcastMessageRealAdmins(ChatColor.AQUA+"Stealth join : "+event.getPlayer().getDisplayName());
-            /* } catch (ChatModeException e) {
-                e.printStackTrace();
-            } */
         }
 
         if(plugin.getConfigHandler().enableCUI) {
@@ -561,7 +547,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
                             if(plugin.getConfigHandler().getLockdowns().containsKey(playername)) {
                                 target = plugin.getConfigHandler().getLockdowns().get(playername).getTarget();
                             } else {
-                                Location loc = player.getTargetBlock((HashSet<Byte>)null, 200).getLocation();
+                                int maxDistance = player.getServer().getViewDistance()*16;
+                                Location loc = player.getTargetBlock((HashSet<Byte>)null, maxDistance).getLocation();
                                 loc.setY(loc.getY()+1);
                                 target = loc.clone();
                             }
@@ -601,10 +588,24 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void reloadInvisTable() {
         List<String> lijst = plugin.getConfiguration().getStringList("invisible-playerlist", null);
-        this.invisplayers.clear();
+
         if(lijst != null)
         {
+            /* Clear the old playerlist, there could be old players on there,
+               who have been tagged as visible for now. */
+            for(String s : this.invisplayers) {
+                LocalPlayer lp = plugin.wrapPlayer(s);
+                lp.setInvisible(false);
+            }
+            this.invisplayers.clear();
+
             this.invisplayers.addAll(lijst);
+
+            /* Add any old and new players who have been tagged as invisible. */
+            for(String s : lijst) {
+                LocalPlayer lp = plugin.wrapPlayer(s);
+                lp.setInvisible(true);
+            }
         }
         if(plugin.getConfigHandler().enableDebug)
             for(String s : lijst)
@@ -626,7 +627,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if(!w.isNetherEnabled()) {
                 if(plugin.getConfigHandler().cancelNetherPortal) event.setCancelled(true);
                 event.getPlayer().sendMessage(ChatColor.RED+"This world doesn't have an extra nether!");
-                
+
                 return;
             }
 
@@ -730,6 +731,18 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
                 entity.eject();
             }
+        }
+    }
+
+    public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
+        if(!plugin.getConfigHandler().enableWorldMOTD) return;
+
+        Player player = event.getPlayer();
+        WorldManager wm = plugin.getworldManager();
+        iWorld world = wm.getWorld(player.getWorld().getName(), true);
+        if(world!=null && world.hasWorldMOTD()) {
+            for(String line : world.getMOTD())
+                player.sendMessage(line);
         }
     }
 }

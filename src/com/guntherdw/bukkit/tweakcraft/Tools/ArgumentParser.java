@@ -32,23 +32,35 @@ public class ArgumentParser {
 
     private Map<String, Argument> _namedargs;
     private List<Argument> _args;
+    private List<String> _flagsUsed;
 
     public ArgumentParser(String[] args) {
         _namedargs = new HashMap<String, Argument>();
         _args = new ArrayList<Argument>();
+        _flagsUsed = new ArrayList<String>();
         int x=0;
         for(String arg: args) {
-
-            String[] argslist = arg.split("\\:", 2);
-            // _args.put(argslist)
-            if(argslist.length>1) {
-                argslist[0] = argslist[0].toLowerCase();
-                Argument argument = new Argument(x, argslist[0], argslist[1]);
-                _namedargs.put(argslist[0], argument);
+            if(arg.startsWith("-")) { /* Flag type */
+                Argument argument = new Argument(x, arg.substring(1), null);
+                argument.setArgType(true);
+                if(args.length > x+1) { /* Add the value as well! */
+                    argument.setArgvalue(args[x+1]);
+                }
+                _namedargs.put(argument.getArgname(), argument);
                 _args.add(argument);
-            } else {
-                Argument argument = new Argument(x, null, argslist[0]);
-                _args.add(argument);
+            } else { /* Possible argname:argvalue type */
+                String[] argslist = arg.split("\\:", 2);
+                // _args.put(argslist)
+                if(argslist.length>1) {
+                    argslist[0] = argslist[0].toLowerCase();
+                    Argument argument = new Argument(x, argslist[0], argslist[1]);
+                    argument.setArgType(false);
+                    _namedargs.put(argslist[0], argument);
+                    _args.add(argument);
+                } else {
+                    Argument argument = new Argument(x, null, argslist[0]);
+                    _args.add(argument);
+                }
             }
             // arglist
             x++;
@@ -56,17 +68,25 @@ public class ArgumentParser {
     }
 
     public ArgumentParser() { }
-    
+
     public void setUsed(String argName, boolean state) {
         Argument arg = null;
         // First the named argument map, this is the easiest one.
         arg = _namedargs.get(argName);
-        if(arg!=null) arg.set_used(state);
-
+        if(arg!=null)  {
+            arg.set_used(state);
+            if(arg.isArgType()) {
+                int pos = arg.getId();
+                if(_args.size()>pos) _args.get(pos+1).set_used(true);
+            }
+        }
         // Second the List<Argument> one, this'll require a for loop
         for(int x=0; x<_args.size(); x++) {
             arg = _args.get(x);
             if(arg.getArgname() != null && arg.getArgname().equals(argName)) arg.set_used(state);
+            if(arg.isArgType()) {
+                if(_args.size()>x) _args.get(x+1).set_used(true);
+            }
         }
     }
 
@@ -134,10 +154,22 @@ public class ArgumentParser {
             return defaultval;
     }
 
+    public boolean is_Flag(Argument arg) {
+        boolean flag = false;
+        int pos = arg.getId();
+        if(pos < _args.size()) {
+            if(arg.isArgType()) flag = true;
+        }
+        if(!flag && pos > 0) {
+            if(_args.get(pos-1).isArgType()) flag = true;
+        }
+        return flag;
+    }
+
     public List<Argument> getDefaultArguments() {
         List<Argument> vals = new ArrayList<Argument>();
         for(Argument arg: _args) {
-            if(arg.getArgname()==null)
+            if(!is_Flag(arg) && arg.getArgname() == null)
                 vals.add(arg);
         }
         return vals;
@@ -146,31 +178,58 @@ public class ArgumentParser {
     public List<Argument> getUnusedArgsList() {
         List<Argument> vals = new ArrayList<Argument>();
         for(Argument arg : _args) {
-            if(arg.getArgname()==null || !arg.is_used())
+            if(is_Flag(arg) && !arg.is_used()) {
+                vals.add(arg);
+            } else if(arg.getArgname()==null || !arg.is_used())
                 vals.add(arg);
         }
         return vals;
     }
 
+    public boolean isflagUsed(String needle) { /* Reserved for simple flag checking */
+        for(Argument arg : _args) {
+            String lookFor = null;
+            if(arg.isArgType())
+                if(arg.getArgname().equals(needle)) {
+                    _flagsUsed.add(needle);
+                    return true;
+                }
+        }
+        return false;
+    }
+
     public String[] getUnusedArgs() {
         // return (String[]) this.getUnusedArgsList().toArray();
         List<Argument> als = this.getUnusedArgsList();
-        String[] args = new String[als.size()];
-        for(int x=0; x<als.size(); x++) {
+        // String[] args = new String[als.size()];
+        List<String> args = new ArrayList<String>();
+        int x=0;
+        while(x<als.size()) {
             String tmp = "";
             Argument arg = als.get(x);
-            if(arg.getArgname()!=null) { tmp+=arg.getArgname()+":"; }
-            if(arg.getArgvalue()!=null) tmp+=(String)arg.getArgvalue();
-            args[x] = tmp;
+            if(is_Flag(arg)) {
+                boolean flagUsed = false;
+                if(arg.getArgname()!=null) {
+                    flagUsed =  _flagsUsed.contains(arg.getArgname());
+                    if(!flagUsed) { args.add("-"+arg.getArgname()); }
+                }
+                if(arg.getArgvalue()!=null) { x++; tmp+=(String)arg.getArgvalue(); args.add(tmp); }
+            } else {
+                if(arg.getArgname()!=null) { tmp+=arg.getArgname()+":"; }
+                if(arg.getArgvalue()!=null) tmp+=(String)arg.getArgvalue();
+                args.add(tmp);
+            }
+            x++;
         }
-        return args;
+        return args.toArray(new String[0]);
     }
 
     public String[] getNormalArgs() {
         List<Argument> al = this.getDefaultArguments();
         String[] lijst = new String[al.size()];
-        for(int x=0;x<al.size();x++)
+        for(int x=0;x<al.size();x++) {
             lijst[x]=(String)al.get(x).getArgvalue();
+        }
         return lijst;
     }
 

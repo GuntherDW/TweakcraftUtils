@@ -42,24 +42,20 @@ public class CraftIRCEndPoint implements EndPoint {
     
     @Override
     public Type getType() {
-        return EndPoint.Type.IRC;
+        return EndPoint.Type.MINECRAFT;
     }
 
     @Override
     public void messageIn(RelayedMessage relayedMessage) {
-        /* chat: '%grey%[IRC]%foreground% <%ircPrefix%%sender%> %message%'
-              private: '%grey%[IRC]%foreground% %sender% whispers> %message%'
-              action: '%grey%[IRC]%purple% * %ircPrefix%%sender% %message%'
-              join: '%grey%[IRC]%darkgreen% * Joins: %sender%'
-              part: '%grey%[IRC]%darkgreen% * Parts: %sender%'
-              quit: '%grey%[IRC]%blue% * Quits: %sender%'
-              kick: '%grey%[IRC]%darkgreen% * %sender% was kicked by %ircModPrefix%%moderator%'
-              nick: '%grey%[IRC]%darkgreen% * %sender% is now known as %message%'
-              generic: '%grey%%message%' */
-        
         /* String event = relayedMessage.getEvent();
         if(event.equals("chat") || event.equals("action")) {
-
+            String pname = relayedMessage.getField("sender");
+            if(pname!=null) {
+                String name = relayedMessage.getField("sender");
+                String nick = plugin.getPlayerListener().findPlayerNameByNick(name, true);
+                relayedMessage.setField("sender", plugin.getNickWithColors(nick==null?name:nick));
+            }
+            ac.broadcastMessage(relayedMessage.getMessage(this));
         } */
     }
 
