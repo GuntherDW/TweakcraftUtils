@@ -49,7 +49,7 @@ public class CommandSpawnmob implements iCommand {
 
             Location loc = player.getTargetBlock((HashSet<Byte>)null, 200).getLocation();
             ArgumentParser ap = new ArgumentParser(realargs);
-            String[] args = ap.getUnusedArgs();
+
             Random rnd = new Random();
 
             int slimesize = ap.getInteger("s", -1);
@@ -57,6 +57,7 @@ public class CommandSpawnmob implements iCommand {
             boolean powered = ap.getBoolean("p", false);
             boolean shoven = ap.getBoolean("sh", false);
             String sheepcolor = ap.getString("sc", null);
+            String[] args = ap.getUnusedArgs();
 
             loc.setY(loc.getY() + 1); // Do not spawn them into the ground, silly!
             String mobName;

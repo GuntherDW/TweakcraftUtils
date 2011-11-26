@@ -218,3 +218,14 @@ commands:
   afk:
     description: Manually toggle your AFK status
     usage: /<command>
+  tntarrow:
+    description: Toggles the use of TNT Arrows.
+    usage: /<command>
+    aliases: [tnta]
+  addexp:
+    description: Adds experience to you or someone else
+    usage: /<command> <experience>
+    aliases: [adde]
+  enchant:
+    description: Adds an enchantment to your current item
+    usage: /<command> <enchantmentid> <level>

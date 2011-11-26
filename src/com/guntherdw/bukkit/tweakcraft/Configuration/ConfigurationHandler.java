@@ -48,6 +48,7 @@ public class ConfigurationHandler {
     public boolean enableSeenConfig = false;
     public boolean enableWorldGuard = false;
     public boolean enableZones = false;
+    public boolean enableLogBlock = false;
     public boolean enableIRC = false;
     public boolean enableTPBack = true;
     public boolean enableGroupChat = true;
@@ -77,6 +78,10 @@ public class ConfigurationHandler {
     public boolean enableExperienceOrbsHalt = false;
     public boolean enableTargetIgnoreAFKPlayers = false;
     public boolean enableWorldMOTD = false;
+    public boolean enableTNTArrows = false;
+    public float tntArrowForce = 4.0F;
+
+    public boolean enableFallDistanceNullify = false;
 
     // public PermissionsResolver.PermissionResolvingMode permissoinsResolvingMode = null;
 
@@ -182,6 +187,10 @@ public class ConfigurationHandler {
         this.enableTargetIgnoreAFKPlayers = globalconfig.getBoolean("extra.targetIgnoreAFK", false);
         this.cancelNickChat = globalconfig.getBoolean("extra.cancelNickChat", true);
         this.extraLogging = globalconfig.getBoolean("extra.extraLogging", false);
+        this.enableTNTArrows = globalconfig.getBoolean("extra.tntArrows.enabled", false);
+        this.tntArrowForce = (float) globalconfig.getDouble("extra.tntArrows.force", 4.0F);
+        this.enableLogBlock =  globalconfig.getBoolean("extra.tntArrows.logblock", false);
+        this.enableFallDistanceNullify = globalconfig.getBoolean("extra.nullifyTeleportFallDistance", false);
 
         this.enableWorldMOTD = globalconfig.getBoolean("worlds.worldMOTD", false);
 

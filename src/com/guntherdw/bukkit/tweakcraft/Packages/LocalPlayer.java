@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
  */
 public class LocalPlayer {
 
-    private String player;
+    private String name;
     private Player bukkitPlayer;
     private boolean afk;
     private int spamcounter;
@@ -34,6 +34,7 @@ public class LocalPlayer {
     private String nick=null;
     private boolean invisible=false;
     private String replyTo=null;
+    private boolean tntArrow=false;
 
     public boolean isInvisible() {
         return this.invisible;
@@ -41,6 +42,14 @@ public class LocalPlayer {
 
     public void setInvisible(boolean state) {
         this.invisible = state;
+    }
+
+    public boolean isTntArrow() {
+        return tntArrow;
+    }
+
+    public void setTntArrow(boolean tntArrow) {
+        this.tntArrow = tntArrow;
     }
 
     public boolean hasNick() {
@@ -65,7 +74,7 @@ public class LocalPlayer {
 
     public Player getBukkitPlayerSafe() {
         if(this.bukkitPlayer == null) {
-            Player p = Bukkit.getPlayerExact(player);
+            Player p = Bukkit.getPlayerExact(name);
             if(p!=null) bukkitPlayer=p;
         }
         return bukkitPlayer;
@@ -103,11 +112,16 @@ public class LocalPlayer {
         this.spamcounter = spamcounter;
     }
 
-    public String getPlayer() {
-        return player;
+    public String getName() {
+        return name;
     }
 
-    public LocalPlayer(String player) {
-        this.player = player;
+    public LocalPlayer(Player player) {
+        this.bukkitPlayer = player;
+        this.name = player.getName();
+    }
+    
+    public LocalPlayer(String name) {
+        this.name = name;
     }
 }

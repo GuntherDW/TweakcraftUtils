@@ -71,9 +71,9 @@ public class AdminChat implements ChatMode {
 
 
             String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;
-                   targetmsg = targetmsg.replace("%name%", cleanname);
-                   targetmsg = targetmsg.replace("%message%", message);
-                   targetmsg = targetmsg.replace("%dispname%", ChatColor.stripColor(sendername));
+                   targetmsg = targetmsg.replace("%name%", cleanname).
+                                         replace("%message%", message).
+                                         replace("%dispname%", ChatColor.stripColor(sendername));
 
             targetmsg = targetmsg.replace("%clearcolors%", Character.toString((char) 3));
             RelayedMessage rmsg = plugin.getCraftIRC().newMsgToTag(plugin.getAdminEndPoint(), plugin.getConfigHandler().AIRCtag, "generic");

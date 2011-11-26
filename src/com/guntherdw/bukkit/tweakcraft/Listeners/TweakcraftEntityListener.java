@@ -20,11 +20,15 @@ package com.guntherdw.bukkit.tweakcraft.Listeners;
 
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import de.diddiz.LogBlock.Consumer;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.*;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -42,12 +46,46 @@ public class TweakcraftEntityListener extends EntityListener {
     public void onEntityTarget(EntityTargetEvent event) {
         if(!plugin.getConfigHandler().enableTargetIgnoreAFKPlayers
                 || event.isCancelled() || !(event.getTarget() instanceof Player)) return;
-        
+
         LocalPlayer lp = plugin.wrapPlayer((Player) event.getTarget());
         if(event.getReason().equals(EntityTargetEvent.TargetReason.CLOSEST_PLAYER)
                 || event.getReason().equals(EntityTargetEvent.TargetReason.RANDOM_TARGET)) {
             if(lp.isAfk()) event.setCancelled(true);
         }
+    }
+
+    public void onProjectileHit(ProjectileHitEvent event) {
+        if(!plugin.getConfigHandler().enableTNTArrows) return;
+        if(event.getEntity()==null || !(event.getEntity() instanceof Arrow)) return;
+        Arrow a = (Arrow) event.getEntity();
+        if(a.getShooter() instanceof Player) {
+            LocalPlayer lp = plugin.wrapPlayer((Player)a.getShooter());
+
+            // Check for TNT in inventory!
+            if(lp.isTntArrow() && plugin.check(lp.getBukkitPlayer(), "tntarrow")) {
+                boolean hasTNT = false;
+                Inventory inv = lp.getBukkitPlayer().getInventory();
+                hasTNT = inv!=null && inv.contains(Material.TNT);
+                if(!hasTNT) return;
+
+                Location loc = a.getLocation().clone();
+                float TNTPower = plugin.getConfigHandler().tntArrowForce;
+
+                ExplosionPrimeEvent explosionPrimeEvent = new ExplosionPrimeEvent(a, TNTPower, false);
+                plugin.getServer().getPluginManager().callEvent(explosionPrimeEvent);
+                if(explosionPrimeEvent.isCancelled()) return;
+
+                if(a.getWorld().createExplosion(loc, TNTPower)) {
+                    lp.getBukkitPlayer().getInventory().removeItem(new ItemStack(Material.TNT, 1));
+                    a.remove();
+                    if(plugin.getConfigHandler().enableLogBlock) {
+                        Consumer consumer = plugin.getLogBlock().getConsumer();
+                        consumer.queueBlockBreak(lp.getName(), loc, Material.TNT.getId(), (byte) 0);
+                    }
+                }
+            }
+        }
+
     }
 
     public void onEntityCombust(EntityCombustEvent event) {

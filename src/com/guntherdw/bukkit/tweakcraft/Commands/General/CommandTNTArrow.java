@@ -16,7 +16,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.guntherdw.bukkit.tweakcraft.Commands.Essentials;
+package com.guntherdw.bukkit.tweakcraft.Commands.General;
 
 import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
@@ -32,50 +32,33 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class CommandMsg implements iCommand {
+public class CommandTNTArrow implements iCommand {
+    @Override
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
-        String senderName = "";
-        String clearName = "";
-        if (sender instanceof Player) {
-            clearName = ((Player) sender).getName();
-            senderName = ((Player) sender).getDisplayName();
-        } else {
-            clearName = "CONSOLE";
-            senderName = ChatColor.LIGHT_PURPLE + "CONSOLE" + ChatColor.WHITE;
-        }
+        if(!plugin.getConfigHandler().enableTNTArrows)
+            throw new CommandException("TNT Arrows aren't enabled!");
 
-        if (args.length > 1) {
-            Player playerto = plugin.findPlayerasPlayer(args[0]);
+        if(!(sender instanceof Player))
+            throw new CommandSenderException("What were you trying to do?");
 
-            String message = "";
-            for (int x = 1; x < args.length; x++) {
-                message += args[x] + (x<args.length?" ":"");
-            }
-            if (playerto == null)
-                throw new CommandException("Can't find that player!");
+        LocalPlayer lp = plugin.wrapPlayer((Player)sender);
+        // Seeing as we wrapped the player, this call should just work (famous last words)
+        if(!plugin.check(lp.getBukkitPlayer(), "tntarrow"))
+            throw new PermissionsException("You don't have permission to use TNT Arrows");
 
-            sender.sendMessage("[Me -> " + playerto.getDisplayName() + "] " + message);
-            playerto.sendMessage("[" + senderName + " -> Me] " + message);
-            if (sender instanceof Player) {
-                LocalPlayer lp = plugin.wrapPlayer(playerto);
-                lp.setReplyTo(((Player)sender).getName());
-                // plugin.setPlayerReply(playerto.getName(), ((Player) sender).getName());
-            }
-
-            plugin.getLogger().info("[TweakcraftUtils] (MSG) " + clearName + " -> " + playerto.getName() + " : " + message);
-        } else if (args.length == 1) {
-            throw new CommandUsageException("I need a message!");
-        } else {
-            throw new CommandUsageException("I need a player!");
-        }
-
+        Boolean mode = null;
+        if(args.length>0) mode = Boolean.parseBoolean(args[0]);
+        if(mode==null) mode = !lp.isTntArrow();
+        lp.setTntArrow(mode);
+        sender.sendMessage(ChatColor.YELLOW+"TNT Arrows have been "+(mode?ChatColor.RED+"ENABLED":ChatColor.GREEN+"DISABLED"));
+        
         return true;
     }
 
     @Override
     public String getPermissionSuffix() {
-        return null;
+        return "tntarrow";
     }
 }

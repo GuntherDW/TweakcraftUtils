@@ -48,6 +48,8 @@ public class CommandListWorlds implements iCommand {
                 if (plugin.check(player, "worlds." + w.getName())) {
 
                     World.Environment env = w.getEnvironment();
+                    boolean customChunkGen = false;
+                    if(w.getGenerator()!=null) { customChunkGen = true; env = null;}
                     iWorld tw = plugin.getworldManager().getWorld(w.getName());
                     if(tw!=null) {
                         if(tw.getChunkGen()!=null)
@@ -59,11 +61,12 @@ public class CommandListWorlds implements iCommand {
                         col =  ChatColor.GREEN.toString();
                     else if (env == World.Environment.NETHER)
                         col = ChatColor.RED.toString();
-                    else if (env == World.Environment.SKYLANDS)
-                        col = ChatColor.AQUA.toString();
+                    else if (env == World.Environment.THE_END)
+                        col = ChatColor.DARK_GRAY.toString();
                     else
                         col = ChatColor.GRAY.toString();
-                    player.sendMessage(ChatColor.LIGHT_PURPLE+ "(" + w.getPlayers().size()+") " + col + w.getName());
+                    player.sendMessage(ChatColor.LIGHT_PURPLE+ "(" + w.getPlayers().size()+") " + col + w.getName() +
+                            (customChunkGen?ChatColor.LIGHT_PURPLE +" (CG:"+ w.getGenerator().getClass().getSimpleName()+")":""));
                 }
             }
 

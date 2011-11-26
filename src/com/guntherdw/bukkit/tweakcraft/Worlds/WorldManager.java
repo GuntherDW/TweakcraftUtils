@@ -19,8 +19,10 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
 import org.bukkit.GameMode;
 import org.bukkit.World.Environment;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.config.Configuration;
 
 import java.io.*;
@@ -46,7 +48,28 @@ public class WorldManager {
     public int getDefaultViewDistance() {
         return plugin.getServer().getViewDistance();
     }
-    
+
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+        // return null;
+        /* if(worlds.containsKey(worldName)) {
+            iWorld iw = worlds.get(worldName); */
+        // I split on _'s, so it's flatgen_height_bottomlayer_proplayer_bedrocklayer
+        String[] split = id.split("_");
+        if(split[0].equalsIgnoreCase("flatgen")) {
+            FlatGen fg = new FlatGen();
+            if(split.length>1) fg.setmapHeight(Integer.parseInt(split[1]));
+            if(split.length>2) fg.setNormal(Byte.parseByte(split[2]));
+            if(split.length>3) fg.setToplayer(Byte.parseByte(split[3]));
+            if(split.length>4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
+            plugin.getLogger().info("[TweakcraftUtils] Utilising FlatGen for world "+worldName);
+            return fg;
+        }
+        // }
+        /**
+         * If all else fails, just provide a standard FlatGen
+         */
+        return new FlatGen();
+    }
     
     public void loadMotd(String worldname) {
         if(!plugin.getConfigHandler().enableWorldMOTD || !worlds.containsKey(worldname)) return;
@@ -140,8 +163,8 @@ public class WorldManager {
                     wenv = Environment.NETHER;
                 } else if (env.equalsIgnoreCase("normal")) {
                     wenv = Environment.NORMAL;
-                } else if (env.equalsIgnoreCase("skylands")) {
-                    wenv = Environment.SKYLANDS;
+                } else if (env.equalsIgnoreCase("end")) {
+                    wenv = Environment.THE_END;
                 } else {
                     wenv = Environment.valueOf(env.toUpperCase());
                 }

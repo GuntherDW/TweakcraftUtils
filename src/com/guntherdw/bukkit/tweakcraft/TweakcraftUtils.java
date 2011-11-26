@@ -45,6 +45,7 @@ import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
+import de.diddiz.LogBlock.LogBlock;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -52,6 +53,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
+import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -76,6 +78,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected WorldGuardPlugin wg = null;
     protected CraftIRC circ = null;
     protected Zones zones = null;
+    protected LogBlock lb = null;
     protected WorldEditPlugin we = null;
     // protected PermissionHandler ph = null;
 
@@ -387,6 +390,7 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET,          entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PROJECTILE_HIT,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH,           entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD,           worldListener , Priority.Normal, this);
 
@@ -502,6 +506,22 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
+    public void setupLogBlock() {
+        if(this.getConfigHandler().enableLogBlock) {
+            Plugin plugin = this.getServer().getPluginManager().getPlugin("LogBlock");
+
+            if(lb == null) {
+                if(plugin != null) {
+                    lb = (LogBlock) plugin;
+                } else {
+                    this.getConfigHandler().enableLogBlock = false;
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find LogBlock, but is enabled in the config.");
+                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling LogBlock support.");
+                }
+            }
+        }
+    }
+
     public void setupWorldEdit() {
         Plugin plugin = this.getServer().getPluginManager().getPlugin("Zones");
 
@@ -514,6 +534,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public Zones getZones() {
         return zones;
+    }
+
+    public LogBlock getLogBlock() {
+        return lb;
     }
 
     public void reloadMOTD() {
@@ -585,6 +609,7 @@ public class TweakcraftUtils extends JavaPlugin {
         this.setupWorldGuard();
         this.setupCraftIRC();
         this.setupZones();
+        this.setupLogBlock();
 
         playerReplyDB = new HashMap<String, String>();
         this.registerEvents();
@@ -624,6 +649,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public ConfigurationHandler getConfigHandler() {
         return configHandler;
+    }
+
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+        return worldmanager.getDefaultWorldGenerator(worldName, id);
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] unfilteredargs) {

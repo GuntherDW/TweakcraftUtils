@@ -100,6 +100,9 @@ public class CommandHandler {
         commandMap.put("eject", new CommandEject());
         commandMap.put("afk", new CommandAFK());
         commandMap.put("getspawn", new CommandGetSpawn());
+        commandMap.put("tntarrow", new CommandTNTArrow());
+        commandMap.put("addexp", new CommandAddExperience());
+        commandMap.put("enchant", new CommandEnchant());
 
         /**
          * Chat commands

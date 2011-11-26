@@ -394,6 +394,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             if(tw!=null && !tw.getGameMode().equals(player.getGameMode())) {
                 player.setGameMode(tw.getGameMode());
             }
+            if(plugin.getConfigHandler().enableFallDistanceNullify) player.setFallDistance(0);
         }
     }
 
@@ -493,7 +494,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
 
         if(plugin.hasNick(name)) {
-            event.setQuitMessage(ChatColor.YELLOW + getNick(name) + " has left the game.");
+            event.setQuitMessage(ChatColor.YELLOW + getNick(name) + " left the game.");
         }
 
         if(getInvisplayers().contains(name)) { // Invisible players do not send out a "left" message

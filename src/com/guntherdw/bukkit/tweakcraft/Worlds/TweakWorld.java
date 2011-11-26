@@ -39,6 +39,7 @@ public class TweakWorld implements iWorld {
     private boolean allowanimals = true;
     private boolean tooldurability = true;
     private boolean netherenabled = false;
+    private boolean enderenabled = false;
     private boolean keepspawnactive = false;
     private Long seed=null;
     private Long netherseed=null;
