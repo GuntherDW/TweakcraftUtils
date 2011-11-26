@@ -87,9 +87,12 @@ public class CommandEnchant implements iCommand {
 
         if(enchantment!=null) {
             ItemStack is = ((Player)sender).getItemInHand();
-            is.clearEnchantments();
-            is.addEnchantment(enchantment, enchantmentLevel);
-            sender.sendMessage(ChatColor.YELLOW+"Adding "+enchantment.name()+" level "+enchantmentLevel);
+            if(is==null) {
+                sender.sendMessage(ChatColor.YELLOW+"You're not holding anything");
+            } else {
+                is.addEnchantment(enchantment, enchantmentLevel);
+                sender.sendMessage(ChatColor.YELLOW+"Adding "+enchantment.name()+" level "+enchantmentLevel);
+            }
         } else {
             sender.sendMessage(ChatColor.YELLOW+"Couldn't find Enchantment with id "+enchantmentId+"!");
         }
