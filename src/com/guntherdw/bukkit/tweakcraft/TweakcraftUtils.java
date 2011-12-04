@@ -30,6 +30,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistor
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
+import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftBlockListener;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftEntityListener;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftPlayerListener;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftWorldListener;
@@ -84,6 +85,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
     private final TweakcraftEntityListener entityListener = new TweakcraftEntityListener(this);
+    private final TweakcraftBlockListener blockListener = new TweakcraftBlockListener(this);
     private final TweakcraftWorldListener worldListener = new TweakcraftWorldListener(this);
     private final CommandHandler commandHandler = new CommandHandler(this);
     private final BanHandler banhandler = new BanHandler(this);
@@ -376,9 +378,9 @@ public class TweakcraftUtils extends JavaPlugin {
 
     private void registerEvents() {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN,           playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN,            playerListener, Priority.Monitor, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT,            playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK,            playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN,            playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT,            playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK,            playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT,            playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT,        playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT,        playerListener, Priority.Normal, this);
@@ -386,7 +388,8 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_PORTAL,          playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN,         playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD,   playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD,   playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE,            blockListener,  Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET,          entityListener, Priority.Normal, this);

@@ -25,8 +25,8 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Enchantment;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -40,8 +40,13 @@ public class CommandEnchant implements iCommand {
     public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player) {
-            if(!plugin.check((Player)sender, getPermissionSuffix()))
+            String permNode = getPermissionSuffix();
+            if(args.length>0 && args[0].equalsIgnoreCase("disenchant"))
+                permNode+=".disenchant";
+
+            if(!plugin.check((Player)sender, permNode))  {
                 throw new PermissionsException(command);
+            }
         } else {
             throw new CommandSenderException("What do you want to enchant today?");
         }
@@ -55,7 +60,7 @@ public class CommandEnchant implements iCommand {
                     sender.sendMessage(ChatColor.YELLOW+"This item doesn't have any enchantments!");
                 } else {
                     for(Enchantment ench : enchantments.keySet()) {
-                        sender.sendMessage(ChatColor.YELLOW+ench.name()+" at level "+enchantments.get(ench));
+                        sender.sendMessage(ChatColor.YELLOW+ench.getName()+" at level "+enchantments.get(ench));
                     }
                 }
             } else {
@@ -66,32 +71,41 @@ public class CommandEnchant implements iCommand {
             ItemStack is = ((Player)sender).getItemInHand();
             if(is!=null) {
                 sender.sendMessage(ChatColor.YELLOW+"Clearing any enchantments this item had");
-                is.clearEnchantments();
+                for(Enchantment ench : is.getEnchantments().keySet()) {
+                    is.removeEnchantment(ench);
+                }
             } else {
                 sender.sendMessage(ChatColor.YELLOW+"You're not holding anything");
             }
+            return true;
         } else if(args.length!=2)
             throw new CommandUsageException("I need exactly 2 values, an ID and a level!");
 
         Integer enchantmentId = null;
         Integer enchantmentLevel = null;
+        String encName = null;
 
         try{
             enchantmentId = Integer.parseInt(args[0]);
+        } catch(NumberFormatException ex) {
+            encName = args[0];
+        }
+
+        try{
             enchantmentLevel = Integer.parseInt(args[1]);
         } catch(NumberFormatException ex) {
             throw new CommandUsageException("I need numbers, not garbage!");
         }
 
-        Enchantment enchantment =  Enchantment.byId(enchantmentId);
+        Enchantment enchantment = encName==null?Enchantment.getById(enchantmentId):Enchantment.getByName(encName.toUpperCase());
 
         if(enchantment!=null) {
             ItemStack is = ((Player)sender).getItemInHand();
             if(is==null) {
                 sender.sendMessage(ChatColor.YELLOW+"You're not holding anything");
             } else {
-                is.addEnchantment(enchantment, enchantmentLevel);
-                sender.sendMessage(ChatColor.YELLOW+"Adding "+enchantment.name()+" level "+enchantmentLevel);
+                is.addUnsafeEnchantment(enchantment, enchantmentLevel);
+                sender.sendMessage(ChatColor.YELLOW+"Adding "+enchantment.getName()+" level "+enchantmentLevel);
             }
         } else {
             sender.sendMessage(ChatColor.YELLOW+"Couldn't find Enchantment with id "+enchantmentId+"!");

@@ -31,6 +31,9 @@ import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.*;
 import org.bukkit.event.block.Action;
@@ -612,35 +615,125 @@ public class TweakcraftPlayerListener extends PlayerListener {
             for(String s : lijst)
                 plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
     }
+    
+    private boolean isTweakTravelSign(Block block) {
+        BlockState state = block.getState();
+        if(state.getType().equals(Material.WALL_SIGN) && ((Sign) state).getLine(0).equals("[TweakTravel]"))
+            return true;
+
+        return false;
+    }
 
 
     public void onPlayerPortal(PlayerPortalEvent event) {
         if(event.isCancelled()) return;
 
         Player p = event.getPlayer();
-        String fromworld = event.getFrom().getWorld().getName();
-        boolean isnether = fromworld.endsWith("_nether");
-        if(isnether) fromworld = fromworld.substring(0, fromworld.length()-7); // MINUS _nether
-        iWorld w = plugin.getworldManager().getWorld(fromworld);
+        Location from = event.getFrom();
+        World worldFrom = from.getWorld();
 
-        if(w!=null) {
-
-            if(!w.isNetherEnabled()) {
-                if(plugin.getConfigHandler().cancelNetherPortal) event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED+"This world doesn't have an extra nether!");
-
-                return;
+        boolean signMode = false;
+        if(plugin.getConfigHandler().enableTweakTravel) { /* Go look for a portalSign */
+            Block signBlock = null;
+            Location ploc = p.getLocation();
+            int searchwidth = plugin.getConfigHandler().tweakTravelSearchWidth;
+            for(int i=ploc.getBlockX()-searchwidth; i<ploc.getBlockX()+searchwidth; i++) {
+                for(int j=ploc.getBlockY()-searchwidth; j<ploc.getBlockY()+searchwidth; j++) {
+                    for(int k=ploc.getBlockZ()-searchwidth; k<ploc.getBlockZ()+searchwidth; k++) {
+                        Block b = worldFrom.getBlockAt(i,j,k);
+                        if(isTweakTravelSign(b)) {
+                            if(signBlock==null) {
+                                signBlock = b;
+                                p.sendMessage(ChatColor.YELLOW+"TweakTravel : taking you to "+(((Sign)b.getState()).getLine(1)));
+                            } else {
+                                plugin.getLogger().warning("[TweakcraftUtils] Found more than one TweakTravel sign");
+                                Location lold = signBlock.getLocation();
+                                Location lnew = b.getLocation();
+                                plugin.getLogger().warning("[TweakcraftUtils] original location : "+lold);
+                                plugin.getLogger().warning("[TweakcraftUtils] other : "+lnew);
+                                
+                                p.sendMessage(ChatColor.RED+"WARNING: Found more than one TweakTravel sign!");
+                            }
+                        }
+                    }
+                }
             }
+            
+            if(signBlock!=null) {
+                signMode=true;
+                Sign sign = (Sign) signBlock.getState();
+                String toWorld = sign.getLine(1);
+                String line3 = sign.getLine(2);
 
-            org.bukkit.Location to = event.getFrom();
-            if(isnether)  { to.setWorld(w.getBukkitWorld()); to.setX(Math.floor(to.getX()*8)); to.setZ(Math.floor(to.getZ()*8)); }
-            else          { to.setWorld(w.getNetherWorld()); to.setX(Math.floor(to.getX()/8)); to.setZ(Math.floor(to.getZ()/8));}
+                // if(line3.length()>3)
+                iWorld iw = plugin.getworldManager().getWorld(toWorld);
+                if(!plugin.check(p, "worlds."+iw.getName())) {
+                    p.sendMessage(ChatColor.RED+"You do not have permission to portal to this world!");
+                    event.setCancelled(true);
+                } else {
+                    if(iw!=null) {
+                        String[] coordsStrings = null;
+                        Integer[] coords = new Integer[3];
+                        coordsStrings=line3.split(",");
+                        Location loc = iw.getBukkitWorld().getSpawnLocation();
+                        if(coordsStrings.length==3) {
+                            coords[0] = Integer.parseInt(coordsStrings[0]);
+                            coords[1] = Integer.parseInt(coordsStrings[1]);
+                            coords[2] = Integer.parseInt(coordsStrings[2]);
+                            loc = new Location(iw.getBukkitWorld(), coords[0], coords[1], coords[2]);
+                        }
 
-            TravelAgent agent = event.getPortalTravelAgent();
-            event.setTo(to);
-            event.useTravelAgent(true);
-            int radius = w.getPortalSearchWidth();
-            agent.setSearchRadius(radius);
+
+                        TravelAgent ta = event.getPortalTravelAgent();
+                        event.useTravelAgent(true);
+
+
+                        if(loc != null) {
+                            event.setTo(loc);
+                        } else {
+                            event.setTo(iw.getBukkitWorld().getSpawnLocation());
+                        }
+
+                        ta.setSearchRadius(0);
+
+                        ta.setCanCreatePortal(false);
+                        event.setPortalTravelAgent(ta);
+
+                    } else {
+                        p.sendMessage(ChatColor.RED+"Couldn't find that world!");
+                        event.setCancelled(true);
+                    }
+                }
+            }
+        }
+
+
+        if(!signMode) {
+            String fromworld = event.getFrom().getWorld().getName();
+            boolean isnether = fromworld.endsWith("_nether");
+            if(isnether) fromworld = fromworld.substring(0, fromworld.length()-7); // MINUS _nether
+            iWorld w = plugin.getworldManager().getWorld(fromworld);
+
+            if(w!=null && w.getBukkitWorld()!=plugin.getworldManager().getDefaultWorld()) {
+
+                if(!w.isNetherEnabled()) {
+                    if(plugin.getConfigHandler().cancelNetherPortal) event.setCancelled(true);
+                    event.getPlayer().sendMessage(ChatColor.RED+"This world doesn't have an extra nether!");
+
+                    return;
+                }
+
+                org.bukkit.Location to = event.getFrom();
+                if(isnether)  { to.setWorld(w.getBukkitWorld()); to.setX(Math.floor(to.getX()*8)); to.setZ(Math.floor(to.getZ()*8)); }
+                else          { to.setWorld(w.getNetherWorld()); to.setX(Math.floor(to.getX()/8)); to.setZ(Math.floor(to.getZ()/8));}
+
+                TravelAgent agent = event.getPortalTravelAgent();
+                event.setTo(to);
+                event.useTravelAgent(true);
+                int radius = w.getPortalSearchWidth();
+                agent.setSearchRadius(radius);
+                event.setPortalTravelAgent(agent);
+            }
         }
     }
 

@@ -94,6 +94,7 @@ public class LocalPlayer {
 
     public void setAfk(boolean afk) {
         this.afk = afk;
+        this.getBukkitPlayerSafe().setSleepingIgnored(afk);
     }
 
     public long getLastmessagetime() {

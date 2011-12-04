@@ -21,6 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Worlds;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
 import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.config.Configuration;
@@ -43,6 +44,10 @@ public class WorldManager {
 
     public Map<String, iWorld> getWorlds() {
         return worlds;
+    }
+    
+    public World getDefaultWorld() {
+        return plugin.getServer().getWorlds().get(0);
     }
     
     public int getDefaultViewDistance() {
@@ -214,7 +219,7 @@ public class WorldManager {
 
     public iWorld getWorld(String name, boolean filterNether) {
         if(filterNether) {
-            boolean isnether = name.endsWith("_nether");
+            boolean isnether = name.endsWith("_nether") || name.endsWith("_the_end");
             if(isnether) name = name.substring(0, name.length()-7); // MINUS _nether
         }
         if (worlds.containsKey(name)) {

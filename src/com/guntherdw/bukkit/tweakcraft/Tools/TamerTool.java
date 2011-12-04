@@ -178,6 +178,7 @@ public class TamerTool {
 
             if(allowed)
                 wolf.setSitting(sit);
+
             else
                 player.sendMessage(ChatColor.RED + "You do not have permission to command this wolf!");
         } else {
@@ -227,6 +228,7 @@ public class TamerTool {
                 break;
             case SIT:
                 this.sit(wolf, tamermode.getState(), player);
+                break;
             case HEAL:
                 this.heal(wolf, tamermode.getState(), player);
                 break;

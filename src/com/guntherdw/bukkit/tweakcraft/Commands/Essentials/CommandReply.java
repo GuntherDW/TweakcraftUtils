@@ -49,7 +49,7 @@ public class CommandReply implements iCommand {
                 }
 
                 LocalPlayer lpTo = plugin.wrapPlayer(replyTo);
-                Player playerto = lp.getBukkitPlayerSafe();
+                Player playerto = lpTo.getBukkitPlayerSafe();
                 if (playerto == null)
                     throw new CommandException("That player is no longer online!");
 

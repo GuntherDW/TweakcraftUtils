@@ -80,6 +80,8 @@ public class ConfigurationHandler {
     public boolean enableWorldMOTD = false;
     public boolean enableTNTArrows = false;
     public float tntArrowForce = 4.0F;
+    public boolean enableTweakTravel = false;
+    public int tweakTravelSearchWidth = 3;
 
     public boolean enableFallDistanceNullify = false;
 
@@ -193,6 +195,8 @@ public class ConfigurationHandler {
         this.enableFallDistanceNullify = globalconfig.getBoolean("extra.nullifyTeleportFallDistance", false);
 
         this.enableWorldMOTD = globalconfig.getBoolean("worlds.worldMOTD", false);
+        this.enableTweakTravel = globalconfig.getBoolean("worlds.TweakTravel", false);
+        this.tweakTravelSearchWidth = globalconfig.getInt("worlds.TweakTravelSearchWidth", 3);
 
         this.enableSpamControl = globalconfig.getBoolean("spamcontrol.enable", false);
         if(this.enableSpamControl) {

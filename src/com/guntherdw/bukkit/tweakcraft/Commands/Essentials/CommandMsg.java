@@ -59,8 +59,9 @@ public class CommandMsg implements iCommand {
             sender.sendMessage("[Me -> " + playerto.getDisplayName() + "] " + message);
             playerto.sendMessage("[" + senderName + " -> Me] " + message);
             if (sender instanceof Player) {
+                Player player = (Player) sender;
                 LocalPlayer lp = plugin.wrapPlayer(playerto);
-                lp.setReplyTo(((Player)sender).getName());
+                lp.setReplyTo(player.getName());
                 // plugin.setPlayerReply(playerto.getName(), ((Player) sender).getName());
             }
 
