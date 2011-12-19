@@ -57,6 +57,7 @@ public class CommandSpawnmob implements iCommand {
             boolean powered = ap.getBoolean("p", false);
             boolean shoven = ap.getBoolean("sh", false);
             String sheepcolor = ap.getString("sc", null);
+            int age = ap.getInteger("a", -1);
             String[] args = ap.getUnusedArgs();
 
             loc.setY(loc.getY() + 1); // Do not spawn them into the ground, silly!
@@ -146,6 +147,9 @@ public class CommandSpawnmob implements iCommand {
                         lent = victimplayer.getWorld().spawnCreature(loc, type);
                         if(health>0)
                             lent.setHealth(health);
+
+                        if(lent instanceof Animals && age!=-1)
+                            ((Animals)lent).setAge(age);
                         
                         if(lent instanceof Slime && slimesize > 0)
                             ((Slime)lent).setSize(slimesize);

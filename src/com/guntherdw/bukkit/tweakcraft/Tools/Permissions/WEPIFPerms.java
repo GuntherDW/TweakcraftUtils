@@ -19,7 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Tools.Permissions;
 
 import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
-import com.sk89q.bukkit.migration.PermissionsResolverManager;
+import com.sk89q.wepif.PermissionsResolverManager;
 import org.bukkit.entity.Player;
 
 /**

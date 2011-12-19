@@ -9,16 +9,16 @@ authors:
 website: https://github.com/GuntherDW/TweakcraftUtils
 description: A general usage plugin primarily aimed at Tweakcraft, but can be used by any server
 database: true
-softdepend: ['CraftIRC']
+softdepend: [ 'CraftIRC' ]
 commands:
   tweakcraft:
     description: General tweakcraftutils command
     usage: /<command> ...
-    aliases: [tc]
+    aliases: [ 'tc' ]
   admin:
     description: Send message to admins
     usage: /<command> <message>
-    aliases: a
+    aliases: [ 'a' ]
   admin-add:
     description: Adds a player to the admin-msg list
     usage: /<command> <player>
@@ -37,11 +37,11 @@ commands:
   who:
     description: List of currently connected players
     usage: /<command>
-    aliases: playerlist
+    aliases: [ 'playerlist' ]
   lwho:
     description: List of currently connected players in-range (localchat)
     usage: /<command>
-    aliases: localwho
+    aliases: [ 'localwho' ]
   tp:
     description: Teleports you to another player
     usage: /<command> <player>
@@ -60,6 +60,7 @@ commands:
   ext:
     description: Extinguish yourself or someone else
     usage: /<command> <player>
+    aliases: [ 'extself' ]
   lc:
     description: Toggle local chat
     usage: /<command>
@@ -75,21 +76,21 @@ commands:
   chatmode:
     description: ChatMode control
     usage: /<command> <chatmode>
-    aliases: [cm]
+    aliases: [ 'cm' ]
   tele:
     description: Teleport to a specific location
     usage: /<command> ...
   tphere:
     description: Teleport a player to you
     usage: /<command> <player>
-    aliases: s
+    aliases: [ 's' ]
   seen:
     description: Report the last logout time of the player
     usage: /<command> <player>
   broadcast:
     description: Broadcasts said message to the server
     usage: /<command> <message>
-    aliases: b
+    aliases: [ 'b', 'broa' ]
   tpmob:
     description: Teleports you to a mob
     usage: /<command> <mobid>
@@ -111,7 +112,7 @@ commands:
   item:
     description: Give yourself an item of choice
     usage: /<command> <itemID/itemName> [amount] [player]
-    aliases: [i, give]
+    aliases: [ 'i', 'give' ]
   world:
     description: Teleports you to a world of choice
     usage: /<command> <world>
@@ -148,30 +149,30 @@ commands:
   msg:
     description: Send a message to a player
     usage: /<command> <player> <message>
-    aliases: [tell, whisper]
+    aliases: [ 'tell', 'whisper' ]
   reply:
     description: Reply to the last msg
     usage: /<command> <message>
-    aliases: [r, re]
+    aliases: [ 'r', 're' ]
   banlist:
     description: Lists the current bans
     usage: /<command>
   listworlds:
     description: Lists the currently active worlds
     usage: /<command>
-    aliases: lw
+    aliases: [ 'lw' ]
   clearinventory:
     description: Clear a player's inventory
     usage: /<command> [player]
-    aliases: [cli]
+    aliases: [ 'cli' ]
   strike:
     description: Strike lightning at command
     usage: /<command> [player]
-    aliases: [ls]
+    aliases: [ 'ls' ]
   strikebind:
     description: Bind the lightning tool to a tool/item
     usage: /<command>
-    aliases: [lsbind]
+    aliases: [ 'lsbind' ]
   rain:
     description: Turn storm on or off at command
     usage: /<command> <world> <on|off>
@@ -184,11 +185,11 @@ commands:
   tpback:
     description: Go back to where you once came from!
     usage: /<command>
-    aliases: [tpb, back]
+    aliases: [ 'tpb', 'back' ]
   tpforward:
     description: Go back to where you once backed from!
     usage: /<command>
-    aliases: [tpf, forward]
+    aliases: [ 'tpf', 'forward' ]
   debug:
     description: Various debug commands
     usage: /<command> <test>
@@ -204,14 +205,14 @@ commands:
   groupchat:
     description: GroupChat control
     usage: /<command>
-    aliases: [gc]
+    aliases: [ 'gc' ]
   eject:
     description: Eject your freeloader!
     usage: /<command>
   donotmount:
     description: Toggle mounting access
     usage: /<command>
-    aliases: [dnm,nomount]
+    aliases: [ 'dnm', 'nomount' ]
   viewdistance:
     desciption: ViewDistance control!
     usage: /<command> [p:<player>] [distance]
@@ -221,11 +222,11 @@ commands:
   tntarrow:
     description: Toggles the use of TNT Arrows.
     usage: /<command>
-    aliases: [tnta]
+    aliases: [ 'tnta' ]
   addexp:
     description: Adds experience to you or someone else
     usage: /<command> <experience>
-    aliases: [adde]
+    aliases: [ 'adde' ]
   enchant:
     description: Adds an enchantment to your current item
     usage: /<command> <enchantmentid> <level>

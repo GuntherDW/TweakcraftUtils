@@ -25,6 +25,7 @@ public class TamerMode {
 
     private Boolean state;
     private TamerModes mode;
+    private Integer data;
 
     public static enum TamerModes {
         INFO,
@@ -32,6 +33,7 @@ public class TamerMode {
         ANGRY,
         HEAL,
         SIT,
+        SETAGE,
         NONE
     }
 
@@ -54,5 +56,13 @@ public class TamerMode {
 
     public void setState(Boolean state) {
         this.state = state;
+    }
+
+    public Integer getData() {
+        return data;
+    }
+
+    public void setData(Integer data) {
+        this.data = data;
     }
 }

@@ -45,6 +45,7 @@ public class CommandAddExperience implements iCommand {
 
         ArgumentParser ap = new ArgumentParser(args);
         String playerString =  ap.getString("p", null);
+        Integer level = ap.getInteger("l", null);
         String[] ars = ap.getUnusedArgs();
         
         if(playerString==null) {
@@ -57,19 +58,29 @@ public class CommandAddExperience implements iCommand {
         List<Player> p = plugin.findPlayerasPlayerList(playerString);
         if(p.size()!=1)
             throw new CommandException("Player not found!");
-        if(ars.length<1)
+        if(ars.length<1 && level == null)
             throw new CommandException("No amount given");
         int amount = 0;
-        try{
-            amount = Integer.parseInt(ars[0]);
+        try {
+            if(level==null) amount = Integer.parseInt(ars[0]);
         } catch(NumberFormatException ex) {
             throw new CommandException("Number expected, garbage given");
         }
         
         Player player = p.get(0);
-        sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW+" had "+player.getTotalExperience()+ " experience, adding "+amount);
-        player.sendMessage(ChatColor.YELLOW+"Adding "+amount+" to your total experience!");
-        player.setTotalExperience(player.getTotalExperience()+amount);
+        
+        if(level!=null) {
+            int olevel = player.getLevel();
+            int nlevel = olevel+level;
+            sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW+" was level "+olevel+", new level : "+nlevel);
+            player.sendMessage(ChatColor.YELLOW+"Adding "+level+" levels to your total experience!");
+            player.setLevel(nlevel);
+        } else {
+            sender.sendMessage(player.getDisplayName()+ChatColor.YELLOW+" had "+player.getTotalExperience()+ " experience, adding "+amount);
+            player.sendMessage(ChatColor.YELLOW+"Adding "+amount+" to your total experience!");
+            player.setTotalExperience(player.getTotalExperience()+amount);
+        }
+        // player.setTotalExperience(player.getTotalExperience()+amount);
 
         return true;
     }

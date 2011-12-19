@@ -45,8 +45,8 @@ public class TweakcraftWorldListener extends WorldListener {
             BlockState[] states = chunk.getTileEntities();
             for(BlockState state : states) {
                 if(state instanceof Furnace) {
-                    Furnace f = (Furnace) state;
-                    if(f.getBurnTime()>0) {
+                    // Furnace f = (Furnace) state;
+                    if(((Furnace) state).getBurnTime()>0) {
                         event.setCancelled(true);
                         return;
                     }

@@ -83,10 +83,25 @@ public class CommandTamer implements iCommand {
                 }
                 mode = new TamerMode(state, TamerMode.TamerModes.SIT);
                 player.sendMessage(ChatColor.GREEN+"TamerTool SIT MODE selected!");
+            } else if(args.length>0 && args[0].equalsIgnoreCase("setage")) {
+                int age = -1;
+                if(args.length>1) {
+                    age = Integer.parseInt(args[1]);
+                    if(age>0) age=0;
+                }
+                mode = new TamerMode(state, TamerMode.TamerModes.SETAGE);
+                mode.setData(age);
+                player.sendMessage(ChatColor.GREEN+"TamerTool SETAGE MODE selected! (age : "+age+")");
+            } else if(args.length>0 && args[0].equalsIgnoreCase("none")) {
+                mode = null;
+                if(plugin.getTamerTool().getTamers().containsKey(player))
+                    plugin.getTamerTool().getTamers().remove(player);
+                player.sendMessage(ChatColor.GREEN+"Removed any set TamerTool mode");
+                return true;
             }
             
             if(mode == null) {
-                player.sendMessage(ChatColor.YELLOW+"Usage: /tame <info|tame|angry|heal|reset> <mode> ");
+                player.sendMessage(ChatColor.YELLOW+"Usage: /tame <info|tame|angry|heal|reset|setage> <mode|data> ");
             } else {
                 plugin.getTamerTool().getTamers().put(player, mode);
             }

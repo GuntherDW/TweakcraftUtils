@@ -39,6 +39,7 @@ public class CommandWhois implements iCommand {
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         // First search for a nick
         Boolean getIP = true;
+        
         if(sender instanceof Player) {
             if(!plugin.check((Player)sender, "whois"))
                 throw new PermissionsException(command);
@@ -47,7 +48,11 @@ public class CommandWhois implements iCommand {
         }
 
 
+
         if(args.length==1) {
+            int level = 0;
+            float exp = 0F;
+
             String nick_origplayer = plugin.getPlayerListener().findPlayerNameByNick(args[0]);
             String nickname = null;
             Player nick = plugin.getPlayerListener().findPlayerByNick(args[0]);
@@ -66,6 +71,10 @@ public class CommandWhois implements iCommand {
                     // Check for nicks
                     // String pname = args[0];
                     OfflinePlayer offlineplayer = plugin.getServer().getOfflinePlayer(nick_origplayer!=null?nick_origplayer:args[0]);
+                    /* level = offlineplayer.getPlayer().getLevel();
+                    exp  = offlineplayer.getPlayer().getExp(); */
+                    level = 0;
+                    exp = 0F;
                     String pname = offlineplayer.getName();
                     String wname = null;
                     World defworld = plugin.getServer().getWorlds().get(0);
@@ -89,6 +98,8 @@ public class CommandWhois implements iCommand {
             } else {
                 playername = who.getName();
                 String wname = null;
+                level = who.getLevel();
+                exp = who.getPlayer().getExp();
                 World defworld = plugin.getServer().getWorlds().get(0);
                 if(defworld!=null) {
                     wname = defworld.getName();
@@ -111,6 +122,7 @@ public class CommandWhois implements iCommand {
                     if(((Player)sender).getName().equalsIgnoreCase(who.getName()))
                         getIP = true;
                 }
+                sender.sendMessage(ChatColor.YELLOW+"Level (exp) : "+level+" ("+exp+")");
                 if(getIP && online)
                     sender.sendMessage(ChatColor.YELLOW + "IP: " + who.getAddress().getAddress().getHostName());
             } else {

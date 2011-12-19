@@ -50,6 +50,7 @@ public class ConfigurationHandler {
     public boolean enableZones = false;
     public boolean enableLogBlock = false;
     public boolean enableIRC = false;
+    public boolean NoLaggEnabled = false;
     public boolean enableTPBack = true;
     public boolean enableGroupChat = true;
     public boolean enableLocalChat = true;

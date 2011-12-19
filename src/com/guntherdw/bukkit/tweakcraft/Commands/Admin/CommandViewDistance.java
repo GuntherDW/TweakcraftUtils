@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -42,7 +43,7 @@ public class CommandViewDistance implements iCommand {
 
         /* ArgumentParser ap = new ArgumentParser(realargs);
         String player = ap.getString("p", null);
-        String[] args = ap.getNormalArgs();
+        String[] args = ap.getUnusedArgs();
 
         Player victim = null;
         
@@ -75,7 +76,7 @@ public class CommandViewDistance implements iCommand {
                     throw new CommandUsageException("I need a number, not a string!");
                 }
 
-                if(vdist<3 || vdist > 15)
+                if(vdist < 3 || vdist > 15)
                     throw new CommandUsageException("Outside of the allowed ViewDistance limit!");
 
                 sender.sendMessage(ChatColor.YELLOW + "Setting " +victim.getDisplayName()+ChatColor.YELLOW +"'s ViewDistance to "+vdist+"!");
@@ -85,7 +86,7 @@ public class CommandViewDistance implements iCommand {
         
 
         return true; */
-        sender.sendMessage(ChatColor.GREEN+"Not working right now!");
+        sender.sendMessage(ChatColor.GREEN + "Not working right now!");
         return true;
     }
 

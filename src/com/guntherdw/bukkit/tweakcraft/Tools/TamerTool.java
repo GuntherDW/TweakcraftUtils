@@ -210,6 +210,12 @@ public class TamerTool {
             player.sendMessage(ChatColor.RED + "You do not have permission to heal wolves!");
         }
     }
+    
+    public void setAge(Wolf wolf, Integer age, Player player) {
+        if(plugin.check(player, "tamer.setage")) {
+            wolf.setAge(age);
+        }
+    }
 
     public void handleEvent(Player player, Wolf wolf) {
         if(!tamers.containsKey(player))
@@ -231,6 +237,9 @@ public class TamerTool {
                 break;
             case HEAL:
                 this.heal(wolf, tamermode.getState(), player);
+                break;
+            case SETAGE:
+                this.setAge(wolf, tamermode.getData(), player);
                 break;
         }
     }

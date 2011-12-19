@@ -27,6 +27,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOption
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
+import com.guntherdw.bukkit.tweakcraft.Packages.TamerMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
@@ -576,6 +577,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     }
             }
         }
+
     }
 
     public void onPlayerKick(PlayerKickEvent event) {
@@ -609,11 +611,10 @@ public class TweakcraftPlayerListener extends PlayerListener {
             for(String s : lijst) {
                 LocalPlayer lp = plugin.wrapPlayer(s);
                 lp.setInvisible(true);
+                if(plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
             }
         }
-        if(plugin.getConfigHandler().enableDebug)
-            for(String s : lijst)
-                plugin.getLogger().info("[TweakcraftUtils] Adding "+s+" to the invisble playerlist!");
     }
     
     private boolean isTweakTravelSign(Block block) {
@@ -741,23 +742,71 @@ public class TweakcraftPlayerListener extends PlayerListener {
         Entity entity = event.getRightClicked();
         Player player = event.getPlayer();
         if(plugin.getConfigHandler().enabletamertool) {
-            if(entity instanceof Wolf) {
-                if(player.getItemInHand() != null &&
-                        player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
+            if(player.getItemInHand() != null) {
 
+                if(entity instanceof Wolf && player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
                     if(plugin.getTamerTool().getTamers().containsKey(player)) {
                         event.setCancelled(true);
                         plugin.getTamerTool().handleEvent(player, (Wolf) entity);
+                        return;
+                    }
+                } else if(entity instanceof Animals) {
+
+                    Animals animal = (Animals) entity;
+
+                    if(player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
+
+                        event.setCancelled(true);
+                        TamerMode mode = plugin.getTamerTool().getTamers().get(player);
+
+                        if(mode.getMode() == TamerMode.TamerModes.SETAGE) {
+                            if(!plugin.check(player, "tamer.setage")) {
+                                player.sendMessage(ChatColor.RED+"You don't have permission to set the age of animals!");
+                            } else {
+                                player.sendMessage(ChatColor.BLUE+"Setting animal age to "+mode.getData());
+                                animal.setAge(mode.getData());
+                            }
+                        } else {
+
+                            CreatureType type = CreatureType.fromName(animal.getClass().getCanonicalName().split("Craft")[1]);
+                            String cname = type.getName().toLowerCase();
+                            player.sendMessage(ChatColor.BLUE+"Animal info : ");
+                            player.sendMessage(ChatColor.BLUE+"type : "+ChatColor.YELLOW+cname);
+                            player.sendMessage(ChatColor.BLUE+"health : "+ChatColor.YELLOW+animal.getHealth());
+                            player.sendMessage(ChatColor.BLUE+"age : "+ChatColor.YELLOW+animal.getAge());
+                        }
+                        
+                        return;
+                        
+                    } else if(player.getItemInHand().getType().equals(Material.WHEAT) && animal.getAge()<0) {
+                        ItemStack inHand = player.getItemInHand();
+                        if(inHand.getAmount()>1)
+                            inHand.setAmount(inHand.getAmount()-1);
+                        else
+                            inHand = null;
+
+                        int newAge = animal.getAge()+1000;
+                        if(newAge>0) newAge=0;
+                        animal.setAge(newAge);
+
+                        player.setItemInHand(inHand);
+
+                        player.getWorld().playEffect(animal.getLocation(), Effect.POTION_BREAK, 0);
+                    } else if(player.getItemInHand().getType().equals(Material.MILK_BUCKET) && animal.getAge()<0) {
+                        int newAge = animal.getAge()+2500;
+                        if(newAge>0) newAge=0;
+                        animal.setAge(newAge);
+
+                        player.setItemInHand(new ItemStack(Material.BUCKET, 1));
+                        player.getWorld().playEffect(animal.getLocation(), Effect.POTION_BREAK, 0);
                     }
                 }
             }
         }
-        if(player.getItemInHand() == null &&
-                entity.getPassenger().equals(player)) {
-            entity.eject();
-        } else
-        if(player.getItemInHand() != null
-                && player.getItemInHand().getType() == Material.SADDLE) {
+
+
+
+        if(player.getItemInHand() != null && player.getItemInHand().getType() == Material.SADDLE) {
             if(entity.isEmpty()) {
                 boolean allowed = true;
                 if(nomount.contains(player.getName())) {

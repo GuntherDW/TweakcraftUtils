@@ -18,6 +18,8 @@
 
 package com.guntherdw.bukkit.tweakcraft;
 
+// import com.bergerkiller.bukkit.nolagg.NoLagg;
+import com.bergerkiller.bukkit.nolagg.NoLagg;
 import com.ensifera.animosity.craftirc.CraftIRC;
 import com.ensifera.animosity.craftirc.EndPoint;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
@@ -81,6 +83,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected Zones zones = null;
     protected LogBlock lb = null;
     protected WorldEditPlugin we = null;
+    // protected NoLagg nolagg = null;
     // protected PermissionHandler ph = null;
 
     private final TweakcraftPlayerListener playerListener = new TweakcraftPlayerListener(this);
@@ -477,6 +480,21 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
+    /* public void setupNoLagg() {
+        // if(this.getConfigHandler().enableWorldGuard) {
+        Plugin plugin = this.getServer().getPluginManager().getPlugin("NoLagg");
+
+        if (nolagg == null) {
+            if (plugin != null) {
+                nolagg = (NoLagg) plugin;
+                this.getConfigHandler().NoLaggEnabled = true;
+            } else {
+                this.getConfigHandler().NoLaggEnabled = false;
+            }
+        }
+        // }
+    } */
+
     public void setupWorldGuard() {
         if(this.getConfigHandler().enableWorldGuard) {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
@@ -526,7 +544,7 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void setupWorldEdit() {
-        Plugin plugin = this.getServer().getPluginManager().getPlugin("Zones");
+        Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldEdit");
 
         if(we == null) {
             if(plugin != null) {
@@ -538,6 +556,10 @@ public class TweakcraftUtils extends JavaPlugin {
     public Zones getZones() {
         return zones;
     }
+    
+    /* public NoLagg getNoLagg() {
+        return nolagg;
+    } */
 
     public LogBlock getLogBlock() {
         return lb;
@@ -613,6 +635,7 @@ public class TweakcraftUtils extends JavaPlugin {
         this.setupCraftIRC();
         this.setupZones();
         this.setupLogBlock();
+        // this.setupNoLagg();
 
         playerReplyDB = new HashMap<String, String>();
         this.registerEvents();
@@ -630,6 +653,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
         playerListener.reloadInvisTable();
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+        
     }
 
     public EndPoint getEndPoint() {

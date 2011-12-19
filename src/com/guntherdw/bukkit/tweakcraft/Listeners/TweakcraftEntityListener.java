@@ -18,6 +18,8 @@
 
 package com.guntherdw.bukkit.tweakcraft.Listeners;
 
+import com.bergerkiller.bukkit.nolagg.NoLagg;
+import com.bergerkiller.bukkit.nolagg.TnTHandler;
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import de.diddiz.LogBlock.Consumer;
@@ -73,9 +75,10 @@ public class TweakcraftEntityListener extends EntityListener {
 
                 ExplosionPrimeEvent explosionPrimeEvent = new ExplosionPrimeEvent(a, TNTPower, false);
                 plugin.getServer().getPluginManager().callEvent(explosionPrimeEvent);
-                if(explosionPrimeEvent.isCancelled()) return;
+                boolean exploded = !explosionPrimeEvent.isCancelled();
 
-                if(a.getWorld().createExplosion(loc, TNTPower)) {
+                if(exploded) {
+                    a.getWorld().createExplosion(loc, TNTPower);
                     lp.getBukkitPlayer().getInventory().removeItem(new ItemStack(Material.TNT, 1));
                     a.remove();
                     if(plugin.getConfigHandler().enableLogBlock) {
