@@ -23,14 +23,13 @@ import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.util.config.Configuration;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author GuntherDW
@@ -40,7 +39,7 @@ public class WorldManager {
     private Map<String, iWorld> worlds;
     private TweakcraftUtils plugin;
     private int defaultViewDistance;
-    private Configuration globalConfig = null;
+    private YamlConfiguration globalConfig = null;
 
     public Map<String, iWorld> getWorlds() {
         return worlds;
@@ -109,8 +108,12 @@ public class WorldManager {
         if(globalConfig==null) globalConfig = plugin.getConfigHandler().getGlobalconfig();
 
         boolean netherWorldOnline = false;
-        List<String> extraworlds = globalConfig.getKeys("worlds.extraworlds");
+        ConfigurationSection section = globalConfig.getConfigurationSection("worlds.extraworlds");
+        if(section==null)
+            return;
         
+        Set<String> extraworlds = section.getKeys(false);
+
         Boolean worldInfDura = globalConfig.getBoolean("worlds.durability", true);
         int defaultviewdistance = this.getDefaultViewDistance();
         
@@ -147,6 +150,7 @@ public class WorldManager {
                 boolean durability = globalConfig.getBoolean("worlds.extraworlds." + node + ".durability", true);
                 boolean addnether = globalConfig.getBoolean("worlds.extraworlds." + node + ".addnether", false);
                 boolean spawnchunksactive = globalConfig.getBoolean("worlds.extraworlds." + node + ".spawnchunksactive", false);
+                String chunkGenClass = globalConfig.getString("worlds.extraworlds." + node + ".chunkGeneratorClass", null);
                 String chunkGen = globalConfig.getString("worlds.extraworlds." + node + ".chunkGenerator", null);
                 int viewdistance = globalConfig.getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
                 int portalSearchRadius = globalConfig.getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
@@ -184,7 +188,12 @@ public class WorldManager {
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" GameMode : "+(gm!=null?gm.toString().toLowerCase():"Survival"));
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
                     if(gm!=null) tw.setGameMode(gm);
-                    if(chunkGen!=null) {
+                    if(chunkGenClass!=null) {
+                        plugin.getLogger().info("[TweakcraftUtils] World "+node+" is using a custom chunkGenClass using the deprecated method!");
+                        plugin.getLogger().info("[TweakcraftUtils] Consider using the newer method!");
+                        tw.setChunkGenClass(chunkGenClass);
+                    }
+                    else if(chunkGen!=null) {
                         plugin.getLogger().info("[TweakcraftUtils] World "+node+" is using a custom chunkGen!");
                         tw.setChunkGen(chunkGen);
                     }

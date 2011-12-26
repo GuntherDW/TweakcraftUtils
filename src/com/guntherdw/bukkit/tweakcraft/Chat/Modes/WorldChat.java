@@ -49,12 +49,12 @@ public class WorldChat implements ChatMode {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.DARK_GREEN+"W"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.DARK_GREEN + "W" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
             }
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("W: ("+player.getWorld().getName()+") <" + player.getName() + "> " + message);
+            plugin.getLogger().info("W: (" + player.getWorld().getName() + ") <" + player.getName() + "> " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
@@ -71,7 +71,7 @@ public class WorldChat implements ChatMode {
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("W: ("+player.getWorld().getName()+") " + message);
+            plugin.getLogger().info("W: (" + player.getWorld().getName() + ") " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
@@ -85,7 +85,7 @@ public class WorldChat implements ChatMode {
             EntityLocation entityloc = new EntityLocation(player);
             for (Player p : player.getWorld().getPlayers()) {
                 // if (entityloc.getDistance(p) < plugin.getConfigHandler().localchatdistance) {
-                    recp.add(p);
+                recp.add(p);
                 // }
             }
         }
@@ -108,7 +108,6 @@ public class WorldChat implements ChatMode {
         return subscribers;
     }
 
-    @Override
     public String getDescription() {
         return "World Chat (chat in your current world)";
     }
@@ -122,7 +121,7 @@ public class WorldChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor()+"W";
+        return this.getColor() + "W";
     }
 }
 

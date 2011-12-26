@@ -28,52 +28,42 @@ import java.util.List;
  * @author GuntherDW
  */
 public class GroupChat implements ChatMode {
-    @Override
     public boolean sendMessage(CommandSender sender, String message) {
         return false;
     }
 
-    @Override
     public List<Player> getRecipients(CommandSender sender) {
         return null;
     }
 
-    @Override
     public void addRecipient(String player) {
 
     }
 
-    @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
         return false;
     }
 
-    @Override
     public void removeRecipient(String player) {
 
     }
 
-    @Override
     public List<String> getSubscribers() {
         return null;
     }
 
-    @Override
     public String getDescription() {
         return null;
     }
 
-    @Override
     public boolean isEnabled() {
         return false;
     }
 
-    @Override
     public String getColor() {
         return null;
     }
 
-    @Override
     public String getPrefix() {
         return null;
     }

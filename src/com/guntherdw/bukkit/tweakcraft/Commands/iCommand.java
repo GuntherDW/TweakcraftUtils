@@ -31,6 +31,11 @@ import org.bukkit.command.CommandSender;
 public interface iCommand {
 
     /**
+     * Get the command's attachment name
+     */
+    public String getCommandName();
+    
+    /**
      * Execute a command
      *
      * @param sender
@@ -43,7 +48,7 @@ public interface iCommand {
      * @throws CommandUsageException
      * @throws CommandException
      */
-    public abstract boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
             throws PermissionsException, CommandSenderException, CommandUsageException, CommandException;
 
     /**
@@ -52,5 +57,5 @@ public interface iCommand {
      *
      * @return The node
      */
-    public abstract String getPermissionSuffix();
+    public String getPermissionSuffix();
 }

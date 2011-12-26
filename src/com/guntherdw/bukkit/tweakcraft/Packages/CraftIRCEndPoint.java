@@ -30,22 +30,20 @@ import java.util.List;
  * @author GuntherDW
  */
 public class CraftIRCEndPoint implements EndPoint {
-    
+
     private ChatHandler ch = null;
     private CraftIRC circ = null;
-    
+
     public CraftIRCEndPoint(TweakcraftUtils instance) {
         this.ch = instance.getChathandler();
         this.circ = instance.getCraftIRC();
         circ.registerEndPoint("tcutils", this);
     }
-    
-    @Override
+
     public Type getType() {
         return EndPoint.Type.MINECRAFT;
     }
 
-    @Override
     public void messageIn(RelayedMessage relayedMessage) {
         /* String event = relayedMessage.getEvent();
         if(event.equals("chat") || event.equals("action")) {
@@ -59,22 +57,18 @@ public class CraftIRCEndPoint implements EndPoint {
         } */
     }
 
-    @Override
     public boolean userMessageIn(String s, RelayedMessage relayedMessage) {
         return false;
     }
 
-    @Override
     public boolean adminMessageIn(RelayedMessage relayedMessage) {
         return false;
     }
 
-    @Override
     public List<String> listUsers() {
         return null;
     }
 
-    @Override
     public List<String> listDisplayUsers() {
         return null;
     }

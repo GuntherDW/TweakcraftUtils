@@ -50,7 +50,6 @@ public class CraftIRCAdminEndPoint implements EndPoint {
         catch(ChatModeException ex) { }
     }
 
-    @Override
     public void messageIn(RelayedMessage relayedMessage) {
         /* chat: '%grey%[IRC]%foreground% <%ircPrefix%%sender%> %message%'
       private: '%grey%[IRC]%foreground% %sender% whispers> %message%'
@@ -75,27 +74,22 @@ public class CraftIRCAdminEndPoint implements EndPoint {
 
     }
 
-    @Override
     public Type getType() {
         return EndPoint.Type.MINECRAFT;
     }
 
-    @Override
     public boolean userMessageIn(String s, RelayedMessage relayedMessage) {
         return false;
     }
 
-    @Override
     public boolean adminMessageIn(RelayedMessage relayedMessage) {
         return false;
     }
 
-    @Override
     public List<String> listUsers() {
         return null;
     }
 
-    @Override
     public List<String> listDisplayUsers() {
         return null;
     }

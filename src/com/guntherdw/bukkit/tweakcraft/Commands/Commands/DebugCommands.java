@@ -16,10 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.guntherdw.bukkit.tweakcraft.Commands.Debug;
+package com.guntherdw.bukkit.tweakcraft.Commands.Commands;
 
-
-import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
+import com.guntherdw.bukkit.tweakcraft.Commands.aCommand;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
@@ -31,12 +30,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * @author sk89q, GuntherDW
+ * @author GuntherDW
  */
-public class CommandDebug implements iCommand {
-    @Override
-    public boolean executeCommand(final CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
-            throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+public class DebugCommands {
+
+    @aCommand(
+        aliases = { "debug" },
+        permissionBase = "debug",
+        description = "Various debug commands",
+        section = "debug"
+    )
+    public boolean debug(final CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player)
             if(!plugin.check((Player) sender, "debug"))
                 throw new PermissionsException(command);
@@ -62,9 +67,9 @@ public class CommandDebug implements iCommand {
             final long startTicks = world.getFullTime();
 
             sender.sendMessage(ChatColor.DARK_RED
-                    + "Timing clock test for " + expected + " IN-GAME seconds...");
+                + "Timing clock test for " + expected + " IN-GAME seconds...");
             sender.sendMessage(ChatColor.DARK_RED
-                    + "DO NOT CHANGE A WORLD'S TIME OR PERFORM A HEAVY OPERATION.");
+                + "DO NOT CHANGE A WORLD'S TIME OR PERFORM A HEAVY OPERATION.");
 
             Runnable task = new Runnable() {
                 public void run() {
@@ -81,27 +86,27 @@ public class CommandDebug implements iCommand {
 
                     if (expectedTicks != elapsedTicks) {
                         sender.sendMessage(ChatColor.DARK_RED
-                                + "Warning: Bukkit scheduler inaccurate; expected "
-                                + expectedTicks + ", got " + elapsedTicks);
+                            + "Warning: Bukkit scheduler inaccurate; expected "
+                            + expectedTicks + ", got " + elapsedTicks);
                     }
 
                     if (Math.round(clockRate) == 20) {
                         sender.sendMessage(ChatColor.YELLOW + "Clock test result: "
-                                + ChatColor.GREEN + "EXCELLENT");
+                            + ChatColor.GREEN + "EXCELLENT");
                     } else {
                         if (elapsedSecs > expectedSecs) {
                             if (clockRate < 19) {
                                 sender.sendMessage(ChatColor.YELLOW + "Clock test result: "
-                                        + ChatColor.DARK_RED + "CLOCK BEHIND");
+                                    + ChatColor.DARK_RED + "CLOCK BEHIND");
                                 sender.sendMessage(ChatColor.DARK_RED
-                                        + "WARNING: You have potential block respawn issues.");
+                                    + "WARNING: You have potential block respawn issues.");
                             } else {
                                 sender.sendMessage(ChatColor.YELLOW + "Clock test result: "
-                                        + ChatColor.DARK_RED + "CLOCK BEHIND");
+                                    + ChatColor.DARK_RED + "CLOCK BEHIND");
                             }
                         } else {
                             sender.sendMessage(ChatColor.YELLOW + "Clock test result: "
-                                    + ChatColor.DARK_RED + "CLOCK AHEAD");
+                                + ChatColor.DARK_RED + "CLOCK AHEAD");
                         }
                     }
 
@@ -118,10 +123,5 @@ public class CommandDebug implements iCommand {
             sender.sendMessage(ChatColor.GOLD + "Possible modes: clock");
         }
         return true;
-    }
-
-    @Override
-    public String getPermissionSuffix() {
-        return "debug";
     }
 }

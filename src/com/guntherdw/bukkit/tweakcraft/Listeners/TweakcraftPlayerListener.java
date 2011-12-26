@@ -41,6 +41,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -142,7 +143,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 }
                 pi.setNick((String)null);
                 lp.setNick(null);
-                plugin.getDatabase().save(pi);
+                plugin.getDatabase().update(pi);
             }
             return true;
         } else { return false; }
@@ -461,8 +462,13 @@ public class TweakcraftPlayerListener extends PlayerListener {
             Calendar cal = Calendar.getInstance();
             if(!plugin.getConfigHandler().enablePersistence) {
                 String time = String.valueOf(cal.getTime().getTime());
-                plugin.getConfigHandler().getSeenconfig().setProperty(name.toLowerCase(), time);
-                plugin.getConfigHandler().getSeenconfig().save();
+                plugin.getConfigHandler().getSeenconfig().set(name.toLowerCase(), time);
+                try{
+                    plugin.getConfigHandler().saveSeenConfig();
+                } catch(IOException ex) {
+                    plugin.getLogger().info("[TweakcraftUtils] Couldn't save SeenConfig file!");
+                }
+                // plugin.getConfigHandler().getSeenconfig().save();
             } else {
                 if(plugin.getConfigHandler().useTweakBotSeen) {
                     PlayerHistoryInfo phi = plugin.getDatabase().find(PlayerHistoryInfo.class).where().ieq("nickname", name).findUnique();
@@ -593,7 +599,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void reloadInvisTable() {
-        List<String> lijst = plugin.getConfiguration().getStringList("invisible-playerlist", null);
+        List<String> lijst = plugin.getConfig().getStringList("invisible-playerlist");
 
         if(lijst != null)
         {

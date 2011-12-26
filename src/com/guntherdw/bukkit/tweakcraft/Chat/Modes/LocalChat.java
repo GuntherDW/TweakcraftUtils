@@ -49,7 +49,7 @@ public class LocalChat implements ChatMode {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.YELLOW+"L"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.YELLOW + "L" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
             }
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
@@ -111,9 +111,8 @@ public class LocalChat implements ChatMode {
         return subscribers;
     }
 
-    @Override
     public String getDescription() {
-        return "Chat locally ("+plugin.getConfigHandler().localchatdistance+" blocks)";
+        return "Chat locally (" + plugin.getConfigHandler().localchatdistance + " blocks)";
     }
 
     public boolean isEnabled() {
@@ -125,6 +124,6 @@ public class LocalChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor()+"L";
+        return this.getColor() + "L";
     }
 }

@@ -22,9 +22,12 @@ import com.guntherdw.bukkit.tweakcraft.Packages.LockdownLocation;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.util.config.Configuration;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,12 +38,18 @@ import java.util.Map;
  */
 public class ConfigurationHandler {
 
-    private Configuration globalconfig;
+    private File globalconfigFile;
+    private File seenconfigFile;
+    
+    private YamlConfiguration globalconfig = new YamlConfiguration();
+    private YamlConfiguration seenconfig = new YamlConfiguration();
     private TweakcraftUtils plugin;
-    private Configuration seenconfig;
+
     private Map<String, Map<Integer, Boolean>> lsbindmap;
     private Map<String, LockdownLocation> lockdowns;
     private Map<String, List<Location>> tpfromlocations;
+
+    private boolean loadSuccessful = true;
 
     /**
      * Defaults
@@ -82,6 +91,9 @@ public class ConfigurationHandler {
     public boolean enableTNTArrows = false;
     public float tntArrowForce = 4.0F;
     public boolean enableTweakTravel = false;
+    public boolean enableSnowPile = false;
+    public int snowPileRate = 2;
+    public boolean enableSnowDouble = false;
     public int tweakTravelSearchWidth = 3;
 
     public boolean enableFallDistanceNullify = false;
@@ -118,11 +130,27 @@ public class ConfigurationHandler {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdirs();
         }
-
-        if(this.globalconfig==null) globalconfig=plugin.getConfiguration();
+        // if(this.globalconfig==null) this.globalconfig = (YamlConfiguration) plugin.getConfig();
+        if(globalconfigFile==null) {
+            plugin.getLogger().warning("[TweakcraftUtils] No config file found, using default values!");
+            return;
+        }
+        try {
+            globalconfig.load(globalconfigFile);
+        } catch (IOException e) {
+            plugin.getLogger().warning("[TweakcraftUtils] IOException while loading config file, using old values!");
+            e.printStackTrace();
+            return;
+        } catch (InvalidConfigurationException e) {
+            plugin.getLogger().warning("[TweakcraftUtils] InvalidConfigurationException while loading config file, using old values!");
+            e.printStackTrace();
+            return;
+        }
+        // plugin.reloadConfig();
 
         this.plugin.getLogger().info("[TweakcraftUtils] Parsing configuration file...");
-        this.globalconfig.load();
+        this.plugin.getLogger().info("[TweakcraftUtils] Config : "+globalconfigFile.getAbsolutePath());
+
         this.enableLocalChat = globalconfig.getBoolean("ChatMode.LocalChat.enabled", true);
         this.localchatdistance = globalconfig.getInt("ChatMode.LocalChat.range", 200);
         this.enableWorldChat = globalconfig.getBoolean("ChatMode.WorldChat.enabled", true);
@@ -136,7 +164,7 @@ public class ConfigurationHandler {
         this.GIRCtag = globalconfig.getString("CraftIRC.regular.tag", "mchatadmin");
         this.GIRCenabled = globalconfig.getBoolean("CraftIRC.regular.enabled", true);
         this.enableTPBack = globalconfig.getBoolean("enableTPBack", true);
-        this.enableDebug = globalconfig.getBoolean("debug.enable", false);
+        this.enableDebug = globalconfig.getBoolean("debug.enabled", false);
         if(this.enableDebug) {
             plugin.getLogger().info("[TweakcraftUtils] Extra verbose messages enabled!");
         }
@@ -153,28 +181,39 @@ public class ConfigurationHandler {
             if(!plugin.databaseloaded)
                 plugin.setupDatabase();
         }
-        for(String plist : globalconfig.getStringList("extrahelp.plugins", null)) {
-            if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
-                if(!extrahelpplugin.contains(plist)) {
-                    if(this.enableDebug)
-                        plugin.getLogger().info("[TweakcraftUtils] Adding "+plist+" to the /help addons.");
-                    extrahelpplugin.add(plist);
+        List<String> extralist = globalconfig.getStringList("extrahelp.plugins");
+        if(extralist!=null)
+            for(String plist : extralist) {
+                if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
+                    if(!extrahelpplugin.contains(plist)) {
+                        if(this.enableDebug)
+                            plugin.getLogger().info("[TweakcraftUtils] Adding "+plist+" to the /help addons.");
+                        extrahelpplugin.add(plist);
+                    } else {
+                        plugin.getLogger().info("[TweakcraftUtils] WARNING: "+plist+" is on the extrahelp list multiple times!");
+                    }
                 } else {
-                    plugin.getLogger().info("[TweakcraftUtils] WARNING: "+plist+" is on the extrahelp list multiple times!");
+                    plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
                 }
-            } else {
-                plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
             }
-        }
         this.cancelNetherPortal = globalconfig.getBoolean("worlds.cancelportal", false);
 
-        this.extrahelphide = globalconfig.getStringList("extrahelp.hide", null);
+        this.extrahelphide = globalconfig.getStringList("extrahelp.hide");
+        
         if (globalconfig.getBoolean("PlayerHistory.enabled", false)) {
             plugin.getLogger().info("[TweakcraftUtils] Keeping player history!");
             File seenFile = new File(plugin.getDataFolder(), "players.yml");
-            this.seenconfig = new Configuration(seenFile);
-            this.seenconfig.load();
-            this.enableSeenConfig = true;
+            try {
+                this.seenconfig.load(seenFile);
+                this.enableSeenConfig = true;
+            } catch (IOException e) {
+                plugin.getLogger().severe("[TweakcraftUtils] IOExeption thrown while trying to load the seen.yml file! playerhistory disabled!");
+                this.enableSeenConfig = false;
+            } catch (InvalidConfigurationException e) {
+                plugin.getLogger().severe("[TweakcraftUtils] InvalidConfigurationException thrown while trying to load the seen.yml file! playerhistory disabled!");
+                this.enableSeenConfig = false;
+            }
+
         }
 
         this.enabletamertool =  globalconfig.getBoolean("tamer.enabled", true);
@@ -194,6 +233,10 @@ public class ConfigurationHandler {
         this.tntArrowForce = (float) globalconfig.getDouble("extra.tntArrows.force", 4.0F);
         this.enableLogBlock =  globalconfig.getBoolean("extra.tntArrows.logblock", false);
         this.enableFallDistanceNullify = globalconfig.getBoolean("extra.nullifyTeleportFallDistance", false);
+        this.enableSnowPile = globalconfig.getBoolean("extra.snowpile.enabled", false);
+        this.snowPileRate = globalconfig.getInt("extra.snowpile.rate", 2500);
+        this.enableSnowDouble = globalconfig.getBoolean("extra.snowpile.doublesnowball", false);
+
 
         this.enableWorldMOTD = globalconfig.getBoolean("worlds.worldMOTD", false);
         this.enableTweakTravel = globalconfig.getBoolean("worlds.TweakTravel", false);
@@ -214,7 +257,7 @@ public class ConfigurationHandler {
         }
     }
 
-    public Configuration getGlobalconfig() {
+    public YamlConfiguration getGlobalconfig() {
         return globalconfig;
     }
 
@@ -234,7 +277,7 @@ public class ConfigurationHandler {
         return enableSeenConfig;
     }
 
-    public Configuration getSeenconfig() {
+    public YamlConfiguration getSeenconfig() {
         return seenconfig;
     }
     
@@ -248,5 +291,16 @@ public class ConfigurationHandler {
     
     public String getDirSeperator() {
         return System.getProperty("file.separator");
+    }
+
+    public void saveSeenConfig() throws IOException {
+        if(seenconfig!=null) {
+            seenconfig.save(seenconfigFile);
+        }
+    }
+
+    public void setGlobalConfig(File file) {
+        this.globalconfigFile = file;
+        this.seenconfigFile = new File(file.getParentFile(), "seen.yml");
     }
 }

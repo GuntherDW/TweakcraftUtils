@@ -44,43 +44,41 @@ public class ZoneChat implements ChatMode {
         this.subscribers = new ArrayList<String>();
     }
 
-    @Override
     public boolean sendMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.DARK_PURPLE+"Z"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.DARK_PURPLE + "Z" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
             }
-            if(getZoneName(player, false).equals("")) {
+            if (getZoneName(player, false).equals("")) {
                 sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a zone!");
             } else if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("Z: ("+getZoneName(player, false)+") <" + player.getName() + "> " + message);
+            plugin.getLogger().info("Z: (" + getZoneName(player, false) + ") <" + player.getName() + "> " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
         return true;
     }
 
-    @Override
     public List<Player> getRecipients(CommandSender sender) {
         List<Player> recp = new ArrayList<Player>();
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
 
             Player player = (Player) sender;
             com.zones.WorldManager wm = plugin.getZones().getWorldManager(player.getWorld());
             List<ZoneBase> zbs = wm.getActiveZones(player.getLocation());
-            for(ZoneBase zb : zbs) {
-                for(Player p : zb.getPlayersInside())
-                    if(!recp.contains(p))
+            for (ZoneBase zb : zbs) {
+                for (Player p : zb.getPlayersInside())
+                    if (!recp.contains(p))
                         recp.add(p);
             }
             /* if(zb != null) {
                 recp.addAll(zb.getCharactersInside().values());
             } */
-            if(!recp.contains(player)) {
+            if (!recp.contains(player)) {
                 recp.add(player);
             }
 
@@ -98,47 +96,43 @@ public class ZoneChat implements ChatMode {
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("Z: ("+getZoneName(player, false)+") : "+message);
+            plugin.getLogger().info("Z: (" + getZoneName(player, false) + ") : " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
         return true;
     }
 
-    @Override
     public void addRecipient(String player) {
         if (!subscribers.contains(player)) {
             subscribers.add(player);
         }
     }
 
-    @Override
     public void removeRecipient(String player) {
         if (subscribers.contains(player)) {
             subscribers.remove(player);
         }
     }
 
-    @Override
     public List<String> getSubscribers() {
         return subscribers;
     }
 
-    @Override
     public String getDescription() {
         return "Zones zone chat!";
     }
 
     public String getZoneName(CommandSender sender, boolean color) {
         Player p = (Player) sender;
-        if(p!=null) {
+        if (p != null) {
             com.zones.WorldManager wm = plugin.getZones().getWorldManager(p);
             String msg = "";
             ZoneBase zb = wm.getActiveZone(p);
-            if(zb != null) {
-                 msg = (color?ChatColor.GOLD:"")+zb.getName();
+            if (zb != null) {
+                msg = (color ? ChatColor.GOLD : "") + zb.getName();
             }
-            return msg+(color?ChatColor.WHITE:"");
+            return msg + (color ? ChatColor.WHITE : "");
         } else {
             return null;
         }
@@ -153,6 +147,6 @@ public class ZoneChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor()+"Z";
+        return this.getColor() + "Z";
     }
 }

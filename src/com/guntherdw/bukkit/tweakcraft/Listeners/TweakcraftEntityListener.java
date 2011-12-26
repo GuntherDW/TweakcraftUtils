@@ -97,7 +97,7 @@ public class TweakcraftEntityListener extends EntityListener {
 
         if(ent instanceof Player) {
             Player player = (Player) ent;
-            if(plugin.getWorldGuard()!=null&&plugin.getWorldGuard().getGlobalConfiguration().hasGodMode(player)) {
+            if(plugin.getWorldGuard()!=null&&plugin.getWorldGuard().getGlobalStateManager().hasGodMode(player)) {
                 event.setCancelled(true);
             }
         }

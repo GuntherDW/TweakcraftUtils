@@ -63,6 +63,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.persistence.PersistenceException;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -393,6 +394,8 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN,         playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD,   playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE,            blockListener,  Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FORM,             blockListener,  Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK,            blockListener,  Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET,          entityListener, Priority.Normal, this);
@@ -627,6 +630,7 @@ public class TweakcraftUtils extends JavaPlugin {
         donottplist = new ArrayList<String>();
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();
+        configHandler.setGlobalConfig(new File(this.getDataFolder(), "config.yml"));
         configHandler.reloadConfig();
         this.cuiPlayers = new ArrayList<Player>();
         this.mod_InfDuraplayers = new ArrayList<Player>();
@@ -648,6 +652,9 @@ public class TweakcraftUtils extends JavaPlugin {
             circendpoint = new CraftIRCEndPoint(this);
             circadminendpoint = new CraftIRCAdminEndPoint(this);
         }
+
+        if(configHandler.enableDebug)
+            commandHandler.checkCommands();
 
         /* itemDB.writeDB(); */
 
@@ -688,8 +695,7 @@ public class TweakcraftUtils extends JavaPlugin {
         // String[] args = new String[];
         int argc = 0;
         for(String a : unfilteredargs) {
-            if(a!=null&& !a.isEmpty() && !a.trim().equals("")) {
-                // args[argc] = a;
+            if(a!=null && !a.isEmpty() && !a.trim().equals("")) {
                 argsa.add(a);
                 argc++;
             }
@@ -698,9 +704,9 @@ public class TweakcraftUtils extends JavaPlugin {
 
         if (commandHandler.getCommandMap().containsKey(cmd.getName())) {
             try {
-                iCommand command = commandHandler.getCommand(cmd.getName());
+                /* iCommand command = commandHandler.getCommand(cmd.getName()); */
                 // public abstract boolean executeCommand(Server server, CommandSender sender, String command, String[] args, TweakcraftUtils plugin);
-                if (!command.executeCommand(sender, cmd.getName(), args, this)) {
+                if (!commandHandler.executeCommand(sender, cmd.getName(), args, this)) {
                     sender.sendMessage("This command did not go as intended!");
                 }
                 String mess = "";
@@ -718,9 +724,9 @@ public class TweakcraftUtils extends JavaPlugin {
                 else
                     log.info("[TweakcraftUtils] CONSOLE issued: /" + cmd.getName() + " " + mess);
                 return true;
-            } catch (CommandNotFoundException e) {
+            } /*catch (CommandNotFoundException e) {
                 sender.sendMessage("TweakcraftUtils error, command not found!");
-            } catch (PermissionsException e) {
+            }*/ catch (PermissionsException e) {
                 sender.sendMessage(ChatColor.RED + "You do not have the correct permissions for this command or usage!");
                 if (sender instanceof Player) {
                     String mess = "";

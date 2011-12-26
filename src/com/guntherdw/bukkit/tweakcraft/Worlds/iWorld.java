@@ -20,6 +20,7 @@ package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.generator.ChunkGenerator;
 
 /**
  * @author GuntherDW
@@ -32,8 +33,10 @@ public interface iWorld {
     public void setPortalSearchWidth(int searchWidth);
     public String getName();
     public void loadWorld();
-    public String getChunkGen();
+    public ChunkGenerator getChunkGen();
     public void setChunkGen(String chunkGen);
+    public String getChunkGenClass();
+    public void setChunkGenClass(String chunkGenClass);
     public GameMode getGameMode();
     public void setGameMode(GameMode mode);
     public Long getSeed(boolean netherseed);

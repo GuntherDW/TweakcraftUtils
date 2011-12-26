@@ -46,7 +46,7 @@ public class AdminChat implements ChatMode {
         subscribers = new ArrayList<String>();
         this.chathandler = instance;
         this.plugin = chathandler.getTCUtilsInstance();
-        if(plugin.getConfigHandler().enableIRC) {
+        if (plugin.getConfigHandler().enableIRC) {
             this.circ = plugin.getCraftIRC();
             circ.registerEndPoint("tcutilsadmin", plugin.getAdminEndPoint());
         }
@@ -71,16 +71,16 @@ public class AdminChat implements ChatMode {
 
 
             String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;
-                   targetmsg = targetmsg.replace("%name%", cleanname).
-                                         replace("%message%", message).
-                                         replace("%dispname%", ChatColor.stripColor(sendername));
+            targetmsg = targetmsg.replace("%name%", cleanname).
+                    replace("%message%", message).
+                    replace("%dispname%", ChatColor.stripColor(sendername));
 
             targetmsg = targetmsg.replace("%clearcolors%", Character.toString((char) 3));
             RelayedMessage rmsg = plugin.getCraftIRC().newMsgToTag(plugin.getAdminEndPoint(), plugin.getConfigHandler().AIRCtag, "generic");
-            rmsg.setField("sender", pcolor+sendername);
+            rmsg.setField("sender", pcolor + sendername);
             rmsg.setField("realSender", cleanname);
             rmsg.setField("message", targetmsg);
-            if(sender instanceof Player) {
+            if (sender instanceof Player) {
                 Player p = (Player) sender;
                 // World w = p.getWorld();
                 rmsg.setField("world", p.getWorld().getName());
@@ -140,8 +140,8 @@ public class AdminChat implements ChatMode {
 
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             if (plugin.check(p, "admon")) {
-                if(!recp.contains(p))
-                       recp.add(p);
+                if (!recp.contains(p))
+                    recp.add(p);
             }
         }
         return recp;
@@ -188,7 +188,6 @@ public class AdminChat implements ChatMode {
         return subscribers;
     }
 
-    @Override
     public String getDescription() {
         return "Admin chat (needs permissions!)";
     }
@@ -213,6 +212,6 @@ public class AdminChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor()+"A";
+        return this.getColor() + "A";
     }
 }

@@ -50,34 +50,32 @@ public class RegionChat implements ChatMode {
         this.subscribers = new ArrayList<String>();
     }
 
-    @Override
     public boolean sendMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             List<Player> recp = getRecipients(player);
             for (Player p : recp) {
-                p.sendMessage(ChatColor.AQUA+"R"+ChatColor.WHITE+": [" + player.getDisplayName() + "]: " + message);
+                p.sendMessage(ChatColor.AQUA + "R" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
             }
-            if(getRegionName(player.getName(), false).equals("")) {
+            if (getRegionName(player.getName(), false).equals("")) {
                 sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a region!");
             } else if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("R: ("+getRegionName(player.getName(), false)+") <" + player.getName() + "> " + message);
+            plugin.getLogger().info("R: (" + getRegionName(player.getName(), false) + ") <" + player.getName() + "> " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
         return true;
     }
 
-    @Override
     public List<Player> getRecipients(CommandSender sender) {
         List<Player> recp = new ArrayList<Player>();
         List<String> regionIds = null;
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
             GlobalRegionManager gm = plugin.getWorldGuard().getGlobalRegionManager();
             Player player = (Player) sender;
-            if(plugin.getWorldGuard() == null) {
+            if (plugin.getWorldGuard() == null) {
                 sender.sendMessage(ChatColor.GOLD + "WorldGuard error!");
             } else {
 
@@ -90,19 +88,19 @@ public class RegionChat implements ChatMode {
                 regionIds = rm.getApplicableRegionsIDs(vec);
                 Vector pvec = null;
                 List<String> preg = null;
-                for(Player p : player.getWorld().getPlayers()) {
+                for (Player p : player.getWorld().getPlayers()) {
                     pvec = new Vector(p.getLocation().getX(), p.getLocation().getY(), p.getLocation().getZ());
                     preg = rm.getApplicableRegionsIDs(pvec);
-                    for(String s : preg) {
-                        if(recp.contains(p)) // List already contains player, skip checks
+                    for (String s : preg) {
+                        if (recp.contains(p)) // List already contains player, skip checks
                             continue;
-                        if(!s.equalsIgnoreCase("__global__") && regionIds.contains(s)) {
+                        if (!s.equalsIgnoreCase("__global__") && regionIds.contains(s)) {
                             recp.add(p);
                         }
                     }
                 }
             }
-            if(!recp.contains(player)) {
+            if (!recp.contains(player)) {
                 recp.add(player);
             }
         }
@@ -119,40 +117,36 @@ public class RegionChat implements ChatMode {
             if (recp.size() < 2) {
                 sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
             }
-            plugin.getLogger().info("R: ("+getRegionName(player.getName(), false)+") : "+message);
+            plugin.getLogger().info("R: (" + getRegionName(player.getName(), false) + ") : " + message);
         } else {
             sender.sendMessage("How did you get here?!");
         }
         return true;
     }
 
-    @Override
     public void addRecipient(String player) {
         if (!subscribers.contains(player)) {
             subscribers.add(player);
         }
     }
 
-    @Override
     public void removeRecipient(String player) {
         if (subscribers.contains(player)) {
             subscribers.remove(player);
         }
     }
 
-    @Override
     public List<String> getSubscribers() {
         return subscribers;
     }
 
-    @Override
     public String getDescription() {
         return "WorldGuard regions chat!";
     }
 
     public String getRegionName(String sender, boolean color) {
         Player p = plugin.getServer().getPlayer(sender);
-        if(p!=null) {
+        if (p != null) {
             GlobalRegionManager gm = plugin.getWorldGuard().getGlobalRegionManager();
             Location loc = p.getLocation().clone();
             Vector vec = new Vector(loc.getX(), loc.getY(), loc.getZ());
@@ -161,15 +155,14 @@ public class RegionChat implements ChatMode {
             String msg = "";
             for (Iterator<String> iterator = regionIds.iterator(); iterator.hasNext(); ) {
                 String next = iterator.next();
-                if(!next.equalsIgnoreCase("__global__"))
-                {
-                    msg += (color?ChatColor.GOLD:"")+next;
-                    if(iterator.hasNext()) {
-                        msg += (color?ChatColor.WHITE:"")+",";
+                if (!next.equalsIgnoreCase("__global__")) {
+                    msg += (color ? ChatColor.GOLD : "") + next;
+                    if (iterator.hasNext()) {
+                        msg += (color ? ChatColor.WHITE : "") + ",";
                     }
                 }
             }
-            return msg+(color?ChatColor.WHITE:"");
+            return msg + (color ? ChatColor.WHITE : "");
         } else {
             return null;
         }
@@ -184,6 +177,6 @@ public class RegionChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor()+"R";
+        return this.getColor() + "R";
     }
 }

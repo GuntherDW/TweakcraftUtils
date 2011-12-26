@@ -18,137 +18,98 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands;
 
-import com.guntherdw.bukkit.tweakcraft.Commands.Admin.*;
-import com.guntherdw.bukkit.tweakcraft.Commands.Chat.*;
-import com.guntherdw.bukkit.tweakcraft.Commands.Debug.CommandDebug;
-import com.guntherdw.bukkit.tweakcraft.Commands.Essentials.*;
-import com.guntherdw.bukkit.tweakcraft.Commands.General.*;
-import com.guntherdw.bukkit.tweakcraft.Commands.Teleportation.*;
-import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandLightning;
-import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandRain;
-import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandStrikeBind;
-import com.guntherdw.bukkit.tweakcraft.Commands.Weather.CommandThunder;
-import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandNotFoundException;
+import com.guntherdw.bukkit.tweakcraft.Commands.Commands.*;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.PluginDescriptionFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author GuntherDW
  */
 public class CommandHandler {
 
-    public Map<String, iCommand> commandMap = new HashMap<String, iCommand>();
+    private Map<String, iCommand> commandMap = new HashMap<String, iCommand>();
+    private Map<String, Method> newCommandMap = new HashMap<String, Method>();
+    private Map<Method, Object> instanceMap = new HashMap<Method, Object>();
+    private AdminCommands adminCommands = new AdminCommands();
+    private ChatCommands chatcommands = new ChatCommands();
+    private DebugCommands debugCommands = new DebugCommands();
+    private EssentialsCommands essentialsCommands = new EssentialsCommands();
+    private GeneralCommands generalCommands = new GeneralCommands();
+    private TeleportationCommands teleportationCommands = new TeleportationCommands();
+    private WeatherCommands weatherCommands = new WeatherCommands();
+    private Logger logger = Logger.getLogger("Minecraft");
     private TweakcraftUtils plugin;
+
+    private Object getMethodInstance(Method method) {
+        if(instanceMap.containsKey(method))
+            return instanceMap.get(method);
+
+        return null;
+    }
 
     public CommandHandler(TweakcraftUtils instance) {
         this.plugin = instance;
         commandMap.clear();
+        newCommandMap.clear();
 
-        /**
-         * Admin commands
-         */
-        commandMap.put("admin", new CommandAdmin());
-        commandMap.put("admin-add", new CommandAdminAdd());
-        commandMap.put("admin-remove", new CommandAdminRemove());
-        commandMap.put("admin-list", new CommandAdminList());
-        commandMap.put("admon", new CommandAdmon());
-        commandMap.put("admoff", new CommandAdmoff());
-        commandMap.put("tplist", new CommandTpList());
-        commandMap.put("tweakcraft", new CommandTC());
-        commandMap.put("clearinventory", new CommandClearInventory());
-        commandMap.put("viewdistance", new CommandViewDistance());
+        addCommandClass(adminCommands);
+        addCommandClass(chatcommands);
+        addCommandClass(debugCommands);
+        addCommandClass(essentialsCommands);
+        addCommandClass(generalCommands);
+        addCommandClass(teleportationCommands);
+        addCommandClass(weatherCommands);
+    }
 
-        /**
-         * Essential commands
-         */
-        commandMap.put("ban", new CommandBan());
-        commandMap.put("banlist", new CommandBanlist());
-        commandMap.put("compass", new CommandCompass());
-        commandMap.put("getpos", new CommandGetpos());
-        commandMap.put("help", new CommandHelp());
-        commandMap.put("item", new CommandItem());
-        commandMap.put("kick", new CommandKick());
-        commandMap.put("listworlds", new CommandListWorlds());
-        commandMap.put("me", new CommandMe());
-        commandMap.put("msg", new CommandMsg());
-        commandMap.put("mute", new CommandMute());
-        commandMap.put("motd", new CommandMotd());
-        commandMap.put("plugin", new CommandPlugin());
-        commandMap.put("reply", new CommandReply());
-        commandMap.put("spawn", new CommandSpawn());
-        commandMap.put("setspawn", new CommandSetSpawn());
-        commandMap.put("spawnmob", new CommandSpawnmob());
-        commandMap.put("time", new CommandTime());
-        commandMap.put("unban", new CommandUnban());
-        commandMap.put("world", new CommandWorld());
-        commandMap.put("who", new CommandWho());
-
-        /**
-         * General commands
-         */
-        commandMap.put("ext", new CommandExt());
-        commandMap.put("ignite", new CommandIgnite());
-        commandMap.put("seen", new CommandSeen());
-        commandMap.put("broadcast", new CommandBroadcast());
-        commandMap.put("tamer", new CommandTamer());
-        commandMap.put("nick", new CommandNick());
-        commandMap.put("lwho", new CommandLocalWho());
-        commandMap.put("whois", new CommandWhois());
-        commandMap.put("donotmount", new CommandDoNotMount());
-        commandMap.put("eject", new CommandEject());
-        commandMap.put("afk", new CommandAFK());
-        commandMap.put("getspawn", new CommandGetSpawn());
-        commandMap.put("tntarrow", new CommandTNTArrow());
-        commandMap.put("addexp", new CommandAddExperience());
-        commandMap.put("enchant", new CommandEnchant());
-
-        /**
-         * Chat commands
-         */
-
-        commandMap.put("lc", new CommandLc());
-        commandMap.put("rc", new CommandRc());
-        commandMap.put("wc", new CommandWc());
-        commandMap.put("zc", new CommandZc());
-        commandMap.put("chatmode", new CommandChatMode());
+    private void addCommandClass(Object instance) {
+        for(Method m : instance.getClass().getDeclaredMethods()) {
+            if(m.getAnnotation(aCommand.class)!=null)
+                injectCommand(m, instance);
+        }
+    }
 
 
-        /**
-         * Teleportation commands
-         */
-        commandMap.put("tele", new CommandTele());
-        commandMap.put("tp", new CommandTp());
-        commandMap.put("tpback", new CommandTPBack());
-        commandMap.put("tpforward", new CommandTPForward());
-        commandMap.put("tphere", new CommandTphere());
-        commandMap.put("tpoff", new CommandTpOff());
-        commandMap.put("tpon", new CommandTpOn());
-        commandMap.put("tpmob", new CommandTpMob());
+    private void injectCommand(Method method, Object instance) {
+        aCommand annotation = method.getAnnotation(aCommand.class);
+        String[] aliases = annotation.aliases();
+        if(aliases.length>0) {
+            if(newCommandMap.containsKey(aliases[0])) {
+                logger.warning("[TweakcraftUtils] Duplicate command found!");
+                logger.warning("[TweakcraftUtils] Method : "+method.getName()+"!");
+                logger.warning("[TweakcraftUtils] Command : "+aliases[0]+"!");
+                return ;
+            }
+            newCommandMap.put(aliases[0], method);
+            instanceMap.put(method, instance);
+        }
+    }
 
-        /**
-         * Weather control commands
-         */
-        commandMap.put("rain", new CommandRain());
-        commandMap.put("strike", new CommandLightning());
-        commandMap.put("thunder", new CommandThunder());
-        commandMap.put("strikebind", new CommandStrikeBind());
-
-        /**
-         * Debug commands
-         */
-
-        commandMap.put("debug", new CommandDebug());
-
+    @SuppressWarnings("unchecked")
+    public void checkCommands() {
+        if(plugin.getConfigHandler().enableDebug) { /* Show commands with no command attached */
+            PluginDescriptionFile pdFile = plugin.getDescription();
+            Map<String, Object> pluginCommands = (Map<String, Object>) pdFile.getCommands();
+            Set<String> cmds = pluginCommands.keySet();
+            for(String c : cmds) {
+                if(!this.newCommandMap.containsKey(c))
+                    logger.warning("[TweakcraftUtils] WARNING: Unmapped command : "+c);
+            }
+        }
     }
 
     public TweakcraftUtils getPlugin() {
         return plugin;
     }
 
-    public Map<String, iCommand> getCommandMap() {
-        return commandMap;
+    public Map<String, Method> getCommandMap() {
+        return newCommandMap;
     }
 
     public iCommand getCommand(String command) throws CommandNotFoundException {
@@ -157,5 +118,32 @@ public class CommandHandler {
         } else {
             throw new CommandNotFoundException(command);
         }
+    }
+
+    public boolean executeCommand(CommandSender sender, String name, String[] args, TweakcraftUtils tweakcraftUtils)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+
+        Method command = newCommandMap.get(name);
+        try{
+            return (Boolean) command.invoke(getMethodInstance(command), sender, name, args, tweakcraftUtils);
+        } catch (InvocationTargetException e) {
+            Throwable t = e.getCause();
+            if(t instanceof PermissionsException)
+                throw (PermissionsException) t;
+            if(t instanceof  CommandSenderException)
+                throw (CommandSenderException) t;
+            if(t instanceof CommandUsageException)
+                throw (CommandUsageException) t;
+            if(t instanceof CommandException)
+                throw (CommandException) t;
+
+            logger.warning("[TweakcraftUtils] Error occured while executing command!");
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            logger.warning("[TweakcraftUtils] Error occured while executing command!");
+            e.printStackTrace();
+        }
+
+        return false;
     }
 }

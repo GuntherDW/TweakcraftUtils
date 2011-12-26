@@ -19,12 +19,11 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author GuntherDW
@@ -45,7 +44,8 @@ public class TweakWorld implements iWorld {
     private Long netherseed=null;
     private int    portalSearchWidth = 128;
     private String worldName = "";
-    private String chunkGen = null;
+    private String chunkGenClass = null;
+    private ChunkGenerator chunkgen;
     private org.bukkit.World.Environment environment;
     private WorldManager wm;
     private boolean pvp = true;
@@ -152,15 +152,35 @@ public class TweakWorld implements iWorld {
         else this.seed = seed;
     }
 
-    public String getChunkGen() {
-        return chunkGen;
+    public ChunkGenerator getChunkGen() {
+        return chunkgen;
     }
 
     public void setChunkGen(String chunkGen) {
-        this.chunkGen = chunkGen;
+        resolvePluginChunkGenerator(chunkGen);
     }
 
-    @Override
+    public String getChunkGenClass() {
+        return chunkGenClass;
+    }
+
+    public void setChunkGenClass(String chunkGenClass) {
+        this.chunkGenClass = chunkGenClass;
+    }
+
+    public void resolvePluginChunkGenerator(String chunkGen) {
+        String[] split = chunkGen.split(":");
+        Plugin plugin = wm.getPlugin().getServer().getPluginManager().getPlugin(split[0]);
+        if(plugin==null) {
+            wm.getPlugin().getLogger().severe("[TweakcraftUtils] Chunkgenerator error for "+world.getName()+",");
+            wm.getPlugin().getLogger().severe("[TweakcraftUtils] Couldn't find plugin with name "+split[0]+"!");
+            this.enabled = false;
+            return;
+        }
+        
+        chunkgen = plugin.getDefaultWorldGenerator(this.worldName, split.length>1?split[1]:null);
+    }
+
     public GameMode getGameMode() {
         if(this.gamemode==null)
             return GameMode.SURVIVAL;
@@ -168,7 +188,6 @@ public class TweakWorld implements iWorld {
         return gamemode;
     }
 
-    @Override
     public void setGameMode(GameMode mode) {
         this.gamemode = mode;
     }
@@ -194,18 +213,18 @@ public class TweakWorld implements iWorld {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] Creating new world!");
                 environment = env;
 
-                if(chunkGen!=null) {
+                if(chunkGenClass!=null) {
                     try {
-                        Class clazz = Class.forName(chunkGen);
+                        Class clazz = Class.forName(chunkGenClass);
                         if(clazz!=null) {
                             Object c = clazz.newInstance();
                             if(c instanceof ChunkGenerator) {
                                 ChunkGenerator cg = (ChunkGenerator) c;
                                 if(c instanceof FlatGen) {
                                     FlatGen fg = (FlatGen) cg;
-                                    int mh = wm.getPlugin().getConfiguration().getInt("worlds.extraworlds." + worldName + ".flatGen.mapHeight", 12);
-                                    byte toplayer = (byte)wm.getPlugin().getConfiguration().getInt("worlds.extraworlds." + worldName + ".flatGen.toplayer", Material.GRASS.getId());
-                                    byte normal = (byte)wm.getPlugin().getConfiguration().getInt("worlds.extraworlds." + worldName + ".flatGen.normal", Material.DIRT.getId());
+                                    int mh = wm.getPlugin().getConfig().getInt("worlds.extraworlds." + worldName + ".flatGen.mapHeight", 12);
+                                    byte toplayer = (byte)wm.getPlugin().getConfig().getInt("worlds.extraworlds." + worldName + ".flatGen.toplayer", Material.GRASS.getId());
+                                    byte normal = (byte)wm.getPlugin().getConfig().getInt("worlds.extraworlds." + worldName + ".flatGen.normal", Material.DIRT.getId());
                                     fg.setmapHeight(mh);
                                     fg.setNormal(normal);
                                     fg.setToplayer(toplayer);
@@ -215,11 +234,11 @@ public class TweakWorld implements iWorld {
                                     worldCreator.generator(cg);
                                 }
                             } else {
-                                this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world "+worldName+"! "+chunkGen+" isn't a Chunk Generator class!");
+                                this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world "+worldName+"! "+chunkGenClass+" isn't a Chunk Generator class!");
                             }
                         }
                     } catch (ClassNotFoundException e) {
-                        this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world "+worldName+"! Can't find class with name "+chunkGen);
+                        this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world "+worldName+"! Can't find class with name "+chunkGenClass);
                         enabled=false;
                     } catch (InstantiationException e) {
                         enabled=false;
@@ -287,7 +306,6 @@ public class TweakWorld implements iWorld {
         this.portalSearchWidth = searchWidth;
     }
 
-    @Override
     public World getNetherWorld() {
         if(!isEnabled()) return null;
         if(!isNetherEnabled()) return null;
@@ -386,7 +404,7 @@ public class TweakWorld implements iWorld {
         this.viewdistance = viewdistance;
     }
 
-    public FileConfiguration getConfiguration() {
+    public YamlConfiguration getConfiguration() {
         /* File f = new File(wm.getPlugin().datafolder, "worlds/" + worldName + ".yml");
         if (!f.exists()) {
             try {
