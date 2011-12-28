@@ -18,15 +18,11 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat;
 
-import com.avaje.ebean.text.StringFormatter;
-import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
