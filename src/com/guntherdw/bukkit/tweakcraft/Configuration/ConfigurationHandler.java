@@ -93,6 +93,7 @@ public class ConfigurationHandler {
     public boolean enableTweakTravel = false;
     public boolean enableSnowPile = false;
     public int snowPileRate = 2;
+    public int snowPileMaxHeight = 7;
     public boolean enableSnowDouble = false;
     public int tweakTravelSearchWidth = 3;
 
@@ -235,6 +236,8 @@ public class ConfigurationHandler {
         this.enableFallDistanceNullify = globalconfig.getBoolean("extra.nullifyTeleportFallDistance", false);
         this.enableSnowPile = globalconfig.getBoolean("extra.snowpile.enabled", false);
         this.snowPileRate = globalconfig.getInt("extra.snowpile.rate", 2500);
+        this.snowPileMaxHeight = globalconfig.getInt("extra.snowpile.maxHeight", 7);
+        this.snowPileMaxHeight = Math.max(this.snowPileMaxHeight, 7);
         this.enableSnowDouble = globalconfig.getBoolean("extra.snowpile.doublesnowball", false);
 
 

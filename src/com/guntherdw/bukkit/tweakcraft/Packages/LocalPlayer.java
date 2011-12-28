@@ -18,6 +18,9 @@
 
 package com.guntherdw.bukkit.tweakcraft.Packages;
 
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -28,6 +31,7 @@ public class LocalPlayer {
 
     private String name;
     private Player bukkitPlayer;
+    private ChatMode chatMode;
     private boolean afk;
     private int spamcounter;
     private long lastmessagetime;
@@ -124,5 +128,31 @@ public class LocalPlayer {
     
     public LocalPlayer(String name) {
         this.name = name;
+    }
+
+    public ChatMode getChatMode() {
+        return chatMode;
+    }
+
+    public void setChatMode(ChatMode chatMode) {
+        this.chatMode = chatMode;
+    }
+
+    /**
+     * Try to resolve a ChatMode and set it
+     * @param chathandler The ChatHandler instance
+     * @param chatmode String defining the ChatMode
+     * @throws ChatModeException Thrown when either the ChatMode isn't found, or isn't enabled
+     */
+    public boolean toggleChatMode(ChatHandler chathandler, String chatmode) throws ChatModeException {
+        ChatMode cm = null;
+        cm = chathandler.getChatMode(chatmode);
+
+        if(cm!=null && chathandler.getTCUtilsInstance().check(this.bukkitPlayer, "chat.mode."+chatmode)) {
+            this.setChatMode(cm);
+            return true;
+        }
+
+        return false;
     }
 }

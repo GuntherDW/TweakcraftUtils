@@ -26,45 +26,39 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author GuntherDW
  */
-public class WorldChat implements ChatMode {
+public class WorldChat extends ChatMode {
 
-    private List<String> subscribers;
     private TweakcraftUtils plugin;
-    private ChatHandler chathandler;
 
     public WorldChat(ChatHandler instance) {
-        subscribers = new ArrayList<String>();
-        this.chathandler = instance;
-        this.plugin = chathandler.getTCUtilsInstance();
+        super(instance);
+        this.plugin = instance.getTCUtilsInstance();
     }
 
+    @Override
     public boolean sendMessage(CommandSender sender, String message) {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            List<Player> recp = getRecipients(player);
-            for (Player p : recp) {
-                p.sendMessage(ChatColor.DARK_GREEN + "W" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
-            }
-            if (recp.size() < 2) {
-                sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
-            }
-            plugin.getLogger().info("W: (" + player.getWorld().getName() + ") <" + player.getName() + "> " + message);
-        } else {
-            sender.sendMessage("How did you get here?!");
+
+        if(!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.YELLOW+"What were you trying to do?");
+            return true;
         }
+
+        super.sendMessage(sender, message);
+        if(getRecipients(sender).size() < 2)
+            sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
+
         return true;
     }
 
     public boolean broadcastMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            List<Player> recp = getRecipients(player);
+            Set<Player> recp = getRecipients(player);
             for (Player p : recp) {
                 p.sendMessage(message);
             }
@@ -78,8 +72,8 @@ public class WorldChat implements ChatMode {
         return true;
     }
 
-    public List<Player> getRecipients(CommandSender sender) {
-        List<Player> recp = new ArrayList<Player>();
+    public Set<Player> getRecipients(CommandSender sender) {
+        Set<Player> recp = new HashSet<Player>();
         if (sender instanceof Player) {
             Player player = (Player) sender;
             EntityLocation entityloc = new EntityLocation(player);
@@ -92,26 +86,11 @@ public class WorldChat implements ChatMode {
         return recp;
     }
 
-    public void addRecipient(String player) {
-        if (!subscribers.contains(player)) {
-            subscribers.add(player);
-        }
-    }
-
-    public void removeRecipient(String player) {
-        if (subscribers.contains(player)) {
-            subscribers.remove(player);
-        }
-    }
-
-    public List<String> getSubscribers() {
-        return subscribers;
-    }
-
     public String getDescription() {
         return "World Chat (chat in your current world)";
     }
 
+    @Override
     public boolean isEnabled() {
         return plugin.getConfigHandler().enableWorldChat;
     }
@@ -121,7 +100,14 @@ public class WorldChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor() + "W";
+        return this.getColor() + "W" + ChatColor.WHITE;
+    }
+
+    @Override
+    public void logChat(CommandSender sender, String message) {
+        /* Nothing but players here, so safe to cast */
+        Player player = (Player) sender;
+        plugin.getLogger().info("W: (" + player.getWorld().getName() + ") <" + player.getName() + "> " + message);
     }
 }
 

@@ -29,7 +29,7 @@ import java.util.Random;
 /**
  * @author GuntherDW
  */
-public class FlatGen extends ChunkGenerator {
+public final class FlatGen extends ChunkGenerator {
 
     private WorldManager wm=null;
     private byte toplayer = (byte)Material.GRASS.getId();

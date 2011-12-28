@@ -18,47 +18,39 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat.Modes;
 
+import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author GuntherDW
  */
-public class GroupChat implements ChatMode {
+public class GroupChat extends ChatMode {
+
+    public GroupChat(ChatHandler instance) {
+        super(instance);
+    }
+
     public boolean sendMessage(CommandSender sender, String message) {
         return false;
     }
 
-    public List<Player> getRecipients(CommandSender sender) {
+    public Set<Player> getRecipients(CommandSender sender) {
         return null;
-    }
-
-    public void addRecipient(String player) {
-
     }
 
     public boolean broadcastMessage(CommandSender sender, String message) {
         return false;
     }
 
-    public void removeRecipient(String player) {
-
-    }
-
-    public List<String> getSubscribers() {
-        return null;
-    }
-
     public String getDescription() {
         return null;
     }
 
-    public boolean isEnabled() {
-        return false;
-    }
 
     public String getColor() {
         return null;

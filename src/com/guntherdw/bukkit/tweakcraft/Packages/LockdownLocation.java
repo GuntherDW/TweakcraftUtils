@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 /**
  * @author GuntherDW
  */
-public class LockdownLocation {
+public final class LockdownLocation {
 
     private Location loc;
     private Player target;

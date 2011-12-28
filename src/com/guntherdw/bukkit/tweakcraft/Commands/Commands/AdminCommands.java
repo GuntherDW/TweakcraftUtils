@@ -36,7 +36,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author GuntherDW
@@ -98,7 +100,7 @@ public class AdminCommands {
 
         try {
             ChatMode cm = plugin.getChathandler().getChatMode("admin");
-            List<String> playernames = new ArrayList<String>();
+            Set<String> playernames = new HashSet<String>();
             for (Player p : plugin.getServer().getOnlinePlayers()) {
                 playernames.add(p.getName());
             }
@@ -615,7 +617,7 @@ public class AdminCommands {
             } else if(args[0].equalsIgnoreCase("improvchat")) {
                 if(sender instanceof Player) {
                     Player player = (Player) sender;
-                    List<Player> lijst = plugin.getCUIPlayers();
+                    Set<Player> lijst = plugin.getCUIPlayers();
                     if(lijst!=null && !lijst.contains(player)) {
                         plugin.getLogger().info("[TweakcraftUtils] Adding "+player.getName()+" to the CUI list!");
                         lijst.add(player);
@@ -626,7 +628,7 @@ public class AdminCommands {
             } else if(args[0].equalsIgnoreCase("tooldura")) {
                 if(sender instanceof Player) {
                     Player player = (Player) sender;
-                    List<Player> lijst = plugin.getMod_InfDuraplayers();
+                    Set<Player> lijst = plugin.getMod_InfDuraplayers();
                     if(lijst!=null && !lijst.contains(player)) {
                         plugin.getLogger().info("[TweakcraftUtils] Adding "+player.getName()+" to the mod_InfDura list!");
                         lijst.add(player);

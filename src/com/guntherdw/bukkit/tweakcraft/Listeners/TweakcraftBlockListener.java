@@ -28,7 +28,6 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 import java.util.Random;
 
@@ -44,26 +43,26 @@ public class TweakcraftBlockListener extends BlockListener {
     }
 
     public void onSignChange(SignChangeEvent event) {
-        if(event.isCancelled()) return;
-        if(plugin.getConfigHandler().enableTweakTravel&&event.getLine(0).equalsIgnoreCase("[TweakTravel]") && !plugin.check(event.getPlayer(), "tweaktravel.create")) {
-            event.getPlayer().sendMessage(ChatColor.RED+"You don't have permission to create TweakTravel signs!");
+        if (event.isCancelled()) return;
+        if (plugin.getConfigHandler().enableTweakTravel && event.getLine(0).equalsIgnoreCase("[TweakTravel]") && !plugin.check(event.getPlayer(), "tweaktravel.create")) {
+            event.getPlayer().sendMessage(ChatColor.RED + "You don't have permission to create TweakTravel signs!");
             event.setCancelled(true);
         }
     }
 
     public void onBlockForm(BlockFormEvent event) {
-        if(event.isCancelled()) return;
-        if(!plugin.getConfigHandler().enableSnowPile) return;
+        if (event.isCancelled()) return;
+        if (!plugin.getConfigHandler().enableSnowPile) return;
 
         Block b = event.getBlock();
         BlockState bnewstate = event.getNewState();
         BlockState boldstate = b.getState();
         int rate = plugin.getConfigHandler().snowPileRate;
 
-        if(boldstate.getTypeId() == 78) {
+        if (boldstate.getTypeId() == 78) {
             Random rnd = new Random();
             byte snowstate = boldstate.getData().getData();
-            if(snowstate<7 && (rnd.nextInt(Integer.MAX_VALUE)%rate*25)==0)  {
+            if (snowstate < (plugin.getConfigHandler().snowPileMaxHeight + 1) && (rnd.nextInt(Integer.MAX_VALUE) % rate * 25) == 0) {
                 snowstate += 1;
                 bnewstate.setData(Material.SNOW.getNewData(snowstate));
             } else {
@@ -75,12 +74,12 @@ public class TweakcraftBlockListener extends BlockListener {
 
 
     public void onBlockBreak(BlockBreakEvent event) {
-        if(event.isCancelled()) return;
-        if(!plugin.getConfigHandler().enableSnowDouble) return;
+        if (event.isCancelled()) return;
+        if (!plugin.getConfigHandler().enableSnowDouble) return;
 
         Block block = event.getBlock();
 
-        if(block.getTypeId() == 78&&block.getData()>3)
+        if (block.getTypeId() == 78 && block.getData() > 2)
             block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.SNOW_BALL, 1));
     }
 

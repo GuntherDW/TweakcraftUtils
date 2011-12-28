@@ -21,7 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Packages;
 /**
  * @author GuntherDW
  */
-public class TamerMode {
+public final class TamerMode {
 
     private Boolean state;
     private TamerModes mode;

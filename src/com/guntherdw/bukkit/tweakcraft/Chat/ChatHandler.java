@@ -33,9 +33,9 @@ public class ChatHandler {
 
     private TweakcraftUtils plugin;
     private AntiSpam antispam = null;
-    public Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
-    public Map<String, String> playerchatmode = new HashMap<String, String>();
-    public Map<String, Long> mutedPlayers = new HashMap<String, Long>();
+    private Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
+    private Map<String, String> playerchatmode = new HashMap<String, String>();
+    private Map<String, Long> mutedPlayers = new HashMap<String, Long>();
     
 
     public ChatHandler(TweakcraftUtils instance) {

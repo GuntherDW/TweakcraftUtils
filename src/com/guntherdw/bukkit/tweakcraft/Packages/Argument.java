@@ -21,7 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Packages;
 /**
  * @author GuntherDW
  */
-public class Argument {
+public final class Argument {
     private Integer id;
     private String argname;
     private Object argvalue;

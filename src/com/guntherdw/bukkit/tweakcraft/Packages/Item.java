@@ -21,7 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Packages;
 /**
  * @author GuntherDW
  */
-public class Item {
+public final class Item {
 
     private int itemnumber;
     private byte damage;

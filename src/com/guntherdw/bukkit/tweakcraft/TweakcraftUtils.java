@@ -64,10 +64,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.persistence.PersistenceException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 // import com.ensifera.animosity.craftirc.EndPoint;
@@ -107,25 +104,25 @@ public class TweakcraftUtils extends JavaPlugin {
     private Object circendpoint = null;
     private Object circadminendpoint = null;
 
-    private List<String> donottplist;
+    private Set<String> donottplist;
     private List<String> MOTDLines;
 
     protected final Logger log = Logger.getLogger("Minecraft");
     protected PluginDescriptionFile pdfFile = null;
 
-    private List<Player> cuiPlayers;
+    private Set<Player> cuiPlayers;
     public String CUIPattern = "§7§3§3§4";
-    private List<Player> mod_InfDuraplayers;
+
+    private Set<Player> mod_InfDuraplayers;
     public String ToolDuraPattern = "§1§1§1§1";
 
     public static TweakcraftUtils instance = null;
 
-    public File datafolder;
     public Map<String, String> playerReplyDB;
     public boolean databaseloaded = false;
 
 
-    public List<Player> getMod_InfDuraplayers() {
+    public Set<Player> getMod_InfDuraplayers() {
         return mod_InfDuraplayers;
     }
 
@@ -133,17 +130,18 @@ public class TweakcraftUtils extends JavaPlugin {
         return this.permsResolver;
     }
 
-    public List<Player> getCUIPlayers() {
+    public Set<Player> getCUIPlayers() {
         return cuiPlayers;
     }
 
     public static TweakcraftUtils getInstance() {
-        /* Do not create a new instance, could be dangerous! */
+        /* Do not create a new instance, could be dangerous!
+         * It'll get set at the onEnable() method!
+         */
         /* if(instance==null)
             instance = new TweakcraftUtils(); */
 
         return instance;
-        // return instance;
     }
 
     public void sendCUIChatMode(Player player) {
@@ -179,27 +177,37 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
+    /**
+     * Send the player a mod_InfDura string, setting the new ToolDurabilty mode
+     * @param player The player to send the mode to
+     */
     public void sendToolDuraMode(Player player) {
+        this.sendToolDuraMode(player, player.getWorld());
+    }
+
+    /**
+     * Send the player a mod_InfDura string, setting the new ToolDurabilty mode
+     * @param player The player to send the mode to
+     * @param world The world to check the ToolDurability mode
+     */
+    public void sendToolDuraMode(Player player, World world) {
         if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
         {
-            player.sendRawMessage(ToolDuraPattern+player.getWorld().getToolDurability());
+            player.sendRawMessage(ToolDuraPattern+world.getToolDurability());
         }
     }
 
-    public void sendToolDuraMode(Player player, World to) {
-        if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
-        {
-            player.sendRawMessage(ToolDuraPattern+to.getToolDurability());
-        }
-    }
-
+    /**
+     * Send the specified player the mod_InfDura handshake
+     * @param player The player that will receive the initiation
+     */
     public void sendmod_InfDuraHandshake(Player player) {
         if(getConfigHandler().enablemod_InfDura) {
             player.sendRawMessage(ToolDuraPattern);
         }
     }
 
-    public String findinlist(String find, List<String> list) {
+    public String findinlist(String find, Set<String> list) {
         for (String name : list) {
             if (name.toLowerCase().contains(find.toLowerCase())) {
                 return name;
@@ -208,40 +216,48 @@ public class TweakcraftUtils extends JavaPlugin {
         return null;
     }
 
-    public String getPlayerReply(String player) {
-        if (playerReplyDB.containsKey(player)) {
-            return playerReplyDB.get(player);
-        } else {
-            return null;
-        }
-    }
-
+    /**
+     * Get the Teleport History tool
+     * @return TeleportHistory instance
+     */
     public TeleportHistory getTelehistory() {
         return telehistory;
     }
 
+    /**
+     * Get the PlayerListener instance
+     * @return TweakcraftUtils's PlayerListener instance
+     */
     public TweakcraftPlayerListener getPlayerListener() {
         return playerListener;
     }
 
-    public void setPlayerReply(String player, String toPlayer) {
-        playerReplyDB.put(player, toPlayer);
-    }
-
+    /**
+     * Get the ItemDB instance
+     * @return ItemDB instance
+     */
     public ItemDB getItemDB() {
         return itemDB;
     }
 
+    /**
+     * Get the WorldManager instance
+     * @return WorldManager instance
+     */
     public WorldManager getworldManager() {
         return worldmanager;
     }
 
+    /**
+     * Get the TamerTool tool instance
+     * @return TamerTool instance
+     */
     public TamerTool getTamerTool() {
         return tamertool;
     }
 
     public String getCompassDirection(Float rotation) {
-        String dir;
+        String dir = null;
         Float rot = (rotation - 90) % 360;
         if (rot < 0) {
             rot += 360;
@@ -342,10 +358,6 @@ public class TweakcraftUtils extends JavaPlugin {
         return nick;
     }
 
-    /* public String getDisplayName(String name) {
-        return this.getNickWithColors(name);
-    } */
-
     public Player getPlayer(String nick, boolean findNick) {
         Player p = findNick?getPlayerByNick(nick):null;
         if(p==null) p = this.getServer().getPlayerExact(nick);
@@ -380,6 +392,9 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
 
+    /**
+     * Register the Bukkit events to the appropriate event handlers.
+     */
     private void registerEvents() {
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN,           playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN,            playerListener, Priority.High, this);
@@ -402,7 +417,6 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.PROJECTILE_HIT,         entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH,           entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD,           worldListener , Priority.Normal, this);
-
     }
 
     public TweakcraftWorldListener getWorldListener() {
@@ -457,7 +471,7 @@ public class TweakcraftUtils extends JavaPlugin {
         int x = 0;
         while (x < msg.length() - maxlength) {
             toadd = msg.substring(x, x + maxlength);
-            if (!toadd.trim().isEmpty())
+            if (!toadd.trim().equals(""))
                 lijst.add(toadd.trim());
             x += maxlength;
         }
@@ -627,13 +641,13 @@ public class TweakcraftUtils extends JavaPlugin {
         pdfFile = this.getDescription();
         instance = this;
 
-        donottplist = new ArrayList<String>();
+        donottplist = new HashSet<String>();
         MOTDLines = new ArrayList<String>();
         this.reloadMOTD();
         configHandler.setGlobalConfig(new File(this.getDataFolder(), "config.yml"));
         configHandler.reloadConfig();
-        this.cuiPlayers = new ArrayList<Player>();
-        this.mod_InfDuraplayers = new ArrayList<Player>();
+        this.cuiPlayers = new HashSet<Player>();
+        this.mod_InfDuraplayers = new HashSet<Player>();
 
         this.setupWorldGuard();
         this.setupCraftIRC();
@@ -671,7 +685,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return (EndPoint) circadminendpoint;
     }
 
-    public List<String> getDonottplist() {
+    public Set<String> getDonottplist() {
         return donottplist;
     }
 
@@ -695,7 +709,7 @@ public class TweakcraftUtils extends JavaPlugin {
         // String[] args = new String[];
         int argc = 0;
         for(String a : unfilteredargs) {
-            if(a!=null && !a.isEmpty() && !a.trim().equals("")) {
+            if(a!=null && !a.trim().equals("")) {
                 argsa.add(a);
                 argc++;
             }

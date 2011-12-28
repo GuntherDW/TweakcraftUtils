@@ -31,29 +31,25 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author GuntherDW
  */
-public class RegionChat implements ChatMode {
+public class RegionChat extends ChatMode {
 
-    private List<String> subscribers;
     private TweakcraftUtils plugin;
-    private ChatHandler chathandler;
 
     public RegionChat(ChatHandler instance) {
-        this.chathandler = instance;
+        super(instance);
         this.plugin = chathandler.getTCUtilsInstance();
-        this.subscribers = new ArrayList<String>();
     }
 
+    @Override
     public boolean sendMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            List<Player> recp = getRecipients(player);
+            Set<Player> recp = getRecipients(player);
             for (Player p : recp) {
                 p.sendMessage(ChatColor.AQUA + "R" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
             }
@@ -69,8 +65,8 @@ public class RegionChat implements ChatMode {
         return true;
     }
 
-    public List<Player> getRecipients(CommandSender sender) {
-        List<Player> recp = new ArrayList<Player>();
+    public Set<Player> getRecipients(CommandSender sender) {
+        Set<Player> recp = new HashSet<Player>();
         List<String> regionIds = null;
         if (sender instanceof Player) {
             GlobalRegionManager gm = plugin.getWorldGuard().getGlobalRegionManager();
@@ -110,7 +106,7 @@ public class RegionChat implements ChatMode {
     public boolean broadcastMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            List<Player> recp = getRecipients(player);
+            Set<Player> recp = getRecipients(player);
             for (Player p : recp) {
                 p.sendMessage(message);
             }
@@ -122,22 +118,6 @@ public class RegionChat implements ChatMode {
             sender.sendMessage("How did you get here?!");
         }
         return true;
-    }
-
-    public void addRecipient(String player) {
-        if (!subscribers.contains(player)) {
-            subscribers.add(player);
-        }
-    }
-
-    public void removeRecipient(String player) {
-        if (subscribers.contains(player)) {
-            subscribers.remove(player);
-        }
-    }
-
-    public List<String> getSubscribers() {
-        return subscribers;
     }
 
     public String getDescription() {
@@ -168,6 +148,7 @@ public class RegionChat implements ChatMode {
         }
     }
 
+    @Override
     public boolean isEnabled() {
         return plugin.getConfigHandler().enableWorldGuard;
     }
@@ -177,6 +158,6 @@ public class RegionChat implements ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor() + "R";
+        return this.getColor() + "R" + ChatColor.WHITE;
     }
 }

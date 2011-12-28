@@ -21,7 +21,7 @@ package com.guntherdw.bukkit.tweakcraft.Packages;
 /**
  * @author GuntherDW
  */
-public class Ban {
+public final class Ban {
 
     String player;
     String reason;
@@ -44,7 +44,7 @@ public class Ban {
     }
 
     public String getReason() {
-        if (reason == null || reason.isEmpty()) {
+        if (reason == null || reason.equals("")) {
             return "You are banned!";
         } else {
             return reason;

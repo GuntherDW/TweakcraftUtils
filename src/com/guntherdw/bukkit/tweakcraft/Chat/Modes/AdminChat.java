@@ -28,24 +28,21 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author GuntherDW
  */
-public class AdminChat implements ChatMode {
+public class AdminChat extends ChatMode {
 
-    /* TweakcraftUtils stuff */
-
-    private List<String> subscribers;
-    private TweakcraftUtils plugin;
-    private ChatHandler chathandler;
     private CraftIRC circ;
+    private TweakcraftUtils plugin;
 
     public AdminChat(ChatHandler instance) {
-        subscribers = new ArrayList<String>();
-        this.chathandler = instance;
-        this.plugin = chathandler.getTCUtilsInstance();
+        super(instance);
+        this.plugin = instance.getTCUtilsInstance();
         if (plugin.getConfigHandler().enableIRC) {
             this.circ = plugin.getCraftIRC();
             circ.registerEndPoint("tcutilsadmin", plugin.getAdminEndPoint());
@@ -130,8 +127,8 @@ public class AdminChat implements ChatMode {
         return true;
     }
 
-    public List<Player> getRecipients(CommandSender sender) {
-        List<Player> recp = new ArrayList<Player>();
+    public Set<Player> getRecipients(CommandSender sender) {
+        Set<Player> recp = new HashSet<Player>();
         for (String m : subscribers) {
             Player p = plugin.getServer().getPlayer(m);
             if (p != null)
@@ -155,12 +152,6 @@ public class AdminChat implements ChatMode {
         }
     }
 
-    public void addRecipient(String player) {
-        if (!subscribers.contains(player)) {
-            subscribers.add(player);
-        }
-    }
-
     public List<Player> getAdmins() {
         List<Player> recp = new ArrayList<Player>();
         for (Player p : plugin.getServer().getOnlinePlayers()) {
@@ -178,16 +169,6 @@ public class AdminChat implements ChatMode {
         return admins;
     }
 
-    public void removeRecipient(String player) {
-        if (subscribers.contains(player)) {
-            subscribers.remove(player);
-        }
-    }
-
-    public List<String> getSubscribers() {
-        return subscribers;
-    }
-
     public String getDescription() {
         return "Admin chat (needs permissions!)";
     }
@@ -199,6 +180,7 @@ public class AdminChat implements ChatMode {
         return true;
     }
 
+    @Override
     public boolean isEnabled() {
         return true;
     }

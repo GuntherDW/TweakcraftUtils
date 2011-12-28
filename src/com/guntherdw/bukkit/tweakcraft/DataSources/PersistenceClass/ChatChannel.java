@@ -19,7 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass;
 
 import com.avaje.ebean.validation.Length;
-import com.sun.istack.internal.NotNull;
+import com.avaje.ebean.validation.NotNull;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

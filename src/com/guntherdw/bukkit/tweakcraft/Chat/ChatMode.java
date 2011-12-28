@@ -18,15 +18,32 @@
 
 package com.guntherdw.bukkit.tweakcraft.Chat;
 
+import com.avaje.ebean.text.StringFormatter;
+import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * @author GuntherDW
  */
-public interface ChatMode {
+public abstract class ChatMode {
+
+    protected Set<String> subscribers;
+    protected ChatHandler chathandler;
+    protected String chatModeName = null;
+    protected Logger logger = Logger.getLogger("Minecraft");
+
+    public ChatMode(ChatHandler instance) {
+        subscribers = new HashSet<String>();
+        this.chathandler = instance;
+    }
 
     /**
      * Sends a message in the chosen method
@@ -35,21 +52,35 @@ public interface ChatMode {
      * @param message
      * @return
      */
-    public abstract boolean sendMessage(CommandSender sender, String message);
+    public boolean sendMessage(CommandSender sender, String message) {
+
+        String playerMessage = String.format(getChatFormatString(), sender instanceof Player?((Player)sender).getDisplayName(): ChatColor.LIGHT_PURPLE+"CONSOLE"+ChatColor.WHITE, message);
+        for(Player player : getRecipients(sender)) {
+            player.sendMessage(playerMessage);
+        }
+
+        logChat(sender, message);
+
+        return true;
+    }
 
     /**
      * Returns a list of players that will get the message
      *
      * @return
      */
-    public abstract List<Player> getRecipients(CommandSender sender);
+    public abstract Set<Player> getRecipients(CommandSender sender);
 
     /**
      * Tries to remove a recipient
      *
      * @param player
      */
-    public abstract void addRecipient(String player);
+    public void addRecipient(String player) {
+        if (!subscribers.contains(player)) {
+            subscribers.add(player);
+        }
+    }
 
     /**
      * Broadcasts a message in the current ChatMode
@@ -65,14 +96,20 @@ public interface ChatMode {
      *
      * @param player
      */
-    public abstract void removeRecipient(String player);
+    public void removeRecipient(String player) {
+        if (subscribers.contains(player)) {
+            subscribers.remove(player);
+        }
+    }
 
     /**
      * Gets the current subscribed list
      *
      * @return
      */
-    public abstract List<String> getSubscribers();
+    public Set<String> getSubscribers() {
+        return this.subscribers;
+    }
 
     /**
      * Shows a little description about the ChatMode
@@ -86,7 +123,10 @@ public interface ChatMode {
      *
      * @return enabled
      */
-    public abstract boolean isEnabled();
+    public boolean isEnabled() {
+        return false;
+    }
+
 
     /**
      * Gets the ChatMode's color
@@ -101,4 +141,25 @@ public interface ChatMode {
      * @return the prefix
      */
     public abstract String getPrefix();
+
+    /**
+     * 
+     */
+    public String getLoggingFormatString() {
+        String name = this.chatModeName==null?getClass().getSimpleName():chatModeName;
+        return name+": <%1$s> %2$s";
+    }
+    
+    public String getChatFormatString() {
+        String prefix = getPrefix();
+        return (prefix!=null?prefix+": ":"")+ "[%1$s] %2$s";
+    }
+    
+    public void logChat(CommandSender sender, String message) {
+        String logFormat = getLoggingFormatString();
+        if(logFormat!=null) {
+            String logMessage = String.format(logFormat, sender instanceof Player?((Player)sender).getName(): "CONSOLE", message);
+            logger.info(logMessage);
+        }
+    }
 }

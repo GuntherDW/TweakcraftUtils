@@ -43,6 +43,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -262,32 +263,34 @@ public class EssentialsCommands {
         } */
         String toadd = "";
         for(String cname : commh.getCommandMap().keySet()) {
-            try {
-                iCommand c = commh.getCommand(cname);
+            //try {
+            // iCommand c = commh.getCommand(cname);
+            Method commandMethod = commh.getCommandMap().get(cname);
+            aCommand annotation = commandMethod.getAnnotation(aCommand.class);
 
-                if(addCommandToList(sender, c, plugin)) {
-                    /* toadd = String.format(ChatColor.GOLD+"%1$-10s"+ChatColor.WHITE+" : "
-                            +ChatColor.YELLOW+"%2$s", cname, plugin.getCommand(cname).getDescription()); */
-                    // Fuck minecraft's font :<
-                    toadd = ChatColor.GOLD+cname+ChatColor.WHITE+
-                        " : "+ChatColor.YELLOW+plugin.getCommand(cname).getDescription();
-                    if(aliases) {
-                        List<String> aliaseslist = plugin.getCommand(cname).getAliases();
-                        if(aliaseslist.size()>0) {
-                            toadd += ChatColor.WHITE+" (";
-                            for(String alias : aliaseslist) {
-                                toadd+= ChatColor.GOLD+alias+ChatColor.WHITE+",";
-                            }
-                            toadd = toadd.substring(0, toadd.length()-1);
-                            toadd+=")";
+            if(addCommandToList(sender, commandMethod, plugin)) {
+                /* toadd = String.format(ChatColor.GOLD+"%1$-10s"+ChatColor.WHITE+" : "
+             +ChatColor.YELLOW+"%2$s", cname, plugin.getCommand(cname).getDescription()); */
+                // Fuck minecraft's font :<
+                toadd = ChatColor.GOLD+cname+ChatColor.WHITE+
+                    " : "+ChatColor.YELLOW+plugin.getCommand(cname).getDescription();
+                if(aliases) {
+                    List<String> aliaseslist = plugin.getCommand(cname).getAliases();
+                    if(aliaseslist.size()>0) {
+                        toadd += ChatColor.WHITE+" (";
+                        for(String alias : aliaseslist) {
+                            toadd+= ChatColor.GOLD+alias+ChatColor.WHITE+",";
                         }
-
+                        toadd = toadd.substring(0, toadd.length()-1);
+                        toadd+=")";
                     }
-                    cma.add(toadd);
+
                 }
-            } catch (CommandNotFoundException e) {
-                throw new CommandException("Exception thrown while calling /help, contact GuntherDW!");
+                cma.add(toadd);
             }
+            /* } catch (CommandNotFoundException e) {
+                throw new CommandException("Exception thrown while calling /help, contact GuntherDW!");
+            } */
         }
         /**
          * Extra plugins
@@ -352,12 +355,13 @@ public class EssentialsCommands {
         return true;
     }
 
-    protected boolean addCommandToList(CommandSender sender, iCommand command, TweakcraftUtils plugin) {
+    protected boolean addCommandToList(CommandSender sender, Method command, TweakcraftUtils plugin) {
         if(sender instanceof Player) {
-            if(command.getPermissionSuffix() == null) {
+            aCommand annotation = command.getAnnotation(aCommand.class);
+            if(annotation == null) {
                 return true;
             } else {
-                return plugin.check((Player)sender, command.getPermissionSuffix());
+                return plugin.check((Player)sender, annotation.permissionBase());
             }
         } else {
             return true;
@@ -1266,7 +1270,7 @@ public class EssentialsCommands {
             // }
             msg += toadd;
         }
-        if (!msg.trim().isEmpty()) {
+        if (!msg.trim().equals("")) {
             sender.sendMessage(msg.substring(0, msg.length() - 2));
         }
 
