@@ -52,6 +52,92 @@ public class ChatCommands {
         return this.chatCommand(sender, command, null, args, plugin);
     }
 
+    @aCommand(
+        aliases = {"gc"},
+        permissionBase = "chat.mode.global",
+        description = "Remove ChatMode subscription",
+        section = "chat"
+    )
+    public boolean globalChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+
+        this.chatCommand(sender, command, "global", args, plugin);
+
+        return true;
+    }
+
+    @aCommand(
+        aliases = {"lc"},
+        permissionBase = "chat.mode.local",
+        description = "Toggle local chat",
+        section = "chat"
+    )
+    public boolean localChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+
+        if (!plugin.getConfigHandler().enableLocalChat) {
+            throw new CommandUsageException("LocalChat not enabled!");
+        }
+
+        this.chatCommand(sender, command, "local", args, plugin);
+
+        return true;
+    }
+
+    @aCommand(
+        aliases = {"rc"},
+        permissionBase = "chat.mode.region",
+        description = "Toggle region chat",
+        section = "chat"
+    )
+    public boolean regionChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+
+        if (!plugin.getConfigHandler().enableWorldGuard) {
+            throw new CommandUsageException("WorldGuard not enabled!");
+        }
+
+        this.chatCommand(sender, command, "region", args, plugin);
+
+        return true;
+    }
+
+    @aCommand(
+        aliases = {"wc"},
+        permissionBase = "chat.mode.world",
+        description = "Toggle world chat",
+        section = "chat"
+    )
+    public boolean worldChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+
+        if (!plugin.getConfigHandler().enableWorldChat) {
+            throw new CommandUsageException("WorldChat not enabled!");
+        }
+
+        this.chatCommand(sender, command, "world", args, plugin);
+
+        return true;
+    }
+
+
+    @aCommand(
+        aliases = {"zc"},
+        permissionBase = "chat.mode.zone",
+        description = "Toggle Zone chat",
+        section = "chat"
+    )
+    public boolean zoneChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+        if (plugin.getConfigHandler().enableZones == false) {
+            throw new CommandUsageException("Zones not enabled!");
+        }
+
+        this.chatCommand(sender, command, "zones", args, plugin);
+
+        return true;
+    }
+
 
     public boolean chatCommand(CommandSender sender, String command, String chatModeName, String[] realargs, TweakcraftUtils plugin)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
@@ -71,7 +157,7 @@ public class ChatCommands {
         } else {
             chatMode = realargs[0].toLowerCase();
         }
-        args = Arrays.asList(realargs);
+        args.addAll(Arrays.asList(realargs));
 
         String msg = "";
         if (args.size() == 1) {
@@ -206,75 +292,5 @@ public class ChatCommands {
         return true;
     }
 
-    @aCommand(
-        aliases = {"lc"},
-        permissionBase = "chat.mode.local",
-        description = "Toggle local chat",
-        section = "chat"
-    )
-    public boolean localchat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
-        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
-        if (!plugin.getConfigHandler().enableLocalChat) {
-            throw new CommandUsageException("LocalChat not enabled!");
-        }
-
-        this.chatCommand(sender, command, "local", args, plugin);
-
-        return true;
-    }
-
-    @aCommand(
-        aliases = {"rc"},
-        permissionBase = "chat.mode.region",
-        description = "Toggle region chat",
-        section = "chat"
-    )
-    public boolean regionchat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
-        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-
-        if (!plugin.getConfigHandler().enableWorldGuard) {
-            throw new CommandUsageException("WorldGuard not enabled!");
-        }
-
-        this.chatCommand(sender, command, "region", args, plugin);
-
-        return true;
-    }
-
-    @aCommand(
-        aliases = {"wc"},
-        permissionBase = "chat.mode.world",
-        description = "Toggle world chat",
-        section = "chat"
-    )
-    public boolean worldchat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
-        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-
-        if (!plugin.getConfigHandler().enableWorldChat) {
-            throw new CommandUsageException("WorldChat not enabled!");
-        }
-
-        this.chatCommand(sender, command, "world", args, plugin);
-
-        return true;
-    }
-
-
-    @aCommand(
-        aliases = {"zc"},
-        permissionBase = "chat.mode.zone",
-        description = "Toggle Zone chat",
-        section = "chat"
-    )
-    public boolean executeCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
-        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if (plugin.getConfigHandler().enableZones == false) {
-            throw new CommandUsageException("Zones not enabled!");
-        }
-
-        this.chatCommand(sender, command, "zones", args, plugin);
-
-        return true;
-    }
 }

@@ -26,7 +26,9 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -37,18 +39,18 @@ public class CommandHandler {
     private Map<String, iCommand> commandMap = new HashMap<String, iCommand>();
     private Map<String, Method> newCommandMap = new HashMap<String, Method>();
     private Map<Method, Object> instanceMap = new HashMap<Method, Object>();
-    private AdminCommands adminCommands = new AdminCommands();
-    private ChatCommands chatcommands = new ChatCommands();
-    private DebugCommands debugCommands = new DebugCommands();
-    private EssentialsCommands essentialsCommands = new EssentialsCommands();
-    private GeneralCommands generalCommands = new GeneralCommands();
-    private TeleportationCommands teleportationCommands = new TeleportationCommands();
-    private WeatherCommands weatherCommands = new WeatherCommands();
+    /*private AdminCommands adminCommands;
+    private ChatCommands chatcommands;
+    private DebugCommands debugCommands; 
+    private EssentialsCommands essentialsCommands;
+    private GeneralCommands generalCommands;
+    private TeleportationCommands teleportationCommands;
+    private WeatherCommands weatherCommands;*/
     private Logger logger = Logger.getLogger("Minecraft");
     private TweakcraftUtils plugin;
 
     private Object getMethodInstance(Method method) {
-        if(instanceMap.containsKey(method))
+        if (instanceMap.containsKey(method))
             return instanceMap.get(method);
 
         return null;
@@ -59,18 +61,18 @@ public class CommandHandler {
         commandMap.clear();
         newCommandMap.clear();
 
-        addCommandClass(adminCommands);
-        addCommandClass(chatcommands);
-        addCommandClass(debugCommands);
-        addCommandClass(essentialsCommands);
-        addCommandClass(generalCommands);
-        addCommandClass(teleportationCommands);
-        addCommandClass(weatherCommands);
+        addCommandClass(new AdminCommands());
+        addCommandClass(new ChatCommands());
+        addCommandClass(new DebugCommands());
+        addCommandClass(new EssentialsCommands());
+        addCommandClass(new GeneralCommands());
+        addCommandClass(new TeleportationCommands());
+        addCommandClass(new WeatherCommands());
     }
 
     private void addCommandClass(Object instance) {
-        for(Method m : instance.getClass().getDeclaredMethods()) {
-            if(m.getAnnotation(aCommand.class)!=null)
+        for (Method m : instance.getClass().getDeclaredMethods()) {
+            if (m.getAnnotation(aCommand.class) != null)
                 injectCommand(m, instance);
         }
     }
@@ -79,12 +81,12 @@ public class CommandHandler {
     private void injectCommand(Method method, Object instance) {
         aCommand annotation = method.getAnnotation(aCommand.class);
         String[] aliases = annotation.aliases();
-        if(aliases.length>0) {
-            if(newCommandMap.containsKey(aliases[0])) {
+        if (aliases.length > 0) {
+            if (newCommandMap.containsKey(aliases[0])) {
                 logger.warning("[TweakcraftUtils] Duplicate command found!");
-                logger.warning("[TweakcraftUtils] Method : "+method.getName()+"!");
-                logger.warning("[TweakcraftUtils] Command : "+aliases[0]+"!");
-                return ;
+                logger.warning("[TweakcraftUtils] Method : " + method.getName() + "!");
+                logger.warning("[TweakcraftUtils] Command : " + aliases[0] + "!");
+                return;
             }
             newCommandMap.put(aliases[0], method);
             instanceMap.put(method, instance);
@@ -93,13 +95,13 @@ public class CommandHandler {
 
     @SuppressWarnings("unchecked")
     public void checkCommands() {
-        if(plugin.getConfigHandler().enableDebug) { /* Show commands with no command attached */
+        if (plugin.getConfigHandler().enableDebug) { /* Show commands with no command attached */
             PluginDescriptionFile pdFile = plugin.getDescription();
             Map<String, Object> pluginCommands = (Map<String, Object>) pdFile.getCommands();
             Set<String> cmds = pluginCommands.keySet();
-            for(String c : cmds) {
-                if(!this.newCommandMap.containsKey(c))
-                    logger.warning("[TweakcraftUtils] WARNING: Unmapped command : "+c);
+            for (String c : cmds) {
+                if (!this.newCommandMap.containsKey(c))
+                    logger.warning("[TweakcraftUtils] WARNING: Unmapped command : " + c);
             }
         }
     }
@@ -124,17 +126,17 @@ public class CommandHandler {
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         Method command = newCommandMap.get(name);
-        try{
+        try {
             return (Boolean) command.invoke(getMethodInstance(command), sender, name, args, tweakcraftUtils);
         } catch (InvocationTargetException e) {
             Throwable t = e.getCause();
-            if(t instanceof PermissionsException)
+            if (t instanceof PermissionsException)
                 throw (PermissionsException) t;
-            if(t instanceof  CommandSenderException)
+            if (t instanceof CommandSenderException)
                 throw (CommandSenderException) t;
-            if(t instanceof CommandUsageException)
+            if (t instanceof CommandUsageException)
                 throw (CommandUsageException) t;
-            if(t instanceof CommandException)
+            if (t instanceof CommandException)
                 throw (CommandException) t;
 
             logger.warning("[TweakcraftUtils] Error occured while executing command!");

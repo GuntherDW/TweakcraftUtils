@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * @author GuntherDW
  */
-public class ArgumentParser {
+public final class ArgumentParser {
 
     private Map<String, Argument> _namedargs;
     private List<Argument> _args;

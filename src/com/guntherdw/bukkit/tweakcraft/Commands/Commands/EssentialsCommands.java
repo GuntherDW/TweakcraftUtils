@@ -23,10 +23,12 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
 import com.guntherdw.bukkit.tweakcraft.Commands.aCommand;
-import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
-import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.Packages.Item;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
@@ -52,7 +54,7 @@ import java.util.*;
 public class EssentialsCommands {
 
     @aCommand(
-        aliases = { "ban" },
+        aliases = {"ban"},
         permissionBase = "ban",
         description = "Bans a player with a reason",
         section = "essentials"
@@ -75,12 +77,12 @@ public class EssentialsCommands {
 
         String playername = args[0];
 
-        if(!exact) {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE+"PlayerFinder enabled.");
+        if (!exact) {
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + "PlayerFinder enabled.");
             playerlist = plugin.getServer().matchPlayer(playername);
-            if(playerlist.size()==1) {
+            if (playerlist.size() == 1) {
                 playername = playerlist.get(0).getName();
-                sender.sendMessage(ChatColor.YELLOW+"Found "+playername);
+                sender.sendMessage(ChatColor.YELLOW + "Found " + playername);
             } else {
                 throw new CommandException("Didn't find the player, cancelling!");
             }
@@ -95,11 +97,11 @@ public class EssentialsCommands {
 
             String toFull = null;
             if (args.length > 1) {
-                if(durationarg!=null) {
+                if (durationarg != null) {
                     duration = args[1].substring(2);
                     dura = TimeTool.calcTime(duration);
                     toFull = TimeTool.getDurationFull(duration);
-                    duration = duration.substring(0, duration.length()-1);
+                    duration = duration.substring(0, duration.length() - 1);
                 }
                 for (int x = 1; x < args.length; x++) {
                     reason += args[x] + " ";
@@ -107,12 +109,12 @@ public class EssentialsCommands {
                 if (reason.length() > 1)
                     reason = reason.substring(0, reason.length() - 1);
             }
-            if(dura!=null&&!plugin.getConfigHandler().enablePersistence) {
+            if (dura != null && !plugin.getConfigHandler().enablePersistence) {
                 throw new CommandUsageException("ERROR: For timed bans to work, persistence HAS to be enabled!");
             }
 
             handler.banPlayer(playername.toLowerCase(), reason, dura);
-            sender.sendMessage(ChatColor.YELLOW + "Banning " + playername + ChatColor.YELLOW+ (dura!=null?" for "+duration+" "+toFull+"!":""));
+            sender.sendMessage(ChatColor.YELLOW + "Banning " + playername + ChatColor.YELLOW + (dura != null ? " for " + duration + " " + toFull + "!" : ""));
 
             Player player = plugin.getServer().getPlayerExact(playername);
             if (player != null) {
@@ -126,7 +128,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "banlist" },
+        aliases = {"banlist"},
         permissionBase = "ban",
         description = "Lists the current bans",
         section = "essentials"
@@ -138,11 +140,11 @@ public class EssentialsCommands {
                 throw new PermissionsException(command);
 
         String banned = "";
-        if(args.length>0) {
+        if (args.length > 0) {
             String tofind = args[0];
             Ban ban = plugin.getBanhandler().isBannedBan(tofind);
-            if(ban!=null) {
-                banned = ChatColor.YELLOW + tofind + " is still banned for "+plugin.getBanhandler().getRemainingTime(tofind);
+            if (ban != null) {
+                banned = ChatColor.YELLOW + tofind + " is still banned for " + plugin.getBanhandler().getRemainingTime(tofind);
             } else {
                 banned = ChatColor.YELLOW + tofind + " isn't banned!";
             }
@@ -152,8 +154,8 @@ public class EssentialsCommands {
             sender.sendMessage(banmsg);
             banned = "";
 
-            for (String banname : plugin.getBanhandler().getBans().keySet()) {
-                banned += banname + " ";
+            for (String banName : plugin.getBanhandler().getBans().keySet()) {
+                banned += banName + " ";
             }
             if (banned.length() > 1)
                 banned = banned.substring(0, banned.length() - 1);
@@ -165,7 +167,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "compass" },
+        aliases = {"compass"},
         permissionBase = "",
         description = "Shows your current orientation",
         section = "essentials"
@@ -184,42 +186,41 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "getpos" },
+        aliases = {"getpos"},
         permissionBase = "getpos",
         description = "Shows your current position",
         section = "essentials"
     )
     public boolean getpos(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-            if (!plugin.check((Player) sender , "getpos"))
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "getpos"))
                 throw new PermissionsException(command);
-        Location loc=null;
+        Location loc = null;
 
         /**
          * Permissions checking!
          */
-        if(args.length==0 && !(sender instanceof Player))
+        if (args.length == 0 && !(sender instanceof Player))
             throw new CommandUsageException("If you're going to call this from a console i need a player to check!");
-        if(args.length==0 && sender instanceof Player)
-            loc = ((Player)sender).getLocation().clone();
-        if(args.length>0 && sender instanceof Player)
-            if(!plugin.check((Player)sender, "getpos.other"))
+        if (args.length == 0 && sender instanceof Player)
+            loc = ((Player) sender).getLocation().clone();
+        if (args.length > 0 && sender instanceof Player)
+            if (!plugin.check((Player) sender, "getpos.other"))
                 throw new PermissionsException(command);
 
-        if(args.length>0) {
+        if (args.length > 0) {
             List<Player> plist = plugin.getServer().matchPlayer(args[0]);
-            if(plist.size()==0) {
+            if (plist.size() == 0) {
                 throw new CommandUsageException(ChatColor.YELLOW + "Can't find player!");
-            } else if(plist.size()>1) {
+            } else if (plist.size() > 1) {
                 throw new CommandUsageException(ChatColor.YELLOW + "Can't match player, got more than one result!");
             } else {
                 loc = plist.get(0).getLocation().clone();
             }
         }
 
-        if(loc != null)
-        {
+        if (loc != null) {
             Integer x, y, z, yaw, pitch;
             x = Math.round((float) loc.getX());
             y = Math.round((float) loc.getY());
@@ -244,80 +245,69 @@ public class EssentialsCommands {
 
     @SuppressWarnings("unchecked")
     @aCommand(
-        aliases = { "help" },
+        aliases = {"help"},
         permissionBase = "help",
         description = "What you're reading right now",
         section = "essentials"
     )
     public boolean help(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        List<String>  cma = new ArrayList<String>();
-        CommandHandler commh = plugin.getCommandHandler();
-        /* StringBuilder sb = new StringBuilder();
-        Formatter formatter = new Formatter(sb); */
-        boolean aliases = true;
-        /* if(args.length>0) {
-            if(Arrays.asList(args).contains("-a")) {
-                aliases = true;
-            }
-        } */
-        String toadd = "";
-        for(String cname : commh.getCommandMap().keySet()) {
-            //try {
-            // iCommand c = commh.getCommand(cname);
-            Method commandMethod = commh.getCommandMap().get(cname);
-            aCommand annotation = commandMethod.getAnnotation(aCommand.class);
 
-            if(addCommandToList(sender, commandMethod, plugin)) {
-                /* toadd = String.format(ChatColor.GOLD+"%1$-10s"+ChatColor.WHITE+" : "
-             +ChatColor.YELLOW+"%2$s", cname, plugin.getCommand(cname).getDescription()); */
+        List<String> cma = new ArrayList<String>();
+        CommandHandler commh = plugin.getCommandHandler();
+
+        boolean aliases = true;
+        String toadd = "";
+        for (String cname : commh.getCommandMap().keySet()) {
+            Method commandMethod = commh.getCommandMap().get(cname);
+            // aCommand annotation = commandMethod.getAnnotation(aCommand.class);
+
+            if (addCommandToList(sender, commandMethod, plugin)) {
                 // Fuck minecraft's font :<
-                toadd = ChatColor.GOLD+cname+ChatColor.WHITE+
-                    " : "+ChatColor.YELLOW+plugin.getCommand(cname).getDescription();
-                if(aliases) {
+                toadd = ChatColor.GOLD + cname + ChatColor.WHITE +
+                    " : " + ChatColor.YELLOW + plugin.getCommand(cname).getDescription();
+                if (aliases) {
                     List<String> aliaseslist = plugin.getCommand(cname).getAliases();
-                    if(aliaseslist.size()>0) {
-                        toadd += ChatColor.WHITE+" (";
-                        for(String alias : aliaseslist) {
-                            toadd+= ChatColor.GOLD+alias+ChatColor.WHITE+",";
+                    if (aliaseslist.size() > 0) {
+                        toadd += ChatColor.WHITE + " (";
+                        for (String alias : aliaseslist) {
+                            toadd += ChatColor.GOLD + alias + ChatColor.WHITE + ",";
                         }
-                        toadd = toadd.substring(0, toadd.length()-1);
-                        toadd+=")";
+                        toadd = toadd.substring(0, toadd.length() - 1);
+                        toadd += ")";
                     }
 
                 }
                 cma.add(toadd);
             }
-            /* } catch (CommandNotFoundException e) {
-                throw new CommandException("Exception thrown while calling /help, contact GuntherDW!");
-            } */
         }
         /**
          * Extra plugins
          */
-        for(String plug : plugin.getConfigHandler().extrahelpplugin) {
-            if(plugin.getServer().getPluginManager().getPlugin(plug) != null) {
+        for (String plug : plugin.getConfigHandler().extrahelpplugin) {
+            if (plugin.getServer().getPluginManager().getPlugin(plug) != null) {
 
                 PluginDescriptionFile pdesc = plugin.getServer().getPluginManager().getPlugin(plug).getDescription();
                 Map<String, Map<String, Object>> cmds = (Map<String, Map<String, Object>>) pdesc.getCommands();
-                for(String cmd : cmds.keySet()) {
+                for (String cmd : cmds.keySet()) {
 
-                    if(!plugin.getConfigHandler().extrahelphide.contains(cmd)) {
+                    if (!plugin.getConfigHandler().extrahelphide.contains(cmd)) {
                         String perm = (String) cmds.get(cmd).get("_permission");
-                        if(perm==null) perm = (String) cmds.get(cmd).get("permissions"); // Added for WorldEdit support
-                        if(addExtCommandToList(sender, perm, plugin)) {
-                            toadd = ChatColor.GOLD+cmd+ChatColor.WHITE +
-                                " : "+ChatColor.YELLOW+((String)cmds.get(cmd).get("description"));
-                            if(aliases) {
+                        if (perm == null)
+                            perm = (String) cmds.get(cmd).get("permissions"); // Added for WorldEdit support
+                        if (addExtCommandToList(sender, perm, plugin)) {
+                            toadd = ChatColor.GOLD + cmd + ChatColor.WHITE +
+                                " : " + ChatColor.YELLOW + ((String) cmds.get(cmd).get("description"));
+                            if (aliases) {
                                 List<String> aliaseslist = (List<String>) cmds.get(cmd).get("aliases");
                                 // toadd += ChatColor.WHITE+" ("+ChatColor.GOLD+aliaseslist+ChatColor.WHITE+")";
-                                if(aliaseslist!=null && aliaseslist.size()>0) {
-                                    toadd += ChatColor.WHITE+" (";
-                                    for(String alias : aliaseslist) {
-                                        toadd+= ChatColor.GOLD+alias+ChatColor.WHITE+",";
+                                if (aliaseslist != null && aliaseslist.size() > 0) {
+                                    toadd += ChatColor.WHITE + " (";
+                                    for (String alias : aliaseslist) {
+                                        toadd += ChatColor.GOLD + alias + ChatColor.WHITE + ",";
                                     }
-                                    toadd = toadd.substring(0, toadd.length()-1);
-                                    toadd+=")";
+                                    toadd = toadd.substring(0, toadd.length() - 1);
+                                    toadd += ")";
                                 }
                             }
                             cma.add(toadd);
@@ -325,30 +315,30 @@ public class EssentialsCommands {
                     }
                 }
             } else {
-                plugin.getLogger().info("[TweakcraftUtils] EXTRAHELP error : "+plug+" is null!");
+                plugin.getLogger().info("[TweakcraftUtils] EXTRAHELP error : " + plug + " is null!");
             }
         }
 
-        Double dmaxPage = Math.ceil((double)cma.size()/plugin.getConfigHandler().helpPerPage);
+        Double dmaxPage = Math.ceil((double) cma.size() / plugin.getConfigHandler().helpPerPage);
         int maxPage = dmaxPage.intValue();
-        int hpp     = plugin.getConfigHandler().helpPerPage;
+        int hpp = plugin.getConfigHandler().helpPerPage;
         Integer pagereq = 0;
-        if(args.length>0) {
+        if (args.length > 0) {
             try {
                 pagereq = Integer.parseInt(args[0]) - 1;
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 pagereq = 0;
             }
         }
-        if(pagereq.intValue() < 0 || pagereq.intValue() > maxPage-1) {
+        if (pagereq.intValue() < 0 || pagereq.intValue() > maxPage - 1) {
             throw new CommandUsageException("Invalid page number!");
         }
 
-        sender.sendMessage(ChatColor.AQUA+"Commands available to you : Page "+(pagereq+1)+"/"+maxPage);
-        int start = pagereq.intValue()*hpp;
+        sender.sendMessage(ChatColor.AQUA + "Commands available to you : Page " + (pagereq + 1) + "/" + maxPage);
+        int start = pagereq.intValue() * hpp;
         int end = start + hpp;
 
-        for(int x = start; x < end && x<cma.size(); x++) {
+        for (int x = start; x < end && x < cma.size(); x++) {
             sender.sendMessage(cma.get(x));
         }
 
@@ -356,12 +346,12 @@ public class EssentialsCommands {
     }
 
     protected boolean addCommandToList(CommandSender sender, Method command, TweakcraftUtils plugin) {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
             aCommand annotation = command.getAnnotation(aCommand.class);
-            if(annotation == null) {
+            if (annotation == null) {
                 return true;
             } else {
-                return plugin.check((Player)sender, annotation.permissionBase());
+                return plugin.check((Player) sender, annotation.permissionBase());
             }
         } else {
             return true;
@@ -369,11 +359,11 @@ public class EssentialsCommands {
     }
 
     protected boolean addExtCommandToList(CommandSender sender, String perm, TweakcraftUtils plugin) {
-        if(sender instanceof Player) {
-            if(perm == null) {
+        if (sender instanceof Player) {
+            if (perm == null) {
                 return true;
             } else {
-                return plugin.checkfull((Player)sender, perm);
+                return plugin.checkfull((Player) sender, perm);
             }
         } else {
             return true;
@@ -381,7 +371,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "item", "i", "give" },
+        aliases = {"item", "i", "give"},
         permissionBase = "item",
         description = "Give yourself an item of choice",
         section = "essentials"
@@ -454,17 +444,17 @@ public class EssentialsCommands {
 
            } */
 
-            if(dmgval>-1&&dmgval<256) {
-                itemDmg = (byte)dmgval;
+            if (dmgval > -1 && dmgval < 256) {
+                itemDmg = (byte) dmgval;
             }
 
-            if(recv != null) {
+            if (recv != null) {
                 receiver = plugin.getServer().getPlayer(plugin.findPlayer(recv));
                 if (receiver == null) {
                     throw new CommandUsageException("Can't find the other player!");
                 }
             } else {
-                if(sender instanceof Player)
+                if (sender instanceof Player)
                     receiver = (Player) sender;
                 else
                     throw new CommandUsageException("If you're a console you have to specify the receiver!");
@@ -473,7 +463,7 @@ public class EssentialsCommands {
             boolean isValid = false;
             Material mat = Material.getMaterial(itemId);
             // if(ItemType.class == null) {
-            isValid = mat!=null;
+            isValid = mat != null;
             /* } else {
                isValid = ItemType.isValid(itemId);
            } */
@@ -491,11 +481,11 @@ public class EssentialsCommands {
                 String itemName = mat.toString().toLowerCase().replace('_', ' ');
 
                 sender.sendMessage(ChatColor.YELLOW + "Giving " + recvname + ChatColor.YELLOW + " " + itemAmount + " of " + itemName + "!");
-                if(!(receiver.getName().equals(giftfrom)))
-                    receiver.sendMessage(ChatColor.AQUA+"Enjoy your gift! :3");
+                if (!(receiver.getName().equals(giftfrom)))
+                    receiver.sendMessage(ChatColor.AQUA + "Enjoy your gift! :3");
                 ItemStack stack = new ItemStack(itemId, itemAmount, itemDmg.shortValue());
-                if(dataval!=-1)
-                    stack.setData(Material.getMaterial(itemId).getNewData((byte)dataval));
+                if (dataval != -1)
+                    stack.setData(Material.getMaterial(itemId).getNewData((byte) dataval));
 
                 receiver.getInventory().addItem(stack);
                 plugin.getLogger().info("[TweakcraftUtils] " + giftfrom + " gave " + recvname + " " + itemAmount + "x" + itemId + " (" + itemDmg.intValue() + ")");
@@ -508,7 +498,7 @@ public class EssentialsCommands {
 
 
     @aCommand(
-        aliases = { "kick" },
+        aliases = {"kick"},
         permissionBase = "kick",
         description = "Kicks a player with reason",
         section = "essentials"
@@ -522,8 +512,8 @@ public class EssentialsCommands {
         String reason = "";
         Player player;
         String kicker = "";
-        if(sender instanceof Player) {
-            kicker = plugin.getNick(((Player)sender).getName());
+        if (sender instanceof Player) {
+            kicker = plugin.getNick(((Player) sender).getName());
         } else {
             kicker = "CONSOLE";
         }
@@ -539,18 +529,18 @@ public class EssentialsCommands {
                     reason += args[x] + " ";
                 }
                 reason = reason.trim();
-                if(!(reason.length()>0))
+                if (!(reason.length() > 0))
                     reason = "No reason given!";
 
             }
-            player.kickPlayer(kicker+": "+reason);
+            player.kickPlayer(kicker + ": " + reason);
         }
 
         return true;
     }
 
     @aCommand(
-        aliases = { "listworlds", "lw" },
+        aliases = {"listworlds", "lw"},
         permissionBase = "worlds",
         description = "Lists the currently active worlds",
         section = "essentials"
@@ -570,29 +560,32 @@ public class EssentialsCommands {
 
                     World.Environment env = w.getEnvironment();
                     boolean customChunkGen = false;
-                    if(w.getGenerator()!=null) { customChunkGen = true; env = null;}
-                    iWorld tw = plugin.getworldManager().getWorld(w.getName());
-                    if(tw!=null) {
-                        if(tw.getChunkGen()!=null)
-                            env=null;
+                    if (w.getGenerator() != null) {
+                        customChunkGen = true;
+                        env = null;
                     }
-                    if(env == null)
+                    iWorld tw = plugin.getworldManager().getWorld(w.getName());
+                    if (tw != null) {
+                        if (tw.getChunkGen() != null)
+                            env = null;
+                    }
+                    if (env == null)
                         col = ChatColor.GRAY.toString();
-                    else if(env == World.Environment.NORMAL)
-                        col =  ChatColor.GREEN.toString();
+                    else if (env == World.Environment.NORMAL)
+                        col = ChatColor.GREEN.toString();
                     else if (env == World.Environment.NETHER)
                         col = ChatColor.RED.toString();
                     else if (env == World.Environment.THE_END)
                         col = ChatColor.DARK_GRAY.toString();
                     else
                         col = ChatColor.GRAY.toString();
-                    player.sendMessage(ChatColor.LIGHT_PURPLE+ "(" + w.getPlayers().size()+") " + col + w.getName() +
-                        (customChunkGen?ChatColor.LIGHT_PURPLE +" (CG:"+ w.getGenerator().getClass().getSimpleName()+")":""));
+                    player.sendMessage(ChatColor.LIGHT_PURPLE + "(" + w.getPlayers().size() + ") " + col + w.getName() +
+                        (customChunkGen ? ChatColor.LIGHT_PURPLE + " (CG:" + w.getGenerator().getClass().getSimpleName() + ")" : ""));
                 }
             }
 
             player.sendMessage(ChatColor.LIGHT_PURPLE + "Legend: " + ChatColor.RED + "NETHER" + ChatColor.LIGHT_PURPLE + "," +
-                ChatColor.GREEN + " NORMAL"+ ChatColor.LIGHT_PURPLE + "," + ChatColor.AQUA + " SKYLANDS"+ChatColor.LIGHT_PURPLE+","+ChatColor.GRAY+" CUSTOM/OTHER");
+                ChatColor.GREEN + " NORMAL" + ChatColor.LIGHT_PURPLE + "," + ChatColor.AQUA + " SKYLANDS" + ChatColor.LIGHT_PURPLE + "," + ChatColor.GRAY + " CUSTOM/OTHER");
             player.sendMessage(ChatColor.LIGHT_PURPLE + "Warp to a world by issuing /world <worldname>");
 
 
@@ -600,7 +593,7 @@ public class EssentialsCommands {
             sender.sendMessage("Currently enabled worlds : ");
             String message = "";
             for (World w : plugin.getServer().getWorlds()) {
-                message += w.getName() + " ("+w.getPlayers().size()+"), ";
+                message += w.getName() + " (" + w.getPlayers().size() + "), ";
             }
             if (message.length() > 1)
                 message = message.substring(0, message.length() - 2);
@@ -610,7 +603,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "me" },
+        aliases = {"me"},
         permissionBase = "",
         description = "Broadcasts a message in third person",
         section = "essentials"
@@ -631,7 +624,7 @@ public class EssentialsCommands {
                     msg = msg.substring(0, msg.length() - 1);
 
                     if (cm == null) {
-                        if(plugin.getPlayerListener().getInvisplayers().contains(player.getName())) {
+                        if (plugin.getPlayerListener().getInvisplayers().contains(player.getName())) {
                             player.sendMessage(ChatColor.AQUA + "Are you crazy? set a chatmode first!");
                         } else {
                             plugin.getServer().broadcastMessage("* " + player.getDisplayName() + " " + msg);
@@ -651,7 +644,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "motd" },
+        aliases = {"motd"},
         permissionBase = "motd",
         description = "Shows the message of the day!",
         section = "essentials"
@@ -659,19 +652,19 @@ public class EssentialsCommands {
     public boolean motd(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
-        if(args.length==1 && args[0].equalsIgnoreCase("reload")) {
-            if(sender instanceof Player)
-                if(!(plugin.check((Player)sender, "motdreload")))
+        if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+            if (sender instanceof Player)
+                if (!(plugin.check((Player) sender, "motdreload")))
                     throw new PermissionsException(command);
 
             plugin.reloadMOTD();
             sender.sendMessage(ChatColor.YELLOW + "Reloading MOTD");
         } else {
-            if(sender instanceof Player)
-                if(!(plugin.check((Player)sender, "motd")))
+            if (sender instanceof Player)
+                if (!(plugin.check((Player) sender, "motd")))
                     throw new PermissionsException(command);
 
-            for(String motdline : plugin.getMOTD()) {
+            for (String motdline : plugin.getMOTD()) {
                 sender.sendMessage(motdline);
             }
         }
@@ -679,7 +672,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "msg", "tell", "whisper" },
+        aliases = {"msg", "tell", "whisper"},
         permissionBase = "msg",
         description = "Send a message to a player",
         section = "essentials"
@@ -702,7 +695,7 @@ public class EssentialsCommands {
 
             String message = "";
             for (int x = 1; x < args.length; x++) {
-                message += args[x] + (x<args.length?" ":"");
+                message += args[x] + (x < args.length ? " " : "");
             }
             if (playerto == null)
                 throw new CommandException("Can't find that player!");
@@ -727,7 +720,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "mute" },
+        aliases = {"mute"},
         permissionBase = "mute",
         description = "Mute a player",
         section = "essentials"
@@ -741,31 +734,32 @@ public class EssentialsCommands {
         String toFull = null;
         ChatHandler ch = plugin.getChathandler();
         if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
-            sender.sendMessage(ChatColor.LIGHT_PURPLE+"Current list of muted players : ");
-            if(ch.getMutedPlayers()==null || ch.getMutedPlayers().size()==0) { sender.sendMessage(ChatColor.LIGHT_PURPLE + "List is empty!"); }
-            else {
-                for(String s : ch.getMutedPlayers().keySet()) {
-                    if(!ch.canTalk(s)) {
+            sender.sendMessage(ChatColor.LIGHT_PURPLE + "Current list of muted players : ");
+            if (ch.getMutedPlayers() == null || ch.getMutedPlayers().size() == 0) {
+                sender.sendMessage(ChatColor.LIGHT_PURPLE + "List is empty!");
+            } else {
+                for (String s : ch.getMutedPlayers().keySet()) {
+                    if (!ch.canTalk(s)) {
                         Long secsremain = ch.getRemaining(s);
-                        String rem = (secsremain==null?"forever":(TimeTool.calcLeft(secsremain)));
-                        sender.sendMessage(ChatColor.GOLD + s +ChatColor.WHITE+" - "+ChatColor.GOLD+rem);
+                        String rem = (secsremain == null ? "forever" : (TimeTool.calcLeft(secsremain)));
+                        sender.sendMessage(ChatColor.GOLD + s + ChatColor.WHITE + " - " + ChatColor.GOLD + rem);
                     }
                 }
             }
-        } else if(args.length > 0) {
+        } else if (args.length > 0) {
             String playername = plugin.findPlayer(args[0]);
             String duration = null;
-            if(args.length>1 && args[1].startsWith("t:")) {
+            if (args.length > 1 && args[1].startsWith("t:")) {
                 duration = args[1].substring(2);
                 dura = TimeTool.calcTime(duration);
                 toFull = TimeTool.getDurationFull(duration);
-                duration = duration.substring(0, duration.length()-1);
+                duration = duration.substring(0, duration.length() - 1);
             }
             Player player = plugin.getServer().getPlayer(playername);
             if (player != null) {
 
-                if (ch.canTalk(playername) || dura!=null) {
-                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName() +ChatColor.YELLOW+ (dura!=null?" for "+duration+" "+toFull+"!":""));
+                if (ch.canTalk(playername) || dura != null) {
+                    sender.sendMessage(ChatColor.YELLOW + "Muting " + player.getDisplayName() + ChatColor.YELLOW + (dura != null ? " for " + duration + " " + toFull + "!" : ""));
                     ch.addMute(player.getName().toLowerCase(), dura);
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "Unmuting " + player.getDisplayName());
@@ -782,7 +776,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "plugin" },
+        aliases = {"plugin"},
         permissionBase = "plugin",
         description = "General plugin command",
         section = "essentials"
@@ -860,7 +854,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "reply", "r", "re" },
+        aliases = {"reply", "r", "re"},
         permissionBase = "msg",
         description = "Reply to the last msg",
         section = "essentials"
@@ -878,7 +872,7 @@ public class EssentialsCommands {
                     throw new CommandException("Can't find the player to reply to!");
 
                 for (int x = 0; x < args.length; x++) {
-                    message += args[x] + (x<args.length?" ":"");
+                    message += args[x] + (x < args.length ? " " : "");
                 }
 
                 LocalPlayer lpTo = plugin.wrapPlayer(replyTo);
@@ -901,7 +895,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "setspawn" },
+        aliases = {"setspawn"},
         permissionBase = "setspawn",
         description = "Sets the spawn of the current world",
         section = "essentials"
@@ -928,7 +922,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "spawn" },
+        aliases = {"spawn"},
         permissionBase = "spawn",
         description = "Sends you to the spawn of the world you're in",
         section = "essentials"
@@ -941,8 +935,8 @@ public class EssentialsCommands {
                 throw new PermissionsException(command);
 
             Location loc = player.getLocation();
-            boolean success  = player.teleport(player.getWorld().getSpawnLocation());
-            if(success) {
+            boolean success = player.teleport(player.getWorld().getSpawnLocation());
+            if (success) {
                 plugin.getTelehistory().addHistory(player.getName(), loc);
                 sender.sendMessage(ChatColor.YELLOW + "Teleporting you to spawn!");
             } else {
@@ -955,7 +949,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "spawnmob" },
+        aliases = {"spawnmob"},
         permissionBase = "spawnmob",
         description = "Spawns mobs at your crosshair",
         section = "essentials"
@@ -967,7 +961,7 @@ public class EssentialsCommands {
             if (!plugin.check(player, "spawnmob"))
                 throw new PermissionsException(command);
 
-            Location loc = player.getTargetBlock((HashSet<Byte>)null, 200).getLocation();
+            Location loc = player.getTargetBlock((HashSet<Byte>) null, 200).getLocation();
             ArgumentParser ap = new ArgumentParser(realargs);
 
             Random rnd = new Random();
@@ -999,48 +993,46 @@ public class EssentialsCommands {
                     mobName = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].length());
                 type = CreatureType.fromName(mobName);
                 if (type == null) {
-                    sender.sendMessage("Tried : "+mobName);
+                    sender.sendMessage("Tried : " + mobName);
                     throw new CommandUsageException("Can't find that creature!");
                 }
                 if (args.length > 1) // amount
                 {
                     try {
                         amount = Integer.parseInt(args[1]);
-                        if(amount>100) {
-                            amount=100; // This should be more than enough before your client starts to lag!
+                        if (amount > 100) {
+                            amount = 100; // This should be more than enough before your client starts to lag!
                         }
                     } catch (NumberFormatException e) {
                         throw new CommandUsageException("I need an amount, not a string!");
                     }
                 }
-                if(args.length > 2) // Riders and/or player!
+                if (args.length > 2) // Riders and/or player!
                 {
                     riders = new ArrayList<CreatureType>();
                     CreatureType tmpRider;
                     String tmpRiderString;
-                    for(int x = 2; x < args.length ; x++) {
+                    for (int x = 2; x < args.length; x++) {
 
-                        if(x==args.length-1) {
+                        if (x == args.length - 1) {
                             // Check to see if the last argument contains a playername
-                            victim = plugin.findPlayer(args[args.length-1]);
+                            victim = plugin.findPlayer(args[args.length - 1]);
                             victimplayer = plugin.getServer().getPlayer(victim);
                             /* if (victimplayer == null) {
                               throw new CommandUsageException("Can't find that player!");
                            } */
-                            if(victimplayer!=null) {
+                            if (victimplayer != null) {
 
                                 loc = victimplayer.getLocation();
                             }
                         }
-                        if(x<args.length-1 ||
-                            (x==args.length-1 && victimplayer == null))
-                        {
+                        if (x < args.length - 1 ||
+                            (x == args.length - 1 && victimplayer == null)) {
                             tmpRiderString = args[x];
                             if (args[x].length() > 2)
                                 tmpRiderString = args[x].substring(0, 1).toUpperCase() + args[x].substring(1, args[x].length());
                             rider = CreatureType.fromName(tmpRiderString);
-                            if(rider == null)
-                            {
+                            if (rider == null) {
                                 sender.sendMessage(ChatColor.YELLOW + "Didn't find one of the specified extra riders!");
                                 // throw new CommandUsageException("Can't find rider creature!");
                             } else {
@@ -1058,43 +1050,43 @@ public class EssentialsCommands {
 
                 // We're finally here
                 // Creature crea = new
-                if(victimplayer == null)
+                if (victimplayer == null)
                     victimplayer = player;
 
                 if (type != null) {
                     LivingEntity rid = null;
                     for (int x = 0; x < amount; x++) {
                         lent = victimplayer.getWorld().spawnCreature(loc, type);
-                        if(health>0)
+                        if (health > 0)
                             lent.setHealth(health);
 
-                        if(lent instanceof Animals && age!=-1)
-                            ((Animals)lent).setAge(age);
+                        if (lent instanceof Animals && age != -1)
+                            ((Animals) lent).setAge(age);
 
-                        if(lent instanceof Slime && slimesize > 0)
-                            ((Slime)lent).setSize(slimesize);
+                        if (lent instanceof Slime && slimesize > 0)
+                            ((Slime) lent).setSize(slimesize);
 
-                        if(lent instanceof Creeper && powered)
-                            ((Creeper)lent).setPowered(powered);
+                        if (lent instanceof Creeper && powered)
+                            ((Creeper) lent).setPowered(powered);
 
-                        if(lent instanceof Sheep && shoven || sheepcolor!=null) {
-                            ((Sheep)lent).setSheared(shoven);
+                        if (lent instanceof Sheep && shoven || sheepcolor != null) {
+                            ((Sheep) lent).setSheared(shoven);
 
-                            if(sheepcolor!=null) {
+                            if (sheepcolor != null) {
                                 DyeColor dc = null;
-                                if(sheepcolor.equalsIgnoreCase("random")) {
+                                if (sheepcolor.equalsIgnoreCase("random")) {
                                     dc = DyeColor.getByData((byte) rnd.nextInt(16));
                                 } else {
                                     dc = DyeColor.valueOf(sheepcolor.toUpperCase());
                                 }
-                                if(dc!=null)((Sheep)lent).setColor(dc);
+                                if (dc != null) ((Sheep) lent).setColor(dc);
                             }
                         }
 
-                        if(riders != null && riders.size()!=0) {
-                            for(CreatureType t : riders) {
+                        if (riders != null && riders.size() != 0) {
+                            for (CreatureType t : riders) {
                                 rid = victimplayer.getWorld().spawnCreature(loc, t);
-                                if(lent != null) lent.setPassenger(rid);
+                                if (lent != null) lent.setPassenger(rid);
                                 lent = rid; // This makes the currently added mob the new "to-ride-along" mob
                             }
                         }
@@ -1110,7 +1102,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "time", "settime" },
+        aliases = {"time", "settime"},
         permissionBase = "time",
         description = "Sets the time",
         section = "essentials"
@@ -1168,7 +1160,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "unban" },
+        aliases = {"unban"},
         permissionBase = "ban",
         description = "Unban a player",
         section = "essentials"
@@ -1194,7 +1186,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "who", "playerlist" },
+        aliases = {"who", "playerlist"},
         permissionBase = "who",
         description = "List of currently connected players",
         section = "essentials"
@@ -1208,31 +1200,30 @@ public class EssentialsCommands {
         String[] args = ap.getUnusedArgs();
         World w = null;
 
-        if(world!=null) {
-            w=plugin.getServer().getWorld(world);
-            if(w==null) throw new CommandUsageException("World not found!");
+        if (world != null) {
+            w = plugin.getServer().getWorld(world);
+            if (w == null) throw new CommandUsageException("World not found!");
         }
 
         List<Player> list = null;
 
-        if(w==null) list = Arrays.asList(plugin.getServer().getOnlinePlayers());
-        else        list = w.getPlayers();
+        if (w == null) list = Arrays.asList(plugin.getServer().getOnlinePlayers());
+        else list = w.getPlayers();
         Integer amountofinvis = 0;
-        for(Player p : list)
-        {
-            if(plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
+        for (Player p : list) {
+            if (plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
                 amountofinvis++;
         }
         boolean hasperm;
-        if(sender instanceof Player)
-            hasperm = plugin.check((Player)sender, "tpinvis");
+        if (sender instanceof Player)
+            hasperm = plugin.check((Player) sender, "tpinvis");
         else
             hasperm = true;
 
-        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (w==null? (list.size()-amountofinvis) + "/" + plugin.getServer().getMaxPlayers() : ChatColor.GREEN+w.getName() + ChatColor.LIGHT_PURPLE) + "): ";
-        if(amountofinvis>0) {
-            if(hasperm)
-                msg += ChatColor.AQUA+" ["+list.size()+"/"+plugin.getServer().getMaxPlayers()+"]";
+        String msg = ChatColor.LIGHT_PURPLE + "Player list (" + (w == null ? (list.size() - amountofinvis) + "/" + plugin.getServer().getMaxPlayers() : ChatColor.GREEN + w.getName() + ChatColor.LIGHT_PURPLE) + "): ";
+        if (amountofinvis > 0) {
+            if (hasperm)
+                msg += ChatColor.AQUA + " [" + list.size() + "/" + plugin.getServer().getMaxPlayers() + "]";
         }
         String toadd;
         Collections.sort(list, new Comparator<Player>() {
@@ -1261,11 +1252,10 @@ public class EssentialsCommands {
 
              toadd+=ChatColor.WHITE+", ";
          } else { */
-            if(check && hasperm)
-            {
-                toadd = ChatColor.AQUA+"["+p.getDisplayName() + ChatColor.AQUA + "]"+ (lp.isAfk()?ChatColor.RED+" [AFK]":"") +ChatColor.WHITE+", ";
-            } else if(!check) {
-                toadd = p.getDisplayName() +  (lp.isAfk()?ChatColor.RED+" [AFK]":"") + ChatColor.WHITE + ", ";
+            if (check && hasperm) {
+                toadd = ChatColor.AQUA + "[" + p.getDisplayName() + ChatColor.AQUA + "]" + (lp.isAfk() ? ChatColor.RED + " [AFK]" : "") + ChatColor.WHITE + ", ";
+            } else if (!check) {
+                toadd = p.getDisplayName() + (lp.isAfk() ? ChatColor.RED + " [AFK]" : "") + ChatColor.WHITE + ", ";
             }
             // }
             msg += toadd;
@@ -1278,7 +1268,7 @@ public class EssentialsCommands {
     }
 
     @aCommand(
-        aliases = { "world" },
+        aliases = {"world"},
         permissionBase = "world",
         description = "Teleports you to a world of choice",
         section = "essentials"
@@ -1301,33 +1291,32 @@ public class EssentialsCommands {
                     throw new CommandUsageException(ChatColor.YELLOW + "Can't find that world!");
                 }
                 if (world != null) {
-                    if(world.getName().equals(player.getWorld().getName())) {
+                    if (world.getName().equals(player.getWorld().getName())) {
                         throw new CommandUsageException("You already are on that world!");
                     }
-                    if (!plugin.check(player, "worlds." + world.getName()+".world")) {
+                    if (!plugin.check(player, "worlds." + world.getName() + ".world")) {
                         throw new PermissionsException("You don't have permission to /world to that world!");
-                    }
-                    else {
+                    } else {
                         Location oldlocation = player.getLocation().clone();
                         Location toLocation = world.getSpawnLocation();
                         // String locString = "";
 
-                        if(plugin.getConfigHandler().enablePersistence) {
+                        if (plugin.getConfigHandler().enablePersistence) {
                             List<PlayerOptions> plist = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player.getName()).ieq("optionname", "worldpos").findList();
                             PlayerOptions po = null;
-                            if(plist.size()>0) {
-                                for(PlayerOptions popts : plist) {
+                            if (plist.size() > 0) {
+                                for (PlayerOptions popts : plist) {
                                     Location tloc = this.parseLocationString(popts.getOptionvalue());
-                                    if(tloc!=null) {
-                                        if(tloc.getWorld().getName().equals(player.getWorld().getName())) {
+                                    if (tloc != null) {
+                                        if (tloc.getWorld().getName().equals(player.getWorld().getName())) {
                                             po = popts;
-                                        } else if(tloc.getWorld().getName().equals(world.getName())) {
+                                        } else if (tloc.getWorld().getName().equals(world.getName())) {
                                             toLocation = tloc;
                                         }
                                     }
                                 }
                             }
-                            if(po==null) {
+                            if (po == null) {
                                 po = new PlayerOptions();
                                 po.setOptionname("worldpos");
                                 po.setName(player.getName());
@@ -1335,7 +1324,7 @@ public class EssentialsCommands {
                             po.setOptionvalue(this.exportLocationString(player.getLocation()));
                             plugin.getDatabase().save(po);
                         }
-                        if(player.teleport(toLocation))
+                        if (player.teleport(toLocation))
                             plugin.getTelehistory().addHistory(player.getName(), oldlocation);
                     }
                 } else {
@@ -1353,7 +1342,7 @@ public class EssentialsCommands {
 
     // x=0.25,y=30,z=30,w=survival,yaw=40,pit=40
     public Location parseLocationString(String locstring) {
-        try{
+        try {
             String[] stuff = locstring.split(",");
             Double x = Double.parseDouble(stuff[0].substring(2));
             Double y = Double.parseDouble(stuff[1].substring(2));
@@ -1361,18 +1350,18 @@ public class EssentialsCommands {
             World world = Bukkit.getServer().getWorld(stuff[3].substring(2));
             Float yaw = Float.parseFloat(stuff[4].substring(4));
             Float pitch = Float.parseFloat(stuff[5].substring(4));
-            if(world==null) return null;
+            if (world == null) return null;
 
             return new Location(world, x, y, z, yaw, pitch);
 
 
-        } catch(NumberFormatException ex) {
+        } catch (NumberFormatException ex) {
             return null;
         }
     }
 
     public String exportLocationString(Location loc) {
-        return "x="+loc.getX()+",y="+loc.getY()+",z="+loc.getZ()+",w="+loc.getWorld().getName()+",yaw="+loc.getYaw()+",pit="+loc.getPitch();
+        return "x=" + loc.getX() + ",y=" + loc.getY() + ",z=" + loc.getZ() + ",w=" + loc.getWorld().getName() + ",yaw=" + loc.getYaw() + ",pit=" + loc.getPitch();
         // return null;
     }
 }

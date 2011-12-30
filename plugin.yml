@@ -206,7 +206,10 @@ commands:
   groupchat:
     description: GroupChat control
     usage: /<command>
-    aliases: [ 'gc' ]
+#    aliases: [ 'gc' ]
+  gc:
+    description: Remove ChatMode subscription
+    usage: /<command>
   eject:
     description: Eject your freeloader!
     usage: /<command>
