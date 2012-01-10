@@ -38,10 +38,10 @@ public final class LockdownLocation {
 
     public Location getTarget() {
         Location targetloc = null;
-        if(this.mode && target != null) {
+        if (this.mode && target != null) {
             targetloc = target.getLocation();
         } else {
-           targetloc = loc.clone();
+            targetloc = loc.clone();
         }
         return targetloc;
     }

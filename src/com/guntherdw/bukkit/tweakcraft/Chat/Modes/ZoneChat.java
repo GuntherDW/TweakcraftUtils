@@ -26,7 +26,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,7 +58,7 @@ public class ZoneChat extends ChatMode {
             }
 
         } else {
-            sender.sendMessage(ChatColor.YELLOW+"What were you trying to do?");
+            sender.sendMessage(ChatColor.YELLOW + "What were you trying to do?");
         }
         return true;
     }

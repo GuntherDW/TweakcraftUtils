@@ -35,10 +35,10 @@ public class LocalPlayer {
     private boolean afk;
     private int spamcounter;
     private long lastmessagetime;
-    private String nick=null;
-    private boolean invisible=false;
-    private String replyTo=null;
-    private boolean tntArrow=false;
+    private String nick = null;
+    private boolean invisible = false;
+    private String replyTo = null;
+    private boolean tntArrow = false;
 
     public boolean isInvisible() {
         return this.invisible;
@@ -57,7 +57,7 @@ public class LocalPlayer {
     }
 
     public boolean hasNick() {
-        return nick!=null;
+        return nick != null;
     }
 
     public String getNick() {
@@ -77,9 +77,9 @@ public class LocalPlayer {
     }
 
     public Player getBukkitPlayerSafe() {
-        if(this.bukkitPlayer == null) {
+        if (this.bukkitPlayer == null) {
             Player p = Bukkit.getPlayerExact(name);
-            if(p!=null) bukkitPlayer=p;
+            if (p != null) bukkitPlayer = p;
         }
         return bukkitPlayer;
     }
@@ -125,7 +125,7 @@ public class LocalPlayer {
         this.bukkitPlayer = player;
         this.name = player.getName();
     }
-    
+
     public LocalPlayer(String name) {
         this.name = name;
     }
@@ -140,15 +140,16 @@ public class LocalPlayer {
 
     /**
      * Try to resolve a ChatMode and set it
+     *
      * @param chathandler The ChatHandler instance
-     * @param chatmode String defining the ChatMode
+     * @param chatmode    String defining the ChatMode
      * @throws ChatModeException Thrown when either the ChatMode isn't found, or isn't enabled
      */
     public boolean toggleChatMode(ChatHandler chathandler, String chatmode) throws ChatModeException {
         ChatMode cm = null;
         cm = chathandler.getChatMode(chatmode);
 
-        if(cm!=null && chathandler.getTCUtilsInstance().check(this.bukkitPlayer, "chat.mode."+chatmode)) {
+        if (cm != null && chathandler.getTCUtilsInstance().check(this.bukkitPlayer, "chat.mode." + chatmode)) {
             this.setChatMode(cm);
             return true;
         }

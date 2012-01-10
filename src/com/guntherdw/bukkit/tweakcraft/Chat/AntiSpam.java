@@ -45,21 +45,21 @@ public class AntiSpam {
     }
 
     public int checkSpam(Player player, String message) {
-        if(!ch.getTCUtilsInstance().check(player, "spam")) {
+        if (!ch.getTCUtilsInstance().check(player, "spam")) {
 
             LocalPlayer lp = ch.getTCUtilsInstance().wrapPlayer(player);
-            
+
             String playername = player.getName().toLowerCase();
 
             long currenttime = System.currentTimeMillis();
             int oldspamcounter = lp.getSpamcounter();
-            if(lp.getLastmessagetime() > currenttime-watchtime) {
-                lp.setSpamcounter(oldspamcounter+1);
+            if (lp.getLastmessagetime() > currenttime - watchtime) {
+                lp.setSpamcounter(oldspamcounter + 1);
             } else {
                 lp.setSpamcounter(0);
             }
             lp.setLastmessagetime(currenttime);
-            
+
             return lp.getSpamcounter();
         }
         return 0;

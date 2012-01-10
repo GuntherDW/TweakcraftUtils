@@ -37,16 +37,16 @@ public class TweakcraftWorldListener extends WorldListener {
     }
 
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if(event.isCancelled())
+        if (event.isCancelled())
             return;
 
-        if(plugin.getConfigHandler().stopChunkUnloadBurningFurnace) {
+        if (plugin.getConfigHandler().stopChunkUnloadBurningFurnace) {
             Chunk chunk = event.getChunk();
             BlockState[] states = chunk.getTileEntities();
-            for(BlockState state : states) {
-                if(state instanceof Furnace) {
+            for (BlockState state : states) {
+                if (state instanceof Furnace) {
                     // Furnace f = (Furnace) state;
-                    if(((Furnace) state).getBurnTime()>0) {
+                    if (((Furnace) state).getBurnTime() > 0) {
                         event.setCancelled(true);
                         return;
                     }

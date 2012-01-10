@@ -41,13 +41,20 @@ import java.util.Map;
  * @author GuntherDW
  */
 public class WeatherCommands {
+
+    TweakcraftUtils plugin;
+
+    public WeatherCommands(TweakcraftUtils instance) {
+        this.plugin = instance;
+    }
+
     @aCommand(
         aliases = {"strike", "ls"},
         permissionBase = "weather",
         description = "Strike lightning at command",
         section = "weather"
     )
-    public boolean strikeLightning(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean strikeLightning(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "weather"))
@@ -79,7 +86,7 @@ public class WeatherCommands {
         description = "Turn storm on or off at command",
         section = "weather"
     )
-    public boolean toggleRain(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean toggleRain(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (!(sender instanceof Player) && args.length < 1) {
@@ -129,7 +136,7 @@ public class WeatherCommands {
         description = "Bind the lightning tool to a tool/item",
         section = "weather"
     )
-    public boolean strikeBind(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean strikeBind(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "weather"))
@@ -203,7 +210,7 @@ public class WeatherCommands {
         description = "Turn thunder on or off at command",
         section = "weather"
     )
-    public boolean toggleThunder(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean toggleThunder(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (!(sender instanceof Player) && args.length < 1) {

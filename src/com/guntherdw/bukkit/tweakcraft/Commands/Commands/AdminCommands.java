@@ -45,13 +45,19 @@ import java.util.Set;
  */
 public class AdminCommands {
 
+    TweakcraftUtils plugin;
+
+    public AdminCommands(TweakcraftUtils instance) {
+        this.plugin = instance;
+    }
+
     @aCommand(
         aliases = { "admin", "a" },
         permissionBase = "admin",
         description = "Send message to admins",
         section = "admin"
     )
-    public boolean admin(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean admin(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         boolean onlist = false;
         try {
@@ -88,7 +94,7 @@ public class AdminCommands {
         description = "Adds a player to the admin-msg list",
         section = "admin"
     )
-    public boolean admin_add(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean admin_add(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "admon"))
@@ -139,7 +145,7 @@ public class AdminCommands {
         description = "Removes a player from the admin-msg list",
         section = "admin"
     )
-    public boolean admin_remove(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean admin_remove(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "admon"))
@@ -202,7 +208,7 @@ public class AdminCommands {
         description = "Show the current admin-msg list",
         section = "admin"
     )
-    public boolean admin_list(CommandSender sender, String command, String[] args, TweakcraftUtils plugin) throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+    public boolean admin_list(CommandSender sender, String command, String[] args) throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "admon"))
                 throw new PermissionsException(command);
@@ -239,7 +245,7 @@ public class AdminCommands {
         description = "Makes you chat like normal again",
         section = "admin"
     )
-    public boolean admoff(CommandSender sender, String command, String[] args, TweakcraftUtils plugin) throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+    public boolean admoff(CommandSender sender, String command, String[] args) throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             try {
@@ -267,7 +273,7 @@ public class AdminCommands {
         description = "Automatically sends any msg as an admin message",
         section = "admin"
     )
-    public boolean admon(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean admon(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
         if (sender instanceof Player) {
             try {
@@ -297,7 +303,7 @@ public class AdminCommands {
         description = "Clear a player's inventory",
         section = "admin"
     )
-    public boolean clearinventory(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean clearinventory(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
         if(sender instanceof Player)
             if(!plugin.check((Player)sender, "clearinventory"))
@@ -329,7 +335,7 @@ public class AdminCommands {
         description = "Shows who has /tpoff",
         section = "admin"
     )
-    public boolean tplist(CommandSender sender, String command, String[] args, TweakcraftUtils plugin) throws PermissionsException, CommandSenderException {
+    public boolean tplist(CommandSender sender, String command, String[] args) throws PermissionsException, CommandSenderException {
 
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "tplist"))
@@ -360,7 +366,7 @@ public class AdminCommands {
         description = "ViewDistance control!",
         section = "admin"
     )
-    public boolean viewdistance(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean viewdistance(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player)
             if(!plugin.check((Player)sender, "viewdistance"))
@@ -421,7 +427,7 @@ public class AdminCommands {
         description = "General tweakcraftutils command",
         section = "admin"
     )
-    public boolean tweakcraft(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tweakcraft(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("version")) {

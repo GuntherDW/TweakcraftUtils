@@ -19,19 +19,21 @@
 package com.guntherdw.bukkit.tweakcraft;
 
 // import com.bergerkiller.bukkit.nolagg.NoLagg;
-import com.bergerkiller.bukkit.nolagg.NoLagg;
+
 import com.ensifera.animosity.craftirc.CraftIRC;
 import com.ensifera.animosity.craftirc.EndPoint;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
-import com.guntherdw.bukkit.tweakcraft.Commands.iCommand;
 import com.guntherdw.bukkit.tweakcraft.Configuration.ConfigurationHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
-import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
+import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftBlockListener;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftEntityListener;
 import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftPlayerListener;
@@ -63,7 +65,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.persistence.PersistenceException;
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -145,40 +146,40 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void sendCUIChatMode(Player player) {
-        if(this.cuiPlayers != null && this.cuiPlayers.contains(player))
-        {
+        if (this.cuiPlayers != null && this.cuiPlayers.contains(player)) {
             ChatMode cm = getChathandler().getPlayerChatMode(player);
 
-            if(cm==null)
-                player.sendRawMessage(CUIPattern+"null");
+            if (cm == null)
+                player.sendRawMessage(CUIPattern + "null");
             else
-                player.sendRawMessage(CUIPattern+"["+cm.getPrefix()+ChatColor.WHITE+"]");
+                player.sendRawMessage(CUIPattern + "[" + cm.getPrefix() + ChatColor.WHITE + "]");
         }
     }
 
     public LocalPlayer wrapPlayer(Player player) {
         LocalPlayer p = this.wrapPlayer(player.getName());
-        if(p.getBukkitPlayer()==null)
+        if (p.getBukkitPlayer() == null)
             p.setBukkitPlayer(player);
 
         return p;
     }
 
     public LocalPlayer wrapPlayer(String player) {
-        if(!this.localPlayers.containsKey(player.toLowerCase()))
+        if (!this.localPlayers.containsKey(player.toLowerCase()))
             this.localPlayers.put(player.toLowerCase(), new LocalPlayer(player));
 
         return this.localPlayers.get(player.toLowerCase());
     }
 
     public void sendCUIHandShake(Player player) {
-        if(getConfigHandler().enableCUI) {
+        if (getConfigHandler().enableCUI) {
             player.sendRawMessage(CUIPattern); // HANDSHAKE
         }
     }
 
     /**
      * Send the player a mod_InfDura string, setting the new ToolDurabilty mode
+     *
      * @param player The player to send the mode to
      */
     public void sendToolDuraMode(Player player) {
@@ -187,22 +188,23 @@ public class TweakcraftUtils extends JavaPlugin {
 
     /**
      * Send the player a mod_InfDura string, setting the new ToolDurabilty mode
+     *
      * @param player The player to send the mode to
-     * @param world The world to check the ToolDurability mode
+     * @param world  The world to check the ToolDurability mode
      */
     public void sendToolDuraMode(Player player, World world) {
-        if(getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player))
-        {
-            player.sendRawMessage(ToolDuraPattern+world.getToolDurability());
+        if (getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player)) {
+            player.sendRawMessage(ToolDuraPattern + world.getToolDurability());
         }
     }
 
     /**
      * Send the specified player the mod_InfDura handshake
+     *
      * @param player The player that will receive the initiation
      */
     public void sendmod_InfDuraHandshake(Player player) {
-        if(getConfigHandler().enablemod_InfDura) {
+        if (getConfigHandler().enablemod_InfDura) {
             player.sendRawMessage(ToolDuraPattern);
         }
     }
@@ -218,6 +220,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     /**
      * Get the Teleport History tool
+     *
      * @return TeleportHistory instance
      */
     public TeleportHistory getTelehistory() {
@@ -226,6 +229,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     /**
      * Get the PlayerListener instance
+     *
      * @return TweakcraftUtils's PlayerListener instance
      */
     public TweakcraftPlayerListener getPlayerListener() {
@@ -234,6 +238,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     /**
      * Get the ItemDB instance
+     *
      * @return ItemDB instance
      */
     public ItemDB getItemDB() {
@@ -242,6 +247,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     /**
      * Get the WorldManager instance
+     *
      * @return WorldManager instance
      */
     public WorldManager getworldManager() {
@@ -250,6 +256,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     /**
      * Get the TamerTool tool instance
+     *
      * @return TamerTool instance
      */
     public TamerTool getTamerTool() {
@@ -299,11 +306,11 @@ public class TweakcraftUtils extends JavaPlugin {
         try {
             getDatabase().find(PlayerInfo.class).findRowCount();
             getDatabase().find(PlayerOptions.class).findRowCount();
-            if(configHandler.useTweakBotSeen)
+            if (configHandler.useTweakBotSeen)
                 getDatabase().find(PlayerHistoryInfo.class).findRowCount();
         } catch (PersistenceException ex) {
             log.info("[TweakcraftUtils] Installing database for " + getDescription().getName() + " due to first time usage");
-            if(configHandler.useTweakBotSeen)
+            if (configHandler.useTweakBotSeen)
                 log.info("[TweakcraftUtils] Also creating the TweakBot !seen helpen table");
             installDDL();
         }
@@ -312,11 +319,11 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public String listToString(List<String> lijst) {
         StringBuilder builder = new StringBuilder();
-        int c=0;
-        if(lijst.size()!=0) {
-            while(c<lijst.size()) {
+        int c = 0;
+        if (lijst.size() != 0) {
+            while (c < lijst.size()) {
                 builder.append(lijst.get(c));
-                if(c!=lijst.size()-1) builder.append(",");
+                if (c != lijst.size() - 1) builder.append(",");
                 c++;
             }
         }
@@ -338,7 +345,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public static List<Player> findPlayerByNick(String part) {
         /* return  getPlayerListener().findPlayerNameByNick(part); */
-        if(getInstance()!=null)
+        if (getInstance() != null)
             return getInstance().findPlayerasPlayerList(part);
         else
             return null;
@@ -347,7 +354,7 @@ public class TweakcraftUtils extends JavaPlugin {
     public Player findPlayerasPlayer(String partOfName) {
         // Go for the nicks first!
         Player nick = playerListener.findPlayerByNick(partOfName);
-        if(nick==null) {
+        if (nick == null) {
             for (Player p : this.getServer().getOnlinePlayers()) {
                 if (p.getName().toLowerCase().contains(partOfName.toLowerCase())) // found, return the fullname!
                     return p;
@@ -359,8 +366,8 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public Player getPlayer(String nick, boolean findNick) {
-        Player p = findNick?getPlayerByNick(nick):null;
-        if(p==null) p = this.getServer().getPlayerExact(nick);
+        Player p = findNick ? getPlayerByNick(nick) : null;
+        if (p == null) p = this.getServer().getPlayerExact(nick);
         return p;
     }
 
@@ -373,12 +380,11 @@ public class TweakcraftUtils extends JavaPlugin {
         List<Player> players = playerListener.findPlayersByNick(partOfName);
         for (Player p : this.getServer().getOnlinePlayers()) {
             if (p.getName().toLowerCase().contains(partOfName.toLowerCase())
-                    && !players.contains(p)) // found, return the fullname!
+                && !players.contains(p)) // found, return the fullname!
                 players.add(p);
         }
         return players;
     }
-
 
 
     public String findPlayer(String partOfName) {
@@ -396,27 +402,27 @@ public class TweakcraftUtils extends JavaPlugin {
      * Register the Bukkit events to the appropriate event handlers.
      */
     private void registerEvents() {
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN,           playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN,            playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT,            playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK,            playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT,            playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT,        playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT,        playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS,        playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_PORTAL,          playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN,         playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD,   playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE,            blockListener,  Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FORM,             blockListener,  Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK,            blockListener,  Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST,         entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME,        entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET,          entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PROJECTILE_HIT,         entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH,           entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD,           worldListener , Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_PORTAL, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD, playerListener, Priority.High, this);
+        getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FORM, blockListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME, entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.PROJECTILE_HIT, entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
+        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD, worldListener, Priority.Normal, this);
     }
 
     public TweakcraftWorldListener getWorldListener() {
@@ -443,17 +449,21 @@ public class TweakcraftUtils extends JavaPlugin {
         return wg;
     }
 
+    public String getPlayerColor(String playername) {
+        return this.getPlayerColor(playername, false);
+    }
+
     public String getPlayerColor(String playername, boolean change) {
         String pref = "";
         Player p = null;
-        try{
-            p = this.getServer().getPlayer(playername);
+        try {
+            p = this.getServer().getPlayerExact(playername);
             pref = this.getPermissions().getResolver().getUserPrefix(p.getWorld().getName(), p);
         } catch (NullPointerException e) {
             pref = "§f";
         }
         String col = ChatColor.WHITE.toString();
-        if (p == null) col = ChatColor.AQUA + "[NC] " + pref;
+        if (p == null && change) col = ChatColor.AQUA + "[NC] " + pref;
         if (p != null) col += pref;
         return col;
 
@@ -482,13 +492,13 @@ public class TweakcraftUtils extends JavaPlugin {
 
 
     public void setupCraftIRC() {
-        if(this.getConfigHandler().enableIRC) {
+        if (this.getConfigHandler().enableIRC) {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("CraftIRC");
 
             if (circ == null) {
                 if (plugin != null) {
                     circ = (CraftIRC) plugin;
-                }  else {
+                } else {
                     this.getConfigHandler().enableIRC = false;
                     this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find CraftIRC, but is enabled in the config.");
                     this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling CraftIRC support.");
@@ -497,23 +507,8 @@ public class TweakcraftUtils extends JavaPlugin {
         }
     }
 
-    /* public void setupNoLagg() {
-        // if(this.getConfigHandler().enableWorldGuard) {
-        Plugin plugin = this.getServer().getPluginManager().getPlugin("NoLagg");
-
-        if (nolagg == null) {
-            if (plugin != null) {
-                nolagg = (NoLagg) plugin;
-                this.getConfigHandler().NoLaggEnabled = true;
-            } else {
-                this.getConfigHandler().NoLaggEnabled = false;
-            }
-        }
-        // }
-    } */
-
     public void setupWorldGuard() {
-        if(this.getConfigHandler().enableWorldGuard) {
+        if (this.getConfigHandler().enableWorldGuard) {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldGuard");
 
             if (wg == null) {
@@ -529,11 +524,11 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void setupZones() {
-        if(this.getConfigHandler().enableZones) {
+        if (this.getConfigHandler().enableZones) {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("Zones");
 
-            if(zones == null) {
-                if(plugin != null) {
+            if (zones == null) {
+                if (plugin != null) {
                     zones = (Zones) plugin;
                 } else {
                     this.getConfigHandler().enableZones = false;
@@ -545,11 +540,11 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public void setupLogBlock() {
-        if(this.getConfigHandler().enableLogBlock) {
+        if (this.getConfigHandler().enableLogBlock) {
             Plugin plugin = this.getServer().getPluginManager().getPlugin("LogBlock");
 
-            if(lb == null) {
-                if(plugin != null) {
+            if (lb == null) {
+                if (plugin != null) {
                     lb = (LogBlock) plugin;
                 } else {
                     this.getConfigHandler().enableLogBlock = false;
@@ -563,8 +558,8 @@ public class TweakcraftUtils extends JavaPlugin {
     public void setupWorldEdit() {
         Plugin plugin = this.getServer().getPluginManager().getPlugin("WorldEdit");
 
-        if(we == null) {
-            if(plugin != null) {
+        if (we == null) {
+            if (plugin != null) {
                 we = (WorldEditPlugin) plugin;
             } /* We don't care if it failed because it's mostly a fallback for permissions. */
         }
@@ -573,10 +568,6 @@ public class TweakcraftUtils extends JavaPlugin {
     public Zones getZones() {
         return zones;
     }
-    
-    /* public NoLagg getNoLagg() {
-        return nolagg;
-    } */
 
     public LogBlock getLogBlock() {
         return lb;
@@ -607,7 +598,7 @@ public class TweakcraftUtils extends JavaPlugin {
     public String getNickWithColors(String player) {
         String nick = playerListener.getNick(player);
         String realname = player;
-        if(nick == null) nick = realname;
+        if (nick == null) nick = realname;
         /// return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
         return this.getPermissions().getResolver().getUserPrefix(player) + nick + ChatColor.WHITE;
     }
@@ -615,18 +606,18 @@ public class TweakcraftUtils extends JavaPlugin {
     public String getNick(String player) {
         String nick = playerListener.getNick(player);
         String realname = player;
-        if(nick == null) nick = realname;
-        return  nick;
+        if (nick == null) nick = realname;
+        return nick;
     }
 
     public boolean check(Player player, String permNode) {
         return player.isOp() ||
-                this.getPermissions().getResolver().hasPermission(player.getWorld().getName(), player, "tweakcraftutils."+permNode);
+            this.getPermissions().getResolver().hasPermission(player.getWorld().getName(), player, "tweakcraftutils." + permNode);
     }
 
     public boolean checkfull(Player player, String permNode) {
         return player.isOp() ||
-                this.getPermissions().getResolver().hasPermission(player.getWorld().getName(), player, permNode);
+            this.getPermissions().getResolver().hasPermission(player.getWorld().getName(), player, permNode);
     }
 
     public BanHandler getBanhandler() {
@@ -634,7 +625,7 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public boolean hasNick(String player) {
-        return playerListener.getNick(player)!=null;
+        return playerListener.getNick(player) != null;
     }
 
     public void onEnable() {
@@ -662,19 +653,19 @@ public class TweakcraftUtils extends JavaPlugin {
         worldmanager.setupWorlds();
         banhandler.reloadBans();
 
-        if(configHandler.enableIRC) {
+        if (configHandler.enableIRC) {
             circendpoint = new CraftIRCEndPoint(this);
             circadminendpoint = new CraftIRCAdminEndPoint(this);
         }
 
-        if(configHandler.enableDebug)
+        if (configHandler.enableDebug)
             commandHandler.checkCommands();
 
         /* itemDB.writeDB(); */
 
         playerListener.reloadInvisTable();
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
-        
+
     }
 
     public EndPoint getEndPoint() {
@@ -691,7 +682,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public void onDisable() {
         instance = null;
-        log.info("["+pdfFile.getName()+"] Shutting down!");
+        log.info("[" + pdfFile.getName() + "] Shutting down!");
         // this.getDatabase().
     }
 
@@ -708,8 +699,8 @@ public class TweakcraftUtils extends JavaPlugin {
         List<String> argsa = new ArrayList<String>();
         // String[] args = new String[];
         int argc = 0;
-        for(String a : unfilteredargs) {
-            if(a!=null && !a.trim().equals("")) {
+        for (String a : unfilteredargs) {
+            if (a != null && !a.trim().equals("")) {
                 argsa.add(a);
                 argc++;
             }
@@ -717,51 +708,7 @@ public class TweakcraftUtils extends JavaPlugin {
         String[] args = argsa.toArray(new String[0]);
 
         if (commandHandler.getCommandMap().containsKey(cmd.getName())) {
-            try {
-                /* iCommand command = commandHandler.getCommand(cmd.getName()); */
-                // public abstract boolean executeCommand(Server server, CommandSender sender, String command, String[] args, TweakcraftUtils plugin);
-                if (!commandHandler.executeCommand(sender, cmd.getName(), args, this)) {
-                    sender.sendMessage("This command did not go as intended!");
-                }
-                String mess = "";
-                if (args.length > 1) {
-                    for (String m : args)
-                        mess += m + " ";
-
-                    mess = mess.substring(0, mess.length() - 1);
-                } else if (args.length == 1) {
-                    mess = args[0];
-                }
-
-                if (sender instanceof Player)
-                    log.info("[TweakcraftUtils] " + sender.getName() + " issued: /" + cmd.getName() + " " + mess);
-                else
-                    log.info("[TweakcraftUtils] CONSOLE issued: /" + cmd.getName() + " " + mess);
-                return true;
-            } /*catch (CommandNotFoundException e) {
-                sender.sendMessage("TweakcraftUtils error, command not found!");
-            }*/ catch (PermissionsException e) {
-                sender.sendMessage(ChatColor.RED + "You do not have the correct permissions for this command or usage!");
-                if (sender instanceof Player) {
-                    String mess = "";
-                    if (args.length > 1) {
-                        for (String m : args)
-                            mess += m + " ";
-
-                        mess = mess.substring(0, mess.length() - 1);
-                    } else if (args.length == 1) {
-                        mess = args[0];
-                    }
-                    log.info("[TweakcraftUtils] " + ((Player) sender).getName() + " tried: /" + cmd.getName() + " " + mess);
-
-                }
-            } catch (CommandUsageException e) {
-                sender.sendMessage(ChatColor.YELLOW + e.getMessage());
-            } catch (CommandSenderException e) {
-                sender.sendMessage(ChatColor.YELLOW + e.getMessage());
-            } catch (CommandException e) {
-                sender.sendMessage(ChatColor.YELLOW + e.getMessage());
-            }
+            return commandHandler.executeCommand(sender, cmd.getName(), unfilteredargs);
         }
         return false;
     }

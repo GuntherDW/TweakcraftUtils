@@ -26,9 +26,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,12 +44,12 @@ public class LocalChat extends ChatMode {
 
     @Override
     public boolean sendMessage(CommandSender sender, String message) {
-        
-        if(!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.YELLOW+"What were you trying to do?");
+
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.YELLOW + "What were you trying to do?");
             return true;
         }
-        
+
         super.sendMessage(sender, message);
         if (getRecipients(sender).size() < 2)
             sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
@@ -107,6 +105,6 @@ public class LocalChat extends ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor() + "L"+ChatColor.WHITE;
+        return this.getColor() + "L" + ChatColor.WHITE;
     }
 }

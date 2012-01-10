@@ -26,7 +26,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author GuntherDW
@@ -43,13 +44,13 @@ public class WorldChat extends ChatMode {
     @Override
     public boolean sendMessage(CommandSender sender, String message) {
 
-        if(!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.YELLOW+"What were you trying to do?");
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.YELLOW + "What were you trying to do?");
             return true;
         }
 
         super.sendMessage(sender, message);
-        if(getRecipients(sender).size() < 2)
+        if (getRecipients(sender).size() < 2)
             sender.sendMessage(ChatColor.GOLD + "No one can hear you!");
 
         return true;

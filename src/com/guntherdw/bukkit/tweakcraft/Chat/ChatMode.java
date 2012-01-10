@@ -50,8 +50,8 @@ public abstract class ChatMode {
      */
     public boolean sendMessage(CommandSender sender, String message) {
 
-        String playerMessage = String.format(getChatFormatString(), sender instanceof Player?((Player)sender).getDisplayName(): ChatColor.LIGHT_PURPLE+"CONSOLE"+ChatColor.WHITE, message);
-        for(Player player : getRecipients(sender)) {
+        String playerMessage = String.format(getChatFormatString(), sender instanceof Player ? ((Player) sender).getDisplayName() : ChatColor.LIGHT_PURPLE + "CONSOLE" + ChatColor.WHITE, message);
+        for (Player player : getRecipients(sender)) {
             player.sendMessage(playerMessage);
         }
 
@@ -139,22 +139,31 @@ public abstract class ChatMode {
     public abstract String getPrefix();
 
     /**
-     * 
+     * Should this ChatMode show up in /chatmode list?
+     *
+     * @return boolean true if it should show up in /chatmode list
+     */
+    public boolean isHidden() {
+        return false;
+    }
+
+    /**
+     *
      */
     public String getLoggingFormatString() {
-        String name = this.chatModeName==null?getClass().getSimpleName():chatModeName;
-        return name+": <%1$s> %2$s";
+        String name = this.chatModeName == null ? getClass().getSimpleName() : chatModeName;
+        return name + ": <%1$s> %2$s";
     }
-    
+
     public String getChatFormatString() {
         String prefix = getPrefix();
-        return (prefix!=null?prefix+": ":"")+ "[%1$s] %2$s";
+        return (prefix != null ? prefix + ": " : "") + "[%1$s] %2$s";
     }
-    
+
     public void logChat(CommandSender sender, String message) {
         String logFormat = getLoggingFormatString();
-        if(logFormat!=null) {
-            String logMessage = String.format(logFormat, sender instanceof Player?((Player)sender).getName(): "CONSOLE", message);
+        if (logFormat != null) {
+            String logMessage = String.format(logFormat, sender instanceof Player ? ((Player) sender).getName() : "CONSOLE", message);
             logger.info(logMessage);
         }
     }

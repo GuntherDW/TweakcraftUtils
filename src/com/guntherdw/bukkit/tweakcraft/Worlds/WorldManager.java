@@ -20,6 +20,7 @@ package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -154,6 +155,7 @@ public class WorldManager {
                 String chunkGen = globalConfig.getString("worlds.extraworlds." + node + ".chunkGenerator", null);
                 int viewdistance = globalConfig.getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
                 int portalSearchRadius = globalConfig.getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
+                int difficulty = globalConfig.getInt("worlds.extraworlds." + node + ".difficulty", Difficulty.NORMAL.getValue());
                 long seed = globalConfig.getInt("worlds.extraworlds." + node + ".seed", -1);
                 long nseed = globalConfig.getInt("worlds.extraworlds." + node + ".netherseed", -1);
                 
@@ -186,7 +188,10 @@ public class WorldManager {
                     if(addnether) plugin.getLogger().info("[TweakcraftUtils] World "+node+" added nether world!");
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" Tool Durability : "+(durability?"enabled":"disabled"));
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" GameMode : "+(gm!=null?gm.toString().toLowerCase():"Survival"));
+                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" Difficulity : "+Difficulty.getByValue(difficulty).name().toLowerCase());
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
+                    if (difficulty!=2)
+                        tw.setDifficulty(difficulty);
                     if(gm!=null) tw.setGameMode(gm);
                     if(chunkGenClass!=null) {
                         plugin.getLogger().info("[TweakcraftUtils] World "+node+" is using a custom chunkGenClass using the deprecated method!");

@@ -42,6 +42,7 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -63,13 +64,15 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (event.isCancelled()) return;
-        if (!plugin.getConfigHandler().extraLogging) return;
 
         String line = event.getMessage();
         String cmd = event.getMessage();
+        List<String> args = new ArrayList<String>();
         if (line.contains(" ")) {
             String c[] = cmd.split(" ");
             cmd = c[0];
+            for(int x=1; x<c.length; x++)
+                args.add(c[x]);
         }
         if (cmd.startsWith("/") && cmd.length() > 1)
             cmd = cmd.substring(1);
@@ -80,7 +83,17 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if (pcmd != null && plugin.getCommandHandler().getCommandMap().containsKey(pcmd.getName()))
             go = false;
 
-        if (go) {
+        if (pcmd == null && plugin.getConfigHandler().enableInjectedCommandsHanding) {
+            // Check if it's been internally handled or injected
+            Method method = plugin.getCommandHandler().getCommand(cmd.toLowerCase());
+            if (method != null) {
+                event.setCancelled(true);
+                plugin.getCommandHandler().executeCommand(event.getPlayer(), cmd, args.toArray(new String[0]));
+                return;
+            }
+        }
+
+        if (go && plugin.getConfigHandler().extraLogging) {
             plugin.getLogger().info("[TweakLog] " + event.getPlayer().getName() + " issued: " + line);
         }
     }
@@ -320,11 +333,11 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 if (!msg.equals("")) {
 
                     msg = msg.replace("{name}", name).
-                              replace("{displayname}", player.getDisplayName()).
-                              replace("{mins}", plugin.getConfigHandler().spamMuteMinutes + "").
-                              replace("&&", "{orly}").
-                              replace("&", "§").
-                              replace("{orly}", "&");
+                        replace("{displayname}", player.getDisplayName()).
+                        replace("{mins}", plugin.getConfigHandler().spamMuteMinutes + "").
+                        replace("&&", "{orly}").
+                        replace("&", "§").
+                        replace("{orly}", "&");
 
                     plugin.getServer().broadcastMessage(msg);
                 }
@@ -353,8 +366,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if (!event.isCancelled() && cm == null) {
             // Log nicks!
             if (getNick(name) != null) {
-                boolean c = plugin.getConfigHandler().cancelNickChat;
-                if (c) {
+                //boolean c = plugin.getConfigHandler().cancelNickChat;
+                if (plugin.getConfigHandler().cancelNickChat) {
                     event.setCancelled(true);
                     plugin.getLogger().info("(" + player.getName() + ")  <" + player.getDisplayName() + "> " + message);
                     // plugin.getServer().broadcastMessage(ChatColor.WHITE+"<"+player.getDisplayName()+ChatColor.WHITE+"> "+message);

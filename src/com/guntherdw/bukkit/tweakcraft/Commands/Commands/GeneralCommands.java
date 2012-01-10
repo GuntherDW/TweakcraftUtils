@@ -51,13 +51,19 @@ import java.util.*;
  */
 public class GeneralCommands {
 
+    TweakcraftUtils plugin;
+
+    public GeneralCommands(TweakcraftUtils instance) {
+        this.plugin = instance;
+    }
+
     @aCommand(
         aliases = { "addexp", "adde" },
         permissionBase = "addexp",
         description = "Adds experience to you or someone else",
         section = "general"
     )
-    public boolean addExperience(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean addExperience(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player)
             if(!plugin.check((Player)sender, "addexp"))
@@ -111,7 +117,7 @@ public class GeneralCommands {
         description = "Manually toggle your AFK status",
         section = "general"
     )
-    public boolean setAFK(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean setAFK(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(!(sender instanceof Player))
             throw new CommandSenderException("Now what do you think you're doing?");
@@ -129,7 +135,7 @@ public class GeneralCommands {
         description = "Broadcasts said message to the server",
         section = "general"
     )
-    public boolean broadcast(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean broadcast(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "broadcast"))
@@ -190,7 +196,7 @@ public class GeneralCommands {
         description = "Toggle mounting access",
         section = "general"
     )
-    public boolean doNotMount(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean doNotMount(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if(sender instanceof Player) {
@@ -221,7 +227,7 @@ public class GeneralCommands {
         description = "Eject your freeloader!",
         section = "general"
     )
-    public boolean eject(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean eject(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player) {
             Player player = (Player) sender;
@@ -253,7 +259,7 @@ public class GeneralCommands {
         description = "Adds an enchantment to your current item",
         section = "general"
     )
-    public boolean enchant(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean enchant(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player) {
             String permNode = "enchant";
@@ -338,7 +344,7 @@ public class GeneralCommands {
         description = "Extinguish yourself or someone else",
         section = "general"
     )
-    public boolean extinguish(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean extinguish(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException {
 
         ExtMode modus = ExtMode.SELF;
@@ -479,7 +485,7 @@ public class GeneralCommands {
         description = "Gets the spawn location for the world",
         section = "general"
     )
-    public boolean getSpawn(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean getSpawn(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
 
@@ -547,7 +553,7 @@ public class GeneralCommands {
         description = "Put someone on fire",
         section = "general"
     )
-    public boolean ignite(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean ignite(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException {
         IgniteMode modus = IgniteMode.SELF;
         if (args.length > 0) {
@@ -692,7 +698,7 @@ public class GeneralCommands {
         description = "List of currently connected players in-range (localchat)",
         section = "general"
     )
-    public boolean localWho(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean localWho(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if(!plugin.getConfigHandler().enableLocalChat) {
@@ -729,7 +735,7 @@ public class GeneralCommands {
         description = "Give someone a nick",
         section = "general"
     )
-    public boolean setNick(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean setNick(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player)
             if(!plugin.check((Player)sender, "nick"))
@@ -791,7 +797,7 @@ public class GeneralCommands {
         description = "Report the last logout time of the player",
         section = "general"
     )
-    public boolean seen(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean seen(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException {
         if (args.length < 1) {
             throw new CommandUsageException("You did not specify a name!");
@@ -874,7 +880,7 @@ public class GeneralCommands {
         description = "Tamer tool control",
         section = "general"
     )
-    public boolean tamer(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tamer(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if(sender instanceof Player) {
@@ -955,7 +961,7 @@ public class GeneralCommands {
         description = "Toggles the use of TNT Arrows.",
         section = "general"
     )
-    public boolean setTNTArrow(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean setTNTArrow(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if(!plugin.getConfigHandler().enableTNTArrows)
@@ -984,7 +990,7 @@ public class GeneralCommands {
         description = "Find out who's behind that nick!",
         section = "general"
     )
-    public boolean whois(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean whois(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         // First search for a nick
         Boolean getIP = true;
@@ -1008,7 +1014,7 @@ public class GeneralCommands {
             // sender.sendMessage(nick.toString());
             String gname = null;
             // Group  g  = null;
-            Player sp = findPlayer(args[0], plugin);
+            Player sp = findPlayer(args[0]);
             Player who = nick==null?sp:nick;
             String groups = "";
 
@@ -1082,7 +1088,7 @@ public class GeneralCommands {
         return true;
     }
 
-    private Player findPlayer(String playername, TweakcraftUtils plugin) {
+    private Player findPlayer(String playername) {
         for(Player p : plugin.getServer().matchPlayer(playername)) {
             if(p.getName().toLowerCase().contains(playername.toLowerCase())) {
                 return p;

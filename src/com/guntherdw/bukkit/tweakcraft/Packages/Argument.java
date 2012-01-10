@@ -29,11 +29,14 @@ public final class Argument {
     private boolean _used;
 
     public Argument(Integer position, String argname, Object argvalue) {
-        this.id = position; this.argname = argname; this.argvalue = argvalue;
+        this.id = position;
+        this.argname = argname;
+        this.argvalue = argvalue;
     }
 
     public Argument(String argname, Object argvalue) {
-        this.argname = argname; this.argvalue = argvalue;
+        this.argname = argname;
+        this.argvalue = argvalue;
     }
 
     public Integer getId() {
@@ -63,7 +66,7 @@ public final class Argument {
     public boolean is_used() {
         return _used;
     }
-    
+
     public void set_used(boolean state) {
         this._used = state;
     }

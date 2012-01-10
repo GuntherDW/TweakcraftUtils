@@ -23,7 +23,6 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.Set;
 
 /**

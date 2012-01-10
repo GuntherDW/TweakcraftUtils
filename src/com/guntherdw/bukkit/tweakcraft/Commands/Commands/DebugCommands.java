@@ -34,13 +34,19 @@ import org.bukkit.entity.Player;
  */
 public class DebugCommands {
 
+    TweakcraftUtils plugin;
+
+    public DebugCommands(TweakcraftUtils instance) {
+        this.plugin = instance;
+    }
+
     @aCommand(
         aliases = { "debug" },
         permissionBase = "debug",
         description = "Various debug commands",
         section = "debug"
     )
-    public boolean debug(final CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean debug(final CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if(sender instanceof Player)
             if(!plugin.check((Player) sender, "debug"))

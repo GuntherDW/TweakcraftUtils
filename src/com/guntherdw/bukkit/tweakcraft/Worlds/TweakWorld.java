@@ -19,10 +19,7 @@
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
@@ -44,6 +41,7 @@ public class TweakWorld implements iWorld {
     private boolean nether_enabled = false;
     private boolean the_end_enabled = false;
     private boolean keepspawnactive = false;
+    private int difficulty = Difficulty.NORMAL.getValue();
     private Long seed = null;
     private Long netherseed = null;
     private Long endseed = null;
@@ -440,5 +438,27 @@ public class TweakWorld implements iWorld {
 
         return config; */
         return null;
+    }
+
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public Difficulty getDifficultyBukkit() {
+        return Difficulty.getByValue(difficulty);
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+        if (world != null && isEnabled())
+            world.setDifficulty(getDifficultyBukkit());
+        if (nether != null && isEnabled())
+            nether.setDifficulty(getDifficultyBukkit());
+        if (the_end != null && isEnabled())
+            the_end.setDifficulty(getDifficultyBukkit());
+    }
+
+    public void setDifficulty(Difficulty difficulty) {
+        this.difficulty = difficulty.getValue();
     }
 }

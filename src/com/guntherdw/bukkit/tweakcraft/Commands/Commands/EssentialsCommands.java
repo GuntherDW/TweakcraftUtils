@@ -53,13 +53,20 @@ import java.util.*;
  */
 public class EssentialsCommands {
 
+
+    TweakcraftUtils plugin;
+
+    public EssentialsCommands(TweakcraftUtils instance) {
+        this.plugin = instance;
+    }
+
     @aCommand(
         aliases = {"ban"},
         permissionBase = "ban",
         description = "Bans a player with a reason",
         section = "essentials"
     )
-    public boolean ban(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean ban(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "ban"))
@@ -133,7 +140,7 @@ public class EssentialsCommands {
         description = "Lists the current bans",
         section = "essentials"
     )
-    public boolean banlist(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean banlist(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "ban"))
@@ -172,7 +179,7 @@ public class EssentialsCommands {
         description = "Shows your current orientation",
         section = "essentials"
     )
-    public boolean compass(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean compass(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -191,7 +198,7 @@ public class EssentialsCommands {
         description = "Shows your current position",
         section = "essentials"
     )
-    public boolean getpos(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean getpos(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "getpos"))
@@ -250,7 +257,7 @@ public class EssentialsCommands {
         description = "What you're reading right now",
         section = "essentials"
     )
-    public boolean help(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean help(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         List<String> cma = new ArrayList<String>();
@@ -258,16 +265,25 @@ public class EssentialsCommands {
 
         boolean aliases = true;
         String toadd = "";
-        for (String cname : commh.getCommandMap().keySet()) {
-            Method commandMethod = commh.getCommandMap().get(cname);
+        for (Map.Entry<String, Method> entry : commh.getCommandMap().entrySet()) {
+            // Method commandMethod = commh.getCommandMap().get(cname);
             // aCommand annotation = commandMethod.getAnnotation(aCommand.class);
+            if (plugin.getCommand(entry.getKey()) == null) {
+                System.out.println("Nullpointer for " + entry.getKey());
+                continue;
+            }
 
-            if (addCommandToList(sender, commandMethod, plugin)) {
+            if (addCommandToList(sender, entry.getValue())) {
                 // Fuck minecraft's font :<
-                toadd = ChatColor.GOLD + cname + ChatColor.WHITE +
-                    " : " + ChatColor.YELLOW + plugin.getCommand(cname).getDescription();
+                Method m = entry.getValue();
+                aCommand annotation = m.getAnnotation(aCommand.class);
+
+                if (annotation == null) continue;
+
+                toadd = ChatColor.GOLD + entry.getKey() + ChatColor.WHITE +
+                    " : " + ChatColor.YELLOW + annotation.description();
                 if (aliases) {
-                    List<String> aliaseslist = plugin.getCommand(cname).getAliases();
+                    List<String> aliaseslist = plugin.getCommand(entry.getKey()).getAliases();
                     if (aliaseslist.size() > 0) {
                         toadd += ChatColor.WHITE + " (";
                         for (String alias : aliaseslist) {
@@ -295,7 +311,7 @@ public class EssentialsCommands {
                         String perm = (String) cmds.get(cmd).get("_permission");
                         if (perm == null)
                             perm = (String) cmds.get(cmd).get("permissions"); // Added for WorldEdit support
-                        if (addExtCommandToList(sender, perm, plugin)) {
+                        if (addExtCommandToList(sender, perm)) {
                             toadd = ChatColor.GOLD + cmd + ChatColor.WHITE +
                                 " : " + ChatColor.YELLOW + ((String) cmds.get(cmd).get("description"));
                             if (aliases) {
@@ -345,7 +361,7 @@ public class EssentialsCommands {
         return true;
     }
 
-    protected boolean addCommandToList(CommandSender sender, Method command, TweakcraftUtils plugin) {
+    protected boolean addCommandToList(CommandSender sender, Method command) {
         if (sender instanceof Player) {
             aCommand annotation = command.getAnnotation(aCommand.class);
             if (annotation == null) {
@@ -358,7 +374,7 @@ public class EssentialsCommands {
         }
     }
 
-    protected boolean addExtCommandToList(CommandSender sender, String perm, TweakcraftUtils plugin) {
+    protected boolean addExtCommandToList(CommandSender sender, String perm) {
         if (sender instanceof Player) {
             if (perm == null) {
                 return true;
@@ -376,7 +392,7 @@ public class EssentialsCommands {
         description = "Give yourself an item of choice",
         section = "essentials"
     )
-    public boolean item(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean item(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (sender instanceof Player)
@@ -503,7 +519,7 @@ public class EssentialsCommands {
         description = "Kicks a player with reason",
         section = "essentials"
     )
-    public boolean kick(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean kick(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "kick"))
@@ -545,7 +561,7 @@ public class EssentialsCommands {
         description = "Lists the currently active worlds",
         section = "essentials"
     )
-    public boolean listworlds(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean listworlds(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) // Give the player a list of worlds he has access to!
         {
@@ -608,7 +624,7 @@ public class EssentialsCommands {
         description = "Broadcasts a message in third person",
         section = "essentials"
     )
-    public boolean me(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean me(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -649,7 +665,7 @@ public class EssentialsCommands {
         description = "Shows the message of the day!",
         section = "essentials"
     )
-    public boolean motd(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean motd(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
@@ -677,7 +693,7 @@ public class EssentialsCommands {
         description = "Send a message to a player",
         section = "essentials"
     )
-    public boolean msg(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean msg(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         String senderName = "";
@@ -725,7 +741,7 @@ public class EssentialsCommands {
         description = "Mute a player",
         section = "essentials"
     )
-    public boolean mute(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean mute(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "mute"))
@@ -781,7 +797,7 @@ public class EssentialsCommands {
         description = "General plugin command",
         section = "essentials"
     )
-    public boolean plugin(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean plugin(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "plugins"))
@@ -859,7 +875,7 @@ public class EssentialsCommands {
         description = "Reply to the last msg",
         section = "essentials"
     )
-    public boolean reply(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean reply(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             if (args.length > 0) {
@@ -900,7 +916,7 @@ public class EssentialsCommands {
         description = "Sets the spawn of the current world",
         section = "essentials"
     )
-    public boolean setSpawn(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean setSpawn(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -927,7 +943,7 @@ public class EssentialsCommands {
         description = "Sends you to the spawn of the world you're in",
         section = "essentials"
     )
-    public boolean spawn(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean spawn(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -954,150 +970,152 @@ public class EssentialsCommands {
         description = "Spawns mobs at your crosshair",
         section = "essentials"
     )
-    public boolean spawnMob(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean spawnMob(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            if (!plugin.check(player, "spawnmob"))
+        /* if (sender instanceof Player) {
+            Player player = (Player) sender; */
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "spawnmob"))
                 throw new PermissionsException(command);
 
-            Location loc = player.getTargetBlock((HashSet<Byte>) null, 200).getLocation();
-            ArgumentParser ap = new ArgumentParser(realargs);
+        Location loc = null;
+        ArgumentParser ap = new ArgumentParser(realargs);
 
-            Random rnd = new Random();
+        Random rnd = new Random();
 
-            int slimesize = ap.getInteger("s", -1);
-            int health = ap.getInteger("h", -1);
-            boolean powered = ap.getBoolean("p", false);
-            boolean shoven = ap.getBoolean("sh", false);
-            String sheepcolor = ap.getString("sc", null);
-            int age = ap.getInteger("a", -1);
-            String[] args = ap.getUnusedArgs();
+        int slimesize = ap.getInteger("s", -1);
+        int health = ap.getInteger("h", -1);
+        boolean powered = ap.getBoolean("pow", false);
+        boolean shoven = ap.getBoolean("sh", false);
+        String sheepcolor = ap.getString("sc", null);
+        String victim = ap.getString("p", null);
+        int age = ap.getInteger("a", -1);
+        String[] args = ap.getUnusedArgs();
 
-            loc.setY(loc.getY() + 1); // Do not spawn them into the ground, silly!
-            String mobName;
-            String mobRider;
-            Integer amount = 1;
-            String victim = null;
-            CreatureType type = null;
-            CreatureType rider = null;
-            Player victimplayer = player;
-            LivingEntity lent = null;
-            List<CreatureType> riders = null;
+        String mobName;
+        String mobRider;
+        Integer amount = 1;
+        CreatureType type = null;
+        CreatureType rider = null;
+        Player victimplayer = null;
+        LivingEntity lent = null;
+        List<CreatureType> riders = null;
 
-            if (args.length > 0) // only a mobname!
+        if (args.length > 0) // only a mobname!
+        {
+            mobName = "";
+            amount = 1;
+            if (args[0].length() > 2)
+                mobName = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].length());
+            type = CreatureType.fromName(mobName);
+            if (type == null) {
+                sender.sendMessage("Tried : " + mobName);
+                throw new CommandUsageException("Can't find that creature!");
+            }
+            if (args.length > 1) // amount
             {
-                mobName = "";
-                amount = 1;
-                if (args[0].length() > 2)
-                    mobName = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].length());
-                type = CreatureType.fromName(mobName);
-                if (type == null) {
-                    sender.sendMessage("Tried : " + mobName);
-                    throw new CommandUsageException("Can't find that creature!");
-                }
-                if (args.length > 1) // amount
-                {
-                    try {
-                        amount = Integer.parseInt(args[1]);
-                        if (amount > 100) {
-                            amount = 100; // This should be more than enough before your client starts to lag!
-                        }
-                    } catch (NumberFormatException e) {
-                        throw new CommandUsageException("I need an amount, not a string!");
-                    }
-                }
-                if (args.length > 2) // Riders and/or player!
-                {
-                    riders = new ArrayList<CreatureType>();
-                    CreatureType tmpRider;
-                    String tmpRiderString;
-                    for (int x = 2; x < args.length; x++) {
-
-                        if (x == args.length - 1) {
-                            // Check to see if the last argument contains a playername
-                            victim = plugin.findPlayer(args[args.length - 1]);
-                            victimplayer = plugin.getServer().getPlayer(victim);
-                            /* if (victimplayer == null) {
-                              throw new CommandUsageException("Can't find that player!");
-                           } */
-                            if (victimplayer != null) {
-
-                                loc = victimplayer.getLocation();
-                            }
-                        }
-                        if (x < args.length - 1 ||
-                            (x == args.length - 1 && victimplayer == null)) {
-                            tmpRiderString = args[x];
-                            if (args[x].length() > 2)
-                                tmpRiderString = args[x].substring(0, 1).toUpperCase() + args[x].substring(1, args[x].length());
-                            rider = CreatureType.fromName(tmpRiderString);
-                            if (rider == null) {
-                                sender.sendMessage(ChatColor.YELLOW + "Didn't find one of the specified extra riders!");
-                                // throw new CommandUsageException("Can't find rider creature!");
-                            } else {
-                                riders.add(rider);
-                            }
-                        }
-                    }
-
-                }
-
-                // if (args.length > 3) // victim!
-                // {
-
-                // }
-
-                // We're finally here
-                // Creature crea = new
-                if (victimplayer == null)
-                    victimplayer = player;
-
-                if (type != null) {
-                    LivingEntity rid = null;
-                    for (int x = 0; x < amount; x++) {
-                        lent = victimplayer.getWorld().spawnCreature(loc, type);
-                        if (health > 0)
-                            lent.setHealth(health);
-
-                        if (lent instanceof Animals && age != -1)
-                            ((Animals) lent).setAge(age);
-
-                        if (lent instanceof Slime && slimesize > 0)
-                            ((Slime) lent).setSize(slimesize);
-
-                        if (lent instanceof Creeper && powered)
-                            ((Creeper) lent).setPowered(powered);
-
-                        if (lent instanceof Sheep && shoven || sheepcolor != null) {
-                            ((Sheep) lent).setSheared(shoven);
-
-                            if (sheepcolor != null) {
-                                DyeColor dc = null;
-                                if (sheepcolor.equalsIgnoreCase("random")) {
-                                    dc = DyeColor.getByData((byte) rnd.nextInt(16));
-                                } else {
-                                    dc = DyeColor.valueOf(sheepcolor.toUpperCase());
-                                }
-                                if (dc != null) ((Sheep) lent).setColor(dc);
-                            }
-                        }
-
-                        if (riders != null && riders.size() != 0) {
-                            for (CreatureType t : riders) {
-                                rid = victimplayer.getWorld().spawnCreature(loc, t);
-                                if (lent != null) lent.setPassenger(rid);
-                                lent = rid; // This makes the currently added mob the new "to-ride-along" mob
-                            }
-                        }
-                    }
-                } else {
-                    sender.sendMessage(ChatColor.YELLOW + "Error trying to spawn creature!");
+                try {
+                    amount = Math.min(Math.max(0, Integer.parseInt(args[1])), 100);
+                } catch (NumberFormatException e) {
+                    throw new CommandUsageException("I need an amount, not a string!");
                 }
             }
-        } else {
-            throw new CommandSenderException("What were you trying to do? :3");
+            if (args.length > 2) { // Riders
+                riders = new ArrayList<CreatureType>();
+                CreatureType tmpRider;
+                String tmpRiderString;
+                for (int x = 2; x < args.length; x++) {
+
+                    /*if (x == args.length - 1) {
+                        // Check to see if the last argument contains a playername
+                        if(victim==null)
+                            victim = plugin.findPlayer(args[args.length - 1]);
+                        
+                        victimplayer = plugin.getServer().getPlayer(victim);
+                        if (victimplayer != null) {
+                            loc = victimplayer.getLocation();
+                        }
+                    }
+                    if (x < args.length - 1 ||
+                        (x == args.length - 1 && victimplayer == null)) { */
+                    tmpRiderString = args[x];
+                    if (args[x].length() > 2)
+                        tmpRiderString = args[x].substring(0, 1).toUpperCase() + args[x].substring(1, args[x].length());
+                    rider = CreatureType.fromName(tmpRiderString);
+                    if (rider == null) {
+                        sender.sendMessage(ChatColor.YELLOW + "Didn't find one of the specified extra riders!");
+                        // throw new CommandUsageException("Can't find rider creature!");
+                    } else {
+                        riders.add(rider);
+                    }
+                    // }
+                }
+            }
+
+            // Find that player
+            if (victim != null) {
+                victimplayer = plugin.findPlayerasPlayer(victim);
+                if (victimplayer != null) {
+                    loc = victimplayer.getLocation();
+                } else {
+                    throw new CommandException("Couldn't find player!");
+                }
+            }
+
+            if (victimplayer == null) {
+                if (sender instanceof Player) {
+                    victimplayer = (Player) sender;
+                    loc = victimplayer.getTargetBlock((HashSet<Byte>) null, 200).getLocation();
+                } else {
+                    throw new CommandException("If you're a console, at least tell me who i need to scare?");
+                }
+            }
+
+            if (type != null) {
+                LivingEntity rid = null;
+                for (int x = 0; x < amount; x++) {
+                    lent = victimplayer.getWorld().spawnCreature(loc, type);
+                    if (health > 0)
+                        lent.setHealth(health);
+
+                    if (lent instanceof Animals && age != -1)
+                        ((Animals) lent).setAge(age);
+
+                    if (lent instanceof Slime && slimesize > 0)
+                        ((Slime) lent).setSize(slimesize);
+
+                    if (lent instanceof Creeper && powered)
+                        ((Creeper) lent).setPowered(powered);
+
+                    if (lent instanceof Sheep && shoven || sheepcolor != null) {
+                        ((Sheep) lent).setSheared(shoven);
+
+                        if (sheepcolor != null) {
+                            DyeColor dc = null;
+                            if (sheepcolor.equalsIgnoreCase("random")) {
+                                dc = DyeColor.getByData((byte) rnd.nextInt(16));
+                            } else {
+                                dc = DyeColor.valueOf(sheepcolor.toUpperCase());
+                            }
+                            if (dc != null) ((Sheep) lent).setColor(dc);
+                        }
+                    }
+
+                    if (riders != null && riders.size() != 0) {
+                        for (CreatureType t : riders) {
+                            rid = victimplayer.getWorld().spawnCreature(loc, t);
+                            if (lent != null) lent.setPassenger(rid);
+                            lent = rid; // This makes the currently added mob the new "to-ride-along" mob
+                        }
+                    }
+                }
+            } else {
+                sender.sendMessage(ChatColor.YELLOW + "Error trying to spawn creature!");
+            }
         }
+        /* } else {
+            throw new CommandSenderException("What were you trying to do? :3");
+        } */
         return true;
     }
 
@@ -1107,7 +1125,7 @@ public class EssentialsCommands {
         description = "Sets the time",
         section = "essentials"
     )
-    public boolean time(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean time(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "time"))
@@ -1165,7 +1183,7 @@ public class EssentialsCommands {
         description = "Unban a player",
         section = "essentials"
     )
-    public boolean unban(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean unban(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player)
             if (!plugin.check((Player) sender, "ban"))
@@ -1191,7 +1209,7 @@ public class EssentialsCommands {
         description = "List of currently connected players",
         section = "essentials"
     )
-    public boolean who(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean who(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException {
 
 
@@ -1273,7 +1291,7 @@ public class EssentialsCommands {
         description = "Teleports you to a world of choice",
         section = "essentials"
     )
-    public boolean world(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean world(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player player = (Player) sender;

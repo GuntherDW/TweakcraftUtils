@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Worlds;
 
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.generator.ChunkGenerator;
@@ -62,4 +63,9 @@ public interface iWorld {
     public String[] getMOTD();
     public boolean hasWorldMOTD();
     public FileConfiguration getConfiguration();
+    public int getDifficulty();
+    public Difficulty getDifficultyBukkit();
+    public void setDifficulty(int difficulty);
+    public void setDifficulty(Difficulty difficulty);
+
 }

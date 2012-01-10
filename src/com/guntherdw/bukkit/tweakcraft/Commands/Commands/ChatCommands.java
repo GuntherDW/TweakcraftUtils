@@ -38,18 +38,24 @@ import java.util.List;
  */
 public class ChatCommands {
 
+    TweakcraftUtils plugin;
+
+    public ChatCommands(TweakcraftUtils instance) {
+        this.plugin = instance;
+    }
+
     @aCommand(
         aliases = {"chatmode", "cm"},
         permissionBase = "chat",
         description = "ChatMode control",
         section = "chat"
     )
-    public boolean chatmode(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean chatmode(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (args.length == 0) {
             throw new CommandUsageException("/" + command + " <list|[chatmode]|...>");
         }
-        return this.chatCommand(sender, command, null, args, plugin);
+        return this.chatCommand(sender, command, null, args);
     }
 
     @aCommand(
@@ -58,10 +64,10 @@ public class ChatCommands {
         description = "Remove ChatMode subscription",
         section = "chat"
     )
-    public boolean globalChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean globalChat(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
-        this.chatCommand(sender, command, "global", args, plugin);
+        this.chatCommand(sender, command, "global", args);
 
         return true;
     }
@@ -72,14 +78,14 @@ public class ChatCommands {
         description = "Toggle local chat",
         section = "chat"
     )
-    public boolean localChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean localChat(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (!plugin.getConfigHandler().enableLocalChat) {
             throw new CommandUsageException("LocalChat not enabled!");
         }
 
-        this.chatCommand(sender, command, "local", args, plugin);
+        this.chatCommand(sender, command, "local", args);
 
         return true;
     }
@@ -90,14 +96,14 @@ public class ChatCommands {
         description = "Toggle region chat",
         section = "chat"
     )
-    public boolean regionChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean regionChat(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (!plugin.getConfigHandler().enableWorldGuard) {
             throw new CommandUsageException("WorldGuard not enabled!");
         }
 
-        this.chatCommand(sender, command, "region", args, plugin);
+        this.chatCommand(sender, command, "region", args);
 
         return true;
     }
@@ -108,14 +114,14 @@ public class ChatCommands {
         description = "Toggle world chat",
         section = "chat"
     )
-    public boolean worldChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean worldChat(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         if (!plugin.getConfigHandler().enableWorldChat) {
             throw new CommandUsageException("WorldChat not enabled!");
         }
 
-        this.chatCommand(sender, command, "world", args, plugin);
+        this.chatCommand(sender, command, "world", args);
 
         return true;
     }
@@ -127,19 +133,19 @@ public class ChatCommands {
         description = "Toggle Zone chat",
         section = "chat"
     )
-    public boolean zoneChat(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean zoneChat(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (plugin.getConfigHandler().enableZones == false) {
             throw new CommandUsageException("Zones not enabled!");
         }
 
-        this.chatCommand(sender, command, "zones", args, plugin);
+        this.chatCommand(sender, command, "zones", args);
 
         return true;
     }
 
 
-    public boolean chatCommand(CommandSender sender, String command, String chatModeName, String[] realargs, TweakcraftUtils plugin)
+    public boolean chatCommand(CommandSender sender, String command, String chatModeName, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
         ChatHandler ch = plugin.getChathandler();
@@ -228,8 +234,16 @@ public class ChatCommands {
                             if (cm.isEnabled()) {
 
                                 ChatMode oldcm = ch.getPlayerChatMode(player);
-                                if (oldcm != null)
-                                    oldcm.removeRecipient(player.getName());
+                                
+                                if (oldcm != null) {
+                                    if(oldcm.equals(cm)) {
+                                        ch.setPlayerchatmode(player.getName(), null);
+                                        lp.setChatMode(null);
+                                        sender.sendMessage(ChatColor.GOLD + "You will now chat globally");
+                                        return true;
+                                    } else
+                                        oldcm.removeRecipient(player.getName());
+                                }
 
                                 ch.setPlayerchatmode(player.getName(), chatMode);
                                 cm.addRecipient(player.getName());

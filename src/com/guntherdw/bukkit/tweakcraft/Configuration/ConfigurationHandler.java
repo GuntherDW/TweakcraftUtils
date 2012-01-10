@@ -120,6 +120,7 @@ public class ConfigurationHandler {
     // public Map<String, String>
     public boolean cancelNetherPortal = false;
     public boolean extraLogging = false;
+    public boolean enableInjectedCommandsHanding = false;
 
     public ConfigurationHandler(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -239,6 +240,7 @@ public class ConfigurationHandler {
         this.snowPileMaxHeight = globalconfig.getInt("extra.snowpile.maxHeight", 7);
         this.snowPileMaxHeight = Math.max(this.snowPileMaxHeight, 7);
         this.enableSnowDouble = globalconfig.getBoolean("extra.snowpile.doublesnowball", false);
+        this.enableInjectedCommandsHanding = globalconfig.getBoolean("extra.enableInjectedCommandsHanding", false);
 
 
         this.enableWorldMOTD = globalconfig.getBoolean("worlds.worldMOTD", false);

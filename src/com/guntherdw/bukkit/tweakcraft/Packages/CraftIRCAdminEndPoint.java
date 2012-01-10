@@ -46,8 +46,10 @@ public class CraftIRCAdminEndPoint implements EndPoint {
         circ = instance.getCraftIRC();
         circ.registerEndPoint("tcutilsadmin", this);
         // this.cm = ch.getChatMode("A")
-        try { this.ac = (AdminChat) ch.getChatMode("admin"); }
-        catch(ChatModeException ex) { }
+        try {
+            this.ac = (AdminChat) ch.getChatMode("admin");
+        } catch (ChatModeException ex) {
+        }
     }
 
     public void messageIn(RelayedMessage relayedMessage) {
@@ -62,12 +64,12 @@ public class CraftIRCAdminEndPoint implements EndPoint {
       generic: '%grey%%message%' */
 
         String event = relayedMessage.getEvent();
-        if(event.equals("chat") || event.equals("action")) {
+        if (event.equals("chat") || event.equals("action")) {
             String pname = relayedMessage.getField("sender");
-            if(pname!=null) {
+            if (pname != null) {
                 String name = relayedMessage.getField("sender");
                 String nick = plugin.getPlayerListener().findPlayerNameByNick(name, true);
-                relayedMessage.setField("sender", plugin.getNickWithColors(nick==null?name:nick));
+                relayedMessage.setField("sender", plugin.getNickWithColors(nick == null ? name : nick));
             }
             ac.broadcastMessage(relayedMessage.getMessage(this));
         }

@@ -36,20 +36,28 @@ public class ChatHandler {
     private Map<String, ChatMode> chatmodes = new HashMap<String, ChatMode>();
     private Map<String, String> playerchatmode = new HashMap<String, String>();
     private Map<String, Long> mutedPlayers = new HashMap<String, Long>();
-    
 
     public ChatHandler(TweakcraftUtils instance) {
         plugin = instance;
         chatmodes.clear();
-        chatmodes.put("admin",  new AdminChat(this)); /* This one has a higher priority! */
-        chatmodes.put("local",  new LocalChat(this));
-        chatmodes.put("region", new RegionChat(this));
-        chatmodes.put("zones",  new ZoneChat(this));
-        chatmodes.put("world",  new WorldChat(this));
+        this.registerChatMode("admin", new AdminChat(this)); /* This one has a higher priority! */
+        this.registerChatMode("local", new LocalChat(this));
+        this.registerChatMode("region", new RegionChat(this));
+        this.registerChatMode("zones", new ZoneChat(this));
+        this.registerChatMode("world", new WorldChat(this));
+
+        this.registerChatMode("tcutils", new TCUtilsChat(this)); /* IRC extra stuff */
+    }
+    
+    public boolean registerChatMode(String chatModeLabel, ChatMode chatMode) {
+        if(chatmodes.containsValue(chatMode)) return false;
+        
+        chatmodes.put(chatModeLabel, chatMode);
+        return true;
     }
 
     public void enableAntiSpam() {
-        if(plugin.getConfigHandler().enableSpamControl && antispam==null)
+        if (plugin.getConfigHandler().enableSpamControl && antispam == null)
             this.antispam = new AntiSpam(this, plugin.getConfigHandler());
     }
 
@@ -74,8 +82,8 @@ public class ChatHandler {
 
     public List<String> listChatModes() {
         List<String> l = new ArrayList<String>();
-        for(String s : chatmodes.keySet()) {
-            if((chatmodes.get(s)).isEnabled())
+        for (String s : chatmodes.keySet()) {
+            if ((chatmodes.get(s)).isEnabled() && !((chatmodes.get(s)).isHidden()))
                 l.add(s);
         }
         return l;
@@ -123,9 +131,9 @@ public class ChatHandler {
             }
             playerchatmode.put(player, mode);
         }
-        if(plugin.getConfigHandler().enableCUI) {
+        if (plugin.getConfigHandler().enableCUI) {
             Player p = plugin.getServer().getPlayer(player);
-            if(p!=null)
+            if (p != null)
                 plugin.sendCUIChatMode(p);
         }
     }
@@ -144,38 +152,38 @@ public class ChatHandler {
 
     public void addMute(String player, Long duration) {
         Long toTime = null;
-        
-        if(player!=null) player = player.toLowerCase(); /* Sanity checks */
+
+        if (player != null) player = player.toLowerCase(); /* Sanity checks */
         else return;
 
-        if(duration != null) {
-            toTime  = Calendar.getInstance().getTime().getTime();
-            toTime += duration*1000;
+        if (duration != null) {
+            toTime = Calendar.getInstance().getTime().getTime();
+            toTime += duration * 1000;
         }
-        if(plugin.getConfigHandler().enablePersistence) {
+        if (plugin.getConfigHandler().enablePersistence) {
             PlayerOptions po = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player).ieq("optionname", "mute").findUnique();
-            if(po==null) {
+            if (po == null) {
                 po = new PlayerOptions();
                 po.setName(player);
                 po.setOptionname("mute");
             }
-            
-            po.setOptionvalue(toTime==null?null:toTime.toString());
+
+            po.setOptionvalue(toTime == null ? null : toTime.toString());
             plugin.getDatabase().save(po);
         }
         mutedPlayers.put(player, toTime);
     }
 
     public boolean canTalk(String player) {
-        if(mutedPlayers.containsKey(player.toLowerCase())) {
+        if (mutedPlayers.containsKey(player.toLowerCase())) {
             Long checktime = Calendar.getInstance().getTime().getTime();
             Long muteTime = mutedPlayers.get(player.toLowerCase());
-            if(muteTime == null || checktime < muteTime) {
+            if (muteTime == null || checktime < muteTime) {
                 return false;
             }
-            if(checktime > muteTime) {
-                if(plugin.getConfigHandler().enableDebug)
-                    plugin.getLogger().info("[TweakcraftUtils] Mutes: auto-unmuting "+player+", his mutetime was over!");
+            if (checktime > muteTime) {
+                if (plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("[TweakcraftUtils] Mutes: auto-unmuting " + player + ", his mutetime was over!");
                 removeMute(player);
             }
         }
@@ -186,9 +194,9 @@ public class ChatHandler {
         if (mutedPlayers.containsKey(player)) {
             mutedPlayers.remove(player);
         }
-        if(plugin.getConfigHandler().enablePersistence) {
+        if (plugin.getConfigHandler().enablePersistence) {
             PlayerOptions po = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player).ieq("optionname", "mute").findUnique();
-            if(po!=null)
+            if (po != null)
                 plugin.getDatabase().delete(po);
         }
     }
@@ -198,11 +206,11 @@ public class ChatHandler {
     }
 
     public Long getRemaining(String player) {
-        if(canTalk(player)) return null;
+        if (canTalk(player)) return null;
         Long remain = mutedPlayers.get(player);
-        if(remain == null) return null;
+        if (remain == null) return null;
         Long checktime = Calendar.getInstance().getTime().getTime();
-        Double dres = Math.floor((remain - checktime)/1000);
+        Double dres = Math.floor((remain - checktime) / 1000);
         return dres.longValue();
     }
 

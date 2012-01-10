@@ -40,13 +40,19 @@ import java.util.List;
  */
 public class TeleportationCommands {
 
+    TweakcraftUtils plugin;
+
+    public TeleportationCommands(TweakcraftUtils instance) {
+        this.plugin = instance;
+    }
+
     @aCommand(
-        aliases = { "tele" },
+        aliases = {"tele"},
         permissionBase = "tele",
         description = "Teleport to a specific location",
         section = "teleport"
     )
-    public boolean teleportToLocation(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean teleportToLocation(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         boolean isPlayer = false;
         ArgumentParser ap = new ArgumentParser(realargs);
@@ -71,64 +77,64 @@ public class TeleportationCommands {
     Integer z = null; */
         World world = null;
 
-        if(args.length == 0) {
+        if (args.length == 0) {
             throw new CommandUsageException("Usage: /tele up|x z (y) <world> or /tele chunk x y (z) <world>");
-        } else if(args.length==1 && args[0].equalsIgnoreCase("up")) {
-            Location l = ((Player)sender).getLocation().clone();
-            x = (int)l.getX();
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("up")) {
+            Location l = ((Player) sender).getLocation().clone();
+            x = (int) l.getX();
             y = 129;
-            z = (int)l.getZ();
+            z = (int) l.getZ();
             world = l.getWorld();
-        } else if(args.length>0 && args[0].equalsIgnoreCase("chunk")) {
-            if(args.length<3) {
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("chunk")) {
+            if (args.length < 3) {
                 throw new CommandUsageException("I need at least 2 variables!");
             }
             try {
-                if(isPlayer)
+                if (isPlayer)
                     world = ((Player) sender).getWorld();
-                x = Integer.parseInt(args[1])<<4;
-                z = Integer.parseInt(args[2])<<4;
-                if(args.length>3) {
+                x = Integer.parseInt(args[1]) << 4;
+                z = Integer.parseInt(args[2]) << 4;
+                if (args.length > 3) {
                     y = Integer.parseInt(args[3]);
                 } else {
                     y = 129;
                 }
-                if(args.length>4 || w!= null) {
-                    if(w==null) w=args[4];
+                if (args.length > 4 || w != null) {
+                    if (w == null) w = args[4];
                     if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(w))) {
                         world = plugin.getServer().getWorld(w);
                     } else {
-                        if(isPlayer)
+                        if (isPlayer)
                             world = ((Player) sender).getWorld();
                         else
                             throw new CommandException("World not found!");
                     }
                 }
 
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 throw new CommandException("I need numbers not strings!");
-            } catch(NullPointerException ex) {
+            } catch (NullPointerException ex) {
                 throw new CommandException("I can't find that world!");
             }
         } else {
-            try{
-                if (x==null) x = Integer.parseInt(args[0]);
-                if (z==null) z = Integer.parseInt(args[1]);
+            try {
+                if (x == null) x = Integer.parseInt(args[0]);
+                if (z == null) z = Integer.parseInt(args[1]);
                 if (args.length == 3) {
-                    if (y==null) y = Integer.parseInt(args[2]);
+                    if (y == null) y = Integer.parseInt(args[2]);
                 } else {
                     y = 129;
                 }
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 throw new CommandException("I need numbers not strings!");
             }
-            if (args.length > 3 || w!=null) {
-                if(w==null) w=args[3];
+            if (args.length > 3 || w != null) {
+                if (w == null) w = args[3];
                 try {
                     if (plugin.getServer().getWorlds().contains(plugin.getServer().getWorld(w))) {
                         world = plugin.getServer().getWorld(w);
                     } else {
-                        if(isPlayer)
+                        if (isPlayer)
                             world = ((Player) sender).getWorld();
                         else
                             throw new CommandException("World not found!");
@@ -137,28 +143,28 @@ public class TeleportationCommands {
                     throw new CommandUsageException("Can't find world with name " + w);
                 }
             } else {
-                if(isPlayer)
+                if (isPlayer)
                     world = ((Player) sender).getWorld();
             }
         }
-        if(args.length == 5 || p!=null) // Added victim
+        if (args.length == 5 || p != null) // Added victim
         {
-            if(p==null) p=args[4];
+            if (p == null) p = args[4];
             victim = plugin.findPlayerasPlayer(p);
         }
-        if(world!=null) {
-            if(isPlayer) {
+        if (world != null) {
+            if (isPlayer) {
                 victim = (Player) sender;
             } else {
-                if(victim==null) {
+                if (victim == null) {
                     throw new CommandException("If you're not a player, would you mind giving me a victim?");
                 }
             }
-            if(victim!=null) {
+            if (victim != null) {
                 Location oldloc = victim.getLocation();
 
                 Location loc = new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue());
-                if(victim.teleport(loc)) {
+                if (victim.teleport(loc)) {
                     plugin.getTelehistory().addHistory(victim.getName(), oldloc);
                 }
             }
@@ -178,17 +184,17 @@ public class TeleportationCommands {
     }
 
     @aCommand(
-        aliases = { "tp" },
+        aliases = {"tp"},
         permissionBase = "tp",
         description = "Teleports you to another player",
         section = "teleport"
     )
-    public boolean teleportToPlayer(CommandSender sender, String command, String[] realargs, TweakcraftUtils plugin)
+    public boolean teleportToPlayer(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException {
 
         ArgumentParser ap = new ArgumentParser(realargs);
         String p1 = ap.getString("p", null);
-        if(p1==null) p1 = ap.getString("f", null);
+        if (p1 == null) p1 = ap.getString("f", null);
         String p2 = ap.getString("t", null);
 
         String[] args = ap.getUnusedArgs();
@@ -203,10 +209,10 @@ public class TeleportationCommands {
                     player.sendMessage(ChatColor.RED + "You can't tp when you don't allow others to tp to you!");
                 } else {
                     // List<Player> p = plugin.getServer().matchPlayer(args[0]);
-                    if(p1==null)p1=args[0];
+                    if (p1 == null) p1 = args[0];
                     List<Player> players = plugin.findPlayerasPlayerList(p1);
                     Player p = null;
-                    if(players.size()==1)
+                    if (players.size() == 1)
                         p = players.get(0);
 
                     if (p == null) {
@@ -214,9 +220,8 @@ public class TeleportationCommands {
                     } else {
                         boolean refusetp = plugin.getDonottplist().contains(p.getName());
                         boolean tpsuccess = true;
-                        if(plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
-                        {
-                            if(!plugin.check(player, "tpinvis")) {
+                        if (plugin.getPlayerListener().getInvisplayers().contains(p.getName())) {
+                            if (!plugin.check(player, "tpinvis")) {
                                 player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                                 plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " tried to tp to " + p.getName() + " <invisible>!");
                                 return true;
@@ -233,8 +238,8 @@ public class TeleportationCommands {
                          override = true; */
                         }
 
-                        if(!player.getWorld().getName().equals(p.getWorld().getName())) {
-                            if(!plugin.check(player, "worlds."+p.getWorld().getName()+".tp"))
+                        if (!player.getWorld().getName().equals(p.getWorld().getName())) {
+                            if (!plugin.check(player, "worlds." + p.getWorld().getName() + ".tp"))
                                 throw new PermissionsException("You don't have permission to TP to someone in that world!");
                         }
 
@@ -247,7 +252,7 @@ public class TeleportationCommands {
                             } else {
                                 Location oldloc = player.getLocation();
                                 tpsuccess = player.teleport(getTpLocation(p));
-                                if(tpsuccess) {
+                                if (tpsuccess) {
                                     plugin.getTelehistory().addHistory(player.getName(), oldloc);
                                     p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
 
@@ -279,21 +284,26 @@ public class TeleportationCommands {
 
         return true;
     }
-    private static int floor(double d) { int rt = (int) d; return rt > d ? rt-1 : rt; }
+
+    private static int floor(double d) {
+        int rt = (int) d;
+        return rt > d ? rt - 1 : rt;
+    }
 
     private Location getTpLocation(Player player) {
         Location loc = player.getLocation();
-        int x = floor(loc.getX()), y = floor(loc.getY())-1,  z = floor(loc.getZ());
-        for(int dx = -1; dx < 1;dx++)
-            for(int dz = -1; dz <= 1;dz++)
-                if(validSpot(loc.getWorld(),x+dx,y,z+dz))
-                    return new Location(loc.getWorld(),x+dx+0.5F,y+2,z+dz+0.5F);
+        int x = floor(loc.getX()), y = floor(loc.getY()) - 1, z = floor(loc.getZ());
+        for (int dx = -1; dx < 1; dx++)
+            for (int dz = -1; dz <= 1; dz++)
+                if (validSpot(loc.getWorld(), x + dx, y, z + dz))
+                    return new Location(loc.getWorld(), x + dx + 0.5F, y + 2, z + dz + 0.5F);
         return loc;
     }
-    private boolean validSpot(World world,int x, int y, int z) {
+
+    private boolean validSpot(World world, int x, int y, int z) {
         return world.getBlockTypeIdAt(x, y, z) != 0
-            && world.getBlockTypeIdAt(x, y+1, z) == 0
-            && world.getBlockTypeIdAt(x, y+2, z) == 0;
+            && world.getBlockTypeIdAt(x, y + 1, z) == 0
+            && world.getBlockTypeIdAt(x, y + 2, z) == 0;
     }
 
     private void tpfromto(TweakcraftUtils plugin, CommandSender sender, String p1, String p2) {
@@ -326,46 +336,47 @@ public class TeleportationCommands {
     }
 
     @aCommand(
-        aliases = { "tpback", "tpb", "back" },
+        aliases = {"tpback", "tpb", "back"},
         permissionBase = "tpback",
         description = "Go back to where you once came from!",
         section = "teleport"
     )
-    public boolean tpBack(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tpBack(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
-            if(!plugin.check(player, "tpback"))
+            if (!plugin.check(player, "tpback"))
                 throw new PermissionsException(command);
-            if(plugin.getConfigHandler().enableTPBack) {
+            if (plugin.getConfigHandler().enableTPBack) {
 
                 boolean go = true;
 
-                if(args.length>0) {
-                    if(args[0].equalsIgnoreCase("clear")) {
-                        player.sendMessage(ChatColor.GOLD+"Cleaning your TPBack history!");
+                if (args.length > 0) {
+                    if (args[0].equalsIgnoreCase("clear")) {
+                        player.sendMessage(ChatColor.GOLD + "Cleaning your TPBack history!");
                         plugin.getTelehistory().clearHistory(player.getName());
-                        go=false;
-                    } else if(args[0].equalsIgnoreCase("remove")) {
-                        if(plugin.getTelehistory().getRemaining(player.getName())>0) {
+                        go = false;
+                    } else if (args[0].equalsIgnoreCase("remove")) {
+                        if (plugin.getTelehistory().getRemaining(player.getName()) > 0) {
                             player.sendMessage(ChatColor.YELLOW + "Removing last tpback line.");
                             plugin.getTelehistory().removeLast(player.getName());
                         } else {
                             player.sendMessage(ChatColor.YELLOW + "You don't have any tpback lines!");
                         }
-                        go=false;
-                    } else if(args[0].equalsIgnoreCase("debug")) {
+                        go = false;
+                    } else if (args[0].equalsIgnoreCase("debug")) {
                         int pos = 0;
                         String s = "";
                         int offs = plugin.getTelehistory().getOffset(player.getName());
                         List<Location> loclist = plugin.getTelehistory().getHistoryList(player.getName());
-                        if(loclist!=null) {
+                        if (loclist != null) {
                             // player.sendMessage(ChatColor.GOLD + "offs : "+offs);
-                            if(offs==-1) offs = loclist.size()-1; else offs = loclist.size()-offs;
+                            if (offs == -1) offs = loclist.size() - 1;
+                            else offs = loclist.size() - offs;
                             // player.sendMessage(ChatColor.GOLD +"size : "+loclist.size());
-                            for(Location l : loclist) {
-                                s = "world: "+l.getWorld().getName()+" x:"+Math.floor(l.getX())+" y:"+Math.floor(l.getY())+" z:"+Math.floor(l.getZ());
-                                player.sendMessage( (pos==offs?"--> ":"") +ChatColor.GOLD + s);
+                            for (Location l : loclist) {
+                                s = "world: " + l.getWorld().getName() + " x:" + Math.floor(l.getX()) + " y:" + Math.floor(l.getY()) + " z:" + Math.floor(l.getZ());
+                                player.sendMessage((pos == offs ? "--> " : "") + ChatColor.GOLD + s);
                                 pos++;
                             }
                         }
@@ -373,42 +384,42 @@ public class TeleportationCommands {
                     }
                 }
 
-                if(go){
+                if (go) {
                     boolean atOrigin = plugin.getTelehistory().atOrigin(player.getName());
                     int offSet = plugin.getTelehistory().getOffset(player.getName());
-                    int size = plugin.getTelehistory().getRemaining(player.getName()) -1;
-                    int pos = size - (offSet>0?offSet:0);
+                    int size = plugin.getTelehistory().getRemaining(player.getName()) - 1;
+                    int pos = size - (offSet > 0 ? offSet : 0);
                     // Location back = plugin.getTelehistory().getLastEntry(player.getName(), false);
                     Location back = plugin.getTelehistory().get(player.getName(), pos, true); // getLastEntry(player.getName(), false)
                     Location oldLocation = player.getLocation().clone();
-                    if(back == null) {
-                        if(atOrigin) player.sendMessage(ChatColor.GOLD+"You don't have any history issues left!");
-                        else player.sendMessage(ChatColor.GOLD+"You don't have any history issues yet!");
+                    if (back == null) {
+                        if (atOrigin) player.sendMessage(ChatColor.GOLD + "You don't have any history issues left!");
+                        else player.sendMessage(ChatColor.GOLD + "You don't have any history issues yet!");
 
                     } else {
-                        player.sendMessage(ChatColor.GOLD+"Teleporting you back to your previous position!");
-                        if(back.getY()==130) {
-                            player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
+                        player.sendMessage(ChatColor.GOLD + "Teleporting you back to your previous position!");
+                        if (back.getY() == 130) {
+                            player.sendMessage(ChatColor.GOLD + "Sending you to Y:130 because you were either too high or too low!");
                         }
 
                         boolean success = player.teleport(back);
-                        if(success) {
-                            if(atOrigin) {
-                                player.sendMessage(ChatColor.GOLD+"You are at your starting point!");
+                        if (success) {
+                            if (atOrigin) {
+                                player.sendMessage(ChatColor.GOLD + "You are at your starting point!");
                             }
-                            if(offSet==-1) {
+                            if (offSet == -1) {
                                 plugin.getTelehistory().addHistory(player.getName(), oldLocation);
                                 plugin.getTelehistory().setHistoryOffset(player.getName(), 2);
                             }
 
                         } else {
-                            player.sendMessage(ChatColor.RED+"tpback failure, tpback line NOT removed!");
-                            player.sendMessage(ChatColor.RED+"To remove this line, type /tpback remove");
+                            player.sendMessage(ChatColor.RED + "tpback failure, tpback line NOT removed!");
+                            player.sendMessage(ChatColor.RED + "To remove this line, type /tpback remove");
                         }
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.RED+"TP History isn't enabled!");
+                player.sendMessage(ChatColor.RED + "TP History isn't enabled!");
             }
         } else {
             throw new CommandSenderException("Consoles need tp history nowadays?");
@@ -417,56 +428,57 @@ public class TeleportationCommands {
     }
 
     @aCommand(
-        aliases = { "tpforward", "tpf", "forward" },
+        aliases = {"tpforward", "tpf", "forward"},
         permissionBase = "tpback",
         description = "Go back to where you once backed from!",
         section = "teleport"
     )
-    public boolean tpForward(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tpForward(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player) {
+        if (sender instanceof Player) {
             Player player = (Player) sender;
-            if(!plugin.check(player, "tpback"))
+            if (!plugin.check(player, "tpback"))
                 throw new PermissionsException(command);
-            if(plugin.getConfigHandler().enableTPBack) {
+            if (plugin.getConfigHandler().enableTPBack) {
                 boolean go = true;
-                if(args.length>0) {
+                if (args.length > 0) {
 
-                    if(args[0].equalsIgnoreCase("clear")) {
-                        player.sendMessage(ChatColor.GOLD+"Cleaning your TPBack future!");
+                    if (args[0].equalsIgnoreCase("clear")) {
+                        player.sendMessage(ChatColor.GOLD + "Cleaning your TPBack future!");
                         plugin.getTelehistory().clearFuture(player.getName());
-                        go=false;
-                    } else if(args[0].equalsIgnoreCase("remove")) {
-                        if(plugin.getTelehistory().getRemaining(player.getName())>0) {
+                        go = false;
+                    } else if (args[0].equalsIgnoreCase("remove")) {
+                        if (plugin.getTelehistory().getRemaining(player.getName()) > 0) {
                             player.sendMessage(ChatColor.YELLOW + "Removing next tpback line.");
                             plugin.getTelehistory().removeNext(player.getName());
                         } else {
                             player.sendMessage(ChatColor.YELLOW + "You don't have any tpback lines!");
                         }
-                        go=false;
+                        go = false;
                     }
                 }
 
-                if(go){
+                if (go) {
                     // boolean atOrigin = plugin.getTelehistory().atOrigin(player.getName());
                     int offSet = plugin.getTelehistory().getOffset(player.getName());
                     int size = plugin.getTelehistory().getRemaining(player.getName()) - 1;
-                    int pos = (size - (offSet>0?offSet:0)) + 2;
+                    int pos = (size - (offSet > 0 ? offSet : 0)) + 2;
                     Location back = plugin.getTelehistory().get(player.getName(), pos, false);
-                    if(back == null) {
-                        player.sendMessage(ChatColor.GOLD+"You don't have any future issues yet/left!");
+                    if (back == null) {
+                        player.sendMessage(ChatColor.GOLD + "You don't have any future issues yet/left!");
                     } else {
-                        player.sendMessage(ChatColor.GOLD+"Teleporting you back to your future position!");
-                        if(back.getY()==130) {
-                            player.sendMessage(ChatColor.GOLD+"Sending you to Y:130 because you were either too high or too low!");
+                        player.sendMessage(ChatColor.GOLD + "Teleporting you back to your future position!");
+                        if (back.getY() == 130) {
+                            player.sendMessage(ChatColor.GOLD + "Sending you to Y:130 because you were either too high or too low!");
                         }
 
                         boolean success = player.teleport(back);
-                        if(success) {}
+                        if (success) {
+                        }
                     }
                 }
             } else {
-                player.sendMessage(ChatColor.RED+"TP History isn't enabled!");
+                player.sendMessage(ChatColor.RED + "TP History isn't enabled!");
             }
         } else {
             throw new CommandSenderException("Consoles need tp history nowadays?");
@@ -475,12 +487,12 @@ public class TeleportationCommands {
     }
 
     @aCommand(
-        aliases = { "tphere", "s", "summon" },
+        aliases = {"tphere", "s", "summon"},
         permissionBase = "tphere",
         description = "Teleport a player to you",
         section = "teleport"
     )
-    public boolean tpHere(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tpHere(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "tphere"))
@@ -496,17 +508,17 @@ public class TeleportationCommands {
 
             Player player = (Player) sender;
 
-            if(args.length == 1 && args[0].equals("*")) {
+            if (args.length == 1 && args[0].equals("*")) {
                 victims = Arrays.asList(plugin.getServer().getOnlinePlayers());
-                if(victims.contains(player))
+                if (victims.contains(player))
                     victims.remove(player); // remove the origin player!
             }
 
-            if(victims==null) {
-                for(String plstring : args) {
+            if (victims == null) {
+                for (String plstring : args) {
                     players = plugin.findPlayerasPlayerList(plstring);
-                    if(players.size()==1) {
-                        if(victims==null)victims=new ArrayList<Player>();
+                    if (players.size() == 1) {
+                        if (victims == null) victims = new ArrayList<Player>();
                         victims.add(players.get(0));
                     }
                 }
@@ -517,17 +529,17 @@ public class TeleportationCommands {
      if(players.size()==1)
          p = players.get(0); */
 
-            if (victims==null) {
+            if (victims == null) {
                 player.sendMessage(ChatColor.YELLOW + "Can't find player(s)!");
             } else {
                 // Player pto = p.get(0);
-                for(Player pto : victims) {
+                for (Player pto : victims) {
                     if (pto.getName().equals(player.getName())) {
                         player.sendMessage(ChatColor.YELLOW + "Now look at that, you've teleported yourself to yourself");
                     } else {
                         Location origloc = pto.getLocation();
                         boolean success = pto.teleport(player);
-                        if(success) {
+                        if (success) {
                             player.sendMessage(ChatColor.YELLOW + "Teleporting " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
                             pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
                                 + " teleported you to him!");
@@ -535,7 +547,7 @@ public class TeleportationCommands {
                         } else {
                             player.sendMessage(ChatColor.YELLOW + "Failed to teleport " + pto.getDisplayName() + ChatColor.YELLOW + " to you!");
                             pto.sendMessage(player.getDisplayName() + ChatColor.YELLOW
-                                + ChatColor.RED + " tried/failed"+ ChatColor.YELLOW +  " to teleport you to him!");
+                                + ChatColor.RED + " tried/failed" + ChatColor.YELLOW + " to teleport you to him!");
                         }
 
                     }
@@ -549,12 +561,12 @@ public class TeleportationCommands {
     }
 
     @aCommand(
-        aliases = { "tpmob" },
+        aliases = {"tpmob"},
         permissionBase = "tpmob",
         description = "Teleports a mob to you",
         section = "teleport"
     )
-    public boolean tpMob(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tpMob(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
             Player victim = (Player) sender;
@@ -606,21 +618,19 @@ public class TeleportationCommands {
             for (LivingEntity crea : plugin.getServer().getWorld(((Player) sender).getWorld().getName()).getLivingEntities()) {
                 if (crea instanceof Creature || crea instanceof Flying) {
                     allowed = true;
-                    if(crea instanceof Wolf)
-                    {
+                    if (crea instanceof Wolf) {
                         Wolf wolf = (Wolf) crea;
-                        if(wolf.isAngry() || !wolf.isTamed())
+                        if (wolf.isAngry() || !wolf.isTamed())
                             allowed = true;
-                        else
-                        {
-                            allowed = wolf.getTarget()!= null && wolf.getTarget().equals(victim.getName());
+                        else {
+                            allowed = wolf.getTarget() != null && wolf.getTarget().equals(victim.getName());
                         }
                     }
                     CreatureType type = null;
                     type = CreatureType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
 
                     if (cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue()) {
-                        if(allowed)
+                        if (allowed)
                             crea.teleport(victim);
                         continue;
                     }
@@ -634,12 +644,12 @@ public class TeleportationCommands {
     }
 
     @aCommand(
-        aliases = { "tpoff" },
+        aliases = {"tpoff"},
         permissionBase = "tpoff",
         description = "Turns off teleporting for you!",
         section = "teleport"
     )
-    public boolean tpOffCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tpOffCommand(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "tpoff"))
@@ -677,12 +687,12 @@ public class TeleportationCommands {
     }
 
     @aCommand(
-        aliases = { "tpon" },
+        aliases = {"tpon"},
         permissionBase = "tpon",
         description = "Turns tp'ing back on!",
         section = "teleport"
     )
-    public boolean tpOnCommand(CommandSender sender, String command, String[] args, TweakcraftUtils plugin)
+    public boolean tpOnCommand(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException {
         if (sender instanceof Player) {
             if (!plugin.check((Player) sender, "tpoff"))

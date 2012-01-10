@@ -25,7 +25,7 @@ public final class Ban {
 
     String player;
     String reason;
-    Long   toTime;
+    Long toTime;
 
     public Ban(String Player, String Reason) {
         this.player = Player;
