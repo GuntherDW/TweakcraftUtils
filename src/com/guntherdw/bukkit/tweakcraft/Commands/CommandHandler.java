@@ -186,6 +186,11 @@ public class CommandHandler {
     public boolean runMethod(CommandSender sender, String name, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
 
+        String argsString = "";
+        for(String a : args) {
+            argsString+= a+" ";
+        }
+
         try {
             Method command = getCommand(name);
             return (Boolean) command.invoke(getMethodInstance(command), sender, name, args);
@@ -201,9 +206,13 @@ public class CommandHandler {
                 throw (CommandException) t;
 
             logger.warning("[TweakcraftUtils] Error occured while executing command!");
+            logger.warning("[TweakcraftUtils] Errornous command : "+name+" "+argsString+"!");
+            logger.warning("[TweakcraftUtils] CommandSender : "+(sender instanceof Player?((Player)sender).getName():"CONSOLE"));
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             logger.warning("[TweakcraftUtils] Error occured while executing command!");
+            logger.warning("[TweakcraftUtils] Errornous command : "+name+" "+argsString+"!");
+            logger.warning("[TweakcraftUtils] CommandSender : "+(sender instanceof Player?((Player)sender).getName():"CONSOLE"));
             e.printStackTrace();
         }
 

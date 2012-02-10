@@ -37,10 +37,15 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.messaging.Messenger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -48,12 +53,13 @@ import java.util.*;
 /**
  * @author GuntherDW
  */
-public class TweakcraftPlayerListener extends PlayerListener {
+public class TweakcraftPlayerListener implements Listener {
 
     //private final Logger log = Logger.getLogger("Minecraft");
     private final TweakcraftUtils plugin;
     private Set<String> invisplayers;
     private Map<String, String> nicks;
+    private Map<String, String> capes;
     private Set<PlayerInfo> playerinfo = new HashSet<PlayerInfo>();
     private Set<PlayerOptions> playeroptions = new HashSet<PlayerOptions>();
     private Set<String> nomount = new HashSet<String>();
@@ -62,6 +68,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         return nomount;
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (event.isCancelled()) return;
 
@@ -71,7 +78,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         if (line.contains(" ")) {
             String c[] = cmd.split(" ");
             cmd = c[0];
-            for(int x=1; x<c.length; x++)
+            for (int x = 1; x < c.length; x++)
                 args.add(c[x]);
         }
         if (cmd.startsWith("/") && cmd.length() > 1)
@@ -126,6 +133,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         plugin = instance;
         invisplayers = new HashSet<String>();
         nicks = new HashMap<String, String>();
+        capes = new HashMap<String, String>();
     }
 
     public void setNick(String player, String nick) {
@@ -141,12 +149,19 @@ public class TweakcraftPlayerListener extends PlayerListener {
             pi.setNick(nick);
             plugin.getDatabase().save(pi);
         }
+
+        if (plugin.getClientBridge() != null) {
+            for(Player p : plugin.getServer().getOnlinePlayers()) {
+                plugin.getClientBridge().getPlayerListener().sendPlayerInfo(p, lp.getBukkitPlayerSafe().getName(), true);
+            }
+        }
     }
 
     public boolean removeNick(String player) {
         LocalPlayer lp = plugin.wrapPlayer(player);
 
         if (lp.hasNick()) {
+            System.out.println("Doing nicks.remove");
             nicks.remove(player);
             if (plugin.getConfigHandler().enablePersistence) {
                 PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
@@ -158,8 +173,14 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 lp.setNick(null);
                 plugin.getDatabase().update(pi);
             }
+            if (plugin.getClientBridge() != null) {
+                for(Player p : plugin.getServer().getOnlinePlayers()) {
+                    plugin.getClientBridge().getPlayerListener().sendPlayerInfo(p, lp.getBukkitPlayerSafe().getName(), true);
+                }
+            }
             return true;
         } else {
+            System.out.println("NOT doing nicks.remove");
             return false;
         }
     }
@@ -262,6 +283,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         playerinfo = plugin.getDatabase().find(PlayerInfo.class).findSet();
 
         nicks.clear();
+        capes.clear();
         for (PlayerInfo pi : playerinfo) {
             LocalPlayer lp = plugin.wrapPlayer(pi.getName());
             if (pi.getNick() != null) {
@@ -269,6 +291,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                     plugin.getLogger().info("[TweakcraftUtils] Setting " + pi.getName() + "'s nick to " + pi.getNick());
                 nicks.put(pi.getName(), pi.getNick());
                 pi.setNick(pi.getNick());
+                lp.setNick(pi.getNick());
             }
         }
         playeroptions = plugin.getDatabase().find(PlayerOptions.class).findSet();
@@ -292,9 +315,28 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 }
                 plugin.getChathandler().updateMute(po.getName(), toTime);
             }
+            if(po.getOptionname().equals("capeurl")) {
+                if (plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("[TweakcraftUtils] Setting " + po.getName() + "'s CapeURL option!");
+                LocalPlayer lp = plugin.wrapPlayer(po.getName());
+                lp.setCapeURL(po.getOptionvalue());
+                capes.put(po.getName(), po.getOptionvalue());
+            }
+        }
+        if(plugin.getClientBridge() != null) {
+            plugin.getClientBridge().getPlayerListener().reloadInfo();
         }
     }
+    
+    public Map<String, String> getNicks() {
+        return nicks;
+    }
 
+    public Map<String, String> getCapeURLs() {
+        return capes;
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerChat(PlayerChatEvent event) {
         if (event.isCancelled()) return;
 
@@ -378,6 +420,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         // if(event.isBedSpawn())
         if (!plugin.getConfigHandler().enableRespawnHook) return;
@@ -405,6 +448,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
             p.setHealth(20);
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (event.isCancelled()) return;
         if (event.getFrom().getWorld() != event.getTo().getWorld()) { // The world is different, make a check!
@@ -425,7 +469,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
-
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLogin(PlayerLoginEvent event) {
         BanHandler handler = plugin.getBanhandler();
         Ban isBanned = handler.isBannedBan(event.getPlayer().getName());
@@ -434,7 +478,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
-
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         String name = p.getName();
@@ -463,6 +507,14 @@ public class TweakcraftPlayerListener extends PlayerListener {
             for (Player play : plugin.getServer().getOnlinePlayers()) {
                 if (plugin.check(play, "tpinvis"))
                     play.sendMessage(ChatColor.AQUA + "Stealth join : " + event.getPlayer().getDisplayName());
+                else {
+                    if(plugin.getConfigHandler().enableVanish)
+                        play.hidePlayer(p);
+                }
+            }
+
+            if(plugin.getConfigHandler().enableVanish) {
+                //p.hidePlayer();
             }
         }
 
@@ -480,6 +532,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
 
         String name = event.getPlayer().getName();
@@ -548,6 +601,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     /**
      * I still don't get why my event.getItem or i keeps on nulling out, if anyone can help, please do
      */
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteract(PlayerInteractEvent event) {
 
         Player player = event.getPlayer();
@@ -609,6 +663,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerKick(PlayerKickEvent event) {
         if (event.isCancelled()) return;
 
@@ -622,7 +677,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
     }
 
     public void reloadInvisTable() {
-        List<String> lijst = plugin.getConfig().getStringList("invisible-playerlist");
+        List<String> lijst = plugin.getConfig().getStringList("invisible.playerList");
 
         if (lijst != null) {
             /* Clear the old playerlist, there could be old players on there,
@@ -653,7 +708,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         return false;
     }
 
-
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerPortal(PlayerPortalEvent event) {
         if (event.isCancelled()) return;
 
@@ -695,21 +750,22 @@ public class TweakcraftPlayerListener extends PlayerListener {
                 String line3 = sign.getLine(2);
 
                 // if(line3.length()>3)
-                iWorld iw = plugin.getworldManager().getWorld(toWorld);
-                if (!plugin.check(p, "worlds." + iw.getName())) {
+                // iWorld iw = plugin.getworldManager().getWorld(toWorld);
+                World world = plugin.getServer().getWorld(toWorld);
+                if (world != null && !plugin.check(p, "worlds." + world.getName())) {
                     p.sendMessage(ChatColor.RED + "You do not have permission to portal to this world!");
                     event.setCancelled(true);
                 } else {
-                    if (iw != null) {
+                    if (world != null) {
                         String[] coordsStrings = null;
                         Integer[] coords = new Integer[3];
                         coordsStrings = line3.split(",");
-                        Location loc = iw.getBukkitWorld().getSpawnLocation();
+                        Location loc = world.getSpawnLocation();
                         if (coordsStrings.length == 3) {
                             coords[0] = Integer.parseInt(coordsStrings[0]);
                             coords[1] = Integer.parseInt(coordsStrings[1]);
                             coords[2] = Integer.parseInt(coordsStrings[2]);
-                            loc = new Location(iw.getBukkitWorld(), coords[0], coords[1], coords[2]);
+                            loc = new Location(world, coords[0], coords[1], coords[2]);
                         }
 
 
@@ -720,7 +776,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
                         if (loc != null) {
                             event.setTo(loc);
                         } else {
-                            event.setTo(iw.getBukkitWorld().getSpawnLocation());
+                            event.setTo(world.getSpawnLocation());
                         }
 
                         ta.setSearchRadius(0);
@@ -773,6 +829,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
         Player player = event.getPlayer();
@@ -793,13 +850,24 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
                         event.setCancelled(true);
                         TamerMode mode = plugin.getTamerTool().getTamers().get(player);
-
-                        if (mode.getMode() == TamerMode.TamerModes.SETAGE) {
+                        if (mode == null) {
+                            return;
+                        } else if (mode.getMode() == TamerMode.TamerModes.SETAGE) {
                             if (!plugin.check(player, "tamer.setage")) {
                                 player.sendMessage(ChatColor.RED + "You don't have permission to set the age of animals!");
                             } else {
                                 player.sendMessage(ChatColor.BLUE + "Setting animal age to " + mode.getData());
                                 animal.setAge(mode.getData());
+                            }
+                        } else if(mode.getMode() == TamerMode.TamerModes.SETAGELOCK) {
+
+                            if(plugin.check(player, "tamer.setage")) {
+                                if(mode.getState() == null)
+                                    mode.setState(!animal.getAgeLock());
+                                player.sendMessage(ChatColor.BLUE + "Setting animal agelock to " + mode.getState());
+                                animal.setAgeLock(mode.getState());
+                            } else {
+                                player.sendMessage(ChatColor.RED + "You don't have permission to set the age of animals!");
                             }
                         } else {
 
@@ -808,7 +876,8 @@ public class TweakcraftPlayerListener extends PlayerListener {
                             player.sendMessage(ChatColor.BLUE + "Animal info : ");
                             player.sendMessage(ChatColor.BLUE + "type : " + ChatColor.YELLOW + cname);
                             player.sendMessage(ChatColor.BLUE + "health : " + ChatColor.YELLOW + animal.getHealth());
-                            player.sendMessage(ChatColor.BLUE + "age : " + ChatColor.YELLOW + animal.getAge());
+                            player.sendMessage(ChatColor.BLUE + "entityId : "+ChatColor.YELLOW + animal.getEntityId());
+                            player.sendMessage(ChatColor.BLUE + "age : " + ChatColor.YELLOW + animal.getAge() + (animal.getAgeLock()? ChatColor.RED+" L":""));
                         }
 
                         return;
@@ -834,6 +903,15 @@ public class TweakcraftPlayerListener extends PlayerListener {
 
                         player.setItemInHand(new ItemStack(Material.BUCKET, 1));
                         player.getWorld().playEffect(animal.getLocation(), Effect.POTION_BREAK, 0);
+                    }
+                } else if (entity instanceof Monster || entity instanceof Flying) {
+                    if (player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
+                        LivingEntity lent = (LivingEntity) entity;
+                        CreatureType type = CreatureType.fromName(lent.getClass().getCanonicalName().split("Craft")[1]);
+                        String cname = type.getName().toLowerCase();
+                        player.sendMessage(ChatColor.BLUE + "Creature info : ");
+                        player.sendMessage(ChatColor.BLUE + "type : " + ChatColor.YELLOW + cname);
+                        player.sendMessage(ChatColor.BLUE + "health : " + ChatColor.YELLOW + lent.getHealth());
                     }
                 }
             }
@@ -907,6 +985,7 @@ public class TweakcraftPlayerListener extends PlayerListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
         if (!plugin.getConfigHandler().enableWorldMOTD) return;
 

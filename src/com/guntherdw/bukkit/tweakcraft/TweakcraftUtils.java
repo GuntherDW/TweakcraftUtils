@@ -22,6 +22,7 @@ package com.guntherdw.bukkit.tweakcraft;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
 import com.ensifera.animosity.craftirc.EndPoint;
+import com.guntherdw.bukkit.tcutilsclientbridge.TCUtilsClientBridgePlugin;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
@@ -34,10 +35,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
-import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftBlockListener;
-import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftEntityListener;
-import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftPlayerListener;
-import com.guntherdw.bukkit.tweakcraft.Listeners.TweakcraftWorldListener;
+import com.guntherdw.bukkit.tweakcraft.Listeners.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCAdminEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
@@ -56,11 +54,10 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.persistence.PersistenceException;
@@ -68,7 +65,6 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-// import com.ensifera.animosity.craftirc.EndPoint;
 
 /**
  * @author GuntherDW
@@ -82,6 +78,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected Zones zones = null;
     protected LogBlock lb = null;
     protected WorldEditPlugin we = null;
+    protected TCUtilsClientBridgePlugin tcUtilsClientBridgePlugin = null;
     // protected NoLagg nolagg = null;
     // protected PermissionHandler ph = null;
 
@@ -99,10 +96,10 @@ public class TweakcraftUtils extends JavaPlugin {
     private final ChatHandler chathandler = new ChatHandler(this);
     private final PermissionsResolver permsResolver = new PermissionsResolver(this);
 
-
     private HashMap<String, LocalPlayer> localPlayers = new HashMap<String, LocalPlayer>();
 
     private Object circendpoint = null;
+    private Object cirdlogendpoint = null;
     private Object circadminendpoint = null;
 
     private Set<String> donottplist;
@@ -145,6 +142,15 @@ public class TweakcraftUtils extends JavaPlugin {
         return instance;
     }
 
+    public TCUtilsClientBridgePlugin getClientBridge() {
+        return tcUtilsClientBridgePlugin;
+    }
+
+    public static void registerClientBridge(TCUtilsClientBridgePlugin clientBridgePlugin) {
+        if(instance==null) return;
+        instance.tcUtilsClientBridgePlugin = clientBridgePlugin;
+    }
+
     public void sendCUIChatMode(Player player) {
         if (this.cuiPlayers != null && this.cuiPlayers.contains(player)) {
             ChatMode cm = getChathandler().getPlayerChatMode(player);
@@ -152,8 +158,10 @@ public class TweakcraftUtils extends JavaPlugin {
             if (cm == null)
                 player.sendRawMessage(CUIPattern + "null");
             else
-                player.sendRawMessage(CUIPattern + "[" + cm.getPrefix() + ChatColor.WHITE + "]");
+                player.sendRawMessage(CUIPattern + "[" + cm.getPrefix() + "]");
         }
+        if(tcUtilsClientBridgePlugin != null)
+            tcUtilsClientBridgePlugin.sendChatMode(player);
     }
 
     public LocalPlayer wrapPlayer(Player player) {
@@ -196,6 +204,8 @@ public class TweakcraftUtils extends JavaPlugin {
         if (getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player)) {
             player.sendRawMessage(ToolDuraPattern + world.getToolDurability());
         }
+        if(tcUtilsClientBridgePlugin != null)
+            tcUtilsClientBridgePlugin.getPlayerListener().sendToolDuraMode(player, world);
     }
 
     /**
@@ -402,7 +412,7 @@ public class TweakcraftUtils extends JavaPlugin {
      * Register the Bukkit events to the appropriate event handlers.
      */
     private void registerEvents() {
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
+        /* getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.High, this);
         getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.High, this);
@@ -422,7 +432,14 @@ public class TweakcraftUtils extends JavaPlugin {
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.PROJECTILE_HIT, entityListener, Priority.Normal, this);
         getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD, worldListener, Priority.Normal, this);
+        // getServer().getPluginManager().registerEvent(Event.Type.CHUNK_LOAD, worldListener, Priority.Monitor, this);
+        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD, worldListener, Priority.Normal, this); */
+        PluginManager manager = getServer().getPluginManager();
+
+        manager.registerEvents(playerListener, this);
+        manager.registerEvents(entityListener, this);
+        manager.registerEvents(blockListener, this);
+        manager.registerEvents(worldListener, this);
     }
 
     public TweakcraftWorldListener getWorldListener() {
@@ -596,7 +613,7 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
     public String getNickWithColors(String player) {
-        String nick = playerListener.getNick(player);
+        String nick = this.wrapPlayer(player).getNick();
         String realname = player;
         if (nick == null) nick = realname;
         /// return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
@@ -628,6 +645,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return playerListener.getNick(player) != null;
     }
 
+
     public void onEnable() {
         pdfFile = this.getDescription();
         instance = this;
@@ -637,6 +655,13 @@ public class TweakcraftUtils extends JavaPlugin {
         this.reloadMOTD();
         configHandler.setGlobalConfig(new File(this.getDataFolder(), "config.yml"));
         configHandler.reloadConfig();
+
+        if(configHandler.enablePersistence) {
+            if(!databaseloaded) {
+                setupDatabase();
+            }
+        }
+
         this.cuiPlayers = new HashSet<Player>();
         this.mod_InfDuraplayers = new HashSet<Player>();
 
@@ -654,7 +679,8 @@ public class TweakcraftUtils extends JavaPlugin {
         banhandler.reloadBans();
 
         if (configHandler.enableIRC) {
-            circendpoint = new CraftIRCEndPoint(this);
+            circendpoint = new CraftIRCEndPoint(this, "tcutils");
+            cirdlogendpoint = new CraftIRCEndPoint(this, "tcutilslog");
             circadminendpoint = new CraftIRCAdminEndPoint(this);
         }
 
@@ -674,6 +700,14 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public EndPoint getAdminEndPoint() {
         return (EndPoint) circadminendpoint;
+    }
+    
+    public String getVersion() {
+        return pdfFile.getVersion();
+    }
+    
+    public EndPoint getLogginEndPoint() {
+        return (EndPoint) cirdlogendpoint;
     }
 
     public Set<String> getDonottplist() {

@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public class WeatherCommands {
 
-    TweakcraftUtils plugin;
+    private TweakcraftUtils plugin;
 
     public WeatherCommands(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -71,7 +71,7 @@ public class WeatherCommands {
                 throw new CommandUsageException("Can't find player!");
             }
             loc = players.get(0).getLocation();
-            sender.sendMessage(ChatColor.RED + "I hope " + players.get(0).getName() + ChatColor.RED + " wasn't standing under a tree!");
+            sender.sendMessage(ChatColor.RED + "I hope " + players.get(0).getDisplayName() + ChatColor.RED + " wasn't standing under a tree!");
         }
 
         if (loc != null) {

@@ -27,6 +27,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class ConfigurationHandler {
 
     private File globalconfigFile;
     private File seenconfigFile;
-    
+
     private YamlConfiguration globalconfig = new YamlConfiguration();
     private YamlConfiguration seenconfig = new YamlConfiguration();
     private TweakcraftUtils plugin;
@@ -74,9 +75,12 @@ public class ConfigurationHandler {
     public boolean useTweakBotSeen = false;
     public String  AIRCtag = "mchatadmin";
     public String  GIRCtag = "mchat";
-    public String  GIRCMessageFormat = "[A] <%name%> %message%";
-    public String  AIRCMessageFormat = "<%name%> %message%";
+    public String  LoggingIRCtag = "mchatlog";
+    public String  AIRCMessageFormat = "[A] <%name%> %message%";
+    public String  GIRCMessageFormat = "<%name%> %message%";
+    public String  LoggingIRCMessageFormat = "<%name%> %message%";
     public boolean cancelNickChat = true;
+    public boolean LoggingIRCenabled = true;
     public boolean GIRCenabled = true;
     public boolean AIRCenabled = false;
     public boolean enableDebug = false; /* Verbose messages */
@@ -96,6 +100,7 @@ public class ConfigurationHandler {
     public int snowPileMaxHeight = 7;
     public boolean enableSnowDouble = false;
     public int tweakTravelSearchWidth = 3;
+    public boolean enableVanish = false;
 
     public boolean enableFallDistanceNullify = false;
 
@@ -133,18 +138,22 @@ public class ConfigurationHandler {
             plugin.getDataFolder().mkdirs();
         }
         // if(this.globalconfig==null) this.globalconfig = (YamlConfiguration) plugin.getConfig();
-        if(globalconfigFile==null) {
+        if (!globalconfigFile.exists()) {
             plugin.getLogger().warning("[TweakcraftUtils] No config file found, using default values!");
             return;
         }
         try {
             globalconfig.load(globalconfigFile);
-        } catch (IOException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] IOException while loading config file, using old values!");
-            e.printStackTrace();
-            return;
         } catch (InvalidConfigurationException e) {
             plugin.getLogger().warning("[TweakcraftUtils] InvalidConfigurationException while loading config file, using old values!");
+            e.printStackTrace();
+            return;
+        } /* catch (FileNotFoundException e) {
+            plugin.getLogger().warning("[TweakcraftUtils] No config file found, using default values!");
+            e.printStackTrace();
+            return;
+        } */ catch (IOException e) {
+            plugin.getLogger().warning("[TweakcraftUtils] IOException while loading config file, using old values!");
             e.printStackTrace();
             return;
         }
@@ -152,6 +161,10 @@ public class ConfigurationHandler {
 
         this.plugin.getLogger().info("[TweakcraftUtils] Parsing configuration file...");
         this.plugin.getLogger().info("[TweakcraftUtils] Config : "+globalconfigFile.getAbsolutePath());
+
+        this.enablePersistence = globalconfig.getBoolean("Persistence.enabled", true);
+        this.useTweakBotSeen = globalconfig.getBoolean("Persistence.useTweakBotSeen", false);
+        plugin.getLogger().info("[TweakcraftUtils] Using TweakBot's seen table for /seen!");
 
         this.enableLocalChat = globalconfig.getBoolean("ChatMode.LocalChat.enabled", true);
         this.localchatdistance = globalconfig.getInt("ChatMode.LocalChat.range", 200);
@@ -163,8 +176,11 @@ public class ConfigurationHandler {
         this.AIRCenabled = globalconfig.getBoolean("CraftIRC.admin.enabled", false);
         this.AIRCtag = globalconfig.getString("CraftIRC.admin.tag", "mchatadmin");
         this.GIRCMessageFormat = globalconfig.getString("CraftIRC.regular.MessageFormat");
-        this.GIRCtag = globalconfig.getString("CraftIRC.regular.tag", "mchatadmin");
-        this.GIRCenabled = globalconfig.getBoolean("CraftIRC.regular.enabled", true);
+        this.GIRCtag = globalconfig.getString("CraftIRC.regular.tag", "mchat");
+        this.GIRCMessageFormat = globalconfig.getString("CraftIRC.regular.MessageFormat");
+        this.LoggingIRCenabled = globalconfig.getBoolean("CraftIRC.log.enabled", true);
+        this.LoggingIRCtag = globalconfig.getString("CraftIRC.log.tag", "mchatlog");
+        this.LoggingIRCMessageFormat = globalconfig.getString("CraftIRC.log.MessageFormat");
         this.enableTPBack = globalconfig.getBoolean("enableTPBack", true);
         this.enableDebug = globalconfig.getBoolean("debug.enabled", false);
         if(this.enableDebug) {
@@ -176,13 +192,7 @@ public class ConfigurationHandler {
 
         this.extrahelpplugin = new ArrayList<String>();
         this.enableGroupChat = globalconfig.getBoolean("ChatMode.GroupChat", true);
-        this.enablePersistence = globalconfig.getBoolean("Persistence.enabled", true);
-        this.useTweakBotSeen = globalconfig.getBoolean("Persistence.useTweakBotSeen", false);
-        plugin.getLogger().info("[TweakcraftUtils] Using TweakBot's seen table for /seen!");
-        if(this.enablePersistence) {
-            if(!plugin.databaseloaded)
-                plugin.setupDatabase();
-        }
+
         List<String> extralist = globalconfig.getStringList("extrahelp.plugins");
         if(extralist!=null)
             for(String plist : extralist) {
@@ -201,7 +211,7 @@ public class ConfigurationHandler {
         this.cancelNetherPortal = globalconfig.getBoolean("worlds.cancelportal", false);
 
         this.extrahelphide = globalconfig.getStringList("extrahelp.hide");
-        
+
         if (globalconfig.getBoolean("PlayerHistory.enabled", false)) {
             plugin.getLogger().info("[TweakcraftUtils] Keeping player history!");
             File seenFile = new File(plugin.getDataFolder(), "players.yml");
@@ -241,6 +251,8 @@ public class ConfigurationHandler {
         this.snowPileMaxHeight = Math.max(this.snowPileMaxHeight, 7);
         this.enableSnowDouble = globalconfig.getBoolean("extra.snowpile.doublesnowball", false);
         this.enableInjectedCommandsHanding = globalconfig.getBoolean("extra.enableInjectedCommandsHanding", false);
+        this.enableVanish = globalconfig.getBoolean("invisible.useVanish", false);
+
 
 
         this.enableWorldMOTD = globalconfig.getBoolean("worlds.worldMOTD", false);
@@ -285,7 +297,7 @@ public class ConfigurationHandler {
     public YamlConfiguration getSeenconfig() {
         return seenconfig;
     }
-    
+
     public Map<String, Map<Integer, Boolean>> getLsbindmap() {
         return lsbindmap;
     }
@@ -293,7 +305,7 @@ public class ConfigurationHandler {
     public Map<String, LockdownLocation> getLockdowns() {
         return lockdowns;
     }
-    
+
     public String getDirSeperator() {
         return System.getProperty("file.separator");
     }

@@ -23,9 +23,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFormEvent;
-import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,7 +36,7 @@ import java.util.Random;
 /**
  * @author GuntherDW
  */
-public class TweakcraftBlockListener extends BlockListener {
+public class TweakcraftBlockListener implements Listener {
 
     private TweakcraftUtils plugin = null;
 
@@ -42,6 +44,7 @@ public class TweakcraftBlockListener extends BlockListener {
         this.plugin = instance;
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onSignChange(SignChangeEvent event) {
         if (event.isCancelled()) return;
         if (plugin.getConfigHandler().enableTweakTravel && event.getLine(0).equalsIgnoreCase("[TweakTravel]") && !plugin.check(event.getPlayer(), "tweaktravel.create")) {
@@ -50,6 +53,7 @@ public class TweakcraftBlockListener extends BlockListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockForm(BlockFormEvent event) {
         if (event.isCancelled()) return;
         if (!plugin.getConfigHandler().enableSnowPile) return;
@@ -72,7 +76,7 @@ public class TweakcraftBlockListener extends BlockListener {
         }
     }
 
-
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         if (!plugin.getConfigHandler().enableSnowDouble) return;

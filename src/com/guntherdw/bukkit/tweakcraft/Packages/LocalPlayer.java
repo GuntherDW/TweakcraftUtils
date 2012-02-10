@@ -39,6 +39,7 @@ public class LocalPlayer {
     private boolean invisible = false;
     private String replyTo = null;
     private boolean tntArrow = false;
+    private String capeURL = null;
 
     public boolean isInvisible() {
         return this.invisible;
@@ -136,6 +137,14 @@ public class LocalPlayer {
 
     public void setChatMode(ChatMode chatMode) {
         this.chatMode = chatMode;
+    }
+    
+    public void setCapeURL(String URL) {
+        this.capeURL = URL;
+    }
+    
+    public String getCapeURL() {
+        return this.capeURL;
     }
 
     /**

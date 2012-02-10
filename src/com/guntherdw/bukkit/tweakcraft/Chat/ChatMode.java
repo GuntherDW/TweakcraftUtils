@@ -61,6 +61,22 @@ public abstract class ChatMode {
     }
 
     /**
+     * Broadcasts a message in the ChatMode without a playertag
+     *
+     * @param message
+     * @return
+     */
+    public boolean broadcastMessage(String message) {
+        // String msg = message;
+        for (Player p : getRecipients(null)) {
+            p.sendMessage(message);
+        }
+
+        logChat(message);
+        return true;
+    }
+
+    /**
      * Returns a list of players that will get the message
      *
      * @return
@@ -155,6 +171,11 @@ public abstract class ChatMode {
         return name + ": <%1$s> %2$s";
     }
 
+    public String getLoggingFormatStringNoPlayerTag() {
+            String name = this.chatModeName == null ? getClass().getSimpleName() : chatModeName;
+            return name + ": %1$s";
+        }
+
     public String getChatFormatString() {
         String prefix = getPrefix();
         return (prefix != null ? prefix + ": " : "") + "[%1$s] %2$s";
@@ -164,6 +185,15 @@ public abstract class ChatMode {
         String logFormat = getLoggingFormatString();
         if (logFormat != null) {
             String logMessage = String.format(logFormat, sender instanceof Player ? ((Player) sender).getName() : "CONSOLE", message);
+            logger.info(logMessage);
+        }
+    }
+
+    public void logChat(String message) {
+
+        String logFormat = getLoggingFormatString();
+        if (logFormat != null) {
+            String logMessage = String.format(getLoggingFormatStringNoPlayerTag(), message);
             logger.info(logMessage);
         }
     }

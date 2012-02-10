@@ -27,6 +27,9 @@ import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * @author GuntherDW
  */
-public class TweakcraftEntityListener extends EntityListener {
+public class TweakcraftEntityListener implements Listener {
 
     private TweakcraftUtils plugin;
 
@@ -43,6 +46,7 @@ public class TweakcraftEntityListener extends EntityListener {
         this.plugin = instance;
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityTarget(EntityTargetEvent event) {
         if (!plugin.getConfigHandler().enableTargetIgnoreAFKPlayers
             || event.isCancelled() || !(event.getTarget() instanceof Player)) return;
@@ -54,6 +58,7 @@ public class TweakcraftEntityListener extends EntityListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onProjectileHit(ProjectileHitEvent event) {
         if (!plugin.getConfigHandler().enableTNTArrows) return;
         if (event.getEntity() == null || !(event.getEntity() instanceof Arrow)) return;
@@ -90,6 +95,7 @@ public class TweakcraftEntityListener extends EntityListener {
 
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityCombust(EntityCombustEvent event) {
         if (!plugin.getConfigHandler().stopIgniteWorldGuard) return;
         Entity ent = event.getEntity();
@@ -102,6 +108,7 @@ public class TweakcraftEntityListener extends EntityListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onEntityDeath(EntityDeathEvent event) {
         Entity ent = event.getEntity();
         if (ent instanceof Pig) {
@@ -116,6 +123,7 @@ public class TweakcraftEntityListener extends EntityListener {
         }
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onExplosionPrime(ExplosionPrimeEvent event) {
         if (event.isCancelled()) return;
 

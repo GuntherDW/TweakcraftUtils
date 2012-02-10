@@ -110,6 +110,7 @@ public class AdminChat extends ChatMode {
         return true;
     }
 
+    @Override
     public boolean broadcastMessage(String message) {
         // String msg = message;
         for (Player p : getRecipients(null)) {
@@ -194,6 +195,6 @@ public class AdminChat extends ChatMode {
     }
 
     public String getPrefix() {
-        return this.getColor() + "A";
+        return this.getColor() + "A" + ChatColor.WHITE.toString();
     }
 }

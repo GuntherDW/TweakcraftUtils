@@ -42,38 +42,35 @@ public class PermissionsResolver {
     public void init() {
         boolean foundPlugin = false;
 
-        foundPlugin=tryPermissionsEx();
-        if(!foundPlugin) foundPlugin=tryNijiPerms();
-        if(!foundPlugin) tryWEPIF();
-        if(!foundPlugin) {
+        foundPlugin = tryPermissionsEx();
+        if (!foundPlugin) foundPlugin = tryNijiPerms();
+        if (!foundPlugin) tryWEPIF();
+        if (!foundPlugin) {
             plugin.getLogger().info("[TweakcraftUtils] DinnerPerms found, using that for permissions resolving!");
             resolver = new BukkitPerms(this);
-            plugin.getLogger().warning("[TweakcraftUtils] Use this only as a fallback please, install and/or manage a real permissions plugin.!");
+            plugin.getLogger().warning("[TweakcraftUtils] Use this only as a fallback please, install and/or manage a real permissions plugin!");
         }
     }
 
     public Permissions getResolver() {
-        if(resolver==null) init();
+        if (resolver == null) init();
         return resolver;
     }
 
     private boolean tryPermissionsEx() {
-        try{
-            if(Class.forName("ru.tehkode.permissions.PermissionsManager")!=null) {
-                resolver = new PermsEx(this);
-                plugin.getLogger().info("[TweakcraftUtils] PermissionsEx found, using that for permissions resolving!");
-                return true;
-            }
-        } catch(ClassNotFoundException ex) {
-            return false;
+        Plugin p = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
+        if (p != null) {
+            resolver = new PermsEx(this);
+            plugin.getLogger().info("[TweakcraftUtils] PermissionsEx found, using that for permissions resolving!");
+            return true;
         }
         return false;
     }
 
     private boolean tryNijiPerms() {
         Plugin p = plugin.getServer().getPluginManager().getPlugin("Permissions");
-        if(p!=null) {
-            resolver = new NijiPerms(this, ((com.nijikokun.bukkit.Permissions.Permissions)p).getHandler());
+        if (p != null) {
+            resolver = new NijiPerms(this, ((com.nijikokun.bukkit.Permissions.Permissions) p).getHandler());
             plugin.getLogger().info("[TweakcraftUtils] NijiPermissions found, using that for permissions resolving!");
             return true;
         }
@@ -81,7 +78,7 @@ public class PermissionsResolver {
     }
 
     private boolean tryWEPIF() {
-        if(plugin.getWorldEdit()!=null) {
+        if (plugin.getWorldEdit() != null) {
             resolver = new WEPIFPerms(this, plugin.getWorldEdit().getPermissionsResolver());
             plugin.getLogger().info("[TweakcraftUtils] WorldEdit found, using that for permissions resolving!");
             plugin.getLogger().warning("[TweakcraftUtils] Use this only as a fallback please, install and/or manage a real permissions plugin.!");

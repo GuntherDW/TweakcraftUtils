@@ -22,13 +22,15 @@ import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.Chunk;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldListener;
 
 /**
  * @author GuntherDW
  */
-public class TweakcraftWorldListener extends WorldListener {
+public class TweakcraftWorldListener implements Listener {
 
     private TweakcraftUtils plugin;
 
@@ -36,14 +38,15 @@ public class TweakcraftWorldListener extends WorldListener {
         this.plugin = instance;
     }
 
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onChunkUnload(ChunkUnloadEvent event) {
         if (event.isCancelled())
             return;
 
         if (plugin.getConfigHandler().stopChunkUnloadBurningFurnace) {
             Chunk chunk = event.getChunk();
-            BlockState[] states = chunk.getTileEntities();
-            for (BlockState state : states) {
+            // BlockState[] states = chunk.getTileEntities();
+            for (BlockState state : chunk.getTileEntities()) {
                 if (state instanceof Furnace) {
                     // Furnace f = (Furnace) state;
                     if (((Furnace) state).getBurnTime() > 0) {

@@ -51,7 +51,7 @@ import java.util.*;
  */
 public class GeneralCommands {
 
-    TweakcraftUtils plugin;
+    private TweakcraftUtils plugin;
 
     public GeneralCommands(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -927,6 +927,14 @@ public class GeneralCommands {
                 }
                 mode = new TamerMode(state, TamerMode.TamerModes.SIT);
                 player.sendMessage(ChatColor.GREEN+"TamerTool SIT MODE selected!");
+            } else if(args.length>0 && args[0].equalsIgnoreCase("agelock")) {
+                // Boolean ageLock = false;
+                if(args.length>1) {
+                    state = Boolean.parseBoolean(args[1]);
+                }
+                mode = new TamerMode(state, TamerMode.TamerModes.SETAGELOCK);
+                player.sendMessage(ChatColor.GREEN+"TamerTool AGELOCK MODE selected!");
+            
             } else if(args.length>0 && args[0].equalsIgnoreCase("setage")) {
                 int age = -1;
                 if(args.length>1) {

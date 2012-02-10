@@ -53,8 +53,7 @@ import java.util.*;
  */
 public class EssentialsCommands {
 
-
-    TweakcraftUtils plugin;
+    private TweakcraftUtils plugin;
 
     public EssentialsCommands(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -987,6 +986,7 @@ public class EssentialsCommands {
         int health = ap.getInteger("h", -1);
         boolean powered = ap.getBoolean("pow", false);
         boolean shoven = ap.getBoolean("sh", false);
+        boolean agelock = ap.getBoolean("l", false);
         String sheepcolor = ap.getString("sc", null);
         String victim = ap.getString("p", null);
         int age = ap.getInteger("a", -1);
@@ -1066,6 +1066,7 @@ public class EssentialsCommands {
                 if (sender instanceof Player) {
                     victimplayer = (Player) sender;
                     loc = victimplayer.getTargetBlock((HashSet<Byte>) null, 200).getLocation();
+                    loc.add(0, 1, 0);
                 } else {
                     throw new CommandException("If you're a console, at least tell me who i need to scare?");
                 }
@@ -1078,8 +1079,15 @@ public class EssentialsCommands {
                     if (health > 0)
                         lent.setHealth(health);
 
-                    if (lent instanceof Animals && age != -1)
+                    if (lent instanceof Animals && age != -1) {
                         ((Animals) lent).setAge(age);
+                        if(ap.isflagUsed("l"))
+                            ((Animals) lent).setAgeLock(true);
+                        else
+                            ((Animals) lent).setAgeLock(agelock);
+
+                    }
+
 
                     if (lent instanceof Slime && slimesize > 0)
                         ((Slime) lent).setSize(slimesize);

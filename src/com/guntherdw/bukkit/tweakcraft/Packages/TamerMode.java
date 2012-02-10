@@ -34,6 +34,7 @@ public final class TamerMode {
         HEAL,
         SIT,
         SETAGE,
+        SETAGELOCK,
         NONE
     }
 

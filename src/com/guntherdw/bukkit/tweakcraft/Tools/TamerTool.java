@@ -73,6 +73,7 @@ public class TamerTool {
             player.sendMessage(ChatColor.AQUA + "This wolf isn't tamed!");
         }
         player.sendMessage(ChatColor.AQUA + "Wolf health : "+wolf.getHealth());
+        player.sendMessage(ChatColor.AQUA + "Wolf age : "+wolf.getAge() + (wolf.getAgeLock() ? ChatColor.RED+" L":""));
         if(wolf.isAngry()) {
             player.sendMessage(ChatColor.AQUA + "This wolf is "+ChatColor.RED+"angry"+ChatColor.AQUA+"!");
             LivingEntity le = wolf.getTarget();
@@ -217,6 +218,13 @@ public class TamerTool {
         }
     }
 
+    public void setAgeLock(Wolf wolf, Boolean lock, Player player) {
+            if(plugin.check(player, "tamer.setage")) {
+                player.sendMessage(ChatColor.BLUE + "Setting animal agelock to " + lock);
+                wolf.setAgeLock(lock);
+            }
+        }
+    
     public void handleEvent(Player player, Wolf wolf) {
         if(!tamers.containsKey(player))
             return;
@@ -237,6 +245,9 @@ public class TamerTool {
                 break;
             case HEAL:
                 this.heal(wolf, tamermode.getState(), player);
+                break;
+            case SETAGELOCK:
+                this.setAgeLock(wolf, tamermode.getState(), player);
                 break;
             case SETAGE:
                 this.setAge(wolf, tamermode.getData(), player);

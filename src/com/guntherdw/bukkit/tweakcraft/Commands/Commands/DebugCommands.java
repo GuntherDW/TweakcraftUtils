@@ -34,7 +34,7 @@ import org.bukkit.entity.Player;
  */
 public class DebugCommands {
 
-    TweakcraftUtils plugin;
+    private TweakcraftUtils plugin;
 
     public DebugCommands(TweakcraftUtils instance) {
         this.plugin = instance;

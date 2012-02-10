@@ -45,8 +45,6 @@ public class ChatHandler {
         this.registerChatMode("region", new RegionChat(this));
         this.registerChatMode("zones", new ZoneChat(this));
         this.registerChatMode("world", new WorldChat(this));
-
-        this.registerChatMode("tcutils", new TCUtilsChat(this)); /* IRC extra stuff */
     }
     
     public boolean registerChatMode(String chatModeLabel, ChatMode chatMode) {
@@ -82,9 +80,9 @@ public class ChatHandler {
 
     public List<String> listChatModes() {
         List<String> l = new ArrayList<String>();
-        for (String s : chatmodes.keySet()) {
-            if ((chatmodes.get(s)).isEnabled() && !((chatmodes.get(s)).isHidden()))
-                l.add(s);
+        for (Map.Entry<String, ChatMode> s : chatmodes.entrySet()) {
+            if(s.getValue().isEnabled() && !s.getValue().isHidden())
+                l.add(s.getKey());
         }
         return l;
     }

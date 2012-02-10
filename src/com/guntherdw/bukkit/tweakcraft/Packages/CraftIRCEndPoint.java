@@ -34,10 +34,10 @@ public class CraftIRCEndPoint implements EndPoint {
     private ChatHandler ch = null;
     private CraftIRC circ = null;
 
-    public CraftIRCEndPoint(TweakcraftUtils instance) {
+    public CraftIRCEndPoint(TweakcraftUtils instance, String tag) {
         this.ch = instance.getChathandler();
         this.circ = instance.getCraftIRC();
-        circ.registerEndPoint("tcutils", this);
+        circ.registerEndPoint(tag, this);
     }
 
     public Type getType() {

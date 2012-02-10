@@ -77,7 +77,7 @@ public final class ArgumentParser {
             arg.set_used(state);
             if(arg.isArgType()) {
                 int pos = arg.getId();
-                if(_args.size()>pos) _args.get(pos+1).set_used(true);
+                if(_args.size()>pos+1) _args.get(pos+1).set_used(true);
             }
         }
         // Second the List<Argument> one, this'll require a for loop
@@ -85,7 +85,7 @@ public final class ArgumentParser {
             arg = _args.get(x);
             if(arg.getArgname() != null && arg.getArgname().equals(argName)) arg.set_used(state);
             if(arg.isArgType()) {
-                if(_args.size()>x) _args.get(x+1).set_used(true);
+                if(_args.size()>x+1) _args.get(x+1).set_used(true);
             }
         }
     }

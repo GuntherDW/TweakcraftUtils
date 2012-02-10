@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class TeleportationCommands {
 
-    TweakcraftUtils plugin;
+    private TweakcraftUtils plugin;
 
     public TeleportationCommands(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -123,7 +123,7 @@ public class TeleportationCommands {
                 if (args.length == 3) {
                     if (y == null) y = Integer.parseInt(args[2]);
                 } else {
-                    y = 129;
+                    y = -1;
                 }
             } catch (NumberFormatException ex) {
                 throw new CommandException("I need numbers not strings!");
@@ -164,6 +164,8 @@ public class TeleportationCommands {
                 Location oldloc = victim.getLocation();
 
                 Location loc = new Location(world, x.doubleValue(), y.doubleValue(), z.doubleValue());
+                if (y == -1) loc.setY(loc.getWorld().getMaxHeight() + 1);
+
                 if (victim.teleport(loc)) {
                     plugin.getTelehistory().addHistory(victim.getName(), oldloc);
                 }

@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public class AdminCommands {
 
-    TweakcraftUtils plugin;
+    private TweakcraftUtils plugin;
 
     public AdminCommands(TweakcraftUtils instance) {
         this.plugin = instance;

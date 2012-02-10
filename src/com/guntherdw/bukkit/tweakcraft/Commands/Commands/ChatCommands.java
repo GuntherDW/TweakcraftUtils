@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class ChatCommands {
 
-    TweakcraftUtils plugin;
+    private TweakcraftUtils plugin;
 
     public ChatCommands(TweakcraftUtils instance) {
         this.plugin = instance;
