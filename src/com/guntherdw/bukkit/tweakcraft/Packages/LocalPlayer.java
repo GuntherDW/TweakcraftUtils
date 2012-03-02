@@ -36,7 +36,9 @@ public class LocalPlayer {
     private int spamcounter;
     private long lastmessagetime;
     private String nick = null;
+    private boolean tpOff = false;
     private boolean invisible = false;
+    private boolean invisiblePickup = false;
     private String replyTo = null;
     private boolean tntArrow = false;
     private String capeURL = null;
@@ -47,6 +49,18 @@ public class LocalPlayer {
 
     public void setInvisible(boolean state) {
         this.invisible = state;
+    }
+
+    public boolean isTpOff() {
+        return tpOff;
+    }
+
+    public void setTpOff(boolean state) {
+        this.tpOff = state;
+    }
+
+    public void setInvisiblePickup(boolean state) {
+        this.invisiblePickup = state;
     }
 
     public boolean isTntArrow() {
@@ -142,7 +156,11 @@ public class LocalPlayer {
     public void setCapeURL(String URL) {
         this.capeURL = URL;
     }
-    
+
+    public boolean isInvisiblePickup() {
+        return invisiblePickup;
+    }
+
     public String getCapeURL() {
         return this.capeURL;
     }

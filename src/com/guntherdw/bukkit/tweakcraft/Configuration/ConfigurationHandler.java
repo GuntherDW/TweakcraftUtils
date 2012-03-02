@@ -61,6 +61,7 @@ public class ConfigurationHandler {
     public boolean enableLogBlock = false;
     public boolean enableIRC = false;
     public boolean NoLaggEnabled = false;
+    public boolean enableKickMessage = false;
     public boolean enableTPBack = true;
     public boolean enableGroupChat = true;
     public boolean enableLocalChat = true;
@@ -252,6 +253,7 @@ public class ConfigurationHandler {
         this.enableSnowDouble = globalconfig.getBoolean("extra.snowpile.doublesnowball", false);
         this.enableInjectedCommandsHanding = globalconfig.getBoolean("extra.enableInjectedCommandsHanding", false);
         this.enableVanish = globalconfig.getBoolean("invisible.useVanish", false);
+        this.enableKickMessage = globalconfig.getBoolean("extra.enableKickMessage", false);
 
 
 

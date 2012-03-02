@@ -43,9 +43,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.messaging.Messenger;
+import org.bukkit.scheduler.BukkitScheduler;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -64,6 +63,13 @@ public class TweakcraftPlayerListener implements Listener {
     private Set<PlayerOptions> playeroptions = new HashSet<PlayerOptions>();
     private Set<String> nomount = new HashSet<String>();
 
+    public TweakcraftPlayerListener(TweakcraftUtils instance) {
+        plugin = instance;
+        invisplayers = new HashSet<String>();
+        nicks = new HashMap<String, String>();
+        capes = new HashMap<String, String>();
+    }
+
     public Set<String> getNomount() {
         return nomount;
     }
@@ -72,8 +78,13 @@ public class TweakcraftPlayerListener implements Listener {
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
         if (event.isCancelled()) return;
 
-        String line = event.getMessage();
+        final String line = event.getMessage();
+        final LocalPlayer lp = plugin.wrapPlayer(event.getPlayer());
+
         String cmd = event.getMessage();
+
+
+
         List<String> args = new ArrayList<String>();
         if (line.contains(" ")) {
             String c[] = cmd.split(" ");
@@ -101,7 +112,7 @@ public class TweakcraftPlayerListener implements Listener {
         }
 
         if (go && plugin.getConfigHandler().extraLogging) {
-            plugin.getLogger().info("[TweakLog] " + event.getPlayer().getName() + " issued: " + line);
+            plugin.getLogger().info("[TweakLog] " + (lp.isInvisible()?"[INVIS] ":"") + event.getPlayer().getName() + " issued: " + line);
         }
     }
 
@@ -127,13 +138,6 @@ public class TweakcraftPlayerListener implements Listener {
             po.setOptionname("nomount");
             plugin.getDatabase().save(po);
         }
-    }
-
-    public TweakcraftPlayerListener(TweakcraftUtils instance) {
-        plugin = instance;
-        invisplayers = new HashSet<String>();
-        nicks = new HashMap<String, String>();
-        capes = new HashMap<String, String>();
     }
 
     public void setNick(String player, String nick) {
@@ -223,10 +227,10 @@ public class TweakcraftPlayerListener implements Listener {
 
         String n = null;
         List<Player> playerlijst = new ArrayList<Player>();
-        for (String part : nicks.keySet()) {
-            n = nicks.get(part);
-            if (n.toLowerCase().contains(nick.toLowerCase())) {
-                Player player = plugin.getServer().getPlayerExact(part);
+        for (Map.Entry<String, String> part : nicks.entrySet()) {
+            // n = nicks.get(part);
+            if (ChatColor.stripColor(part.getValue()).toLowerCase().contains(nick.toLowerCase())) {
+                Player player = plugin.getServer().getPlayerExact(part.getKey());
                 if (player != null) playerlijst.add(player);
             }
         }
@@ -498,7 +502,7 @@ public class TweakcraftPlayerListener implements Listener {
 
 
         if (plugin.hasNick(name)) {
-            event.setJoinMessage(ChatColor.YELLOW + getNick(name) + " joined the game.");
+            event.setJoinMessage(ChatColor.YELLOW + displayName + ChatColor.YELLOW +" joined the game.");
         }
 
         if (getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
@@ -524,6 +528,13 @@ public class TweakcraftPlayerListener implements Listener {
             // plugin.sendCUIChatMode(p);
         }
 
+        for(String playerName : getInvisplayers()) {
+            Player ptest = plugin.getServer().getPlayer(playerName);
+            if (ptest != null && !p.hasPermission("tpinvis")) {
+                p.hidePlayer(ptest);
+            }
+        }
+
         if (plugin.getConfigHandler().enablemod_InfDura) {
             if (!plugin.getMod_InfDuraplayers().contains(p)) {
                 plugin.sendmod_InfDuraHandshake(p);
@@ -535,7 +546,8 @@ public class TweakcraftPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(PlayerQuitEvent event) {
 
-        String name = event.getPlayer().getName();
+        Player player = event.getPlayer();
+        String name = player.getName();
 
         if (plugin.getConfigHandler().enableSeenConfig) {
             Calendar cal = Calendar.getInstance();
@@ -581,9 +593,9 @@ public class TweakcraftPlayerListener implements Listener {
         }
 
 
-        if (plugin.hasNick(name)) {
-            event.setQuitMessage(ChatColor.YELLOW + getNick(name) + " left the game.");
-        }
+        // if (plugin.hasNick(name)) {
+            event.setQuitMessage(ChatColor.YELLOW + player.getDisplayName() + ChatColor.YELLOW + " left the game.");
+        // }
 
         if (getInvisplayers().contains(name)) { // Invisible players do not send out a "left" message
             event.setQuitMessage(null);
@@ -668,11 +680,28 @@ public class TweakcraftPlayerListener implements Listener {
         if (event.isCancelled()) return;
 
         Player p = event.getPlayer();
-        String nick = getNick(p.getName());
+        // String nick = getNick(p.getName());
+
         if (invisplayers.contains(p.getName())) {
             event.setLeaveMessage(null);
-        } else if (nick != null) {
-            event.setLeaveMessage(ChatColor.YELLOW + nick + " left the game.");
+            return;
+        }
+
+        if(!plugin.getConfigHandler().enableKickMessage)
+            event.setLeaveMessage(ChatColor.YELLOW + p.getDisplayName() + ChatColor.YELLOW + " left the game.");
+        else {
+            event.setLeaveMessage(null);
+            plugin.getServer().broadcastMessage(ChatColor.YELLOW + p.getDisplayName() + ChatColor.YELLOW + " has been kicked.");
+            plugin.getServer().broadcastMessage(ChatColor.YELLOW+"Reason : ("+ChatColor.WHITE+event.getReason()+ChatColor.YELLOW+")");
+            // BukkitScheduler bs = plugin.getServer().getScheduler();
+            /**
+             * Make it a thread to be sure that it
+             */
+            /** bs.scheduleAsyncDelayedTask(plugin, new Runnable() {
+                public void run() {
+                    plugin.getServer().broadcastMessage(ChatColor.YELLOW+"Reason : ("+ChatColor.WHITE+event.getReason()+ChatColor.YELLOW+")");
+                }
+            }, 5); */
         }
     }
 
@@ -706,6 +735,14 @@ public class TweakcraftPlayerListener implements Listener {
             return true;
 
         return false;
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        final Player player = event.getPlayer();
+        final LocalPlayer lp = plugin.wrapPlayer(player);
+        if(lp.isInvisible() && !lp.isInvisiblePickup())
+            event.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -871,7 +908,7 @@ public class TweakcraftPlayerListener implements Listener {
                             }
                         } else {
 
-                            CreatureType type = CreatureType.fromName(animal.getClass().getCanonicalName().split("Craft")[1]);
+                            EntityType type = EntityType.fromName(animal.getClass().getCanonicalName().split("Craft")[1]);
                             String cname = type.getName().toLowerCase();
                             player.sendMessage(ChatColor.BLUE + "Animal info : ");
                             player.sendMessage(ChatColor.BLUE + "type : " + ChatColor.YELLOW + cname);
@@ -907,7 +944,7 @@ public class TweakcraftPlayerListener implements Listener {
                 } else if (entity instanceof Monster || entity instanceof Flying) {
                     if (player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
                         LivingEntity lent = (LivingEntity) entity;
-                        CreatureType type = CreatureType.fromName(lent.getClass().getCanonicalName().split("Craft")[1]);
+                        EntityType type = EntityType.fromName(lent.getClass().getCanonicalName().split("Craft")[1]);
                         String cname = type.getName().toLowerCase();
                         player.sendMessage(ChatColor.BLUE + "Creature info : ");
                         player.sendMessage(ChatColor.BLUE + "type : " + ChatColor.YELLOW + cname);

@@ -121,7 +121,7 @@ public class WorldManager {
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
             // catch a /reload!
             // IWorld iw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
-            if(!extraworlds.contains(world.getName())) {
+            if(extraworlds.contains(world.getName())) {
                 TweakWorld tw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
                 tw.setSpawnChunksActive(world.getKeepSpawnInMemory());
                 worlds.put(world.getName(), tw);
@@ -233,8 +233,10 @@ public class WorldManager {
 
     public iWorld getWorld(String name, boolean filterNether) {
         if(filterNether) {
-            boolean isnether = name.endsWith("_nether") || name.endsWith("_the_end");
+            boolean isnether = name.endsWith("_nether");
+            boolean isTheEnd = name.endsWith("_the_end");
             if(isnether) name = name.substring(0, name.length()-7); // MINUS _nether
+            if(isTheEnd) name = name.substring(0, name.length()-8); // MINUS _the_end
         }
         if (worlds.containsKey(name)) {
             return worlds.get(name);

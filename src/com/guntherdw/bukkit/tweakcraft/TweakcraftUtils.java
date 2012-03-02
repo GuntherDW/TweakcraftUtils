@@ -675,7 +675,6 @@ public class TweakcraftUtils extends JavaPlugin {
         this.registerEvents();
 
         itemDB.loadDataBase();
-        worldmanager.setupWorlds();
         banhandler.reloadBans();
 
         if (configHandler.enableIRC) {
@@ -690,6 +689,8 @@ public class TweakcraftUtils extends JavaPlugin {
         /* itemDB.writeDB(); */
 
         playerListener.reloadInvisTable();
+        worldmanager.setupWorlds();
+
         log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 
     }

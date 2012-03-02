@@ -372,7 +372,7 @@ public class TweakTravelAgent implements TravelAgent {
             }
         }
 
-        PortalCreateEvent event = new PortalCreateEvent(blocks, world);
+        PortalCreateEvent event = new PortalCreateEvent(blocks, world, PortalCreateEvent.CreateReason.OBC_DESTINATION);
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;

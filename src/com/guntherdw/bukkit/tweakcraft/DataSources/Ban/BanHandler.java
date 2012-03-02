@@ -45,9 +45,9 @@ public class BanHandler {
 
     public Ban searchBan(String playername) {
         //Ban ban = null;
-        for (String search : bans.keySet()) {
-            if (search.equalsIgnoreCase(playername)) {
-                return bans.get(search);
+        for (Map.Entry<String, Ban> entryMap : bans.entrySet()) {
+            if (entryMap.getKey().equalsIgnoreCase(playername)) {
+                return entryMap.getValue();
             }
         }
         return null; // I Has found nothing!

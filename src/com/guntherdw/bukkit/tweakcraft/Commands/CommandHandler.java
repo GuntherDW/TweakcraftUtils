@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -103,7 +104,7 @@ public class CommandHandler {
     public void checkCommands() {
         if (plugin.getConfigHandler().enableDebug) { /* Show commands with no command attached */
             PluginDescriptionFile pdFile = plugin.getDescription();
-            Map<String, Object> pluginCommands = (Map<String, Object>) pdFile.getCommands();
+            Map<String, Map<String, Object>> pluginCommands = pdFile.getCommands();
             Set<String> cmds = pluginCommands.keySet();
             for (String c : cmds) {
                 if (!this.newCommandMap.containsKey(c) && !this.aliasCommandMap.containsKey(c))
@@ -159,9 +160,10 @@ public class CommandHandler {
                 if (!runMethod(sender, name, args)) {
                     sender.sendMessage("This command did not go as intended!");
                 }
-                if (sender instanceof Player)
-                    plugin.getLogger().info("[TweakcraftUtils] " + sender.getName() + " issued: /" + name + " " + mess);
-                else
+                if (sender instanceof Player) {
+                    final LocalPlayer lp = plugin.wrapPlayer((Player)sender);
+                    plugin.getLogger().info("[TweakcraftUtils] "+(lp.isInvisible()?"[INVIS] ":"") + sender.getName() + " issued: /" + name + " " + mess);
+                } else
                     plugin.getLogger().info("[TweakcraftUtils] CONSOLE issued: /" + name + " " + mess);
                 return true;
             } /*catch (CommandNotFoundException e) {
@@ -169,7 +171,8 @@ public class CommandHandler {
                 }*/ catch (PermissionsException e) {
                 sender.sendMessage(ChatColor.RED + "You do not have the correct permissions for this command or usage!");
                 if (sender instanceof Player) {
-                    plugin.getLogger().info("[TweakcraftUtils] " + ((Player) sender).getName() + " tried: /" + name + " " + mess);
+                    final LocalPlayer lp = plugin.wrapPlayer((Player)sender);
+                    plugin.getLogger().info("[TweakcraftUtils] " + (lp.isInvisible()?"[INVIS] ":"") + ((Player) sender).getName() + " tried: /" + name + " " + mess);
                 }
             } catch (CommandUsageException e) {
                 sender.sendMessage(ChatColor.YELLOW + e.getMessage());

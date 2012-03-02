@@ -626,7 +626,9 @@ public class EssentialsCommands {
     public boolean me(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
         if (sender instanceof Player) {
-            Player player = (Player) sender;
+            final Player player = (Player) sender;
+            final LocalPlayer localPlayer = plugin.wrapPlayer(player);
+
             ChatHandler ch = plugin.getChathandler();
             if (!ch.canTalk(player.getName())) {
                 sender.sendMessage(ChatColor.RED + "What were you trying to do?");
@@ -639,7 +641,7 @@ public class EssentialsCommands {
                     msg = msg.substring(0, msg.length() - 1);
 
                     if (cm == null) {
-                        if (plugin.getPlayerListener().getInvisplayers().contains(player.getName())) {
+                        if (localPlayer.isInvisible()) {
                             player.sendMessage(ChatColor.AQUA + "Are you crazy? set a chatmode first!");
                         } else {
                             plugin.getServer().broadcastMessage("* " + player.getDisplayName() + " " + msg);
@@ -963,6 +965,10 @@ public class EssentialsCommands {
         return true;
     }
 
+    protected boolean isSpawnable(EntityType et) {
+        return et.isSpawnable() && et.isAlive();
+    }
+
     @aCommand(
         aliases = {"spawnmob"},
         permissionBase = "spawnmob",
@@ -989,17 +995,18 @@ public class EssentialsCommands {
         boolean agelock = ap.getBoolean("l", false);
         String sheepcolor = ap.getString("sc", null);
         String victim = ap.getString("p", null);
+        int catType = ap.getInteger("ct", -1);
         int age = ap.getInteger("a", -1);
         String[] args = ap.getUnusedArgs();
 
         String mobName;
         String mobRider;
         Integer amount = 1;
-        CreatureType type = null;
-        CreatureType rider = null;
+        EntityType type = null;
+        EntityType rider = null;
         Player victimplayer = null;
         LivingEntity lent = null;
-        List<CreatureType> riders = null;
+        List<EntityType> riders = null;
 
         if (args.length > 0) // only a mobname!
         {
@@ -1007,8 +1014,8 @@ public class EssentialsCommands {
             amount = 1;
             if (args[0].length() > 2)
                 mobName = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].length());
-            type = CreatureType.fromName(mobName);
-            if (type == null) {
+            type = EntityType.fromName(mobName);
+            if (type == null || !this.isSpawnable(type)) {
                 sender.sendMessage("Tried : " + mobName);
                 throw new CommandUsageException("Can't find that creature!");
             }
@@ -1021,30 +1028,15 @@ public class EssentialsCommands {
                 }
             }
             if (args.length > 2) { // Riders
-                riders = new ArrayList<CreatureType>();
-                CreatureType tmpRider;
+                riders = new ArrayList<EntityType>();
                 String tmpRiderString;
                 for (int x = 2; x < args.length; x++) {
-
-                    /*if (x == args.length - 1) {
-                        // Check to see if the last argument contains a playername
-                        if(victim==null)
-                            victim = plugin.findPlayer(args[args.length - 1]);
-                        
-                        victimplayer = plugin.getServer().getPlayer(victim);
-                        if (victimplayer != null) {
-                            loc = victimplayer.getLocation();
-                        }
-                    }
-                    if (x < args.length - 1 ||
-                        (x == args.length - 1 && victimplayer == null)) { */
                     tmpRiderString = args[x];
                     if (args[x].length() > 2)
                         tmpRiderString = args[x].substring(0, 1).toUpperCase() + args[x].substring(1, args[x].length());
-                    rider = CreatureType.fromName(tmpRiderString);
-                    if (rider == null) {
+                    rider = EntityType.fromName(tmpRiderString);
+                    if (rider == null && isSpawnable(rider)) {
                         sender.sendMessage(ChatColor.YELLOW + "Didn't find one of the specified extra riders!");
-                        // throw new CommandUsageException("Can't find rider creature!");
                     } else {
                         riders.add(rider);
                     }
@@ -1068,7 +1060,7 @@ public class EssentialsCommands {
                     loc = victimplayer.getTargetBlock((HashSet<Byte>) null, 200).getLocation();
                     loc.add(0, 1, 0);
                 } else {
-                    throw new CommandException("If you're a console, at least tell me who i need to scare?");
+                    throw new CommandException("If you're a console, at least tell me whom I need to scare?");
                 }
             }
 
@@ -1095,6 +1087,19 @@ public class EssentialsCommands {
                     if (lent instanceof Creeper && powered)
                         ((Creeper) lent).setPowered(powered);
 
+                    if(lent instanceof Ocelot && catType != -1) {
+                        Ocelot.Type ocelotType = Ocelot.Type.getType(catType);
+                        if(ocelotType != null) {
+                            ((Ocelot) lent).setCatType(ocelotType);
+                            if(ocelotType != Ocelot.Type.WILD_OCELOT)
+                                ((Ocelot) lent).setOwner(victimplayer);
+                        } else {
+                            sender.sendMessage(ChatColor.YELLOW + "Ocelot type not valid!");
+                            return true;
+                        }
+
+                    }
+
                     if (lent instanceof Sheep && shoven || sheepcolor != null) {
                         ((Sheep) lent).setSheared(shoven);
 
@@ -1110,7 +1115,7 @@ public class EssentialsCommands {
                     }
 
                     if (riders != null && riders.size() != 0) {
-                        for (CreatureType t : riders) {
+                        for (EntityType t : riders) {
                             rid = victimplayer.getWorld().spawnCreature(loc, t);
                             if (lent != null) lent.setPassenger(rid);
                             lent = rid; // This makes the currently added mob the new "to-ride-along" mob
@@ -1237,7 +1242,8 @@ public class EssentialsCommands {
         else list = w.getPlayers();
         Integer amountofinvis = 0;
         for (Player p : list) {
-            if (plugin.getPlayerListener().getInvisplayers().contains(p.getName()))
+            LocalPlayer lp = plugin.wrapPlayer(p);
+            if (lp.isInvisible())
                 amountofinvis++;
         }
         boolean hasperm;
@@ -1265,7 +1271,7 @@ public class EssentialsCommands {
         for (Player p : list) {
             LocalPlayer lp = plugin.wrapPlayer(p);
             toadd = "";
-            check = plugin.getPlayerListener().getInvisplayers().contains(p.getName());
+            check = lp.isInvisible();
 
             /* if (!(sender instanceof Player)) { // console won't show gold colors? shame! // THIS HAS BEEN FIXED LONG AGO!
              if(check)

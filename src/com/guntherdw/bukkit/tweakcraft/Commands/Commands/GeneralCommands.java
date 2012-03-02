@@ -31,8 +31,8 @@ import com.guntherdw.bukkit.tweakcraft.Packages.TamerMode;
 import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
-
 import com.guntherdw.bukkit.tweakcraft.Util.EntityLocation;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -400,7 +400,7 @@ public class GeneralCommands {
 
             sender.sendMessage(ChatColor.YELLOW + "Oh my god it's hell alright!");
 
-            CreatureType type = null;
+            EntityType type = null;
             Integer range = 0;
             Vector playervector = null;
             if (sender instanceof Player) {
@@ -412,7 +412,7 @@ public class GeneralCommands {
                 String mobName = "";
                 if (args[1].length() > 2)
                     mobName = args[1].substring(0, 1).toUpperCase() + args[1].substring(1, args[1].length());
-                type = CreatureType.fromName(mobName);
+                type = EntityType.fromName(mobName);
                 if (type == null)
                     throw new CommandUsageException("Can't find mob with name " + mobName + "!");
                 if (args.length > 2) {
@@ -433,7 +433,7 @@ public class GeneralCommands {
                 for (LivingEntity ent : w.getLivingEntities()) {
                     if (ent instanceof Flying || ent instanceof Creature) {
                         if (type != null) {
-                            if (type == CreatureType.fromName(ent.getClass().getCanonicalName().split("Craft")[1])) {
+                            if (type == EntityType.fromName(ent.getClass().getCanonicalName().split("Craft")[1])) {
                                 if (range != 0) // Range set, check range
                                 {
                                     Location loc = ent.getLocation();
@@ -602,7 +602,7 @@ public class GeneralCommands {
 
             sender.sendMessage(ChatColor.YELLOW + "Oh my god it's hell alright!");
 
-            CreatureType type = null;
+            EntityType type = null;
             Integer range = 0;
             Vector playervector = null;
             if (sender instanceof Player) {
@@ -614,7 +614,7 @@ public class GeneralCommands {
                 String mobName = "";
                 if (args[1].length() > 2)
                     mobName = args[1].substring(0, 1).toUpperCase() + args[1].substring(1, args[1].length());
-                type = CreatureType.fromName(mobName);
+                type = EntityType.fromName(mobName);
                 if (type == null)
                     throw new CommandUsageException("Can't find mob with name " + mobName + "!");
                 if (args.length > 2) {
@@ -646,7 +646,7 @@ public class GeneralCommands {
                         }
 
                         if (type != null) {
-                            if (type == CreatureType.fromName(ent.getClass().getCanonicalName().split("Craft")[1])) {
+                            if (type == EntityType.fromName(ent.getClass().getCanonicalName().split("Craft")[1])) {
                                 if (range != 0) // Range set, check range
                                 {
                                     Location loc = ent.getLocation();
@@ -715,9 +715,9 @@ public class GeneralCommands {
         for(Player p : self.getWorld().getPlayers()) {
             Integer distance = ploc.getDistance(p);
             if (distance != null && distance < plugin.getConfigHandler().localchatdistance) {
-                // lplayers.add(p);
-                if(!(plugin.getPlayerListener().getInvisplayers().contains(p.getName()))) {
-                    ps+= p.getDisplayName() + ChatColor.WHITE +", ";
+                LocalPlayer lp = plugin.wrapPlayer(p);
+                if(!lp.isInvisible()) {
+                    ps += p.getDisplayName() + ChatColor.WHITE +", ";
                 }
             }
         }
@@ -788,6 +788,33 @@ public class GeneralCommands {
         } else {
             throw new CommandUsageException("I need a nick!");
         }
+        return true;
+    }
+
+    @aCommand(
+        aliases = { "toggleinvispickup", "tip" },
+        permissionBase = "tpinvis",
+        description = "Toggle the picking up of items for invisble players",
+        section = "general"
+    )
+    public boolean toggleInvisiblePickup(CommandSender sender, String command, String[] args)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+        if(!(sender instanceof Player)) {
+            throw new CommandSenderException("What were you trying to do?");
+        }
+
+        final Player player = (Player) sender;
+        final LocalPlayer localPlayer = plugin.wrapPlayer(player);
+
+
+        if(localPlayer.isInvisible()) {
+            boolean newstate = !localPlayer.isInvisiblePickup();
+            player.sendMessage(ChatColor.YELLOW+"Set pickup state to "+(newstate?ChatColor.GREEN+"ENABLED":ChatColor.RED+"DISABLED")+ChatColor.YELLOW+"!");
+            localPlayer.setInvisiblePickup(newstate);
+        } else {
+            player.sendMessage(ChatColor.RED+"You're not invisible, what were you trying to do?");
+        }
+
         return true;
     }
 

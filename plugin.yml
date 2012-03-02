@@ -2,7 +2,7 @@ name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
 # softdepend: [ 'CraftIRC' ]
 # depend: [ CraftIRC ]
-version: 2.8.0-git
+version: 2.8.1-git
 authors:
   - GuntherDW
   - Meaglin
@@ -235,3 +235,7 @@ commands:
   enchant:
     description: Adds an enchantment to your current item
     usage: /<command> <enchantmentid> <level>
+  toggleinvispickup:
+    description: Toggle the picking up of items for invisble players
+    usage: /<command>
+    aliases: [ 'tip' ]

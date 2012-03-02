@@ -31,9 +31,9 @@ import java.util.Random;
  */
 public final class FlatGen extends ChunkGenerator {
 
-    private WorldManager wm=null;
-    private byte toplayer = (byte)Material.GRASS.getId();
-    private byte normal = (byte)Material.DIRT.getId();
+    private WorldManager wm = null;
+    private byte toplayer = (byte) Material.GRASS.getId();
+    private byte normal = (byte) Material.DIRT.getId();
     private int height = 64;
     private boolean bedrockBottom = true;
 
@@ -80,18 +80,19 @@ public final class FlatGen extends ChunkGenerator {
 
     @Override
     public byte[] generate(World world, Random random, int cx, int cz) {
-        byte[] result = new byte[32768];
+        // byte[] result = new byte[32768];
+        byte[] result = new byte[65536];
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = 0; y < 128; y++) {
-                    if(y==0 && bedrockBottom)
-                        result[(x * 16 + z) * 128 + y] = (byte) 7;
-                    else if(y<height)
-                        result[(x * 16 + z) * 128 + y] = normal;
-                    else if(y==height)
-                        result[(x * 16 + z) * 128 + y] = toplayer;
+                    if (y == 0 && bedrockBottom)
+                        result[(x * 16 + z) * 256 + y] = (byte) 7;
+                    else if (y < height)
+                        result[(x * 16 + z) * 256 + y] = normal;
+                    else if (y == height)
+                        result[(x * 16 + z) * 256 + y] = toplayer;
                     else
-                        result[(x * 16 + z) * 128 + y] = (byte) 0;
+                        result[(x * 16 + z) * 256 + y] = (byte) 0;
                 }
                 // result[(x * 16 + z) * 128 + y]
             }

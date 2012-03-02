@@ -30,6 +30,7 @@ import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.ChatColor;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -570,6 +571,7 @@ public class AdminCommands {
                         }
                     } else if(modus.equalsIgnoreCase("info")) {
                         boolean tcworld = (iw!=null);
+                        // sender.sendMessage("tcworld? "+tcworld);
                         World bw = null;
                         World.Environment wenv;
                         if(!tcworld) {
@@ -590,6 +592,7 @@ public class AdminCommands {
                         int amountofplayers = tcworld?iw.getBukkitWorld().getPlayers().size():bw.getPlayers().size();
                         boolean customChunkGen = tcworld?iw.getChunkGen()!=null:bw.getGenerator()!=null;
                         boolean tooldura = tcworld?iw.isDurabilityEnabled():bw.getToolDurability();
+                        Difficulty difficulty = tcworld?iw.getDifficultyBukkit():bw.getDifficulty();
                         GameMode gm = tcworld?iw.getGameMode():null;
                         String players = "";
                         if(amountofplayers<5) {
@@ -606,6 +609,7 @@ public class AdminCommands {
                         sender.sendMessage(ChatColor.RED+"MONSTERS: "+(monsters?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
                         sender.sendMessage(ChatColor.RED+"PVP: "+(pvp?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
                         sender.sendMessage(ChatColor.RED+"ENV: "+wenv);
+                        sender.sendMessage(ChatColor.RED+"DIFFICULITY: "+difficulty.name().toLowerCase());
                         sender.sendMessage(ChatColor.RED+"PLAYERS: "+amountofplayers + (players.equals("")?"":(" ("+players+ChatColor.RED+")")));
                         sender.sendMessage(ChatColor.RED+"TOOL DURABILITY: "+(tooldura?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
                         if(gm!=null)

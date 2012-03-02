@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
@@ -203,26 +204,36 @@ public class TeleportationCommands {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
+            LocalPlayer lp = plugin.wrapPlayer(player);
+
             if (!plugin.check(player, "tp"))
                 throw new PermissionsException(command);
 
             if (args.length == 1 || p1 != null) {
-                if (plugin.getDonottplist().contains(player.getName()) && !plugin.check(player, "forcetp")) {
+                if (lp.isTpOff() && !plugin.check(player, "forcetp")) {
                     player.sendMessage(ChatColor.RED + "You can't tp when you don't allow others to tp to you!");
                 } else {
                     // List<Player> p = plugin.getServer().matchPlayer(args[0]);
                     if (p1 == null) p1 = args[0];
                     List<Player> players = plugin.findPlayerasPlayerList(p1);
                     Player p = null;
+
                     if (players.size() == 1)
                         p = players.get(0);
+
+                    if(p != null && (!player.canSee(p) && !plugin.check(player, "tpinvis")))
+                        p = null;
 
                     if (p == null) {
                         player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                     } else {
-                        boolean refusetp = plugin.getDonottplist().contains(p.getName());
+                        LocalPlayer lpto = plugin.wrapPlayer(p);
+                        boolean refusetp = lpto.isInvisible();
+                        boolean playertpoff = lpto.isTpOff();
                         boolean tpsuccess = true;
-                        if (plugin.getPlayerListener().getInvisplayers().contains(p.getName())) {
+                        boolean override = false;
+
+                        if (lpto.isInvisible()) {
                             if (!plugin.check(player, "tpinvis")) {
                                 player.sendMessage(ChatColor.YELLOW + "Can't find player!");
                                 plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " tried to tp to " + p.getName() + " <invisible>!");
@@ -231,13 +242,11 @@ public class TeleportationCommands {
                                 player.sendMessage(ChatColor.AQUA + "Stealth player TP!");
                             }
                         }
-                        boolean override = false;
-                        if (refusetp && (player.isOp() || plugin.check(player, "forcetp"))) {
+
+                        if (playertpoff && plugin.check(player, "forcetp")) {
                             override = true;
                         } else {
                             override = false;
-                            /* if(refusetp)
-                         override = true; */
                         }
 
                         if (!player.getWorld().getName().equals(p.getWorld().getName())) {
@@ -248,7 +257,7 @@ public class TeleportationCommands {
                         if (p.getName().equals(player.getName())) {
                             player.sendMessage(ChatColor.YELLOW + "You're already there!");
                         } else {
-                            if (refusetp && !override) {
+                            if (playertpoff && !override) {
                                 player.sendMessage(ChatColor.RED + "You don't have the correct permission to tp to " + p.getDisplayName() + ChatColor.RED + "!");
                                 p.sendMessage(player.getDisplayName() + ChatColor.YELLOW + " tried to tp to you!");
                             } else {
@@ -575,7 +584,7 @@ public class TeleportationCommands {
             String vname = "you";
 
             Integer cnum;
-            CreatureType ctype = null;
+            EntityType ctype = null;
             if (!plugin.check((Player) sender, "tpmob"))
                 throw new PermissionsException(command);
 
@@ -603,7 +612,7 @@ public class TeleportationCommands {
                     if (args[0].length() > 2)
                         mn = args[0].substring(0, 1).toUpperCase() + args[0].substring(1, args[0].length());
                     cnum = 0;
-                    ctype = CreatureType.fromName(mn);
+                    ctype = EntityType.fromName(mn);
                     if (ctype == null) {
                         throw new CommandUsageException("I need a number or a name, not a random string!");
                     }
@@ -628,8 +637,8 @@ public class TeleportationCommands {
                             allowed = wolf.getTarget() != null && wolf.getTarget().equals(victim.getName());
                         }
                     }
-                    CreatureType type = null;
-                    type = CreatureType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
+                    EntityType type = null;
+                    type = EntityType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
 
                     if (cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue()) {
                         if (allowed)
@@ -682,6 +691,8 @@ public class TeleportationCommands {
         String playername = plugin.findPlayer(player);
         if (!plugin.getDonottplist().contains(playername)) {
             plugin.getDonottplist().add(playername);
+            LocalPlayer lp = plugin.wrapPlayer(playername);
+            lp.setTpOff(true);
             sender.sendMessage(ChatColor.GREEN + "They can no longer tp to " + playername + "!");
         } else {
             sender.sendMessage(ChatColor.GREEN + playername + " already is on the do-not-tp list!");
@@ -725,6 +736,8 @@ public class TeleportationCommands {
         String playername = plugin.findPlayer(player);
         if (plugin.getDonottplist().contains(playername)) {
             plugin.getDonottplist().remove(playername);
+            LocalPlayer lp = plugin.wrapPlayer(playername);
+            lp.setTpOff(false);
             sender.sendMessage(ChatColor.GREEN + "They can now tp to " + playername + "!");
         } else {
             sender.sendMessage(ChatColor.GREEN + "I can't find " + playername + " in the do-not-tp list!");
