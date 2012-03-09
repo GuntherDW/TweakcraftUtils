@@ -46,6 +46,17 @@ public class CommandHandler {
     private Map<String, Method> newCommandMap = new HashMap<String, Method>();
     private Map<String, Method> aliasCommandMap = new HashMap<String, Method>();
     private Map<Method, Object> instanceMap = new HashMap<Method, Object>();
+
+    /** Command Classes **/
+
+    public AdminCommands adminCommands = null;
+    public ChatCommands chatCommands = null;
+    public DebugCommands debugCommands = null;
+    public EssentialsCommands essentialsCommands = null;
+    public GeneralCommands generalCommands = null;
+    public TeleportationCommands teleportationCommands = null;
+    public WeatherCommands weatherCommands = null;
+
     private Logger logger = Logger.getLogger("Minecraft");
     private TweakcraftUtils plugin;
 
@@ -61,13 +72,21 @@ public class CommandHandler {
         commandMap.clear();
         newCommandMap.clear();
 
-        addCommandClass(new AdminCommands(instance));
-        addCommandClass(new ChatCommands(instance));
-        addCommandClass(new DebugCommands(instance));
-        addCommandClass(new EssentialsCommands(instance));
-        addCommandClass(new GeneralCommands(instance));
-        addCommandClass(new TeleportationCommands(instance));
-        addCommandClass(new WeatherCommands(instance));
+        adminCommands = new AdminCommands(instance);
+        chatCommands = new ChatCommands(instance);
+        debugCommands = new DebugCommands(instance);
+        essentialsCommands = new EssentialsCommands(instance);
+        generalCommands = new GeneralCommands(instance);
+        teleportationCommands = new TeleportationCommands(instance);
+        weatherCommands = new WeatherCommands(instance);
+
+        addCommandClass(adminCommands);
+        addCommandClass(chatCommands);
+        addCommandClass(debugCommands);
+        addCommandClass(essentialsCommands);
+        addCommandClass(generalCommands);
+        addCommandClass(teleportationCommands);
+        addCommandClass(weatherCommands);
     }
 
     public void addCommandClass(Object instance) {
@@ -133,6 +152,14 @@ public class CommandHandler {
             return newCommandMap.get(command);
         } else if (aliasCommandMap.containsKey(command)) {
             return aliasCommandMap.get(command);
+        } else {
+            return null;
+        }
+    }
+
+    public Object getCommandInstance(Method command) {
+        if (instanceMap.containsKey(command)) {
+            return instanceMap.get(command);
         } else {
             return null;
         }
