@@ -24,6 +24,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
+import com.guntherdw.bukkit.tweakcraft.Events.TweakcraftUtilsEvent;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
@@ -43,7 +44,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -154,11 +154,14 @@ public class TweakcraftPlayerListener implements Listener {
             plugin.getDatabase().save(pi);
         }
 
-        if (plugin.getClientBridge() != null) {
+        /* if (plugin.getClientBridge() != null) {
             for(Player p : plugin.getServer().getOnlinePlayers()) {
                 plugin.getClientBridge().getPlayerListener().sendPlayerInfo(p, lp.getBukkitPlayerSafe().getName(), true);
             }
-        }
+        } */
+        TweakcraftUtilsEvent event = new TweakcraftUtilsEvent(TweakcraftUtilsEvent.Action.NICK_CHANGED);
+        event.setPlayer(lp);
+        plugin.getServer().getPluginManager().callEvent(event);
     }
 
     public boolean removeNick(String player) {
@@ -177,11 +180,15 @@ public class TweakcraftPlayerListener implements Listener {
                 lp.setNick(null);
                 plugin.getDatabase().update(pi);
             }
-            if (plugin.getClientBridge() != null) {
+            /* if (plugin.getClientBridge() != null) {
                 for(Player p : plugin.getServer().getOnlinePlayers()) {
                     plugin.getClientBridge().getPlayerListener().sendPlayerInfo(p, lp.getBukkitPlayerSafe().getName(), true);
                 }
-            }
+            } */
+            TweakcraftUtilsEvent event = new TweakcraftUtilsEvent(TweakcraftUtilsEvent.Action.NICK_CHANGED);
+            event.setPlayer(lp);
+            plugin.getServer().getPluginManager().callEvent(event);
+
             return true;
         } else {
             System.out.println("NOT doing nicks.remove");
@@ -327,9 +334,10 @@ public class TweakcraftPlayerListener implements Listener {
                 capes.put(po.getName(), po.getOptionvalue());
             }
         }
-        if(plugin.getClientBridge() != null) {
+        /* if(plugin.getClientBridge() != null) {
             plugin.getClientBridge().getPlayerListener().reloadInfo();
-        }
+        } */
+        plugin.getServer().getPluginManager().callEvent(new TweakcraftUtilsEvent(TweakcraftUtilsEvent.Action.RELOAD_INFO));
     }
     
     public Map<String, String> getNicks() {
@@ -485,6 +493,7 @@ public class TweakcraftPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
+        LocalPlayer lp = plugin.wrapPlayer(p);
         String name = p.getName();
         String displayName = plugin.getNickWithColors(p.getName());
         String ldisplayname = displayName.substring(0, displayName.length() - 2);
@@ -500,12 +509,9 @@ public class TweakcraftPlayerListener implements Listener {
             p.sendMessage(m);
         }
 
+        event.setJoinMessage(ChatColor.YELLOW + displayName + ChatColor.YELLOW +" joined the game.");
 
-        if (plugin.hasNick(name)) {
-            event.setJoinMessage(ChatColor.YELLOW + displayName + ChatColor.YELLOW +" joined the game.");
-        }
-
-        if (getInvisplayers().contains(event.getPlayer().getName())) { // Invisible players do not send out a "joined" message
+        if (lp.isInvisible()) { // Invisible players do not send out a "joined" message
             event.setJoinMessage(null);
             p.sendMessage(ChatColor.AQUA + "You has joined STEALTHILY!");
             for (Player play : plugin.getServer().getOnlinePlayers()) {
@@ -547,6 +553,7 @@ public class TweakcraftPlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
 
         Player player = event.getPlayer();
+        LocalPlayer lp = plugin.wrapPlayer(player);
         String name = player.getName();
 
         if (plugin.getConfigHandler().enableSeenConfig) {
@@ -597,7 +604,7 @@ public class TweakcraftPlayerListener implements Listener {
             event.setQuitMessage(ChatColor.YELLOW + player.getDisplayName() + ChatColor.YELLOW + " left the game.");
         // }
 
-        if (getInvisplayers().contains(name)) { // Invisible players do not send out a "left" message
+        if (lp.isInvisible()) { // Invisible players do not send out a "left" message
             event.setQuitMessage(null);
             /* if (plugin.getCraftIRC() != null) {
                 plugin.getCraftIRC().sendMessageToTag("STEALTH QUIT : " +name ,"mchatadmin");
@@ -706,24 +713,26 @@ public class TweakcraftPlayerListener implements Listener {
     }
 
     public void reloadInvisTable() {
-        List<String> lijst = plugin.getConfig().getStringList("invisible.playerList");
+        List<String> lijst = plugin.getConfigHandler().getGlobalconfig().getStringList("invisible.playerList");
 
-        if (lijst != null) {
+        for (String s : this.invisplayers) {
+            LocalPlayer lp = plugin.wrapPlayer(s);
+            plugin.getLogger().info("[TweakcraftUtils] Removing " + s + " from the invisble playerlist!");
+            lp.setInvisible(false);
+        }
+        this.invisplayers.clear();
+
             /* Clear the old playerlist, there could be old players on there,
                who have been tagged as visible for now. */
-            for (String s : this.invisplayers) {
-                LocalPlayer lp = plugin.wrapPlayer(s);
-                lp.setInvisible(false);
-            }
-            this.invisplayers.clear();
 
+
+        if (lijst != null) {
             this.invisplayers.addAll(lijst);
-
             /* Add any old and new players who have been tagged as invisible. */
             for (String s : lijst) {
                 LocalPlayer lp = plugin.wrapPlayer(s);
                 lp.setInvisible(true);
-                if (plugin.getConfigHandler().enableDebug)
+                // if (plugin.getConfigHandler().enableDebug)
                     plugin.getLogger().info("[TweakcraftUtils] Adding " + s + " to the invisble playerlist!");
             }
         }

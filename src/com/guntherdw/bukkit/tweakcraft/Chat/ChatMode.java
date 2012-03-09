@@ -172,9 +172,9 @@ public abstract class ChatMode {
     }
 
     public String getLoggingFormatStringNoPlayerTag() {
-            String name = this.chatModeName == null ? getClass().getSimpleName() : chatModeName;
-            return name + ": %1$s";
-        }
+        String name = this.chatModeName == null ? getClass().getSimpleName() : chatModeName;
+        return name + ": %1$s";
+    }
 
     public String getChatFormatString() {
         String prefix = getPrefix();

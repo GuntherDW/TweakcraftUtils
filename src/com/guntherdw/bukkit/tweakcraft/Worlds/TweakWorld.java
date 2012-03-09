@@ -219,7 +219,6 @@ public class TweakWorld implements iWorld {
             if ((world = wm.getPlugin().getServer().getWorld(worldName)) == null) {
                 // wm.getPlugin().getLogger().info("[TweakcraftUtils] Creating new world!");
                 environment = env;
-
                 if (chunkgen != null)
                     worldCreator.generator(chunkgen);
 

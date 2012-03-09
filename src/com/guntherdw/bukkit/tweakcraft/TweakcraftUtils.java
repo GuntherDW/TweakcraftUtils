@@ -22,7 +22,7 @@ package com.guntherdw.bukkit.tweakcraft;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
 import com.ensifera.animosity.craftirc.EndPoint;
-import com.guntherdw.bukkit.tcutilsclientbridge.TCUtilsClientBridgePlugin;
+// import com.guntherdw.bukkit.tcutilsclientbridge.TCUtilsClientBridgePlugin;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
@@ -31,10 +31,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerHistoryInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerInfo;
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
-import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandException;
-import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandSenderException;
-import com.guntherdw.bukkit.tweakcraft.Exceptions.CommandUsageException;
-import com.guntherdw.bukkit.tweakcraft.Exceptions.PermissionsException;
+import com.guntherdw.bukkit.tweakcraft.Events.TweakcraftUtilsEvent;
 import com.guntherdw.bukkit.tweakcraft.Listeners.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCAdminEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCEndPoint;
@@ -78,7 +75,7 @@ public class TweakcraftUtils extends JavaPlugin {
     protected Zones zones = null;
     protected LogBlock lb = null;
     protected WorldEditPlugin we = null;
-    protected TCUtilsClientBridgePlugin tcUtilsClientBridgePlugin = null;
+    // protected TCUtilsClientBridgePlugin tcUtilsClientBridgePlugin = null;
     // protected NoLagg nolagg = null;
     // protected PermissionHandler ph = null;
 
@@ -142,14 +139,14 @@ public class TweakcraftUtils extends JavaPlugin {
         return instance;
     }
 
-    public TCUtilsClientBridgePlugin getClientBridge() {
+    /* public TCUtilsClientBridgePlugin getClientBridge() {
         return tcUtilsClientBridgePlugin;
     }
 
     public static void registerClientBridge(TCUtilsClientBridgePlugin clientBridgePlugin) {
         if(instance==null) return;
         instance.tcUtilsClientBridgePlugin = clientBridgePlugin;
-    }
+    } */
 
     public void sendCUIChatMode(Player player) {
         if (this.cuiPlayers != null && this.cuiPlayers.contains(player)) {
@@ -160,8 +157,11 @@ public class TweakcraftUtils extends JavaPlugin {
             else
                 player.sendRawMessage(CUIPattern + "[" + cm.getPrefix() + "]");
         }
-        if(tcUtilsClientBridgePlugin != null)
-            tcUtilsClientBridgePlugin.sendChatMode(player);
+        /* if(tcUtilsClientBridgePlugin != null)
+            tcUtilsClientBridgePlugin.sendChatMode(player); */
+        TweakcraftUtilsEvent event = new TweakcraftUtilsEvent(TweakcraftUtilsEvent.Action.CHATMODE_CHANGED);
+        event.setPlayer(wrapPlayer(player));
+        this.getServer().getPluginManager().callEvent(event);
     }
 
     public LocalPlayer wrapPlayer(Player player) {
@@ -204,8 +204,9 @@ public class TweakcraftUtils extends JavaPlugin {
         if (getConfigHandler().enablemod_InfDura && mod_InfDuraplayers.contains(player)) {
             player.sendRawMessage(ToolDuraPattern + world.getToolDurability());
         }
-        if(tcUtilsClientBridgePlugin != null)
-            tcUtilsClientBridgePlugin.getPlayerListener().sendToolDuraMode(player, world);
+        /* if(tcUtilsClientBridgePlugin != null)
+            tcUtilsClientBridgePlugin.getPlayerListener().sendToolDuraMode(player, world); */
+
     }
 
     /**

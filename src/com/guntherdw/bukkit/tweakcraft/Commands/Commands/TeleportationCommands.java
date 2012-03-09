@@ -666,13 +666,15 @@ public class TeleportationCommands {
             if (!plugin.check((Player) sender, "tpoff"))
                 throw new PermissionsException(command);
 
+            LocalPlayer lp = plugin.wrapPlayer((Player) sender);
+
             if (args.length != 0 && !args[0].equalsIgnoreCase(((Player) sender).getName())) {
                 if (!plugin.check((Player) sender, "tpoffother"))
                     throw new PermissionsException(command);
                 this.tpoff(plugin, sender, args[0]);
             } else {
-                if (!plugin.getDonottplist().contains(((Player) sender).getName())) {
-                    plugin.getDonottplist().add(((Player) sender).getName());
+                if(!lp.isTpOff()) {
+                    lp.setTpOff(true);
                     sender.sendMessage(ChatColor.YELLOW + "They can no longer tp to you!");
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "You already are on the do-not-tp list!");
@@ -688,14 +690,16 @@ public class TeleportationCommands {
     }
 
     private void tpoff(TweakcraftUtils plugin, CommandSender sender, String player) {
-        String playername = plugin.findPlayer(player);
-        if (!plugin.getDonottplist().contains(playername)) {
-            plugin.getDonottplist().add(playername);
-            LocalPlayer lp = plugin.wrapPlayer(playername);
+        Player p = plugin.findPlayerasPlayer(player);
+        if(p==null) return;
+        LocalPlayer lp = plugin.wrapPlayer(p);
+        // LocalPlayer lp = plugin.wrapPlayer(playername);
+
+        if (!lp.isTpOff()) {
             lp.setTpOff(true);
-            sender.sendMessage(ChatColor.GREEN + "They can no longer tp to " + playername + "!");
+            sender.sendMessage(ChatColor.GREEN + "They can no longer tp to " + p.getDisplayName() + ChatColor.GREEN + "!");
         } else {
-            sender.sendMessage(ChatColor.GREEN + playername + " already is on the do-not-tp list!");
+            sender.sendMessage(ChatColor.GREEN + p.getDisplayName() + ChatColor.GREEN + " already is on the do-not-tp list!");
         }
     }
 
@@ -711,13 +715,15 @@ public class TeleportationCommands {
             if (!plugin.check((Player) sender, "tpoff"))
                 throw new PermissionsException(command);
 
+            LocalPlayer lp = plugin.wrapPlayer((Player) sender);
+
             if (args.length != 0 && !args[0].equalsIgnoreCase(((Player) sender).getName())) {
                 if (!plugin.check((Player) sender, "tpoffother"))
                     throw new PermissionsException(command);
                 this.tpon(plugin, sender, args[0]);
             } else {
-                if (plugin.getDonottplist().contains(((Player) sender).getName())) {
-                    plugin.getDonottplist().remove(((Player) sender).getName());
+                if (lp.isTpOff()) {
+                    lp.setTpOff(false);
                     sender.sendMessage(ChatColor.YELLOW + "They can now tp to you!");
                 } else {
                     sender.sendMessage(ChatColor.YELLOW + "You aren't on the do-not-tp list!");
@@ -733,14 +739,16 @@ public class TeleportationCommands {
     }
 
     private void tpon(TweakcraftUtils plugin, CommandSender sender, String player) {
-        String playername = plugin.findPlayer(player);
-        if (plugin.getDonottplist().contains(playername)) {
-            plugin.getDonottplist().remove(playername);
-            LocalPlayer lp = plugin.wrapPlayer(playername);
+        Player p = plugin.findPlayerasPlayer(player);
+        if(p==null) return;
+        LocalPlayer lp = plugin.wrapPlayer(p);
+        // LocalPlayer lp = plugin.wrapPlayer(playername);
+
+        if (lp.isTpOff()) {
             lp.setTpOff(false);
-            sender.sendMessage(ChatColor.GREEN + "They can now tp to " + playername + "!");
+            sender.sendMessage(ChatColor.GREEN + "They can now tp to " + p.getDisplayName() + ChatColor.GREEN + "!");
         } else {
-            sender.sendMessage(ChatColor.GREEN + "I can't find " + playername + " in the do-not-tp list!");
+            sender.sendMessage(ChatColor.GREEN + "I can't find " + p.getDisplayName() + ChatColor.GREEN + " in the do-not-tp list!");
         }
     }
 }
