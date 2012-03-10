@@ -45,11 +45,26 @@ public class WorldManager {
     public Map<String, iWorld> getWorlds() {
         return worlds;
     }
-    
+
     public World getDefaultWorld() {
         return plugin.getServer().getWorlds().get(0);
     }
-    
+
+    public Set<World> getDefaultWorlds() {
+        boolean isNetherEnabled = plugin.getServer().getAllowNether();
+        boolean isTheEndEnabled = plugin.getServer().getAllowEnd();
+
+        int max = 0;
+        if(isNetherEnabled) max++;
+        if(isTheEndEnabled) max++;
+
+        Set<World> worlds = new HashSet<World>();
+        for(int i=0; i<=max; i++)
+            worlds.add(plugin.getServer().getWorlds().get(i));
+
+        return worlds;
+    }
+
     public int getDefaultViewDistance() {
         return plugin.getServer().getViewDistance();
     }
@@ -75,10 +90,10 @@ public class WorldManager {
          */
         return new FlatGen();
     }
-    
+
     public void loadMotd(String worldname) {
         if(!plugin.getConfigHandler().enableWorldMOTD || !worlds.containsKey(worldname)) return;
-        
+
         try{
             File motd = new File(plugin.getDataFolder()+plugin.getConfigHandler().getDirSeperator()+"motd-"+worldname+".txt");
             if(!motd.exists()) return;
@@ -112,12 +127,19 @@ public class WorldManager {
         ConfigurationSection section = globalConfig.getConfigurationSection("worlds.extraworlds");
         if(section==null)
             return;
-        
+
         Set<String> extraworlds = section.getKeys(false);
 
         Boolean worldInfDura = globalConfig.getBoolean("worlds.durability", true);
+
+        if(plugin.getConfigHandler().enablemod_InfDura) {
+            for(World w : getDefaultWorlds())
+                w.setToolDurability(worldInfDura);
+
+        }
+
         int defaultviewdistance = this.getDefaultViewDistance();
-        
+
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
             // catch a /reload!
             // IWorld iw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
@@ -129,7 +151,7 @@ public class WorldManager {
             if (world.getEnvironment() == Environment.NETHER)
                 netherWorldOnline = true;
         }
-        
+
         if (netherWorldOnline == false && globalConfig.getBoolean("worlds.enablenether", false)) {
             String netherfolder = globalConfig.getString("worlds.netherfolder", "nether");
             if (!netherfolder.equalsIgnoreCase("")) {
@@ -158,7 +180,7 @@ public class WorldManager {
                 int difficulty = globalConfig.getInt("worlds.extraworlds." + node + ".difficulty", Difficulty.NORMAL.getValue());
                 long seed = globalConfig.getInt("worlds.extraworlds." + node + ".seed", -1);
                 long nseed = globalConfig.getInt("worlds.extraworlds." + node + ".netherseed", -1);
-                
+
                 String gameMode = globalConfig.getString("worlds.extraworlds." + node + ".gamemode", null);
                 GameMode gm = gameMode!=null?GameMode.valueOf(gameMode.toUpperCase()):null;
 
