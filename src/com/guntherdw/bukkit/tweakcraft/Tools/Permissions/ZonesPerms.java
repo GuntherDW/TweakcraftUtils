@@ -18,9 +18,13 @@
 
 package com.guntherdw.bukkit.tweakcraft.Tools.Permissions;
 
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.zones.Zones;
+import com.zones.util.ZoneUtil;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 /**
  * @author GuntherDW
@@ -28,50 +32,67 @@ import org.bukkit.entity.Player;
 public class ZonesPerms extends Permissions {
 
     private Zones zones;
+    private ZoneUtil zonesAPI;
     private PermissionsResolver resolver;
+    private com.zones.permissions.Permissions permsResolver;
 
     public ZonesPerms(PermissionsResolver permissionsResolver, Zones zonesInstance) {
         this.zones = zonesInstance;
         this.resolver = permissionsResolver;
+        this.zonesAPI = zonesInstance.getApi();
+        this.permsResolver = zonesInstance.getPermissions();
     }
 
     @Override
     public String getUserPrefix(String player) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        LocalPlayer lp = resolver.plugin.wrapPlayer(player);
+        Player p = lp.getBukkitPlayer();
+
+        return p != null ? permsResolver.getPrefix(p) : "§f";
     }
 
     @Override
     public String getUserPrefix(String world, String player) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+        LocalPlayer lp = resolver.plugin.wrapPlayer(player);
+        Player p = lp.getBukkitPlayer();
 
-    @Override
-    public String getPrimaryUserGroup(String world, String player) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return p != null ? permsResolver.getPrefix(p, world) : "§f";
     }
 
     @Override
     public String getUserSuffix(String world, String player) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        LocalPlayer lp = resolver.plugin.wrapPlayer(player);
+        Player p = lp.getBukkitPlayer();
+
+        return p != null ? permsResolver.getSuffix(p, world) : "§f";
+    }
+
+    @Override
+    public String getPrimaryUserGroup(String world, String player) {
+        List<String> groups = permsResolver.getGroups(world, player);
+        return groups.size() > 0 ? groups.get(0) : null;
     }
 
     @Override
     public boolean inGroup(String group, Player player) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return permsResolver.inGroup(player, group);
     }
 
     @Override
     public boolean inGroup(String world, String group, Player player) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return permsResolver.inGroup(player, world, group);
     }
 
+    /**
+     * No longer used
+     */
     @Override
     public boolean inSingleGroup(String world, String group, Player player) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 
     @Override
     public boolean hasPermission(String world, Player player, String permissionbit) {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return permsResolver.canUse(player, world, permissionbit);
     }
 }
