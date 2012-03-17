@@ -63,6 +63,7 @@ public class TweakcraftUtilsEvent extends Event {
 	public enum Action {
         CHATMODE_CHANGED,
         NICK_CHANGED,
-        RELOAD_INFO
+        RELOAD_INFO,
+        RELOAD
 	}
 }

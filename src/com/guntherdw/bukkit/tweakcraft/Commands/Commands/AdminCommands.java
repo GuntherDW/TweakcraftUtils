@@ -23,6 +23,7 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
 import com.guntherdw.bukkit.tweakcraft.Commands.aCommand;
 import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
+import com.guntherdw.bukkit.tweakcraft.Events.TweakcraftUtilsEvent;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
@@ -470,6 +471,10 @@ public class AdminCommands {
                    plugin.getPlayerListener().reloadInfo();
                } */
 
+                TweakcraftUtilsEvent reloadEvent = new TweakcraftUtilsEvent(TweakcraftUtilsEvent.Action.RELOAD);
+                if (sender instanceof Player) reloadEvent.setPlayer((Player) sender);
+                plugin.getServer().getPluginManager().callEvent(reloadEvent);
+
             } else if(args[0].equalsIgnoreCase("world")) {
                 if(sender instanceof Player)
                     if(!plugin.check((Player) sender, "admin.world"))
@@ -477,7 +482,7 @@ public class AdminCommands {
                 if(args.length>2) {
                     String modus = args[1];
                     String world = args[2];
-                    String arg   = args.length>3? args[3] : null;
+                    String arg   = args.length>3 ? args[3] : null;
                     iWorld iw = plugin.getworldManager().getWorld(world);
                     if(modus.equalsIgnoreCase("unload")) {
                         if(iw!=null) {

@@ -217,10 +217,10 @@ public class TweakcraftPlayerListener implements Listener {
         String p = null;
         String n = null;
 
-        for (String part : nicks.keySet()) {
-            n = nicks.get(part);
-            if (exact ? n.toLowerCase().equals(nick.toLowerCase()) : n.toLowerCase().contains(nick.toLowerCase())) {
-                p = part;
+        for (Map.Entry<String, String> part : nicks.entrySet()) {
+            if (exact ? part.getValue().toLowerCase().equals(nick.toLowerCase())
+                      : ChatColor.stripColor(part.getValue()).toLowerCase().contains(nick.toLowerCase())) {
+                p = part.getValue();
             }
         }
 
@@ -249,10 +249,12 @@ public class TweakcraftPlayerListener implements Listener {
         String p = null;
         String n = null;
 
-        for (String part : nicks.keySet()) {
-            n = nicks.get(part);
-            if (strict ? n.toLowerCase().equals(nick.toLowerCase()) : n.toLowerCase().contains(nick.toLowerCase())) {
-                p = part;
+        for (Map.Entry<String, String> part : nicks.entrySet()) {
+            // n = nicks.get(part);
+            if (strict ? part.getValue().toLowerCase().equals(nick.toLowerCase())
+                       : ChatColor.stripColor(part.getValue()).toLowerCase().contains(nick.toLowerCase())) {
+                // p = part;
+                p = part.getValue();
                 if (strict) return p;
             }
         }

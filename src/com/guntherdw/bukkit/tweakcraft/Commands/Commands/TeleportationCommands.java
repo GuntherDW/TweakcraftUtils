@@ -265,7 +265,7 @@ public class TeleportationCommands {
                                 tpsuccess = player.teleport(getTpLocation(p));
                                 if (tpsuccess) {
                                     plugin.getTelehistory().addHistory(player.getName(), oldloc);
-                                    p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
+                                    if(!lp.isInvisible()) p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " Teleported to you!");
 
                                     if (override)
                                         player.sendMessage(ChatColor.RED + "Forced tp!");

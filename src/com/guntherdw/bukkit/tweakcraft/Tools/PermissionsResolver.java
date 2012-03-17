@@ -20,6 +20,7 @@ package com.guntherdw.bukkit.tweakcraft.Tools;
 
 import com.guntherdw.bukkit.tweakcraft.Tools.Permissions.*;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -44,6 +45,7 @@ public class PermissionsResolver {
 
         foundPlugin = tryPermissionsEx();
         if (!foundPlugin) foundPlugin = tryNijiPerms();
+        if (!foundPlugin) tryZones();
         if (!foundPlugin) tryWEPIF();
         if (!foundPlugin) {
             plugin.getLogger().info("[TweakcraftUtils] DinnerPerms found, using that for permissions resolving!");
@@ -52,9 +54,22 @@ public class PermissionsResolver {
         }
     }
 
+
     public Permissions getResolver() {
         if (resolver == null) init();
         return resolver;
+    }
+
+    public boolean hasPermission(String world, Player player, String permissionbit) {
+        if (resolver == null) init();
+        return resolver.hasPermission(world, player, permissionbit);
+    }
+
+    private void tryZones() {
+        if(plugin.getConfigHandler().enableZones && plugin.getZones() != null) {
+            resolver = new ZonesPerms(this, plugin.getZones());
+            plugin.getLogger().info("[TweakcraftUtils] Meaglin's Zones found, using that for permissions resolving!");
+        }
     }
 
     private boolean tryPermissionsEx() {

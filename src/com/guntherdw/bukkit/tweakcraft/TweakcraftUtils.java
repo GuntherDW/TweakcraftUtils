@@ -37,11 +37,11 @@ import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCAdminEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.CraftIRCEndPoint;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
+import com.guntherdw.bukkit.tweakcraft.Tools.Permissions.Permissions;
 import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Util.TeleportHistory;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
-import com.nijikokun.bukkit.Permissions.Permissions;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.zones.Zones;
@@ -69,7 +69,6 @@ import java.util.logging.Logger;
 
 public class TweakcraftUtils extends JavaPlugin {
 
-    protected Permissions perm = null;
     protected WorldGuardPlugin wg = null;
     protected CraftIRC circ = null;
     protected Zones zones = null;
@@ -123,6 +122,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public PermissionsResolver getPermissions() {
         return this.permsResolver;
+    }
+
+    public Permissions getPermissionsResolver() {
+        return this.getPermissions().getResolver();
     }
 
     public Set<Player> getCUIPlayers() {
@@ -630,7 +633,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public boolean check(Player player, String permNode) {
         return player.isOp() ||
-            this.getPermissions().getResolver().hasPermission(player.getWorld().getName(), player, "tweakcraftutils." + permNode);
+            this.getPermissions().hasPermission(player.getWorld().getName(), player, "tweakcraftutils." + permNode);
     }
 
     public boolean checkfull(Player player, String permNode) {
