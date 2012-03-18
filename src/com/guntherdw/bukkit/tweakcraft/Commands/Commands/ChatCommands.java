@@ -18,6 +18,7 @@
 
 package com.guntherdw.bukkit.tweakcraft.Commands.Commands;
 
+import com.ensifera.animosity.craftirc.RelayedMessage;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Chat.Modes.AdminChat;
@@ -28,6 +29,7 @@ import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerChatEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -272,7 +274,22 @@ public class ChatCommands {
                         spam += m + " ";
                     x++;
                 }
-                plugin.getServer().broadcastMessage(ChatColor.WHITE + "<" + (sender instanceof Player ? ((Player) sender).getDisplayName() : ChatColor.LIGHT_PURPLE + "CONSOLE") + ChatColor.WHITE + "> " + spam);
+                // plugin.getServer().broadcastMessage(ChatColor.WHITE + "<" + (sender instanceof Player ? ((Player) sender).getDisplayName() : ChatColor.LIGHT_PURPLE + "CONSOLE") + ChatColor.WHITE + "> " + spam);
+                if(sender instanceof Player) {
+                    PlayerChatEvent playerChatEvent = new PlayerChatEvent((Player) sender, spam);
+                    plugin.getServer().getPluginManager().callEvent(playerChatEvent);
+                } else {
+                    String chat = ChatColor.WHITE + "<" + ChatColor.LIGHT_PURPLE + "CONSOLE" + ChatColor.WHITE + "> " + spam;
+                    plugin.getServer().broadcastMessage(chat);
+                    if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC() != null) {
+                        if(plugin.getConfigHandler().GIRCenabled) {
+                            RelayedMessage rm = plugin.getCraftIRC().newMsgToTag(plugin.getEndPoint(), plugin.getConfigHandler().GIRCtag, "generic");
+                            rm.setField("message", chat);
+                            rm.post();
+                        }
+                    }
+                }
+
             } else {
                 try {
                     ChatMode cm = ch.getChatMode(chatMode);

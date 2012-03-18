@@ -195,7 +195,7 @@ public class ConfigurationHandler {
         this.enableGroupChat = globalconfig.getBoolean("ChatMode.GroupChat", true);
 
         List<String> extralist = globalconfig.getStringList("extrahelp.plugins");
-        if(extralist!=null)
+        if(extralist!=null) {
             for(String plist : extralist) {
                 if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
                     if(!extrahelpplugin.contains(plist)) {
@@ -209,6 +209,8 @@ public class ConfigurationHandler {
                     plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
                 }
             }
+        }
+
         this.cancelNetherPortal = globalconfig.getBoolean("worlds.cancelportal", false);
 
         this.extrahelphide = globalconfig.getStringList("extrahelp.hide");

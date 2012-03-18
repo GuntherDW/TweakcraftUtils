@@ -83,8 +83,6 @@ public class TweakcraftPlayerListener implements Listener {
 
         String cmd = event.getMessage();
 
-
-
         List<String> args = new ArrayList<String>();
         if (line.contains(" ")) {
             String c[] = cmd.split(" ");
@@ -218,9 +216,11 @@ public class TweakcraftPlayerListener implements Listener {
         String n = null;
 
         for (Map.Entry<String, String> part : nicks.entrySet()) {
-            if (exact ? part.getValue().toLowerCase().equals(nick.toLowerCase())
-                      : ChatColor.stripColor(part.getValue()).toLowerCase().contains(nick.toLowerCase())) {
-                p = part.getValue();
+            String c1 = ChatColor.stripColor(part.getValue()).toLowerCase();
+            String c2 = ChatColor.stripColor(nick).toLowerCase();
+            if (exact ? c1.equals(c2)
+                      : c1.contains(c2)) {
+                p = part.getKey();
             }
         }
 
@@ -251,10 +251,12 @@ public class TweakcraftPlayerListener implements Listener {
 
         for (Map.Entry<String, String> part : nicks.entrySet()) {
             // n = nicks.get(part);
-            if (strict ? part.getValue().toLowerCase().equals(nick.toLowerCase())
-                       : ChatColor.stripColor(part.getValue()).toLowerCase().contains(nick.toLowerCase())) {
+            String c1 = ChatColor.stripColor(part.getValue()).toLowerCase();
+            String c2 = ChatColor.stripColor(nick).toLowerCase();
+            if (strict ? c1.equals(c2)
+                       : c1.contains(c2)) {
                 // p = part;
-                p = part.getValue();
+                p = part.getKey();
                 if (strict) return p;
             }
         }
@@ -360,12 +362,13 @@ public class TweakcraftPlayerListener implements Listener {
         String displayName = plugin.getNickWithColors(player.getName());
         String ldisplayname = displayName.substring(0, displayName.length() - 2);
         player.setDisplayName(displayName);
-        if (ldisplayname.length() <= 16)
+        if (ldisplayname.length() <= 16) {
             try {
                 player.setPlayerListName(ldisplayname);
             } catch (IllegalArgumentException ex) {
                 ;
             }
+        }
 
         ChatHandler ch = plugin.getChathandler();
         ChatMode cm = ch.getPlayerChatMode(player);

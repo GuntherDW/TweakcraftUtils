@@ -204,9 +204,9 @@ commands:
   whois:
     description: Find out who's behind that nick!
     usage: /<command> <nick>
-  groupchat:
-    description: GroupChat control
-    usage: /<command>
+#  groupchat:
+#    description: GroupChat control
+#    usage: /<command>
 #    aliases: [ 'gc' ]
   gc:
     description: Remove ChatMode subscription
