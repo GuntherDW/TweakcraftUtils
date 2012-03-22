@@ -416,28 +416,6 @@ public class TweakcraftUtils extends JavaPlugin {
      * Register the Bukkit events to the appropriate event handlers.
      */
     private void registerEvents() {
-        /* getServer().getPluginManager().registerEvent(Event.Type.PLAYER_LOGIN, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_TELEPORT, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_COMMAND_PREPROCESS, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_INTERACT_ENTITY, playerListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_PORTAL, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_RESPAWN, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHANGED_WORLD, playerListener, Priority.High, this);
-        getServer().getPluginManager().registerEvent(Event.Type.SIGN_CHANGE, blockListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_FORM, blockListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.BLOCK_BREAK, blockListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.EXPLOSION_PRIME, entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_TARGET, entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.PROJECTILE_HIT, entityListener, Priority.Normal, this);
-        getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, entityListener, Priority.Normal, this);
-        // getServer().getPluginManager().registerEvent(Event.Type.CHUNK_LOAD, worldListener, Priority.Monitor, this);
-        getServer().getPluginManager().registerEvent(Event.Type.CHUNK_UNLOAD, worldListener, Priority.Normal, this); */
         PluginManager manager = getServer().getPluginManager();
 
         manager.registerEvents(playerListener, this);

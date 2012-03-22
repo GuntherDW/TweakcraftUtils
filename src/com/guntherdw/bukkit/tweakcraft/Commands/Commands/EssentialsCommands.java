@@ -267,10 +267,10 @@ public class EssentialsCommands {
         for (Map.Entry<String, Method> entry : commh.getCommandMap().entrySet()) {
             // Method commandMethod = commh.getCommandMap().get(cname);
             // aCommand annotation = commandMethod.getAnnotation(aCommand.class);
-            if (plugin.getCommand(entry.getKey()) == null) {
+            /* if (plugin.getCommand(entry.getKey()) == null) {
                 System.out.println("Nullpointer for " + entry.getKey());
                 continue;
-            }
+            } */
 
             if (addCommandToList(sender, entry.getValue())) {
                 // Fuck minecraft's font :<
@@ -997,6 +997,8 @@ public class EssentialsCommands {
         String victim = ap.getString("p", null);
         int catType = ap.getInteger("ct", -1);
         int age = ap.getInteger("a", -1);
+        boolean sitting = ap.getBoolean("sit", false);
+        boolean tame = ap.getBoolean("tame", false);
         String[] args = ap.getUnusedArgs();
 
         String mobName;
@@ -1071,12 +1073,12 @@ public class EssentialsCommands {
                     if (health > 0)
                         lent.setHealth(health);
 
-                    if (lent instanceof Animals && age != -1) {
-                        ((Animals) lent).setAge(age);
+                    if (lent instanceof Ageable && age != -1) {
+                        ((Ageable) lent).setAge(age);
                         if(ap.isflagUsed("l"))
-                            ((Animals) lent).setAgeLock(true);
+                            ((Ageable) lent).setAgeLock(true);
                         else
-                            ((Animals) lent).setAgeLock(agelock);
+                            ((Ageable) lent).setAgeLock(agelock);
 
                     }
 
@@ -1087,17 +1089,34 @@ public class EssentialsCommands {
                     if (lent instanceof Creeper && powered)
                         ((Creeper) lent).setPowered(powered);
 
-                    if(lent instanceof Ocelot && catType != -1) {
-                        Ocelot.Type ocelotType = Ocelot.Type.getType(catType);
-                        if(ocelotType != null) {
-                            ((Ocelot) lent).setCatType(ocelotType);
-                            if(ocelotType != Ocelot.Type.WILD_OCELOT)
-                                ((Ocelot) lent).setOwner(victimplayer);
-                        } else {
-                            sender.sendMessage(ChatColor.YELLOW + "Ocelot type not valid!");
-                            return true;
-                        }
+                    if (lent instanceof Ocelot) {
 
+                        if(sitting)
+                            ((Ocelot) lent).setSitting(sitting);
+
+                        if(catType != -1) {
+                            Ocelot.Type ocelotType = Ocelot.Type.getType(catType);
+                            if(ocelotType != null) {
+                                ((Ocelot) lent).setCatType(ocelotType);
+                                if(ocelotType != Ocelot.Type.WILD_OCELOT)
+                                    ((Ocelot) lent).setOwner(victimplayer);
+                            } else {
+                                sender.sendMessage(ChatColor.YELLOW + "Ocelot type not valid!");
+                                return true;
+                            }
+                        }
+                    }
+
+                    if (lent instanceof Wolf) {
+                       if(sitting)
+                           ((Wolf) lent).setSitting(sitting);
+                    }
+
+                    if(lent instanceof Tameable) {
+                        if (tame) {
+                            ((Tameable) lent).setOwner(victimplayer);
+                            ((Tameable) lent).setTamed(true);
+                        }
                     }
 
                     if (lent instanceof Sheep && shoven || sheepcolor != null) {

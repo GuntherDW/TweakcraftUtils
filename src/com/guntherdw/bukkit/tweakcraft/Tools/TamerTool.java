@@ -22,10 +22,7 @@ import com.guntherdw.bukkit.tweakcraft.Packages.TamerMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
+import org.bukkit.entity.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,54 +43,70 @@ public class TamerTool {
         return tamers;
     }
 
-    public void getOwner(Player player, Wolf wolf) {
-        if(wolf.isTamed()) {
-            AnimalTamer tamer = wolf.getOwner();
+    public void getOwner(Player player, Tameable tameable) {
+        String className = tameable.getClass().getCanonicalName().split("Craft")[1];
+        if(className.equals("Ocelot")) className = "Ozelot";
+        EntityType entityType = EntityType.fromName(className);
+
+        String cname = entityType.getName().toLowerCase();
+
+        player.sendMessage(ChatColor.AQUA + "Tameable type : "+cname);
+
+        if(tameable.isTamed()) {
+            AnimalTamer tamer = tameable.getOwner();
             if(tamer instanceof Player || tamer instanceof OfflinePlayer) {
                 // Player ptamer = (Player) tamer;
                 boolean online = false;
                 Player ptamer=null; OfflinePlayer offlinetamer=null;
                 if(tamer instanceof Player) { ptamer = (Player) tamer; online = true; }
                 else                        { offlinetamer = (OfflinePlayer) tamer; online = false; }
-                    
+
                 boolean allowed = true;
                 if(online && !ptamer.equals(player)) {
                     if(!plugin.check(player, "tamer.info.other"))
                         allowed = false;
                 }
                 if(allowed) {
-                    player.sendMessage(ChatColor.AQUA + "Wolf owner : "+(online?ptamer.getDisplayName():offlinetamer.getName()));
+                    player.sendMessage(ChatColor.AQUA + "Tameable owner : "+(online?ptamer.getDisplayName():offlinetamer.getName()));
                 } else {
                     player.sendMessage(ChatColor.RED + "You do not have the permission to check the ownership of other wolves!");
                 }
             } else {
-                player.sendMessage(ChatColor.AQUA + "This wolf is owned by an entity/offline player!");
+                player.sendMessage(ChatColor.AQUA + "This tameable is owned by an entity/offline player!");
             }
         } else {
-            player.sendMessage(ChatColor.AQUA + "This wolf isn't tamed!");
+            player.sendMessage(ChatColor.AQUA + "This tameable isn't tamed!");
         }
-        player.sendMessage(ChatColor.AQUA + "Wolf health : "+wolf.getHealth());
-        player.sendMessage(ChatColor.AQUA + "Wolf age : "+wolf.getAge() + (wolf.getAgeLock() ? ChatColor.RED+" L":""));
-        if(wolf.isAngry()) {
-            player.sendMessage(ChatColor.AQUA + "This wolf is "+ChatColor.RED+"angry"+ChatColor.AQUA+"!");
-            LivingEntity le = wolf.getTarget();
-            String target = "";
-            if(le instanceof Player)
-                target = ((Player)le).getDisplayName();
-            else
-                target = "Animal";
-            player.sendMessage(ChatColor.AQUA + "Target : "+target);
+        player.sendMessage(ChatColor.AQUA + "Tameable health : "+((LivingEntity)tameable).getHealth());
+        if(tameable instanceof Ageable) {
+            player.sendMessage(ChatColor.AQUA + "Tameable age : "+((Ageable)tameable).getAge() + (((Ageable)tameable).getAgeLock() ? ChatColor.RED+" L":""));
+        }
+        if(tameable instanceof Ocelot) {
+            player.sendMessage(ChatColor.AQUA + "Tameable cat-type : "+((Ocelot)tameable).getCatType().toString().toLowerCase());
+        }
+        if(tameable instanceof Wolf) {
+            Wolf wolf = (Wolf) tameable;
+            if(wolf.isAngry()) {
+                player.sendMessage(ChatColor.AQUA + "This tameable is "+ChatColor.RED+"angry"+ChatColor.AQUA+"!");
+                LivingEntity le = wolf.getTarget();
+                String target = "";
+                if(le instanceof Player)
+                    target = ((Player)le).getDisplayName();
+                else
+                    target = "Animal";
+                player.sendMessage(ChatColor.AQUA + "Target : "+target);
+            }
         }
     }
 
-    public void setTame(Wolf wolf, Boolean tame, Player player) {
+    public void setTame(Tameable tameable, Boolean tame, Player player) {
         if(plugin.check(player, "tamer.tame")) {
             Boolean allowed = true;
             if(tame==null) {
-                tame = !wolf.isTamed();
+                tame = !tameable.isTamed();
             }
-            if(wolf.isTamed() && !tame) {
-                AnimalTamer tamer = wolf.getOwner();
+            if(tameable.isTamed() && !tame) {
+                AnimalTamer tamer = tameable.getOwner();
 
                 if(tamer instanceof Player) {
                     if(!((Player)tamer).equals(player)) {
@@ -105,65 +118,78 @@ public class TamerTool {
                     }
                 }
                 if(allowed) {
-                    wolf.setOwner(null);
-                    wolf.setTamed(false);
+                    tameable.setOwner(null);
+                    tameable.setTamed(false);
                 } else {
-                    player.sendMessage(ChatColor.RED + "You do not have permission to untame this wolf!");
+                    player.sendMessage(ChatColor.RED + "You do not have permission to untame this tameables!");
                 }
-            } else if(!wolf.isTamed() && tame) {
+            } else if(!tameable.isTamed() && tame) {
                 if(!plugin.check(player, "tamer.tame.tame"))
                     allowed = false;
-                
+
                 if(allowed) {
-                    wolf.setTamed(true);
-                    wolf.setAngry(false);
-                    wolf.setTarget(null);
-                    wolf.setOwner(player);
+                    tameable.setTamed(true);
+                    if(tameable instanceof Wolf) {
+                        ((Wolf)tameable).setAngry(false);
+                    }
+                    ((Creature)tameable).setTarget(null);
+
+                    tameable.setOwner(player);
                 } else {
-                    player.sendMessage(ChatColor.RED + "You do not have permission to tame this wolf!");
+                    player.sendMessage(ChatColor.RED + "You do not have permission to tame this tameables!");
                 }
             }
         } else {
-            player.sendMessage(ChatColor.RED + "You do not have permission to tame wolves!");
+            player.sendMessage(ChatColor.RED + "You do not have permission to tame tameables!");
         }
     }
 
-    public void setAngry(Wolf wolf, Boolean angry, Player player) {
-        if(plugin.check(player, "tamer.angry"))
-        {
-            Boolean allowed = true;
-            if(wolf.isTamed()) {
-                if(wolf.getOwner().equals(player)) {
-                    if(!plugin.check(player, "tamer.angry.own"))
-                        allowed = false;
-                } else {
-                    if(!plugin.check(player, "tamer.angry.other"))
-                        allowed = false;
+    public void setAngry(Tameable tameable, Boolean angry, Player player) {
+        if(plugin.check(player, "tamer.angry")) {
+            if(tameable instanceof Wolf) {
+                Wolf wolf = (Wolf) tameable;
+                Boolean allowed = true;
+                if(tameable.isTamed()) {
+                    if(tameable.getOwner().equals(player)) {
+                        if(!plugin.check(player, "tamer.angry.own"))
+                            allowed = false;
+                    } else {
+                        if(!plugin.check(player, "tamer.angry.other"))
+                            allowed = false;
+                    }
+
                 }
+                if(angry==null) {
+                    angry = !wolf.isAngry();
+                }
+                if(allowed) {
+                    wolf.setAngry(angry);
 
-            }
-            if(angry==null) {
-                angry = !wolf.isAngry();
-            }
-            if(allowed) {
-                wolf.setAngry(angry);
-
-                if(!angry) {
-                    wolf.setTarget(null);
+                    if(!angry) {
+                        wolf.setTarget(null);
+                    }
+                } else {
+                    player.sendMessage(ChatColor.RED + "You do not have permission to anger this tameables!");
                 }
             } else {
-                player.sendMessage(ChatColor.RED + "You do not have permission to anger this wolf!");
+                player.sendMessage(ChatColor.RED + "You can't anger anything else than wolves!");
             }
         } else {
-            player.sendMessage(ChatColor.RED + "You do not have permission to anger wolves!");
+            player.sendMessage(ChatColor.RED + "You do not have permission to anger tameables!");
         }
     }
-    
-    public void sit(Wolf wolf, Boolean sit, Player player) {
+
+    public void sit(Tameable tameable, Boolean sit, Player player) {
         if(plugin.check(player, "tamer.sit")) {
             Boolean allowed = true;
-            if(wolf.isSitting()) {
-                if(wolf.getOwner()!=null && wolf.getOwner().equals(player)) {
+
+            Boolean sitting = tameable instanceof Ocelot ? ((Ocelot)tameable).isSitting() :
+                tameable instanceof Wolf   ? ((Wolf)tameable).isSitting()   :
+                    false;
+
+
+            if(sitting) {
+                if(tameable.getOwner()!=null && tameable.getOwner().equals(player)) {
                     if(!plugin.check(player, "tamer.sit.own"))
                         allowed = false;
                 } else {
@@ -175,23 +201,28 @@ public class TamerTool {
                     allowed = false;
             }
             if(sit==null)
-                sit = !wolf.isSitting();
+                sit = !sitting;
 
-            if(allowed)
-                wolf.setSitting(sit);
+            if(allowed) {
+                if(tameable instanceof Wolf)
+                    ((Wolf)tameable).setSitting(sit);
+                if(tameable instanceof Ocelot)
+                    ((Ocelot)tameable).setSitting(sit);
+            }
+
 
             else
-                player.sendMessage(ChatColor.RED + "You do not have permission to command this wolf!");
+                player.sendMessage(ChatColor.RED + "You do not have permission to command this tameables!");
         } else {
-            player.sendMessage(ChatColor.RED + "You do not have permission to command wolves!");
+            player.sendMessage(ChatColor.RED + "You do not have permission to command tameables!");
         }
     }
 
-    public void heal(Wolf wolf, Boolean kill, Player player) {
+    public void heal(Tameable tameable, Boolean kill, Player player) {
         if(plugin.check(player, "tamer.heal")) {
             Boolean allowed = true;
-            if(wolf.isTamed()) {
-                if(wolf.getOwner()!=null && wolf.getOwner().equals(player)) {
+            if(tameable.isTamed()) {
+                if(tameable.getOwner()!=null && tameable.getOwner().equals(player)) {
                     if(!plugin.check(player, "tamer.heal.own"))
                         allowed = false;
                 } else {
@@ -204,53 +235,55 @@ public class TamerTool {
             }
 
             if(allowed)
-                wolf.setHealth(20);
+                ((LivingEntity)tameable).setHealth(20);
             else
-                player.sendMessage(ChatColor.RED + "You do not have permission to heal this wolf!");
+                player.sendMessage(ChatColor.RED + "You do not have permission to heal this tameables!");
         } else {
-            player.sendMessage(ChatColor.RED + "You do not have permission to heal wolves!");
-        }
-    }
-    
-    public void setAge(Wolf wolf, Integer age, Player player) {
-        if(plugin.check(player, "tamer.setage")) {
-            wolf.setAge(age);
+            player.sendMessage(ChatColor.RED + "You do not have permission to heal tameables!");
         }
     }
 
-    public void setAgeLock(Wolf wolf, Boolean lock, Player player) {
-            if(plugin.check(player, "tamer.setage")) {
+    public void setAge(Tameable tameable, Integer age, Player player) {
+        if(plugin.check(player, "tamer.setage")) {
+            if(tameable instanceof Ageable) ((Ageable)tameable).setAge(age);
+        }
+    }
+
+    public void setAgeLock(Tameable tameable, Boolean lock, Player player) {
+        if(plugin.check(player, "tamer.setage")) {
+            if(tameable instanceof Ageable) {
                 player.sendMessage(ChatColor.BLUE + "Setting animal agelock to " + lock);
-                wolf.setAgeLock(lock);
+                ((Ageable)tameable).setAgeLock(lock);
             }
         }
-    
-    public void handleEvent(Player player, Wolf wolf) {
+    }
+
+    public void handleEvent(Player player, Tameable tameable) {
         if(!tamers.containsKey(player))
             return;
 
         TamerMode tamermode = tamers.get(player);
         switch(tamermode.getMode()) {
             case INFO:
-                this.getOwner(player, wolf);
+                this.getOwner(player, tameable);
                 break;
             case TAME:
-                this.setTame(wolf, tamermode.getState(), player);
+                this.setTame(tameable, tamermode.getState(), player);
                 break;
             case ANGRY:
-                this.setAngry(wolf, tamermode.getState(), player);
+                this.setAngry(tameable, tamermode.getState(), player);
                 break;
             case SIT:
-                this.sit(wolf, tamermode.getState(), player);
+                this.sit(tameable, tamermode.getState(), player);
                 break;
             case HEAL:
-                this.heal(wolf, tamermode.getState(), player);
+                this.heal(tameable, tamermode.getState(), player);
                 break;
             case SETAGELOCK:
-                this.setAgeLock(wolf, tamermode.getState(), player);
+                this.setAgeLock(tameable, tamermode.getState(), player);
                 break;
             case SETAGE:
-                this.setAge(wolf, tamermode.getData(), player);
+                this.setAge(tameable, tamermode.getData(), player);
                 break;
         }
     }

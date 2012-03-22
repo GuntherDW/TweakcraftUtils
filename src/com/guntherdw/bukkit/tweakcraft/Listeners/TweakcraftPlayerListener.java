@@ -514,7 +514,8 @@ public class TweakcraftPlayerListener implements Listener {
             p.sendMessage(m);
         }
 
-        event.setJoinMessage(ChatColor.YELLOW + displayName + ChatColor.YELLOW +" joined the game.");
+        // event.setJoinMessage(ChatColor.YELLOW + displayName + ChatColor.YELLOW +" joined the game.");
+        event.setJoinMessage(ChatColor.GREEN + " + " + displayName + ChatColor.DARK_GRAY + " / joined the game.");
 
         if (lp.isInvisible()) { // Invisible players do not send out a "joined" message
             event.setJoinMessage(null);
@@ -526,10 +527,6 @@ public class TweakcraftPlayerListener implements Listener {
                     if(plugin.getConfigHandler().enableVanish)
                         play.hidePlayer(p);
                 }
-            }
-
-            if(plugin.getConfigHandler().enableVanish) {
-                //p.hidePlayer();
             }
         }
 
@@ -606,7 +603,8 @@ public class TweakcraftPlayerListener implements Listener {
 
 
         // if (plugin.hasNick(name)) {
-            event.setQuitMessage(ChatColor.YELLOW + player.getDisplayName() + ChatColor.YELLOW + " left the game.");
+        // event.setQuitMessage(ChatColor.YELLOW + player.getDisplayName() + ChatColor.YELLOW + " left the game.");
+        event.setQuitMessage(ChatColor.DARK_GRAY + " - " + player.getDisplayName() + ChatColor.DARK_GRAY + " / left the game.");
         // }
 
         if (lp.isInvisible()) { // Invisible players do not send out a "left" message
@@ -887,10 +885,10 @@ public class TweakcraftPlayerListener implements Listener {
         if (plugin.getConfigHandler().enabletamertool) {
             if (player.getItemInHand() != null) {
 
-                if (entity instanceof Wolf && player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
+                if (entity instanceof Tameable && player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
                     if (plugin.getTamerTool().getTamers().containsKey(player)) {
                         event.setCancelled(true);
-                        plugin.getTamerTool().handleEvent(player, (Wolf) entity);
+                        plugin.getTamerTool().handleEvent(player, (Tameable) entity);
                         return;
                     }
                 } else if (entity instanceof Animals) {
@@ -963,6 +961,19 @@ public class TweakcraftPlayerListener implements Listener {
                         player.sendMessage(ChatColor.BLUE + "Creature info : ");
                         player.sendMessage(ChatColor.BLUE + "type : " + ChatColor.YELLOW + cname);
                         player.sendMessage(ChatColor.BLUE + "health : " + ChatColor.YELLOW + lent.getHealth());
+                    }
+                } else if(entity instanceof Ageable) { // Villagers?
+                    if (player.getItemInHand().getTypeId() == plugin.getConfigHandler().tamertoolid) {
+                        LivingEntity lent = (LivingEntity) entity;
+                        EntityType type = EntityType.fromName(lent.getClass().getCanonicalName().split("Craft")[1]);
+                        Ageable a = (Ageable) lent;
+                        String cname = type.getName().toLowerCase();
+
+                        player.sendMessage(ChatColor.BLUE + "Creature info : ");
+                        player.sendMessage(ChatColor.BLUE + "type : " + ChatColor.YELLOW + cname);
+                        player.sendMessage(ChatColor.BLUE + "health : " + ChatColor.YELLOW + lent.getHealth());
+                        player.sendMessage(ChatColor.BLUE + "age : " + ChatColor.YELLOW + a.getAge() + (a.getAgeLock()? ChatColor.RED+" L":""));
+
                     }
                 }
             }
