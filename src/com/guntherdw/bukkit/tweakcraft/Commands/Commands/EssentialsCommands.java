@@ -282,7 +282,7 @@ public class EssentialsCommands {
                 toadd = ChatColor.GOLD + entry.getKey() + ChatColor.WHITE +
                     " : " + ChatColor.YELLOW + annotation.description();
                 if (aliases) {
-                    List<String> aliaseslist = plugin.getCommand(entry.getKey()).getAliases();
+                    List<String> aliaseslist = commh.getAliases(entry.getKey());
                     if (aliaseslist.size() > 0) {
                         toadd += ChatColor.WHITE + " (";
                         for (String alias : aliaseslist) {
@@ -1115,7 +1115,7 @@ public class EssentialsCommands {
                     if(lent instanceof Tameable) {
                         if (tame) {
                             ((Tameable) lent).setOwner(victimplayer);
-                            ((Tameable) lent).setTamed(true);
+                            // ((Tameable) lent).setTamed(true);
                         }
                     }
 

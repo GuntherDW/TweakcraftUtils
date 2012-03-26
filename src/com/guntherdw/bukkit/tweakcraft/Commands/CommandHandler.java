@@ -32,9 +32,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -45,6 +43,7 @@ public class CommandHandler {
     private Map<String, iCommand> commandMap = new HashMap<String, iCommand>();
     private Map<String, Method> newCommandMap = new HashMap<String, Method>();
     private Map<String, Method> aliasCommandMap = new HashMap<String, Method>();
+    private Map<String, List<String>> commandAliases = new HashMap<String, List<String>>();
     private Map<Method, Object> instanceMap = new HashMap<Method, Object>();
 
     /** Command Classes **/
@@ -107,16 +106,28 @@ public class CommandHandler {
                 logger.warning("[TweakcraftUtils] Command : " + aliases[0] + "!");
                 return;
             }
+            List<String> al = new ArrayList<String>();
             for (int x = 0; x < aliases.length; x++) {
 
                 if (x == 0)
                     newCommandMap.put(aliases[x], method);
-                else
+                else {
+                    al.add(aliases[x]);
                     aliasCommandMap.put(aliases[x], method);
+                }
             }
+            // if(al.size()>0)
+            commandAliases.put(aliases[0], al);
 
             instanceMap.put(method, instance);
         }
+    }
+
+    public List<String> getAliases(String command) {
+        // if(newCommandMap.containsKey(command))
+            return commandAliases.get(command);
+        // else
+        //    return new ArrayList<String>();
     }
 
     @SuppressWarnings("unchecked")

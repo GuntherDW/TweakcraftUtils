@@ -604,7 +604,7 @@ public class TweakcraftPlayerListener implements Listener {
 
         // if (plugin.hasNick(name)) {
         // event.setQuitMessage(ChatColor.YELLOW + player.getDisplayName() + ChatColor.YELLOW + " left the game.");
-        event.setQuitMessage(ChatColor.DARK_GRAY + " - " + player.getDisplayName() + ChatColor.DARK_GRAY + " / left the game.");
+        event.setQuitMessage(ChatColor.RED + " - " + player.getDisplayName() + ChatColor.DARK_GRAY + " / left the game.");
         // }
 
         if (lp.isInvisible()) { // Invisible players do not send out a "left" message
