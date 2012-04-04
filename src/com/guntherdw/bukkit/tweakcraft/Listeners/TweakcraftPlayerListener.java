@@ -87,8 +87,7 @@ public class TweakcraftPlayerListener implements Listener {
         if (line.contains(" ")) {
             String c[] = cmd.split(" ");
             cmd = c[0];
-            for (int x = 1; x < c.length; x++)
-                args.add(c[x]);
+            args.addAll(Arrays.asList(c).subList(1, c.length));
         }
         if (cmd.startsWith("/") && cmd.length() > 1)
             cmd = cmd.substring(1);
@@ -104,7 +103,7 @@ public class TweakcraftPlayerListener implements Listener {
             Method method = plugin.getCommandHandler().getCommand(cmd.toLowerCase());
             if (method != null) {
                 event.setCancelled(true);
-                plugin.getCommandHandler().executeCommand(event.getPlayer(), cmd, args.toArray(new String[0]));
+                plugin.getCommandHandler().executeCommand(event.getPlayer(), cmd, args.toArray(new String[args.size()]));
                 return;
             }
         }
@@ -270,10 +269,7 @@ public class TweakcraftPlayerListener implements Listener {
 
     public boolean nickTakenCheck(String playername, String nick) {
         if (nicks.values().contains(nick)) {
-            if (getNick(playername).equals(nick))
-                return false;
-            else
-                return true;
+            return !getNick(playername).equals(nick);
         }
         return false;
     }
@@ -648,8 +644,8 @@ public class TweakcraftPlayerListener implements Listener {
                         }
                     }
 
-                    if ((event.getItem() == null && i.intValue() == 0)
-                        || (event.getItem() != null && event.getItem().getTypeId() == i.intValue())) {
+                    if ((event.getItem() == null && i == 0)
+                        || (event.getItem() != null && event.getItem().getTypeId() == i)) {
                         Action a = event.getAction();
                         if ((!bind.get(i) && (a.equals(Action.RIGHT_CLICK_AIR) || a.equals(Action.RIGHT_CLICK_BLOCK)))
                             || (bind.get(i) && (a.equals(Action.LEFT_CLICK_AIR) || a.equals(Action.LEFT_CLICK_BLOCK)))) {
@@ -743,10 +739,8 @@ public class TweakcraftPlayerListener implements Listener {
 
     private boolean isTweakTravelSign(Block block) {
         BlockState state = block.getState();
-        if (state.getType().equals(Material.WALL_SIGN) && ((Sign) state).getLine(0).equals("[TweakTravel]"))
-            return true;
+        return state.getType().equals(Material.WALL_SIGN) && ((Sign) state).getLine(0).equals("[TweakTravel]");
 
-        return false;
     }
 
     @EventHandler(priority = EventPriority.HIGH)

@@ -56,6 +56,7 @@ public class WorldChat extends ChatMode {
         return true;
     }
 
+    @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -73,6 +74,7 @@ public class WorldChat extends ChatMode {
         return true;
     }
 
+    @Override
     public Set<Player> getRecipients(CommandSender sender) {
         Set<Player> recp = new HashSet<Player>();
         if (sender instanceof Player) {
@@ -87,6 +89,7 @@ public class WorldChat extends ChatMode {
         return recp;
     }
 
+    @Override
     public String getDescription() {
         return "World Chat (chat in your current world)";
     }
@@ -96,10 +99,12 @@ public class WorldChat extends ChatMode {
         return plugin.getConfigHandler().enableWorldChat;
     }
 
+    @Override
     public String getColor() {
         return ChatColor.DARK_GREEN.toString();
     }
 
+    @Override
     public String getPrefix() {
         return this.getColor() + "W" + ChatColor.WHITE;
     }

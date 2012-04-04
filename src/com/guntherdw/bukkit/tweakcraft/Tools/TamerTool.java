@@ -184,8 +184,7 @@ public class TamerTool {
             Boolean allowed = true;
 
             Boolean sitting = tameable instanceof Ocelot ? ((Ocelot)tameable).isSitting() :
-                tameable instanceof Wolf   ? ((Wolf)tameable).isSitting()   :
-                    false;
+                tameable instanceof Wolf && ((Wolf) tameable).isSitting();
 
 
             if(sitting) {
@@ -235,7 +234,7 @@ public class TamerTool {
             }
 
             if(allowed)
-                ((LivingEntity)tameable).setHealth(20);
+                ((LivingEntity)tameable).setHealth(((LivingEntity)tameable).getMaxHealth());
             else
                 player.sendMessage(ChatColor.RED + "You do not have permission to heal this tameables!");
         } else {

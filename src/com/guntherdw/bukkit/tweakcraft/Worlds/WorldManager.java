@@ -20,12 +20,12 @@ package com.guntherdw.bukkit.tweakcraft.Worlds;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.FlatGen;
+import com.guntherdw.bukkit.tweakcraft.Worlds.Generators.PlotGen;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator;
 
@@ -83,6 +83,17 @@ public class WorldManager {
             if(split.length>4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
             plugin.getLogger().info("[TweakcraftUtils] Utilising FlatGen for world "+worldName);
             return fg;
+        } else if(split[0].equalsIgnoreCase("plotgen")) {
+            PlotGen fg = new PlotGen();
+            if(split.length>1) fg.setmapHeight(Integer.parseInt(split[1]));
+            if(split.length>2) fg.setNormal(Byte.parseByte(split[2]));
+            if(split.length>3) fg.setToplayer(Byte.parseByte(split[3]));
+            if(split.length>4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
+            if(split.length>5) fg.setPlotSize(Integer.parseInt(split[5]));
+            plugin.getLogger().info("[TweakcraftUtils] Utilising PlotGen for world "+worldName);
+            plugin.getLogger().info("[TweakcraftUtils] PlotSize : "+fg.getPlotSize());
+            // System.out.println("[");
+            return fg;
         }
         // }
         /**
@@ -105,7 +116,7 @@ public class WorldManager {
             }
 
             iWorld w = worlds.get(worldname);
-            w.setMOTD(lines.toArray(new String[0]));
+            w.setMOTD(lines.toArray(new String[lines.size()]));
             plugin.getLogger().info("[TweakcraftUtils] Loaded MOTD for world "+worldname+"!");
         } catch (FileNotFoundException e) {
             plugin.getLogger().warning("[TweakcraftUtils] Couldn't find MOTD for world "+worldname+"!");
@@ -152,7 +163,7 @@ public class WorldManager {
                 netherWorldOnline = true;
         }
 
-        if (netherWorldOnline == false && globalConfig.getBoolean("worlds.enablenether", false)) {
+        if (!netherWorldOnline && globalConfig.getBoolean("worlds.enablenether", false)) {
             String netherfolder = globalConfig.getString("worlds.netherfolder", "nether");
             if (!netherfolder.equalsIgnoreCase("")) {
                 plugin.getLogger().info("[TweakcraftUtils] Loading the netherworld!");
@@ -189,7 +200,7 @@ public class WorldManager {
                 } */
 
                 Environment wenv = null;
-                if(env==null || env=="") {
+                if(env==null || env.equals("")) {
                     plugin.getLogger().info("[TweakcraftUtils] World "+node+" does not have a valid environment definition, using \"normal\"");
                     wenv = Environment.NORMAL;
                 } else if (env.equalsIgnoreCase("nether")) {

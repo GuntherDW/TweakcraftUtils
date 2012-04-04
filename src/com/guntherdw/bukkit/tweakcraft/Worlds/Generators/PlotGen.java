@@ -1,28 +1,9 @@
-/*
- * Copyright (c) 2011 GuntherDW
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
-
 package com.guntherdw.bukkit.tweakcraft.Worlds.Generators;
 
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldType;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.util.Random;
@@ -30,79 +11,73 @@ import java.util.Random;
 /**
  * @author GuntherDW
  */
-public class FlatGen extends ChunkGenerator {
+public class PlotGen extends FlatGen {
 
     private WorldManager wm = null;
     private byte toplayer = (byte) Material.GRASS.getId();
     private byte normal = (byte) Material.DIRT.getId();
     private int height = 64;
     private boolean bedrockBottom = true;
-    private World world = null;
+    private int plotSize = 32;
+    private int plotSize_parsed = plotSize + 7;
 
+    @Override
     public boolean isBedrockBottom() {
         return bedrockBottom;
     }
 
+    public void setPlotSize(int plotSize) {
+        this.plotSize = plotSize;
+        this.plotSize_parsed = plotSize + 7;
+    }
+
+    @Override
     public void setBedrockBottom(boolean bedrockBottom) {
         this.bedrockBottom = bedrockBottom;
     }
 
+    @Override
     public void assignWorldManager(WorldManager instance) {
         this.wm = instance;
     }
 
+    @Override
     public void setToplayer(byte md) {
         toplayer = md;
     }
 
+    @Override
     public void setNormal(byte md) {
         normal = md;
     }
 
+    @Override
     public void setmapHeight(int height) {
         this.height = height;
     }
 
+    @Override
     public WorldManager getWm() {
         return wm;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public byte getNormal() {
         return normal;
     }
 
+    @Override
     public byte getToplayer() {
         return toplayer;
     }
 
-    /* @Override
-    public byte[] generate(World world, Random random, int cx, int cz) {
-        // byte[] result = new byte[32768];
-        byte[] result = new byte[65536];
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < 128; y++) {
-                    if (y == 0 && bedrockBottom)
-                        result[(x * 16 + z) * 256 + y] = (byte) 7;
-                    else if (y < height)
-                        result[(x * 16 + z) * 256 + y] = normal;
-                    else if (y == height)
-                        result[(x * 16 + z) * 256 + y] = toplayer;
-                    else
-                        result[(x * 16 + z) * 256 + y] = (byte) 0;
-                }
-                // result[(x * 16 + z) * 128 + y]
-            }
-        }
-        return result;
-    } */
-
-    @Override
     @Deprecated
+    @Override
     public byte[] generate(World world, Random random, int x, int z) {
         return null;
     }
@@ -112,16 +87,56 @@ public class FlatGen extends ChunkGenerator {
         return null;
     }
 
+    boolean isBorder(int x, int z) {
+        return ( x      % plotSize_parsed == 0) || ( z      % plotSize_parsed == 0)
+            || ((x + 1) % plotSize_parsed == 0) || ((z + 1) % plotSize_parsed == 0)
+            || ((x + 2) % plotSize_parsed == 0) || ((z + 2) % plotSize_parsed == 0)
+            || ((x - 1) % plotSize_parsed == 0) || ((z - 1) % plotSize_parsed == 0)
+            || ((x - 2) % plotSize_parsed == 0) || ((z - 2) % plotSize_parsed == 0);
+    }
+
+    boolean isDefiniteBorder(int x, int z) {
+        return ((x + 3) % plotSize_parsed == 0) || ((z + 3) % plotSize_parsed == 0)
+            || ((x - 3) % plotSize_parsed == 0) || ((z - 3) % plotSize_parsed == 0);
+    }
+
     @Override
     public byte[][] generateBlockSections(World world, Random random, int cx, int cz, BiomeGrid biomes) {
-        if(this.world == null) this.world = world;
-
         int maxHeight = world.getMaxHeight();
         byte[][] result = new byte[maxHeight / 16][];
+        int realChunkX = cx << 4;
+        int realChunkZ = cz << 4;
 
-        for(int x = 0; x < 16; x++) {
-            for(int z = 0; z < 16; z++) {
-                for(int y = 0; y < maxHeight; y++) {
+        /* System.out.println("cx : "+cx);
+        System.out.println("cz : "+cz); */
+
+        for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int y = 0; y < maxHeight; y++) {
+                    if (y == 0 && bedrockBottom)
+                        setBlock(result, x, y, z, (byte) 7);
+                    else if (y < height)
+                        setBlock(result, x, y, z, normal);
+                    else if (y == height)
+                        setBlock(result, x, y, z, toplayer);
+                    else
+                        setBlock(result, x, y, z, (byte) 0);
+
+                    if(isBorder(realChunkX + x, realChunkZ + z) && y == height) {
+                        setBlock(result, x, y, z, (byte) Material.WOOD.getId());
+                    } else if(isDefiniteBorder(realChunkX + x, realChunkZ + z) && y == height) {
+                        setBlock(result, x, y, z, (byte) Material.DOUBLE_STEP.getId());
+                    } /* else if(isDefiniteBorder(realChunkZ + x, realChunkZ + z) && y == height + 1) {
+                        if(!isBorder(realChunkX + x, realChunkZ + z))
+                            setBlock(result, x, y, z, (byte) Material.STEP.getId());
+                    } */
+                }
+            }
+        }
+
+        /* for (int x = 0; x < 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                for (int y = 0; y < maxHeight; y++) {
                     if (y == 0 && bedrockBottom)
                         setBlock(result, x, y, z, (byte) 7);
                     else if (y < height)
@@ -132,12 +147,13 @@ public class FlatGen extends ChunkGenerator {
                         setBlock(result, x, y, z, (byte) 0);
                 }
             }
-        }
+        } */
 
         // return null; // Default - returns null, which drives call to generate()
         return result;
     }
 
+    @Override
     public void setBlock(byte[][] result, int x, int y, int z, byte blkid) {
         if (result[y >> 4] == null) {
             result[y >> 4] = new byte[4096];
@@ -145,9 +161,10 @@ public class FlatGen extends ChunkGenerator {
         result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
     }
 
+    @Override
     public byte getBlock(byte[][] result, int x, int y, int z) {
         if (result[y >> 4] == null) {
-            return (byte)0;
+            return (byte) 0;
         }
         return result[y >> 4][((y & 0xF) << 8) | (z << 4) | x];
     }
@@ -158,5 +175,9 @@ public class FlatGen extends ChunkGenerator {
         int z = random.nextInt(200) - 100;
         int y = world.getHighestBlockYAt(x, z);
         return new Location(world, x, y, z);
+    }
+
+    public int getPlotSize() {
+        return plotSize;
     }
 }

@@ -251,7 +251,7 @@ public class EssentialsCommands {
 
     @SuppressWarnings("unchecked")
     @aCommand(
-        aliases = {"help"},
+        aliases = {"helptcutils"},
         permissionBase = "help",
         description = "What you're reading right now",
         section = "essentials"
@@ -345,12 +345,12 @@ public class EssentialsCommands {
                 pagereq = 0;
             }
         }
-        if (pagereq.intValue() < 0 || pagereq.intValue() > maxPage - 1) {
+        if (pagereq < 0 || pagereq > maxPage - 1) {
             throw new CommandUsageException("Invalid page number!");
         }
 
         sender.sendMessage(ChatColor.AQUA + "Commands available to you : Page " + (pagereq + 1) + "/" + maxPage);
-        int start = pagereq.intValue() * hpp;
+        int start = pagereq * hpp;
         int end = start + hpp;
 
         for (int x = start; x < end && x < cma.size(); x++) {

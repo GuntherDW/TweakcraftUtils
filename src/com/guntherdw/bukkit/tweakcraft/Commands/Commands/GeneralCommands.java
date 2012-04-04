@@ -265,6 +265,8 @@ public class GeneralCommands {
             String permNode = "enchant";
             if(args.length>0 && args[0].equalsIgnoreCase("disenchant"))
                 permNode+=".disenchant";
+            else
+                permNode+=".enchant";
 
             if(!plugin.check((Player)sender, permNode))  {
                 throw new PermissionsException(command);
@@ -639,10 +641,7 @@ public class GeneralCommands {
                         if(ent instanceof Wolf)
                         {
                             Wolf wolf = (Wolf) ent;
-                            if(wolf.isAngry() || !wolf.isTamed())
-                                allowed = true;
-                            else
-                                allowed = false;
+                            allowed = wolf.isAngry() || !wolf.isTamed();
                         }
 
                         if (type != null) {

@@ -428,6 +428,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return worldListener;
     }
 
+    @Override
     public Logger getLogger() {
         return log;
     }
@@ -628,6 +629,7 @@ public class TweakcraftUtils extends JavaPlugin {
     }
 
 
+    @Override
     public void onEnable() {
         pdfFile = this.getDescription();
         instance = this;
@@ -668,6 +670,8 @@ public class TweakcraftUtils extends JavaPlugin {
         if (configHandler.enableDebug)
             commandHandler.checkCommands();
 
+        commandHandler.addHelpTopics();
+
         /* itemDB.writeDB(); */
 
         playerListener.reloadInvisTable();
@@ -697,6 +701,7 @@ public class TweakcraftUtils extends JavaPlugin {
         return donottplist;
     }
 
+    @Override
     public void onDisable() {
         instance = null;
         log.info("[" + pdfFile.getName() + "] Shutting down!");
@@ -707,10 +712,12 @@ public class TweakcraftUtils extends JavaPlugin {
         return configHandler;
     }
 
+    @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return worldmanager.getDefaultWorldGenerator(worldName, id);
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] unfilteredargs) {
 
         List<String> argsa = new ArrayList<String>();
@@ -722,7 +729,7 @@ public class TweakcraftUtils extends JavaPlugin {
                 argc++;
             }
         }
-        String[] args = argsa.toArray(new String[0]);
+        String[] args = argsa.toArray(new String[argsa.size()]);
 
         if (commandHandler.getCommandMap().containsKey(cmd.getName())) {
             return commandHandler.executeCommand(sender, cmd.getName(), unfilteredargs);

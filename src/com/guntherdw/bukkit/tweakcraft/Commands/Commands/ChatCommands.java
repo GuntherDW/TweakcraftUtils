@@ -137,7 +137,7 @@ public class ChatCommands {
     )
     public boolean zoneChat(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if (plugin.getConfigHandler().enableZones == false) {
+        if (!plugin.getConfigHandler().enableZones) {
             throw new CommandUsageException("Zones not enabled!");
         }
 

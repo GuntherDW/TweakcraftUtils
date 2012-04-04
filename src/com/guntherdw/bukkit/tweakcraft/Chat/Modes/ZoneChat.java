@@ -63,6 +63,7 @@ public class ZoneChat extends ChatMode {
         return true;
     }
 
+    @Override
     public Set<Player> getRecipients(CommandSender sender) {
         Set<Player> recp = new HashSet<Player>();
         if (sender instanceof Player) {
@@ -86,6 +87,7 @@ public class ZoneChat extends ChatMode {
         return recp;
     }
 
+    @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -103,6 +105,7 @@ public class ZoneChat extends ChatMode {
         return true;
     }
 
+    @Override
     public String getDescription() {
         return "Zones zone chat!";
     }
@@ -127,10 +130,12 @@ public class ZoneChat extends ChatMode {
         return plugin.getConfigHandler().enableZones;
     }
 
+    @Override
     public String getColor() {
         return ChatColor.DARK_PURPLE.toString();
     }
 
+    @Override
     public String getPrefix() {
         return this.getColor() + "Z" + ChatColor.WHITE;
     }

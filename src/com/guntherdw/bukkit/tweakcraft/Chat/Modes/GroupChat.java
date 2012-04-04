@@ -34,27 +34,33 @@ public class GroupChat extends ChatMode {
         super(instance);
     }
 
+    @Override
     public boolean sendMessage(CommandSender sender, String message) {
         return false;
     }
 
+    @Override
     public Set<Player> getRecipients(CommandSender sender) {
         return null;
     }
 
+    @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
         return false;
     }
 
+    @Override
     public String getDescription() {
         return null;
     }
 
 
+    @Override
     public String getColor() {
         return null;
     }
 
+    @Override
     public String getPrefix() {
         return null;
     }

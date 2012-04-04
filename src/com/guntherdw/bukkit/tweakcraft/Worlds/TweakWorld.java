@@ -264,11 +264,18 @@ public class TweakWorld implements iWorld {
             }
 
             if (seed != null)
-                worldCreator.seed(seed.longValue());
+                worldCreator.seed(seed);
 
             if (enabled) {
                 worldCreator.environment(env);
+
+                if(worldCreator.generator() instanceof FlatGen) {
+                    this.wm.getPlugin().getLogger().info("[TweakcraftUtils] World " + worldName + " is using FlatGen so setting WorldType to FLAT!");
+                    worldCreator.type(WorldType.FLAT);
+                }
+
                 world = worldCreator.createWorld();
+
                 world.setKeepSpawnInMemory(this.getSpawnChunksActive());
                 world.setPVP(pvp);
             }

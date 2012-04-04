@@ -49,6 +49,7 @@ public class AdminChat extends ChatMode {
         }
     }
 
+    @Override
     public boolean sendMessage(CommandSender sender, String message) {
 
         String sendername = "";
@@ -97,6 +98,7 @@ public class AdminChat extends ChatMode {
         return true;
     }
 
+    @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
 
         String msg = message;
@@ -128,6 +130,7 @@ public class AdminChat extends ChatMode {
         return true;
     }
 
+    @Override
     public Set<Player> getRecipients(CommandSender sender) {
         Set<Player> recp = new HashSet<Player>();
         for (String m : subscribers) {
@@ -170,6 +173,7 @@ public class AdminChat extends ChatMode {
         return admins;
     }
 
+    @Override
     public String getDescription() {
         return "Admin chat (needs permissions!)";
     }
@@ -190,10 +194,12 @@ public class AdminChat extends ChatMode {
         return subscribers.contains(playername);
     }
 
+    @Override
     public String getColor() {
         return ChatColor.GREEN.toString();
     }
 
+    @Override
     public String getPrefix() {
         return this.getColor() + "A" + ChatColor.WHITE.toString();
     }

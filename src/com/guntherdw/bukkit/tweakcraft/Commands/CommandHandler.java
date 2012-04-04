@@ -27,6 +27,7 @@ import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 
@@ -79,55 +80,78 @@ public class CommandHandler {
         teleportationCommands = new TeleportationCommands(instance);
         weatherCommands = new WeatherCommands(instance);
 
-        addCommandClass(adminCommands);
-        addCommandClass(chatCommands);
-        addCommandClass(debugCommands);
-        addCommandClass(essentialsCommands);
-        addCommandClass(generalCommands);
-        addCommandClass(teleportationCommands);
-        addCommandClass(weatherCommands);
+        addCommandClass(adminCommands, false);
+        addCommandClass(chatCommands, false);
+        addCommandClass(debugCommands, false);
+        addCommandClass(essentialsCommands, false);
+        addCommandClass(generalCommands, false);
+        addCommandClass(teleportationCommands, false);
+        addCommandClass(weatherCommands, false);
     }
 
     public void addCommandClass(Object instance) {
+        this.addCommandClass(instance, true);
+    }
+
+    public void addCommandClass(Object instance, boolean injectIntoBukkit) {
         for (Method m : instance.getClass().getDeclaredMethods()) {
             if (m.getAnnotation(aCommand.class) != null)
-                injectCommand(m, instance);
+                injectCommand(m, instance, injectIntoBukkit);
         }
     }
 
 
-    public void injectCommand(Method method, Object instance) {
+    public void injectCommand(Method method, Object instance, boolean injectIntoBukkit) {
         aCommand annotation = method.getAnnotation(aCommand.class);
         String[] aliases = annotation.aliases();
         if (aliases.length > 0) {
-            if (newCommandMap.containsKey(aliases[0])) {
+
+            String commandName = aliases[0];
+            String[] commandAliases_array = new String[aliases.length-1];
+            if(aliases.length > 1)
+                System.arraycopy(aliases, 1, commandAliases_array, 0, aliases.length-1);
+
+
+            if (newCommandMap.containsKey(commandName)) {
                 logger.warning("[TweakcraftUtils] Duplicate command found!");
                 logger.warning("[TweakcraftUtils] Method : " + method.getName() + "!");
-                logger.warning("[TweakcraftUtils] Command : " + aliases[0] + "!");
+                logger.warning("[TweakcraftUtils] Command : " + commandName + "!");
                 return;
             }
             List<String> al = new ArrayList<String>();
-            for (int x = 0; x < aliases.length; x++) {
+            newCommandMap.put(commandName, method);
 
-                if (x == 0)
-                    newCommandMap.put(aliases[x], method);
-                else {
-                    al.add(aliases[x]);
-                    aliasCommandMap.put(aliases[x], method);
-                }
+            for(String alias : commandAliases_array) {
+                al.add(alias);
+                aliasCommandMap.put(alias, method);
             }
-            // if(al.size()>0)
-            commandAliases.put(aliases[0], al);
+
+
+            this.commandAliases.put(commandName, al);
 
             instanceMap.put(method, instance);
         }
     }
 
     public List<String> getAliases(String command) {
-        // if(newCommandMap.containsKey(command))
-            return commandAliases.get(command);
-        // else
-        //    return new ArrayList<String>();
+        return commandAliases.get(command);
+    }
+
+    public void addHelpTopics() {
+
+        for(Map.Entry<String, Method> entry : newCommandMap.entrySet()) {
+
+            String commandName = entry.getKey();
+            Method m = entry.getValue();
+
+            aCommand annotation = m.getAnnotation(aCommand.class);
+            if(annotation == null)
+                continue;
+
+            PluginCommand pcmd = plugin.getCommand(commandName);
+            if(pcmd!=null && !annotation.permissionBase().equals(""))
+                pcmd.setPermission("tweakcraftutils."+annotation.permissionBase());
+        }
     }
 
     @SuppressWarnings("unchecked")

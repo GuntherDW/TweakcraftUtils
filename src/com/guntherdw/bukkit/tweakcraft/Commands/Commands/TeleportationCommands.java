@@ -243,11 +243,7 @@ public class TeleportationCommands {
                             }
                         }
 
-                        if (playertpoff && plugin.check(player, "forcetp")) {
-                            override = true;
-                        } else {
-                            override = false;
-                        }
+                        override = playertpoff && plugin.check(player, "forcetp");
 
                         if (!player.getWorld().getName().equals(p.getWorld().getName())) {
                             if (!plugin.check(player, "worlds." + p.getWorld().getName() + ".tp"))
@@ -634,16 +630,15 @@ public class TeleportationCommands {
                         if (wolf.isAngry() || !wolf.isTamed())
                             allowed = true;
                         else {
-                            allowed = wolf.getTarget() != null && wolf.getTarget().equals(victim.getName());
+                            allowed = wolf.getTarget() != null && wolf.getTarget().equals(victim);
                         }
                     }
                     EntityType type = null;
                     type = EntityType.fromName(crea.getClass().getCanonicalName().split("Craft")[1]);
 
-                    if (cnum == -1 || ctype == type || crea.getEntityId() == cnum.intValue()) {
+                    if (cnum == -1 || ctype == type || crea.getEntityId() == cnum) {
                         if (allowed)
                             crea.teleport(victim);
-                        continue;
                     }
                 }
 

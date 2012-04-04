@@ -181,7 +181,7 @@ commands:
   thunder:
     description: Turn thunder on or off at command
     usage: /<command> <world> <on|off>
-  help:
+  helptcutils:
     description: What you're reading right now
     usage: /<command>
   tpback:

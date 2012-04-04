@@ -68,6 +68,7 @@ public class RegionChat extends ChatMode {
         return true;
     }
 
+    @Override
     public Set<Player> getRecipients(CommandSender sender) {
         Set<Player> recp = new HashSet<Player>();
         List<String> regionIds = null;
@@ -106,6 +107,7 @@ public class RegionChat extends ChatMode {
         return recp;
     }
 
+    @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -123,6 +125,7 @@ public class RegionChat extends ChatMode {
         return true;
     }
 
+    @Override
     public String getDescription() {
         return "WorldGuard regions chat!";
     }
@@ -156,10 +159,12 @@ public class RegionChat extends ChatMode {
         return plugin.getConfigHandler().enableWorldGuard;
     }
 
+    @Override
     public String getColor() {
         return ChatColor.AQUA.toString();
     }
 
+    @Override
     public String getPrefix() {
         return this.getColor() + "R" + ChatColor.WHITE;
     }

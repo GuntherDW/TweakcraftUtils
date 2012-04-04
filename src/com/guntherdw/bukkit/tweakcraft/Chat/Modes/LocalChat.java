@@ -57,6 +57,7 @@ public class LocalChat extends ChatMode {
         return true;
     }
 
+    @Override
     public boolean broadcastMessage(CommandSender sender, String message) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
@@ -74,6 +75,7 @@ public class LocalChat extends ChatMode {
         return true;
     }
 
+    @Override
     public Set<Player> getRecipients(CommandSender sender) {
         Set<Player> recp = new HashSet<Player>();
         if (sender instanceof Player) {
@@ -91,6 +93,7 @@ public class LocalChat extends ChatMode {
         return recp;
     }
 
+    @Override
     public String getDescription() {
         return "Chat locally (" + plugin.getConfigHandler().localchatdistance + " blocks)";
     }
@@ -100,10 +103,12 @@ public class LocalChat extends ChatMode {
         return plugin.getConfigHandler().enableLocalChat && plugin.getConfigHandler().localchatdistance > 0;
     }
 
+    @Override
     public String getColor() {
         return ChatColor.YELLOW.toString();
     }
 
+    @Override
     public String getPrefix() {
         return this.getColor() + "L" + ChatColor.WHITE;
     }

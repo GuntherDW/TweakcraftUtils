@@ -74,18 +74,18 @@ public class PermsEx extends Permissions {
     @Override
     public boolean inGroup(String world, String group, Player player) {
         PermissionUser puser = permsManager.getUser(player);
-        return puser!=null?puser.inGroup(world, group):false;
+        return puser != null && puser.inGroup(world, group);
     }
 
     @Override
     public boolean inSingleGroup(String world, String group, Player player) {
         PermissionUser puser = permsManager.getUser(player);
-        return puser!=null?puser.inGroup(group, world, false):false;
+        return puser != null && puser.inGroup(group, world, false);
     }
 
     @Override
     public boolean hasPermission(String world, Player player, String permissionbit) {
         PermissionUser puser = permsManager.getUser(player);
-        return puser!=null?puser.has(permissionbit, world):false;
+        return puser != null && puser.has(permissionbit, world);
     }
 }

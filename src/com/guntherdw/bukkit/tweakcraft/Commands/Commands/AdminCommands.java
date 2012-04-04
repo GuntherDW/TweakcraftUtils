@@ -493,7 +493,7 @@ public class AdminCommands {
                                 }
                                 iw.setEnabled(false);
                                 sender.sendMessage(ChatColor.GOLD + "Unloading world "+iw.getName());
-                                plugin.getServer().unloadWorld(iw.getName(), arg==null?true:Boolean.parseBoolean(arg));
+                                plugin.getServer().unloadWorld(iw.getName(), arg == null || Boolean.parseBoolean(arg));
                             } else {
                                 sender.sendMessage(ChatColor.RED+"That world wasn't enabled!");
                             }

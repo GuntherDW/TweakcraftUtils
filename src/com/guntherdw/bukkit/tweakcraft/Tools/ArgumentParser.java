@@ -221,7 +221,7 @@ public final class ArgumentParser {
             }
             x++;
         }
-        return args.toArray(new String[0]);
+        return args.toArray(new String[args.size()]);
     }
 
     public String[] getNormalArgs() {
