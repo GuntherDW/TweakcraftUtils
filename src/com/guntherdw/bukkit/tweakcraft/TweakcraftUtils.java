@@ -169,7 +169,7 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public LocalPlayer wrapPlayer(Player player) {
         LocalPlayer p = this.wrapPlayer(player.getName());
-        if (p.getBukkitPlayer() == null)
+        if (p.getBukkitPlayer() == null || p.getBukkitPlayer() != player)
             p.setBukkitPlayer(player);
 
         return p;
@@ -649,6 +649,7 @@ public class TweakcraftUtils extends JavaPlugin {
         this.cuiPlayers = new HashSet<Player>();
         this.mod_InfDuraplayers = new HashSet<Player>();
 
+        this.setupWorldEdit();
         this.setupWorldGuard();
         this.setupCraftIRC();
         this.setupZones();

@@ -19,6 +19,8 @@
 package com.guntherdw.bukkit.tweakcraft.Packages;
 
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.sk89q.worldedit.blocks.ItemType;
+import org.bukkit.Bukkit;
 
 import java.io.*;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ import java.util.Map;
 public class ItemDB {
 
     private TweakcraftUtils plugin;
-    private Map<String, com.guntherdw.bukkit.tweakcraft.Packages.Item> itemmap;
+    private Map<String, Item> itemmap;
 
     public ItemDB(TweakcraftUtils instance) {
         this.plugin = instance;
@@ -72,6 +74,16 @@ public class ItemDB {
         if (itemmap.containsKey(name)) {
             return itemmap.get(name);
         } else {
+            // try WorldEdit first!
+            if(plugin.getWorldEdit()!=null) {
+                ItemType it = ItemType.lookup(name, true);
+                if(it!=null) {
+                    Item item = new Item(it.getID(), (byte) 0, 64);
+                    // Let's add that to the cache, for performance reasons
+                    itemmap.put(name, item);
+                    return item;
+                }
+            }
             return null;
         }
     }

@@ -25,6 +25,7 @@ import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.WorldType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.generator.ChunkGenerator;
@@ -55,11 +56,11 @@ public class WorldManager {
         boolean isTheEndEnabled = plugin.getServer().getAllowEnd();
 
         int max = 0;
-        if(isNetherEnabled) max++;
-        if(isTheEndEnabled) max++;
+        if (isNetherEnabled) max++;
+        if (isTheEndEnabled) max++;
 
         Set<World> worlds = new HashSet<World>();
-        for(int i=0; i<=max; i++)
+        for (int i = 0; i <= max; i++)
             worlds.add(plugin.getServer().getWorlds().get(i));
 
         return worlds;
@@ -75,23 +76,23 @@ public class WorldManager {
             iWorld iw = worlds.get(worldName); */
         // I split on _'s, so it's flatgen_height_bottomlayer_proplayer_bedrocklayer
         String[] split = id.split("_");
-        if(split[0].equalsIgnoreCase("flatgen")) {
+        if (split[0].equalsIgnoreCase("flatgen")) {
             FlatGen fg = new FlatGen();
-            if(split.length>1) fg.setmapHeight(Integer.parseInt(split[1]));
-            if(split.length>2) fg.setNormal(Byte.parseByte(split[2]));
-            if(split.length>3) fg.setToplayer(Byte.parseByte(split[3]));
-            if(split.length>4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
-            plugin.getLogger().info("[TweakcraftUtils] Utilising FlatGen for world "+worldName);
+            if (split.length > 1) fg.setmapHeight(Integer.parseInt(split[1]));
+            if (split.length > 2) fg.setNormal(Byte.parseByte(split[2]));
+            if (split.length > 3) fg.setToplayer(Byte.parseByte(split[3]));
+            if (split.length > 4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
+            plugin.getLogger().info("[TweakcraftUtils] Utilising FlatGen for world " + worldName);
             return fg;
-        } else if(split[0].equalsIgnoreCase("plotgen")) {
+        } else if (split[0].equalsIgnoreCase("plotgen")) {
             PlotGen fg = new PlotGen();
-            if(split.length>1) fg.setmapHeight(Integer.parseInt(split[1]));
-            if(split.length>2) fg.setNormal(Byte.parseByte(split[2]));
-            if(split.length>3) fg.setToplayer(Byte.parseByte(split[3]));
-            if(split.length>4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
-            if(split.length>5) fg.setPlotSize(Integer.parseInt(split[5]));
-            plugin.getLogger().info("[TweakcraftUtils] Utilising PlotGen for world "+worldName);
-            plugin.getLogger().info("[TweakcraftUtils] PlotSize : "+fg.getPlotSize());
+            if (split.length > 1) fg.setmapHeight(Integer.parseInt(split[1]));
+            if (split.length > 2) fg.setNormal(Byte.parseByte(split[2]));
+            if (split.length > 3) fg.setToplayer(Byte.parseByte(split[3]));
+            if (split.length > 4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
+            if (split.length > 5) fg.setPlotSize(Integer.parseInt(split[5]));
+            plugin.getLogger().info("[TweakcraftUtils] Utilising PlotGen for world " + worldName);
+            plugin.getLogger().info("[TweakcraftUtils] PlotGen PlotSize : " + fg.getPlotSize());
             // System.out.println("[");
             return fg;
         }
@@ -103,25 +104,25 @@ public class WorldManager {
     }
 
     public void loadMotd(String worldname) {
-        if(!plugin.getConfigHandler().enableWorldMOTD || !worlds.containsKey(worldname)) return;
+        if (!plugin.getConfigHandler().enableWorldMOTD || !worlds.containsKey(worldname)) return;
 
-        try{
-            File motd = new File(plugin.getDataFolder()+plugin.getConfigHandler().getDirSeperator()+"motd-"+worldname+".txt");
-            if(!motd.exists()) return;
+        try {
+            File motd = new File(plugin.getDataFolder() + plugin.getConfigHandler().getDirSeperator() + "motd-" + worldname + ".txt");
+            if (!motd.exists()) return;
             BufferedReader fr = new BufferedReader(new FileReader(motd));
             String line = null;
             List<String> lines = new ArrayList<String>();
-            while((line = fr.readLine()) != null) {
+            while ((line = fr.readLine()) != null) {
                 lines.add(line.replace('&', '§'));
             }
 
             iWorld w = worlds.get(worldname);
             w.setMOTD(lines.toArray(new String[lines.size()]));
-            plugin.getLogger().info("[TweakcraftUtils] Loaded MOTD for world "+worldname+"!");
+            plugin.getLogger().info("[TweakcraftUtils] Loaded MOTD for world " + worldname + "!");
         } catch (FileNotFoundException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] Couldn't find MOTD for world "+worldname+"!");
+            plugin.getLogger().warning("[TweakcraftUtils] Couldn't find MOTD for world " + worldname + "!");
         } catch (IOException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] Error while reading MOTD for world "+worldname+"!");
+            plugin.getLogger().warning("[TweakcraftUtils] Error while reading MOTD for world " + worldname + "!");
         }
     }
 
@@ -132,19 +133,19 @@ public class WorldManager {
 
     public void setupWorlds() {
 
-        if(globalConfig==null) globalConfig = plugin.getConfigHandler().getGlobalconfig();
+        if (globalConfig == null) globalConfig = plugin.getConfigHandler().getGlobalconfig();
 
         boolean netherWorldOnline = false;
         ConfigurationSection section = globalConfig.getConfigurationSection("worlds.extraworlds");
-        if(section==null)
+        if (section == null)
             return;
 
         Set<String> extraworlds = section.getKeys(false);
 
         Boolean worldInfDura = globalConfig.getBoolean("worlds.durability", true);
 
-        if(plugin.getConfigHandler().enablemod_InfDura) {
-            for(World w : getDefaultWorlds())
+        if (plugin.getConfigHandler().enablemod_InfDura) {
+            for (World w : getDefaultWorlds())
                 w.setToolDurability(worldInfDura);
 
         }
@@ -154,7 +155,7 @@ public class WorldManager {
         for (org.bukkit.World world : plugin.getServer().getWorlds()) {
             // catch a /reload!
             // IWorld iw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
-            if(extraworlds.contains(world.getName())) {
+            if (extraworlds.contains(world.getName())) {
                 TweakWorld tw = new TweakWorld(this, world.getName(), world.getEnvironment(), world.getPVP(), world.getAllowMonsters(), world.getAllowMonsters(), defaultviewdistance, worldInfDura, true);
                 tw.setSpawnChunksActive(world.getKeepSpawnInMemory());
                 worlds.put(world.getName(), tw);
@@ -183,9 +184,12 @@ public class WorldManager {
                 boolean animals = globalConfig.getBoolean("worlds.extraworlds." + node + ".animals", true);
                 boolean durability = globalConfig.getBoolean("worlds.extraworlds." + node + ".durability", true);
                 boolean addnether = globalConfig.getBoolean("worlds.extraworlds." + node + ".addnether", false);
+                boolean addtheend = globalConfig.getBoolean("worlds.extraworlds." + node + ".addtheend", false);
                 boolean spawnchunksactive = globalConfig.getBoolean("worlds.extraworlds." + node + ".spawnchunksactive", false);
+                boolean allowFlight = globalConfig.getBoolean("worlds.extraworlds." + node + ".allowFlight", false);
                 String chunkGenClass = globalConfig.getString("worlds.extraworlds." + node + ".chunkGeneratorClass", null);
                 String chunkGen = globalConfig.getString("worlds.extraworlds." + node + ".chunkGenerator", null);
+                String worldType = globalConfig.getString("worlds.extraworlds." + node + ".worldType", null);
                 int viewdistance = globalConfig.getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
                 int portalSearchRadius = globalConfig.getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
                 int difficulty = globalConfig.getInt("worlds.extraworlds." + node + ".difficulty", Difficulty.NORMAL.getValue());
@@ -193,15 +197,15 @@ public class WorldManager {
                 long nseed = globalConfig.getInt("worlds.extraworlds." + node + ".netherseed", -1);
 
                 String gameMode = globalConfig.getString("worlds.extraworlds." + node + ".gamemode", null);
-                GameMode gm = gameMode!=null?GameMode.valueOf(gameMode.toUpperCase()):null;
+                GameMode gm = gameMode != null ? GameMode.valueOf(gameMode.toUpperCase()) : null;
 
                 /* if(gameMode==null || gameMode.equals("")) {
                     gm=GameMode.SURVIVAL;
                 } */
 
                 Environment wenv = null;
-                if(env==null || env.equals("")) {
-                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" does not have a valid environment definition, using \"normal\"");
+                if (env == null || env.equals("")) {
+                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " does not have a valid environment definition, using \"normal\"");
                     wenv = Environment.NORMAL;
                 } else if (env.equalsIgnoreCase("nether")) {
                     wenv = Environment.NETHER;
@@ -214,44 +218,57 @@ public class WorldManager {
                 }
 
 
-                if (!(wenv == null)) {
+                if (wenv == null) {
+                    plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
+                } else {
                     plugin.getLogger().info("[TweakcraftUtils] Adding world with name " + node + " and environmenttype " + env + "!");
-                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" has pvp "+(pvp?"enabled":"disabled")+"!");
-                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" monsters : "+(monsters?"enabled":"disabled")+", animals : "+(animals?"enabled":"disabled")+"!");
-                    if(addnether) plugin.getLogger().info("[TweakcraftUtils] World "+node+" added nether world!");
-                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" Tool Durability : "+(durability?"enabled":"disabled"));
-                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" GameMode : "+(gm!=null?gm.toString().toLowerCase():"Survival"));
-                    plugin.getLogger().info("[TweakcraftUtils] World "+node+" Difficulity : "+Difficulty.getByValue(difficulty).name().toLowerCase());
+                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " has pvp " + (pvp ? "enabled" : "disabled") + "!");
+                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " monsters : " + (monsters ? "enabled" : "disabled") + ", animals : " + (animals ? "enabled" : "disabled") + "!");
+                    if (addnether) plugin.getLogger().info("[TweakcraftUtils] World " + node + " added nether world!");
+                    if (addtheend) plugin.getLogger().info("[TweakcraftUtils] World " + node + " added the_end world!");
+                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " Tool Durability : " + (durability ? "enabled" : "disabled"));
+                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " GameMode : " + (gm != null ? gm.toString().toLowerCase() : "Survival"));
+                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " Difficulity : " + Difficulty.getByValue(difficulty).name().toLowerCase());
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
-                    if (difficulty!=2)
+                    if (difficulty != 2)
                         tw.setDifficulty(difficulty);
-                    if(gm!=null) tw.setGameMode(gm);
-                    if(chunkGenClass!=null) {
-                        plugin.getLogger().info("[TweakcraftUtils] World "+node+" is using a custom chunkGenClass using the deprecated method!");
+                    if (gm != null) tw.setGameMode(gm);
+                    if (chunkGenClass != null) {
+                        plugin.getLogger().info("[TweakcraftUtils] World " + node + " is using a custom chunkGenClass using the deprecated method!");
                         plugin.getLogger().info("[TweakcraftUtils] Consider using the newer method!");
                         tw.setChunkGenClass(chunkGenClass);
-                    }
-                    else if(chunkGen!=null) {
-                        plugin.getLogger().info("[TweakcraftUtils] World "+node+" is using a custom chunkGen!");
+                    } else if (chunkGen != null) {
+                        plugin.getLogger().info("[TweakcraftUtils] World " + node + " is using a custom chunkGen!");
                         tw.setChunkGen(chunkGen);
                     }
-                    tw.setEnabled(enabled);
-                    if(enabled) {
 
+                    if (worldType != null) {
+                        WorldType type = WorldType.valueOf(worldType.toUpperCase());
+                        if (type != null) {
+                            plugin.getLogger().info("[TweakcraftUtils] World " + node + " has worldType "+type.getName().toLowerCase()+"!");
+                            tw.setWorldType(type);
+                        }
+                    }
+
+                    tw.setEnabled(enabled);
+                    if (enabled) {
                         tw.loadWorld();
-                        if(seed != -1) tw.setSeed(seed, false);
-                        if(addnether) {
-                            if(nseed != -1) tw.setSeed(seed, true);
+                        if (seed != -1) tw.setSeed(seed, false);
+                        tw.setSpawnChunksActive(spawnchunksactive);
+                        tw.setAllowFlight(allowFlight);
+                        if (addnether) {
+                            if (nseed != -1) tw.setNetherseed(seed);
                             tw.addNether();
-                            tw.setSpawnChunksActive(spawnchunksactive);
                             tw.setPortalSearchWidth(portalSearchRadius);
+                        }
+                        if(addtheend) {
+                            if (nseed != -1) tw.setEndseed(seed);
+                            tw.addTheEnd();
                         }
                     }
 
                     worlds.put(node, tw);
                     this.loadMotd(tw.getName());
-                } else {
-                    plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
                 }
             } else {
                 plugin.getLogger().info("[TweakcraftUtils] World with name " + node + " already exists!");
@@ -265,11 +282,11 @@ public class WorldManager {
     }
 
     public iWorld getWorld(String name, boolean filterNether) {
-        if(filterNether) {
-            boolean isnether = name.endsWith("_nether");
+        if (filterNether) {
+            boolean isNether = name.endsWith("_nether");
             boolean isTheEnd = name.endsWith("_the_end");
-            if(isnether) name = name.substring(0, name.length()-7); // MINUS _nether
-            if(isTheEnd) name = name.substring(0, name.length()-8); // MINUS _the_end
+            if (isNether) name = name.substring(0, name.length() - 7); // MINUS _nether
+            if (isTheEnd) name = name.substring(0, name.length() - 8); // MINUS _the_end
         }
         if (worlds.containsKey(name)) {
             return worlds.get(name);

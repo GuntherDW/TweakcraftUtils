@@ -405,8 +405,9 @@ public class TeleportationCommands {
 
                     } else {
                         player.sendMessage(ChatColor.GOLD + "Teleporting you back to your previous position!");
-                        if (back.getY() == 130) {
-                            player.sendMessage(ChatColor.GOLD + "Sending you to Y:130 because you were either too high or too low!");
+                        int maxHeightplus2 = back.getWorld().getMaxHeight() + 2;
+                        if (back.getY() == maxHeightplus2) {
+                            player.sendMessage(ChatColor.GOLD + "Sending you to Y:"+maxHeightplus2+" because you were either too high or too low!");
                         }
 
                         boolean success = player.teleport(back);
@@ -475,8 +476,9 @@ public class TeleportationCommands {
                         player.sendMessage(ChatColor.GOLD + "You don't have any future issues yet/left!");
                     } else {
                         player.sendMessage(ChatColor.GOLD + "Teleporting you back to your future position!");
-                        if (back.getY() == 130) {
-                            player.sendMessage(ChatColor.GOLD + "Sending you to Y:130 because you were either too high or too low!");
+                        int maxHeightplus2 = back.getWorld().getMaxHeight() + 2;
+                        if (back.getY() == maxHeightplus2) {
+                            player.sendMessage(ChatColor.GOLD + "Sending you to Y:"+maxHeightplus2+" because you were either too high or too low!");
                         }
 
                         boolean success = player.teleport(back);

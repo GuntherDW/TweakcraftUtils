@@ -41,10 +41,21 @@ public class LocalPlayer {
     private boolean invisiblePickup = false;
     private String replyTo = null;
     private boolean tntArrow = false;
+    private boolean allowedFlight = false;
     private String capeURL = null;
 
     public boolean isInvisible() {
         return this.invisible;
+    }
+
+    public boolean isAllowedFlight() {
+        return allowedFlight;
+    }
+
+    public void setAllowedFlight(boolean hasFlight) {
+        this.allowedFlight = hasFlight;
+        if(getBukkitPlayer()!=null)
+            getBukkitPlayer().setAllowFlight(hasFlight);
     }
 
     public void setInvisible(boolean state) {

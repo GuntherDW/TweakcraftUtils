@@ -90,10 +90,19 @@ public class TamerTool {
                 player.sendMessage(ChatColor.AQUA + "This tameable is "+ChatColor.RED+"angry"+ChatColor.AQUA+"!");
                 LivingEntity le = wolf.getTarget();
                 String target = "";
-                if(le instanceof Player)
-                    target = ((Player)le).getDisplayName();
-                else
-                    target = "Animal";
+                if(le instanceof OfflinePlayer)
+                    if(((OfflinePlayer) le).isOnline())
+                        target = ((Player)le).getDisplayName();
+                    else
+                        target = ((OfflinePlayer) le).getName();
+                else {
+                    String extraInfo = "";
+                    if ( le != null ) {
+                        EntityType et = le.getType();
+                        extraInfo = et.getName();
+                    }
+                    target = "Animal "+extraInfo;// +le!=null?" ("+(et.getName())+")":"";
+                }
                 player.sendMessage(ChatColor.AQUA + "Target : "+target);
             }
         }

@@ -52,6 +52,12 @@ public class TweakcraftEntityListener implements Listener {
             || event.isCancelled() || !(event.getTarget() instanceof Player)) return;
 
         LocalPlayer lp = plugin.wrapPlayer((Player) event.getTarget());
+
+        if(lp.isInvisible()) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (event.getReason().equals(EntityTargetEvent.TargetReason.CLOSEST_PLAYER)
             || event.getReason().equals(EntityTargetEvent.TargetReason.RANDOM_TARGET)) {
             if (lp.isAfk()) event.setCancelled(true);

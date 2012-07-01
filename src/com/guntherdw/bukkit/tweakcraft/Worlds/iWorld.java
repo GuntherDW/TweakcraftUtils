@@ -43,6 +43,8 @@ public interface iWorld {
     public Long getSeed(boolean netherseed);
     public void setSeed(long seed, boolean netherseed);
     public boolean isDurabilityEnabled();
+    public boolean isAllowFlight();
+    public void setAllowFlight(boolean state);
     public void setDurabilityEnabled(boolean state);
     public void addNether();
     public boolean isNetherEnabled();

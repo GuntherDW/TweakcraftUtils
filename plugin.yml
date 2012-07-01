@@ -91,7 +91,7 @@ commands:
   broadcast:
     description: Broadcasts said message to the server
     usage: /<command> <message>
-    aliases: [ 'b', 'broa' ]
+    aliases: [ 'broa' ]
   tpmob:
     description: Teleports a mob to you
     usage: /<command> <mobid>

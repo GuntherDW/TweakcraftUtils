@@ -50,10 +50,12 @@ public class TweakWorld implements iWorld {
     private String chunkGenClass = null;
     private ChunkGenerator chunkgen = null;
     private org.bukkit.World.Environment environment;
+    private org.bukkit.WorldType worldType = null;
     private WorldManager wm;
     private boolean pvp = true;
     private int viewdistance = 10;
     private GameMode gamemode = null;
+    private boolean allowFlight = false;
     private String[] motd;
 
     public TweakWorld(WorldManager wm, String foldername, org.bukkit.World.Environment env, boolean enabled) {
@@ -155,8 +157,32 @@ public class TweakWorld implements iWorld {
         else this.seed = seed;
     }
 
+    public Long getNetherseed() {
+        return netherseed;
+    }
+
+    public void setNetherseed(Long netherseed) {
+        this.netherseed = netherseed;
+    }
+
+    public Long getEndseed() {
+        return endseed;
+    }
+
+    public void setEndseed(Long endseed) {
+        this.endseed = endseed;
+    }
+
     public ChunkGenerator getChunkGen() {
         return chunkgen;
+    }
+
+    public void setWorldType(WorldType type) {
+        this.worldType = type;
+    }
+
+    public WorldType getWorldType() {
+        return this.worldType;
     }
 
     public void setChunkGen(String chunkGen) {
@@ -231,9 +257,9 @@ public class TweakWorld implements iWorld {
                                 ChunkGenerator cg = (ChunkGenerator) c;
                                 if (c instanceof FlatGen) {
                                     FlatGen fg = (FlatGen) cg;
-                                    int mh = wm.getPlugin().getConfig().getInt("worlds.extraworlds." + worldName + ".flatGen.mapHeight", 12);
-                                    byte toplayer = (byte) wm.getPlugin().getConfig().getInt("worlds.extraworlds." + worldName + ".flatGen.toplayer", Material.GRASS.getId());
-                                    byte normal = (byte) wm.getPlugin().getConfig().getInt("worlds.extraworlds." + worldName + ".flatGen.normal", Material.DIRT.getId());
+                                    int mh = wm.getPlugin().getConfigHandler().getGlobalconfig().getInt("worlds.extraworlds." + worldName + ".flatGen.mapHeight", 12);
+                                    byte toplayer = (byte) wm.getPlugin().getConfigHandler().getGlobalconfig().getInt("worlds.extraworlds." + worldName + ".flatGen.toplayer", Material.GRASS.getId());
+                                    byte normal = (byte) wm.getPlugin().getConfigHandler().getGlobalconfig().getInt("worlds.extraworlds." + worldName + ".flatGen.normal", Material.DIRT.getId());
                                     fg.setmapHeight(mh);
                                     fg.setNormal(normal);
                                     fg.setToplayer(toplayer);
@@ -266,16 +292,14 @@ public class TweakWorld implements iWorld {
             if (seed != null)
                 worldCreator.seed(seed);
 
+            WorldType type = getWorldType();
+            if(type!=null)
+                worldCreator.type(type);
+
             if (enabled) {
                 worldCreator.environment(env);
 
-                if(worldCreator.generator() instanceof FlatGen) {
-                    this.wm.getPlugin().getLogger().info("[TweakcraftUtils] World " + worldName + " is using FlatGen so setting WorldType to FLAT!");
-                    worldCreator.type(WorldType.FLAT);
-                }
-
                 world = worldCreator.createWorld();
-
                 world.setKeepSpawnInMemory(this.getSpawnChunksActive());
                 world.setPVP(pvp);
             }
@@ -304,6 +328,14 @@ public class TweakWorld implements iWorld {
         // this.world.setKeepSpawnInMemory(state);
         if (world != null) this.world.setKeepSpawnInMemory(state);
         this.keepspawnactive = state;
+    }
+
+    public boolean isAllowFlight() {
+        return allowFlight;
+    }
+
+    public void setAllowFlight(boolean allowFlight) {
+        this.allowFlight = allowFlight;
     }
 
     public boolean getSpawnChunksActive() {
@@ -346,7 +378,7 @@ public class TweakWorld implements iWorld {
         this.nether_enabled = true;
         this.nether = nw;
     }
-    
+
     public void addTheEnd() {
         if(!isEnabled()) return;
         WorldCreator wc = new WorldCreator(this.world.getName() + "_the_end");
@@ -357,7 +389,7 @@ public class TweakWorld implements iWorld {
         }
         endw.setSpawnFlags(this.allowmonsters, this.allowanimals);
         endw.setToolDurability(this.tooldurability);
-        
+
         this.the_end_enabled = true;
         this.the_end = endw;
     }

@@ -130,7 +130,7 @@ public class GeneralCommands {
     }
 
     @aCommand(
-        aliases = { "broadcast", "b", "broa" },
+        aliases = { "broadcast", "broa" },
         permissionBase = "broadcast",
         description = "Broadcasts said message to the server",
         section = "general"

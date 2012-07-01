@@ -545,6 +545,11 @@ public class TweakcraftPlayerListener implements Listener {
             }
             plugin.sendmod_InfDuraHandshake(p);
         }
+
+        iWorld iw = plugin.getworldManager().getWorld(p.getWorld().getName());
+
+        if(lp.isAllowedFlight() || (iw!=null && iw.isAllowFlight()))
+            p.setAllowFlight(true);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -1043,12 +1048,21 @@ public class TweakcraftPlayerListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-        if (!plugin.getConfigHandler().enableWorldMOTD) return;
 
         Player player = event.getPlayer();
+        LocalPlayer lp = plugin.wrapPlayer(player);
+
         WorldManager wm = plugin.getworldManager();
         iWorld world = wm.getWorld(player.getWorld().getName(), true);
-        if (world != null && world.hasWorldMOTD()) {
+
+        if(world == null || world.isDurabilityEnabled())
+            player.setAllowFlight(false);
+        else if(lp.isAllowedFlight() || world.isAllowFlight() || world.getGameMode() == GameMode.CREATIVE)
+            player.setAllowFlight(true);
+        else if((!world.isAllowFlight() && !lp.isAllowedFlight()))
+            player.setAllowFlight(false);
+
+        if (plugin.getConfigHandler().enableWorldMOTD && (world != null && world.hasWorldMOTD())) {
             for (String line : world.getMOTD())
                 player.sendMessage(line);
         }

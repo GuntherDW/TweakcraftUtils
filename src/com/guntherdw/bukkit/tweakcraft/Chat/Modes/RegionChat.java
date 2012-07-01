@@ -22,8 +22,6 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldguard.LocalPlayer;
-import com.sk89q.worldguard.bukkit.BukkitPlayer;
 import com.sk89q.worldguard.protection.GlobalRegionManager;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import org.bukkit.ChatColor;
@@ -83,7 +81,7 @@ public class RegionChat extends ChatMode {
                 RegionManager rm = gm.get(player.getWorld());
                 Location loc = player.getLocation().clone();
                 Vector vec = new Vector(loc.getX(), loc.getY(), loc.getZ());
-                LocalPlayer localplayer = new BukkitPlayer(plugin.getWorldGuard(), player);
+                // LocalPlayer localplayer = new BukkitPlayer(plugin.getWorldGuard(), player);
                 // ApplicableRegionSet regionset = rm.getApplicableRegions(vec);
                 regionIds = rm.getApplicableRegionsIDs(vec);
                 Vector pvec = null;

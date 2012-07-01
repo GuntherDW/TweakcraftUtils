@@ -412,8 +412,7 @@ public class EssentialsCommands {
         int dataval = ap.getInteger("dat", -1);
         String[] args = ap.getUnusedArgs();
 
-        if (args.length > 0) // just the item!
-        {
+        if (args.length > 0) { // just the item!
             String[] split = args[0].split(":");
             if (split.length > 1) {
                 try {
@@ -445,19 +444,6 @@ public class EssentialsCommands {
                 if (itemAmount == null)
                     itemAmount = 64;
             }
-
-            /* if (args.length > 2) { // set Receiver
-               receiver = plugin.getServer().getPlayer(plugin.findPlayer(args[2]));
-               if (receiver == null) {
-                   throw new CommandUsageException("Can't find the other player!");
-               }
-           } else {
-               if (sender instanceof Player)
-                   receiver = (Player) sender;
-               else
-                   throw new CommandUsageException("If you're a console you have to specify the receiver!");
-
-           } */
 
             if (dmgval > -1 && dmgval < 256) {
                 itemDmg = (byte) dmgval;
@@ -1010,8 +996,7 @@ public class EssentialsCommands {
         LivingEntity lent = null;
         List<EntityType> riders = null;
 
-        if (args.length > 0) // only a mobname!
-        {
+        if (args.length > 0) { // only a mobname!
             mobName = "";
             amount = 1;
             if (args[0].length() > 2)
@@ -1069,7 +1054,11 @@ public class EssentialsCommands {
             if (type != null) {
                 LivingEntity rid = null;
                 for (int x = 0; x < amount; x++) {
-                    lent = victimplayer.getWorld().spawnCreature(loc, type);
+
+                    // lent = victimplayer.getWorld().spawnCreature(loc, type);
+
+                    lent = (LivingEntity) victimplayer.getWorld().spawnEntity(loc, type);
+
                     if (health > 0)
                         lent.setHealth(health);
 
@@ -1135,7 +1124,7 @@ public class EssentialsCommands {
 
                     if (riders != null && riders.size() != 0) {
                         for (EntityType t : riders) {
-                            rid = victimplayer.getWorld().spawnCreature(loc, t);
+                            rid = (LivingEntity) victimplayer.getWorld().spawnEntity(loc, t);
                             if (lent != null) lent.setPassenger(rid);
                             lent = rid; // This makes the currently added mob the new "to-ride-along" mob
                         }

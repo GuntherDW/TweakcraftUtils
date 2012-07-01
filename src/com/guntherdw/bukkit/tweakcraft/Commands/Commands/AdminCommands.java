@@ -614,7 +614,7 @@ public class AdminCommands {
                         sender.sendMessage(ChatColor.RED+"MONSTERS: "+(monsters?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
                         sender.sendMessage(ChatColor.RED+"PVP: "+(pvp?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
                         sender.sendMessage(ChatColor.RED+"ENV: "+wenv);
-                        sender.sendMessage(ChatColor.RED+"DIFFICULITY: "+difficulty.name().toLowerCase());
+                        sender.sendMessage(ChatColor.RED+"DIFFICULTY: "+difficulty.name().toLowerCase());
                         sender.sendMessage(ChatColor.RED+"PLAYERS: "+amountofplayers + (players.equals("")?"":(" ("+players+ChatColor.RED+")")));
                         sender.sendMessage(ChatColor.RED+"TOOL DURABILITY: "+(tooldura?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
                         if(gm!=null)
