@@ -809,7 +809,22 @@ public class TweakcraftPlayerListener implements Listener {
                         Integer[] coords = new Integer[3];
                         coordsStrings = line3.split(",");
                         Location loc = world.getSpawnLocation();
-                        if (coordsStrings.length == 3) {
+                        if(line3.trim().equalsIgnoreCase("personal") && plugin.getConfigHandler().enablePersistence) {
+                            List<PlayerOptions> plist = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", event.getPlayer().getName()).ieq("optionname", "worldpos").findList();
+                            PlayerOptions po = null;
+                            if (plist.size() > 0) {
+                                for (PlayerOptions popts : plist) {
+                                    Location tloc = plugin.getCommandHandler().essentialsCommands.parseLocationString(popts.getOptionvalue());
+                                    if (tloc != null) {
+                                        if (tloc.getWorld().getName().equals(event.getPlayer().getWorld().getName())) {
+                                            po = popts;
+                                        } else if (tloc.getWorld().getName().equals(world.getName())) {
+                                            loc = tloc;
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (coordsStrings.length == 3) {
                             coords[0] = Integer.parseInt(coordsStrings[0]);
                             coords[1] = Integer.parseInt(coordsStrings[1]);
                             coords[2] = Integer.parseInt(coordsStrings[2]);
@@ -843,7 +858,7 @@ public class TweakcraftPlayerListener implements Listener {
 
         if (!signMode) {
             String fromworld = event.getFrom().getWorld().getName();
-            boolean isnether = fromworld.endsWith("_nether");
+            boolean isnether = fromworld.endsWith("_nether") || fromworld.endsWith("_the_end");
             if (isnether) fromworld = fromworld.substring(0, fromworld.length() - 7); // MINUS _nether
             iWorld w = plugin.getworldManager().getWorld(fromworld);
 
@@ -862,9 +877,15 @@ public class TweakcraftPlayerListener implements Listener {
                     to.setX(Math.floor(to.getX() * 8));
                     to.setZ(Math.floor(to.getZ() * 8));
                 } else {
-                    to.setWorld(w.getNetherWorld());
-                    to.setX(Math.floor(to.getX() / 8));
-                    to.setZ(Math.floor(to.getZ() / 8));
+                    if (w.isTheEndEnabled() && event.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL) {
+                        to.setWorld(w.getThe_endWorld());
+                        to.setX(Math.floor(to.getX() * 8));
+                        to.setZ(Math.floor(to.getZ() * 8));
+                    } else {
+                        to.setWorld(w.getNetherWorld());
+                        to.setX(Math.floor(to.getX() / 8));
+                        to.setZ(Math.floor(to.getZ() / 8));
+                    }
                 }
 
                 TravelAgent agent = event.getPortalTravelAgent();

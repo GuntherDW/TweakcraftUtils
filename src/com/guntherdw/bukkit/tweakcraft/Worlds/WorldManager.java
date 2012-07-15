@@ -230,7 +230,7 @@ public class WorldManager {
                     plugin.getLogger().info("[TweakcraftUtils] World " + node + " GameMode : " + (gm != null ? gm.toString().toLowerCase() : "Survival"));
                     plugin.getLogger().info("[TweakcraftUtils] World " + node + " Difficulity : " + Difficulty.getByValue(difficulty).name().toLowerCase());
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
-                    if (difficulty != 2)
+                    if (difficulty != getDefaultWorld().getDifficulty().getValue())
                         tw.setDifficulty(difficulty);
                     if (gm != null) tw.setGameMode(gm);
                     if (chunkGenClass != null) {

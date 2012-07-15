@@ -30,6 +30,7 @@ public interface iWorld {
     public iWorld getWorld();
     public org.bukkit.World getBukkitWorld();
     public org.bukkit.World getNetherWorld();
+    public org.bukkit.World getThe_endWorld();
     public int getPortalSearchWidth();
     public void setPortalSearchWidth(int searchWidth);
     public String getName();
@@ -48,6 +49,7 @@ public interface iWorld {
     public void setDurabilityEnabled(boolean state);
     public void addNether();
     public boolean isNetherEnabled();
+    public boolean isTheEndEnabled();
     public boolean isEnabled();
     public boolean isLoaded();
     public boolean getAllowAnimals();

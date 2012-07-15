@@ -610,6 +610,10 @@ public class TweakcraftUtils extends JavaPlugin {
         return nick;
     }
 
+    public boolean check(CommandSender sender, String permNode) {
+        return !(sender instanceof Player) || this.check(((Player) sender), permNode);
+    }
+
     public boolean check(Player player, String permNode) {
         return player.isOp() ||
             this.getPermissions().hasPermission(player.getWorld().getName(), player, "tweakcraftutils." + permNode);

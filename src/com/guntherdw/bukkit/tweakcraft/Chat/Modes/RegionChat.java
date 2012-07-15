@@ -51,9 +51,11 @@ public class RegionChat extends ChatMode {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             Set<Player> recp = getRecipients(player);
-            for (Player p : recp) {
+            /* for (Player p : recp) {
                 p.sendMessage(ChatColor.AQUA + "R" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
-            }
+            } */
+            super.sendMessage(sender, message);
+
             if (getRegionName(player.getName(), false).equals("")) {
                 sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a region!");
             } else if (recp.size() < 2) {

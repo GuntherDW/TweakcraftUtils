@@ -26,6 +26,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.Ban.BanHandler;
 import com.guntherdw.bukkit.tweakcraft.Events.TweakcraftUtilsEvent;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.*;
 import com.guntherdw.bukkit.tweakcraft.Packages.ItemDB;
+import com.guntherdw.bukkit.tweakcraft.Tools.ArgumentParser;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Worlds.TweakWorld;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
@@ -37,7 +38,6 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +54,7 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "admin", "a" },
+        aliases = {"admin", "a"},
         permissionBase = "admin",
         description = "Send message to admins",
         section = "admin"
@@ -67,7 +67,7 @@ public class AdminCommands {
             String msg = "";
             for (String m : args)
                 msg += m + " ";
-            if(msg.length()>0) {
+            if (msg.length() > 0) {
                 msg = msg.substring(0, msg.length() - 1);
 
                 if (sender instanceof Player) {
@@ -91,7 +91,7 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "admin-add" },
+        aliases = {"admin-add"},
         permissionBase = "admon",
         description = "Adds a player to the admin-msg list",
         section = "admin"
@@ -142,7 +142,7 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "admin-remove" },
+        aliases = {"admin-remove"},
         permissionBase = "admon",
         description = "Removes a player from the admin-msg list",
         section = "admin"
@@ -205,7 +205,7 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "admin-list" },
+        aliases = {"admin-list"},
         permissionBase = "admon",
         description = "Show the current admin-msg list",
         section = "admin"
@@ -242,7 +242,7 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "admoff" },
+        aliases = {"admoff"},
         permissionBase = "",
         description = "Makes you chat like normal again",
         section = "admin"
@@ -270,7 +270,7 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "admon" },
+        aliases = {"admon"},
         permissionBase = "",
         description = "Automatically sends any msg as an admin message",
         section = "admin"
@@ -300,39 +300,43 @@ public class AdminCommands {
 
 
     @aCommand(
-        aliases = { "clearinventory", "cli" },
+        aliases = {"clearinventory", "cli"},
         permissionBase = "clearinventory",
         description = "Clear a player's inventory",
         section = "admin"
     )
     public boolean clearinventory(CommandSender sender, String command, String[] args)
         throws PermissionsException, CommandSenderException, CommandException, CommandUsageException {
-        if(sender instanceof Player)
-            if(!plugin.check((Player)sender, "clearinventory"))
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "clearinventory"))
                 throw new PermissionsException(command);
 
         Player victim = null;
 
-        if(args.length == 0 && sender instanceof Player)
+        if (args.length == 0 && sender instanceof Player)
             victim = (Player) sender;
-        else if(args.length == 0 && !(sender instanceof Player))
+        else if (args.length == 0 && !(sender instanceof Player))
             sender.sendMessage("Can't clear the console's inventory when it doesn't need one...");
-        else if(args.length!=0) {
+        else if (args.length != 0) {
             List<Player> p = plugin.getServer().matchPlayer(args[0]);
-            if(p.size()==1) { victim = p.get(0); } else { sender.sendMessage(ChatColor.YELLOW + "Can't find player!"); }
+            if (p.size() == 1) {
+                victim = p.get(0);
+            } else {
+                sender.sendMessage(ChatColor.YELLOW + "Can't find player!");
+            }
         }
 
-        if(victim != null) {
-            sender.sendMessage(ChatColor.YELLOW+"Clearning "+victim.getDisplayName()+ChatColor.YELLOW+"'s inventory!");
+        if (victim != null) {
+            sender.sendMessage(ChatColor.YELLOW + "Clearning " + victim.getDisplayName() + ChatColor.YELLOW + "'s inventory!");
             victim.getInventory().clear();
         } else {
-            sender.sendMessage(ChatColor.RED+"Victim is null, this isn't supposed to happen!");
+            sender.sendMessage(ChatColor.RED + "Victim is null, this isn't supposed to happen!");
         }
         return true;
     }
 
     @aCommand(
-        aliases = { "tplist" },
+        aliases = {"tplist"},
         permissionBase = "tplist",
         description = "Shows who has /tpoff",
         section = "admin"
@@ -363,15 +367,15 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "viewdistance" },
+        aliases = {"viewdistance"},
         permissionBase = "viewdistance",
         description = "ViewDistance control!",
         section = "admin"
     )
     public boolean viewdistance(CommandSender sender, String command, String[] realargs)
         throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
-        if(sender instanceof Player)
-            if(!plugin.check((Player)sender, "viewdistance"))
+        if (sender instanceof Player)
+            if (!plugin.check((Player) sender, "viewdistance"))
                 throw new PermissionsException(command);
 
         /* ArgumentParser ap = new ArgumentParser(realargs);
@@ -424,7 +428,99 @@ public class AdminCommands {
     }
 
     @aCommand(
-        aliases = { "tweakcraft", "tc" },
+        aliases = {"wd"},
+        permissionBase = "difficulty",
+        description = "World difficulty",
+        section = "admin"
+    )
+    public boolean worlddifficulty(CommandSender sender, String command, String[] args)
+        throws PermissionsException, CommandSenderException, CommandUsageException, CommandException {
+
+        ArgumentParser ap = new ArgumentParser(args);
+        String worldarg = ap.getString("w", null);
+        World world = null;
+        iWorld iw = null;
+
+        if (worldarg == null)
+            if (!(sender instanceof Player))
+                throw new CommandSenderException("If you're going to use this from the console, at least give me a world!");
+            else
+                world = ((Player) sender).getWorld();
+        else {
+            WorldManager wm = plugin.getworldManager();
+            iw = wm.getWorld(worldarg, true);
+            if (iw != null) world = iw.getBukkitWorld();
+            else {
+                List<World> worlds = plugin.getServer().getWorlds();
+                for (World w : worlds) {
+                    if (w.getName().equalsIgnoreCase(worldarg))
+                        world = w;
+                }
+            }
+        }
+
+        if (world == null) {
+            sender.sendMessage(ChatColor.RED + "Can't find world!");
+        } else {
+
+
+            String[] _args = ap.getUnusedArgs();
+            if (_args.length == 0) { /* Set difficulty! */
+                if (plugin.check(sender, "difficulity.get." + world.getName())) {
+
+                    Difficulty diff = world.getDifficulty();
+                    String color = "";
+                    switch (diff) {
+                        case PEACEFUL:
+                            color = ChatColor.GREEN.toString();
+                            break;
+                        case EASY:
+                            color = ChatColor.DARK_GREEN.toString();
+                            break;
+                        case NORMAL:
+                            color = ChatColor.YELLOW.toString();
+                            break;
+                        case HARD:
+                            color = ChatColor.RED.toString();
+                            break;
+                        default:
+                            color = ChatColor.WHITE.toString();
+
+                    }
+                    sender.sendMessage(ChatColor.YELLOW + "Difficulty level of " + world.getName() + " : " + color + diff.name().toLowerCase());
+                } else {
+                    sender.sendMessage(ChatColor.RED + "You don't have permission the get the difficulty of "+world.getName()+"!");
+                }
+            } else { /* Show current difficulty! */
+                Difficulty diff = parseDifficulty(_args[0]);
+                if (diff == null)
+                    sender.sendMessage(ChatColor.RED + "Can't find that difficulty level!");
+                else {
+                    if (plugin.check(sender, "difficulity.set." + world.getName())) {
+                        sender.sendMessage(ChatColor.RED + "Setting difficulty of world " + world.getName() + " to " + diff.name().toLowerCase() + "");
+                        world.setDifficulty(diff);
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "You don't have permission to set the difficulity of world " + world.getName() + "!");
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+
+    private Difficulty parseDifficulty(String arg) {
+        try { /* Try numbers first! */
+            Integer d = Integer.parseInt(arg);
+            return Difficulty.getByValue(d);
+        } catch (NumberFormatException ex) { /* Try strings! */
+            return Difficulty.valueOf(arg.toUpperCase());
+        }
+    }
+
+    @aCommand(
+        aliases = {"tweakcraft", "tc"},
         permissionBase = "tweakcraft",
         description = "General tweakcraftutils command",
         section = "admin"
@@ -453,14 +549,18 @@ public class AdminCommands {
                     String name = p.getName();
                     // p.setDisplayName(plugin.getPlayerColor(name, false) + name + ChatColor.WHITE);
                     String displayName = plugin.getNickWithColors(p.getName());
-                    String ldisplayname = displayName.substring(0, displayName.length()-2);
+                    String ldisplayname = displayName.substring(0, displayName.length() - 2);
                     p.setDisplayName(displayName);
-                    if(ldisplayname.length()<=16) {
-                        try{ p.setPlayerListName(ldisplayname); } catch(IllegalArgumentException ex) { ; }
+                    if (ldisplayname.length() <= 16) {
+                        try {
+                            p.setPlayerListName(ldisplayname);
+                        } catch (IllegalArgumentException ex) {
+                            ;
+                        }
                     }
                 }
                 WorldManager wm = plugin.getworldManager();
-                for(String worldname : wm.getWorlds().keySet()) {
+                for (String worldname : wm.getWorlds().keySet()) {
                     wm.loadMotd(worldname);
                 }
                 plugin.getPlayerListener().reloadInvisTable();
@@ -475,41 +575,44 @@ public class AdminCommands {
                 if (sender instanceof Player) reloadEvent.setPlayer((Player) sender);
                 plugin.getServer().getPluginManager().callEvent(reloadEvent);
 
-            } else if(args[0].equalsIgnoreCase("world")) {
-                if(sender instanceof Player)
-                    if(!plugin.check((Player) sender, "admin.world"))
+            } else if (args[0].equalsIgnoreCase("world")) {
+                if (sender instanceof Player)
+                    if (!plugin.check((Player) sender, "admin.world"))
                         throw new PermissionsException(command);
-                if(args.length>2) {
+                if (args.length > 2) {
                     String modus = args[1];
                     String world = args[2];
-                    String arg   = args.length>3 ? args[3] : null;
+                    String arg = args.length > 3 ? args[3] : null;
                     iWorld iw = plugin.getworldManager().getWorld(world);
-                    if(modus.equalsIgnoreCase("unload")) {
-                        if(iw!=null) {
-                            if(iw.isEnabled()) {
-                                for(Player pl : iw.getBukkitWorld().getPlayers()) {
+                    if (modus.equalsIgnoreCase("unload")) {
+                        if (iw != null) {
+                            if (iw.isEnabled()) {
+                                for (Player pl : iw.getBukkitWorld().getPlayers()) {
                                     pl.sendMessage(ChatColor.RED + "WORLD UNLOADING. Sending you to spawn on the first world.");
                                     pl.teleport(plugin.getServer().getWorlds().get(0).getSpawnLocation());
                                 }
                                 iw.setEnabled(false);
-                                sender.sendMessage(ChatColor.GOLD + "Unloading world "+iw.getName());
+                                sender.sendMessage(ChatColor.GOLD + "Unloading world " + iw.getName());
                                 plugin.getServer().unloadWorld(iw.getName(), arg == null || Boolean.parseBoolean(arg));
                             } else {
-                                sender.sendMessage(ChatColor.RED+"That world wasn't enabled!");
+                                sender.sendMessage(ChatColor.RED + "That world wasn't enabled!");
                             }
                         } else {
-                            sender.sendMessage(ChatColor.RED+"World error, is that world managed by TweakcraftUtils?");
+                            sender.sendMessage(ChatColor.RED + "World error, is that world managed by TweakcraftUtils?");
                         }
-                    } else if(modus.equalsIgnoreCase("create") || modus.equalsIgnoreCase("load")) {
-                        if(arg == null) arg = "normal";
+                    } else if (modus.equalsIgnoreCase("create") || modus.equalsIgnoreCase("load")) {
+                        if (arg == null) arg = "normal";
                         World.Environment env = null;
-                        try { env = World.Environment.valueOf(arg.toUpperCase()); }
-                        catch(IllegalArgumentException ex) { env = World.Environment.NORMAL; }
-                        if(iw!=null) {
-                            if(iw.isEnabled()) {
+                        try {
+                            env = World.Environment.valueOf(arg.toUpperCase());
+                        } catch (IllegalArgumentException ex) {
+                            env = World.Environment.NORMAL;
+                        }
+                        if (iw != null) {
+                            if (iw.isEnabled()) {
                                 sender.sendMessage(ChatColor.RED + "This world already is enabled!");
                             } else {
-                                sender.sendMessage(ChatColor.GOLD + "Enabling world "+world+" with env "+env.name());
+                                sender.sendMessage(ChatColor.GOLD + "Enabling world " + world + " with env " + env.name());
                                 iw.loadWorld();
                                 iw.setEnabled(true);
                             }
@@ -517,111 +620,111 @@ public class AdminCommands {
                             /**
                              * NEW WORLD
                              */
-                            sender.sendMessage(ChatColor.GOLD + "Creating new world "+world+" with env "+env.name());
+                            sender.sendMessage(ChatColor.GOLD + "Creating new world " + world + " with env " + env.name());
                             plugin.getworldManager().getWorlds().put(world, new TweakWorld(plugin.getworldManager(), world, env, true));
                         }
-                    } else if(modus.equalsIgnoreCase("flag")) {
-                        String flagset = args.length>4?args[4]:null;
+                    } else if (modus.equalsIgnoreCase("flag")) {
+                        String flagset = args.length > 4 ? args[4] : null;
                         String flag = arg;
                         boolean tcworld = (iw != null);
                         World bw = null;
-                        if(!tcworld) {
+                        if (!tcworld) {
                             bw = plugin.getServer().getWorld(world);
-                            if(bw==null)
+                            if (bw == null)
                                 throw new CommandException("World not found!");
                         } else {
-                            if(!iw.isEnabled())
+                            if (!iw.isEnabled())
                                 throw new CommandException("World is not enabled/active!");
                         }
 
-                        if(flag!=null) {
-                            Boolean toSet = flagset!=null?Boolean.parseBoolean(flagset):null;
-                            if(flag.equalsIgnoreCase("monsters")) {
-                                if(toSet!=null)
-                                    if(tcworld)
+                        if (flag != null) {
+                            Boolean toSet = flagset != null ? Boolean.parseBoolean(flagset) : null;
+                            if (flag.equalsIgnoreCase("monsters")) {
+                                if (toSet != null)
+                                    if (tcworld)
                                         iw.setAllowMonsters(toSet);
                                     else
                                         bw.setSpawnFlags(toSet, bw.getAllowAnimals());
 
-                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
-                                    + " MONSTERS: "+((tcworld? iw.getAllowMonsters() : bw.getAllowMonsters())?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                            } else if(flag.equalsIgnoreCase("animals")) {
-                                if(toSet!=null)
-                                    if(tcworld)
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + (tcworld ? iw.getName() : bw.getName()) + ChatColor.LIGHT_PURPLE + "]"
+                                    + " MONSTERS: " + ((tcworld ? iw.getAllowMonsters() : bw.getAllowMonsters()) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"));
+                            } else if (flag.equalsIgnoreCase("animals")) {
+                                if (toSet != null)
+                                    if (tcworld)
                                         iw.setAllowAnimals(toSet);
                                     else
                                         bw.setSpawnFlags(bw.getAllowMonsters(), toSet);
 
-                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
-                                    + " ANIMALS: "+((tcworld? iw.getAllowAnimals() : bw.getAllowAnimals())?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                            } else if(flag.equalsIgnoreCase("pvp")) {
-                                if(toSet!=null)
-                                    if(tcworld)
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + (tcworld ? iw.getName() : bw.getName()) + ChatColor.LIGHT_PURPLE + "]"
+                                    + " ANIMALS: " + ((tcworld ? iw.getAllowAnimals() : bw.getAllowAnimals()) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"));
+                            } else if (flag.equalsIgnoreCase("pvp")) {
+                                if (toSet != null)
+                                    if (tcworld)
                                         iw.setPVP(toSet);
                                     else
                                         bw.setPVP(toSet);
 
-                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
-                                    + " PVP: "+((tcworld? iw.getPVP() : bw.getPVP())?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + (tcworld ? iw.getName() : bw.getName()) + ChatColor.LIGHT_PURPLE + "]"
+                                    + " PVP: " + ((tcworld ? iw.getPVP() : bw.getPVP()) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"));
 
-                            } else if(flag.equalsIgnoreCase("env")) {
-                                World.Environment wenv = tcworld? iw.getBukkitWorld().getEnvironment() : bw.getEnvironment();
-                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "["+ChatColor.GOLD+(tcworld?iw.getName():bw.getName())+ChatColor.LIGHT_PURPLE+"]"
-                                    + " ENVIRONMENT: "+wenv.name());
+                            } else if (flag.equalsIgnoreCase("env")) {
+                                World.Environment wenv = tcworld ? iw.getBukkitWorld().getEnvironment() : bw.getEnvironment();
+                                sender.sendMessage(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + (tcworld ? iw.getName() : bw.getName()) + ChatColor.LIGHT_PURPLE + "]"
+                                    + " ENVIRONMENT: " + wenv.name());
                             } else {
                                 throw new CommandUsageException("No flag by that name found!");
                             }
                         } else {
                             throw new CommandUsageException("Set of flags to enable/disable : [monsters|animals|env]");
                         }
-                    } else if(modus.equalsIgnoreCase("info")) {
-                        boolean tcworld = (iw!=null);
+                    } else if (modus.equalsIgnoreCase("info")) {
+                        boolean tcworld = (iw != null);
                         // sender.sendMessage("tcworld? "+tcworld);
                         World bw = null;
                         World.Environment wenv;
-                        if(!tcworld) {
+                        if (!tcworld) {
                             bw = plugin.getServer().getWorld(world);
-                            if(bw==null)
+                            if (bw == null)
                                 throw new CommandException("World not found!");
                             else
                                 wenv = bw.getEnvironment();
                         } else {
-                            if(!iw.isEnabled())
+                            if (!iw.isEnabled())
                                 throw new CommandException("World is not enabled/active!");
 
                             wenv = iw.getBukkitWorld().getEnvironment();
                         }
-                        boolean monsters = tcworld?iw.getAllowMonsters():bw.getAllowMonsters();
-                        boolean animals = tcworld?iw.getAllowAnimals():bw.getAllowAnimals();
-                        boolean pvp     = tcworld?iw.getPVP():bw.getPVP();
-                        int amountofplayers = tcworld?iw.getBukkitWorld().getPlayers().size():bw.getPlayers().size();
-                        boolean customChunkGen = tcworld?iw.getChunkGen()!=null:bw.getGenerator()!=null;
-                        boolean tooldura = tcworld?iw.isDurabilityEnabled():bw.getToolDurability();
-                        Difficulty difficulty = tcworld?iw.getDifficultyBukkit():bw.getDifficulty();
-                        GameMode gm = tcworld?iw.getGameMode():null;
+                        boolean monsters = tcworld ? iw.getAllowMonsters() : bw.getAllowMonsters();
+                        boolean animals = tcworld ? iw.getAllowAnimals() : bw.getAllowAnimals();
+                        boolean pvp = tcworld ? iw.getPVP() : bw.getPVP();
+                        int amountofplayers = tcworld ? iw.getBukkitWorld().getPlayers().size() : bw.getPlayers().size();
+                        boolean customChunkGen = tcworld ? iw.getChunkGen() != null : bw.getGenerator() != null;
+                        boolean tooldura = tcworld ? iw.isDurabilityEnabled() : bw.getToolDurability();
+                        Difficulty difficulty = tcworld ? iw.getDifficultyBukkit() : bw.getDifficulty();
+                        GameMode gm = tcworld ? iw.getGameMode() : null;
                         String players = "";
-                        if(amountofplayers<5) {
-                            List<Player> ps = tcworld?iw.getBukkitWorld().getPlayers():bw.getPlayers();
-                            for(Player p : ps) {
-                                players+=p.getDisplayName()+ChatColor.WHITE+",";
+                        if (amountofplayers < 5) {
+                            List<Player> ps = tcworld ? iw.getBukkitWorld().getPlayers() : bw.getPlayers();
+                            for (Player p : ps) {
+                                players += p.getDisplayName() + ChatColor.WHITE + ",";
                             }
-                            if(players.length()>0)
-                                players = players.substring(0, players.length()-1);
+                            if (players.length() > 0)
+                                players = players.substring(0, players.length() - 1);
                         }
-                        String name = tcworld?iw.getName():bw.getName();
-                        sender.sendMessage(ChatColor.LIGHT_PURPLE+"["+ChatColor.GOLD + name + ChatColor.LIGHT_PURPLE+"]");
-                        sender.sendMessage(ChatColor.RED+"ANIMALS: "+(animals?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                        sender.sendMessage(ChatColor.RED+"MONSTERS: "+(monsters?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                        sender.sendMessage(ChatColor.RED+"PVP: "+(pvp?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                        sender.sendMessage(ChatColor.RED+"ENV: "+wenv);
-                        sender.sendMessage(ChatColor.RED+"DIFFICULTY: "+difficulty.name().toLowerCase());
-                        sender.sendMessage(ChatColor.RED+"PLAYERS: "+amountofplayers + (players.equals("")?"":(" ("+players+ChatColor.RED+")")));
-                        sender.sendMessage(ChatColor.RED+"TOOL DURABILITY: "+(tooldura?ChatColor.GREEN+"enabled":ChatColor.RED+"disabled"));
-                        if(gm!=null)
-                            sender.sendMessage(ChatColor.RED+"GAMEMODE: "+gm.toString().toLowerCase());
-                        if(customChunkGen) {
-                            String ChunkGen = tcworld?iw.getChunkGenClass():bw.getGenerator().getClass().getName();
-                            sender.sendMessage(ChatColor.RED+"CHUNKGEN: "+ChunkGen);
+                        String name = tcworld ? iw.getName() : bw.getName();
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE + "[" + ChatColor.GOLD + name + ChatColor.LIGHT_PURPLE + "] " + (tcworld ? "" : ChatColor.GREEN + "*"));
+                        sender.sendMessage(ChatColor.RED + "ANIMALS: " + (animals ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"));
+                        sender.sendMessage(ChatColor.RED + "MONSTERS: " + (monsters ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"));
+                        sender.sendMessage(ChatColor.RED + "PVP: " + (pvp ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"));
+                        sender.sendMessage(ChatColor.RED + "ENV: " + wenv);
+                        sender.sendMessage(ChatColor.RED + "DIFFICULTY: " + difficulty.name().toLowerCase());
+                        sender.sendMessage(ChatColor.RED + "PLAYERS: " + amountofplayers + (players.equals("") ? "" : (" (" + players + ChatColor.RED + ")")));
+                        sender.sendMessage(ChatColor.RED + "TOOL DURABILITY: " + (tooldura ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"));
+                        if (gm != null)
+                            sender.sendMessage(ChatColor.RED + "GAMEMODE: " + gm.toString().toLowerCase());
+                        if (customChunkGen) {
+                            String ChunkGen = tcworld ? iw.getChunkGenClass() : bw.getGenerator().getClass().getName();
+                            sender.sendMessage(ChatColor.RED + "CHUNKGEN: " + ChunkGen);
                         }
 
                     }
@@ -629,23 +732,23 @@ public class AdminCommands {
                 } else {
                     sender.sendMessage(ChatColor.GREEN + "usage: /tc world create|unload|flag|info");
                 }
-            } else if(args[0].equalsIgnoreCase("improvchat")) {
-                if(sender instanceof Player) {
+            } else if (args[0].equalsIgnoreCase("improvchat")) {
+                if (sender instanceof Player) {
                     Player player = (Player) sender;
                     Set<Player> lijst = plugin.getCUIPlayers();
-                    if(lijst!=null && !lijst.contains(player)) {
-                        plugin.getLogger().info("[TweakcraftUtils] Adding "+player.getName()+" to the CUI list!");
+                    if (lijst != null && !lijst.contains(player)) {
+                        plugin.getLogger().info("[TweakcraftUtils] Adding " + player.getName() + " to the CUI list!");
                         lijst.add(player);
                     }
 
                     plugin.sendCUIChatMode(player);
                 }
-            } else if(args[0].equalsIgnoreCase("tooldura")) {
-                if(sender instanceof Player) {
+            } else if (args[0].equalsIgnoreCase("tooldura")) {
+                if (sender instanceof Player) {
                     Player player = (Player) sender;
                     Set<Player> lijst = plugin.getMod_InfDuraplayers();
-                    if(lijst!=null && !lijst.contains(player)) {
-                        plugin.getLogger().info("[TweakcraftUtils] Adding "+player.getName()+" to the mod_InfDura list!");
+                    if (lijst != null && !lijst.contains(player)) {
+                        plugin.getLogger().info("[TweakcraftUtils] Adding " + player.getName() + " to the mod_InfDura list!");
                         lijst.add(player);
                     }
 

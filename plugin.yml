@@ -239,3 +239,6 @@ commands:
     description: Toggle the picking up of items for invisble players
     usage: /<command>
     aliases: [ 'tip' ]
+  wd:
+    description: Get or set the world difficulty level
+    usage: /<command>

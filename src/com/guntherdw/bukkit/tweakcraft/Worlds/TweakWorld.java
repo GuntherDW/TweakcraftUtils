@@ -302,6 +302,7 @@ public class TweakWorld implements iWorld {
                 world = worldCreator.createWorld();
                 world.setKeepSpawnInMemory(this.getSpawnChunksActive());
                 world.setPVP(pvp);
+                world.setDifficulty(getDifficultyBukkit());
             }
             // TODO: Re-enable after it's been added again!
             // world.setViewDistance(this.viewdistance);
@@ -358,6 +359,12 @@ public class TweakWorld implements iWorld {
         if (!isEnabled()) return null;
         if (!isNetherEnabled()) return null;
         return nether;
+    }
+
+    public World getThe_endWorld() {
+        if (!isEnabled()) return null;
+        if (!isTheEndEnabled()) return null;
+        return the_end;
     }
 
     public boolean getAllowAnimals() {
@@ -498,5 +505,11 @@ public class TweakWorld implements iWorld {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty.getValue();
+        if (world != null && isEnabled())
+            world.setDifficulty(getDifficultyBukkit());
+        if (nether != null && isEnabled())
+            nether.setDifficulty(getDifficultyBukkit());
+        if (the_end != null && isEnabled())
+            the_end.setDifficulty(getDifficultyBukkit());
     }
 }

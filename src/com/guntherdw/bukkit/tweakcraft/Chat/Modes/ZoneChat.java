@@ -48,9 +48,9 @@ public class ZoneChat extends ChatMode {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             Set<Player> recp = getRecipients(player);
-            for (Player p : recp) {
-                p.sendMessage(ChatColor.DARK_PURPLE + "Z" + ChatColor.WHITE + ": [" + player.getDisplayName() + "]: " + message);
-            }
+
+            super.sendMessage(sender, message);
+
             if (getZoneName(player, false).equals("")) {
                 sender.sendMessage(ChatColor.GOLD + "You're currently not inside of a zone!");
             } else if (recp.size() < 2) {
