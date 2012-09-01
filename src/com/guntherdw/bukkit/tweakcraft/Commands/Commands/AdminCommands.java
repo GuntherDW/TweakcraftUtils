@@ -737,7 +737,7 @@ public class AdminCommands {
                     Player player = (Player) sender;
                     Set<Player> lijst = plugin.getCUIPlayers();
                     if (lijst != null && !lijst.contains(player)) {
-                        plugin.getLogger().info("[TweakcraftUtils] Adding " + player.getName() + " to the CUI list!");
+                        plugin.getLogger().info("Adding " + player.getName() + " to the CUI list!");
                         lijst.add(player);
                     }
 
@@ -748,7 +748,7 @@ public class AdminCommands {
                     Player player = (Player) sender;
                     Set<Player> lijst = plugin.getMod_InfDuraplayers();
                     if (lijst != null && !lijst.contains(player)) {
-                        plugin.getLogger().info("[TweakcraftUtils] Adding " + player.getName() + " to the mod_InfDura list!");
+                        plugin.getLogger().info("Adding " + player.getName() + " to the mod_InfDura list!");
                         lijst.add(player);
                     }
 

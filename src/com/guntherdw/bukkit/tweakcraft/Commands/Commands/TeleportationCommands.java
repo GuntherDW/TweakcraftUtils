@@ -236,7 +236,7 @@ public class TeleportationCommands {
                         if (lpto.isInvisible()) {
                             if (!plugin.check(player, "tpinvis")) {
                                 player.sendMessage(ChatColor.YELLOW + "Can't find player!");
-                                plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " tried to tp to " + p.getName() + " <invisible>!");
+                                plugin.getLogger().info(player.getName() + " tried to tp to " + p.getName() + " <invisible>!");
                                 return true;
                             } else {
                                 player.sendMessage(ChatColor.AQUA + "Stealth player TP!");
@@ -265,10 +265,10 @@ public class TeleportationCommands {
 
                                     if (override)
                                         player.sendMessage(ChatColor.RED + "Forced tp!");
-                                    plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " teleported to " + p.getName() + "!");
+                                    plugin.getLogger().info(player.getName() + " teleported to " + p.getName() + "!");
                                 } else {
                                     p.sendMessage(player.getDisplayName() + ChatColor.LIGHT_PURPLE + " failed to teleport to you!");
-                                    plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " failed to teleport to " + p.getName() + "!");
+                                    plugin.getLogger().info(player.getName() + " failed to teleport to " + p.getName() + "!");
                                     // This doesn't happen, CraftBukkit has return true; in it's sources!
                                 }
                             }
@@ -337,7 +337,7 @@ public class TeleportationCommands {
         } else {
             player = "CONSOLE";
         }
-        plugin.getLogger().info("[TweakcraftUtils] " + player + " teleported " + pfrom.getName() + " to " + pto.getName() + "!");
+        plugin.getLogger().info(player + " teleported " + pfrom.getName() + " to " + pto.getName() + "!");
         plugin.getTelehistory().addHistory(pfrom.getName(), pfrom.getLocation());
         pfrom.teleport(pto);
     }

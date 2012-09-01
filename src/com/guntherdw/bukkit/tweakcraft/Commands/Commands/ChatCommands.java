@@ -29,11 +29,8 @@ import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerChatEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author GuntherDW
@@ -276,7 +273,10 @@ public class ChatCommands {
                 }
                 // plugin.getServer().broadcastMessage(ChatColor.WHITE + "<" + (sender instanceof Player ? ((Player) sender).getDisplayName() : ChatColor.LIGHT_PURPLE + "CONSOLE") + ChatColor.WHITE + "> " + spam);
                 if(sender instanceof Player) {
-                    PlayerChatEvent playerChatEvent = new PlayerChatEvent((Player) sender, spam);
+                    Set<Player> players = new HashSet<Player>();
+                    players.addAll(Arrays.asList(plugin.getServer().getOnlinePlayers()));
+
+                    org.bukkit.event.player.AsyncPlayerChatEvent playerChatEvent = new org.bukkit.event.player.AsyncPlayerChatEvent(false, (Player) sender, spam, players);
                     plugin.getServer().getPluginManager().callEvent(playerChatEvent);
                 } else {
                     String chat = ChatColor.WHITE + "<" + ChatColor.LIGHT_PURPLE + "CONSOLE" + ChatColor.WHITE + "> " + spam;

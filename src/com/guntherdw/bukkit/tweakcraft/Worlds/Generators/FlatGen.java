@@ -22,7 +22,6 @@ import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldType;
 import org.bukkit.generator.ChunkGenerator;
 
 import java.util.Random;
@@ -78,28 +77,6 @@ public class FlatGen extends ChunkGenerator {
     public byte getToplayer() {
         return toplayer;
     }
-
-    /* @Override
-    public byte[] generate(World world, Random random, int cx, int cz) {
-        // byte[] result = new byte[32768];
-        byte[] result = new byte[65536];
-        for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < 128; y++) {
-                    if (y == 0 && bedrockBottom)
-                        result[(x * 16 + z) * 256 + y] = (byte) 7;
-                    else if (y < height)
-                        result[(x * 16 + z) * 256 + y] = normal;
-                    else if (y == height)
-                        result[(x * 16 + z) * 256 + y] = toplayer;
-                    else
-                        result[(x * 16 + z) * 256 + y] = (byte) 0;
-                }
-                // result[(x * 16 + z) * 128 + y]
-            }
-        }
-        return result;
-    } */
 
     @Override
     @Deprecated

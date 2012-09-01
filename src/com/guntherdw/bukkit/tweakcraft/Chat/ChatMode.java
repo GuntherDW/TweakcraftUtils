@@ -37,7 +37,7 @@ public abstract class ChatMode {
     protected Logger logger = Logger.getLogger("Minecraft");
 
     public ChatMode(ChatHandler instance) {
-        subscribers = new HashSet<String>();
+        this.subscribers = new HashSet<String>();
         this.chathandler = instance;
     }
 

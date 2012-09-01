@@ -54,7 +54,6 @@ import java.util.*;
  */
 public class TweakcraftPlayerListener implements Listener {
 
-    //private final Logger log = Logger.getLogger("Minecraft");
     private final TweakcraftUtils plugin;
     private Set<String> invisplayers;
     private Map<String, String> nicks;
@@ -98,7 +97,8 @@ public class TweakcraftPlayerListener implements Listener {
         if (pcmd != null && plugin.getCommandHandler().getCommandMap().containsKey(pcmd.getName()))
             go = false;
 
-        if (pcmd == null && plugin.getConfigHandler().enableInjectedCommandsHanding) {
+
+        /* if (pcmd == null && plugin.getConfigHandler().enableInjectedCommandsHanding) {
             // Check if it's been internally handled or injected
             Method method = plugin.getCommandHandler().getCommand(cmd.toLowerCase());
             if (method != null) {
@@ -106,7 +106,7 @@ public class TweakcraftPlayerListener implements Listener {
                 plugin.getCommandHandler().executeCommand(event.getPlayer(), cmd, args.toArray(new String[args.size()]));
                 return;
             }
-        }
+        } */
 
         if (go && plugin.getConfigHandler().extraLogging) {
             plugin.getLogger().info("[TweakLog] " + (lp.isInvisible()?"[INVIS] ":"") + event.getPlayer().getName() + " issued: " + line);
@@ -124,7 +124,6 @@ public class TweakcraftPlayerListener implements Listener {
 
     public void addNoMountPersistence(String playername) {
         if (plugin.getConfigHandler().enablePersistence) {
-            // PlayerOptions po = new PlayerOptions();
             List<PlayerOptions> popts = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", playername).ieq("optionname", "nomount").findList();
             if (popts != null && !popts.isEmpty())
                 removeNoMountPersistence(playername);
@@ -151,11 +150,6 @@ public class TweakcraftPlayerListener implements Listener {
             plugin.getDatabase().save(pi);
         }
 
-        /* if (plugin.getClientBridge() != null) {
-            for(Player p : plugin.getServer().getOnlinePlayers()) {
-                plugin.getClientBridge().getPlayerListener().sendPlayerInfo(p, lp.getBukkitPlayerSafe().getName(), true);
-            }
-        } */
         TweakcraftUtilsEvent event = new TweakcraftUtilsEvent(TweakcraftUtilsEvent.Action.NICK_CHANGED);
         event.setPlayer(lp);
         plugin.getServer().getPluginManager().callEvent(event);
@@ -165,7 +159,6 @@ public class TweakcraftPlayerListener implements Listener {
         LocalPlayer lp = plugin.wrapPlayer(player);
 
         if (lp.hasNick()) {
-            System.out.println("Doing nicks.remove");
             nicks.remove(player);
             if (plugin.getConfigHandler().enablePersistence) {
                 PlayerInfo pi = plugin.getDatabase().find(PlayerInfo.class).where().ieq("name", player).findUnique();
@@ -188,7 +181,6 @@ public class TweakcraftPlayerListener implements Listener {
 
             return true;
         } else {
-            System.out.println("NOT doing nicks.remove");
             return false;
         }
     }
@@ -299,7 +291,7 @@ public class TweakcraftPlayerListener implements Listener {
             LocalPlayer lp = plugin.wrapPlayer(pi.getName());
             if (pi.getNick() != null) {
                 if (plugin.getConfigHandler().enableDebug)
-                    plugin.getLogger().info("[TweakcraftUtils] Setting " + pi.getName() + "'s nick to " + pi.getNick());
+                    plugin.getLogger().info("Setting " + pi.getName() + "'s nick to " + pi.getNick());
                 nicks.put(pi.getName(), pi.getNick());
                 pi.setNick(pi.getNick());
                 lp.setNick(pi.getNick());
@@ -310,12 +302,12 @@ public class TweakcraftPlayerListener implements Listener {
         for (PlayerOptions po : playeroptions) {
             if (po.getOptionname().equals("nomount")) {
                 if (plugin.getConfigHandler().enableDebug)
-                    plugin.getLogger().info("[TweakcraftUtils] Setting " + po.getName() + "'s no-ride option!");
+                    plugin.getLogger().info("Setting " + po.getName() + "'s no-ride option!");
                 nomount.add(po.getName());
             }
             if (po.getOptionname().equals("mute")) {
                 if (plugin.getConfigHandler().enableDebug)
-                    plugin.getLogger().info("[TweakcraftUtils] Setting " + po.getName() + "'s mute option!");
+                    plugin.getLogger().info("Setting " + po.getName() + "'s mute option!");
                 Long toTime = null;
                 try {
                     if (po.getOptionvalue() != null) {
@@ -328,7 +320,7 @@ public class TweakcraftPlayerListener implements Listener {
             }
             if(po.getOptionname().equals("capeurl")) {
                 if (plugin.getConfigHandler().enableDebug)
-                    plugin.getLogger().info("[TweakcraftUtils] Setting " + po.getName() + "'s CapeURL option!");
+                    plugin.getLogger().info("Setting " + po.getName() + "'s CapeURL option!");
                 LocalPlayer lp = plugin.wrapPlayer(po.getName());
                 lp.setCapeURL(po.getOptionvalue());
                 capes.put(po.getName(), po.getOptionvalue());
@@ -349,7 +341,7 @@ public class TweakcraftPlayerListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onPlayerChat(PlayerChatEvent event) {
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
 
         Player player = event.getPlayer();
@@ -371,7 +363,7 @@ public class TweakcraftPlayerListener implements Listener {
 
         if (!ch.canTalk(player.getName())) {
             player.sendMessage(ChatColor.GOLD + "You are muted! No one can hear you.");
-            plugin.getLogger().info("[TweakcraftUtils] Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
+            plugin.getLogger().info("Muted player message : <" + event.getPlayer().getName() + "> " + event.getMessage());
             event.setCancelled(true);
             return;
         }
@@ -381,7 +373,7 @@ public class TweakcraftPlayerListener implements Listener {
             counter = ch.getAntiSpam().checkSpam(player, message);
 
             if (counter > (plugin.getConfigHandler().spamMaxMessages - 1)) {
-                plugin.getLogger().info("[TweakcraftUtils] " + player.getName() + " has been auto-muted for spamming!");
+                plugin.getLogger().info(player.getName() + " has been auto-muted for spamming!");
                 long until = plugin.getConfigHandler().spamMuteMinutes * 60;
                 ch.addMute(player.getName().toLowerCase(), until);
                 String msg = plugin.getConfigHandler().spamMuteMessage.trim();
@@ -567,7 +559,7 @@ public class TweakcraftPlayerListener implements Listener {
                 try {
                     plugin.getConfigHandler().saveSeenConfig();
                 } catch (IOException ex) {
-                    plugin.getLogger().info("[TweakcraftUtils] Couldn't save SeenConfig file!");
+                    plugin.getLogger().info("Couldn't save SeenConfig file!");
                 }
                 // plugin.getConfigHandler().getSeenconfig().save();
             } else {
@@ -593,13 +585,13 @@ public class TweakcraftPlayerListener implements Listener {
                 }
             }
             if (plugin.getConfigHandler().enableDebug)
-                plugin.getLogger().info("[TweakcraftUtils] Stored " + name + "'s logout!");
+                plugin.getLogger().info("Stored " + name + "'s logout!");
         }
         plugin.getChathandler().removePlayer(event.getPlayer());
         try {
             plugin.getChathandler().setPlayerchatmode(name, null);
         } catch (ChatModeException e) {
-            plugin.getLogger().severe("[TweakcraftUtils] Error setting ChatMode to null after the logout!");
+            plugin.getLogger().severe("Error setting ChatMode to null after the logout!");
         }
 
 
@@ -634,7 +626,7 @@ public class TweakcraftPlayerListener implements Listener {
             for (Integer i : bind.keySet()) {
                 if (i == null) {
                     event.getPlayer().sendMessage(ChatColor.RED + "[TweakcraftUtils] onPlayerInteract Null error!");
-                    plugin.getLogger().info("[TweakcraftUtils] " + playername + " triggered a i == null event!");
+                    plugin.getLogger().info(playername + " triggered a i == null event!");
                 } else {
 
                     if (event.isCancelled()) {
@@ -721,7 +713,7 @@ public class TweakcraftPlayerListener implements Listener {
 
         for (String s : this.invisplayers) {
             LocalPlayer lp = plugin.wrapPlayer(s);
-            plugin.getLogger().info("[TweakcraftUtils] Removing " + s + " from the invisble playerlist!");
+            plugin.getLogger().info("Removing " + s + " from the invisble playerlist!");
             lp.setInvisible(false);
         }
         this.invisplayers.clear();
@@ -737,7 +729,7 @@ public class TweakcraftPlayerListener implements Listener {
                 LocalPlayer lp = plugin.wrapPlayer(s);
                 lp.setInvisible(true);
                 // if (plugin.getConfigHandler().enableDebug)
-                    plugin.getLogger().info("[TweakcraftUtils] Adding " + s + " to the invisble playerlist!");
+                    plugin.getLogger().info("Adding " + s + " to the invisble playerlist!");
             }
         }
     }
@@ -778,11 +770,11 @@ public class TweakcraftPlayerListener implements Listener {
                                 signBlock = b;
                                 p.sendMessage(ChatColor.YELLOW + "TweakTravel : taking you to " + (((Sign) b.getState()).getLine(1)));
                             } else {
-                                plugin.getLogger().warning("[TweakcraftUtils] Found more than one TweakTravel sign");
+                                plugin.getLogger().warning("Found more than one TweakTravel sign");
                                 Location lold = signBlock.getLocation();
                                 Location lnew = b.getLocation();
-                                plugin.getLogger().warning("[TweakcraftUtils] original location : " + lold);
-                                plugin.getLogger().warning("[TweakcraftUtils] other : " + lnew);
+                                plugin.getLogger().warning("original location : " + lold);
+                                plugin.getLogger().warning("other : " + lnew);
 
                                 p.sendMessage(ChatColor.RED + "WARNING: Found more than one TweakTravel sign!");
                             }

@@ -56,18 +56,18 @@ public class ItemDB {
                         Integer stacks = Integer.parseInt(split[3]);
                         itemmap.put(itemname, new Item(itemnr, damage, stacks));
                     } catch (Throwable e) {
-                        plugin.getLogger().info("[TweakcraftUtils] Item error at line " + line);
+                        plugin.getLogger().info("Item error at line " + line);
                     }
                 }
                 line++;
             }
         } catch (FileNotFoundException e) {
-            plugin.getLogger().info("[TweakcraftUtils] Item DB not found!");
-            plugin.getLogger().info("[TweakcraftUtils] looked in " + plugin.getDataFolder());
+            plugin.getLogger().info("Item DB not found!");
+            plugin.getLogger().info("looked in " + plugin.getDataFolder());
         } catch (IOException e) {
-            plugin.getLogger().info("[TweakcraftUtils] Item DB IO error!");
+            plugin.getLogger().info("Item DB IO error!");
         }
-        plugin.getLogger().info("[TweakcraftUtils] Loaded item DB, " + itemmap.size() + " items found!");
+        plugin.getLogger().info("Loaded item DB, " + itemmap.size() + " items found!");
     }
 
     public Item getItem(String name) {

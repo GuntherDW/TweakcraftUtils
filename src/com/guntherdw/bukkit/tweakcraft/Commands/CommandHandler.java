@@ -28,13 +28,17 @@ import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.SimplePluginManager;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * @author GuntherDW
@@ -57,7 +61,11 @@ public class CommandHandler {
     public TeleportationCommands teleportationCommands = null;
     public WeatherCommands weatherCommands = null;
 
-    private Logger logger = Logger.getLogger("Minecraft");
+    /** Bukkit Command Injection stuff **/
+    private SimplePluginManager simplePluginManager = null;
+    private SimpleCommandMap simpleCommandMap = null;
+    private Constructor<PluginCommand> pluginCommandConstructor = null;
+
     private TweakcraftUtils plugin;
 
     private Object getMethodInstance(Method method) {
@@ -113,9 +121,9 @@ public class CommandHandler {
 
 
             if (newCommandMap.containsKey(commandName)) {
-                logger.warning("[TweakcraftUtils] Duplicate command found!");
-                logger.warning("[TweakcraftUtils] Method : " + method.getName() + "!");
-                logger.warning("[TweakcraftUtils] Command : " + commandName + "!");
+                plugin.getLogger().warning("Duplicate command found!");
+                plugin.getLogger().warning("Method : " + method.getName() + "!");
+                plugin.getLogger().warning("Command : " + commandName + "!");
                 return;
             }
             List<String> al = new ArrayList<String>();
@@ -126,10 +134,58 @@ public class CommandHandler {
                 aliasCommandMap.put(alias, method);
             }
 
-
             this.commandAliases.put(commandName, al);
 
             instanceMap.put(method, instance);
+
+            if(injectIntoBukkit) {
+                // plugin.getLogger().info("Injecting "+commandName+" into Bukkit!");
+                this.injectIntoBukkit(commandName, aliases, method, instance, annotation);
+            }
+        }
+    }
+
+    public void getBukkitCommandMap() {
+        try {
+            Object plmgr = plugin.getServer().getPluginManager();
+            if (plmgr instanceof SimplePluginManager) {
+                SimplePluginManager pluginmanager = (SimplePluginManager) plmgr;
+                Field f = SimplePluginManager.class.getDeclaredField("commandMap");
+                f.setAccessible(true);
+                SimpleCommandMap simpleCommandMap = (SimpleCommandMap) f.get(pluginmanager);
+                Constructor<PluginCommand> con = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+                con.setAccessible(true);
+                this.simplePluginManager = pluginmanager;
+                this.simpleCommandMap = simpleCommandMap;
+                this.pluginCommandConstructor = con;
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("Exception caught while getting the CommandMap, plugin command injection will NOT work!");
+            e.printStackTrace();
+        }
+
+    }
+
+    public void injectIntoBukkit(String command, String[] aliases, Method commandMethod, Object classInstance, aCommand annotation) {
+
+        if(this.simplePluginManager == null)
+            this.getBukkitCommandMap();
+
+        try {
+            if (this.simplePluginManager != null) {
+                PluginCommand cmd = pluginCommandConstructor.newInstance(command, this.plugin);
+                cmd.setAliases(Arrays.asList(aliases));
+                cmd.setPermission("tweakcraftutils."+annotation.permissionBase());
+                cmd.setDescription(annotation.description());
+                cmd.setUsage(annotation.usage());
+
+                cmd.setExecutor(plugin);
+
+                this.simpleCommandMap.register("tweakcraftutils", cmd);
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("Exception caught while injecting '" + command + "' into Bukkit!");
+            e.printStackTrace();
         }
     }
 
@@ -162,7 +218,7 @@ public class CommandHandler {
             Set<String> cmds = pluginCommands.keySet();
             for (String c : cmds) {
                 if (!this.newCommandMap.containsKey(c) && !this.aliasCommandMap.containsKey(c))
-                    logger.warning("[TweakcraftUtils] WARNING: Unmapped command : " + c);
+                    plugin.getLogger().warning("WARNING: Unmapped command : " + c);
             }
         }
     }
@@ -216,17 +272,15 @@ public class CommandHandler {
 
         if (newCommandMap.containsKey(name) || aliasCommandMap.containsKey(name)) {
             try {
-                /* iCommand command = commandHandler.getCommand(cmd.getName()); */
-                // public abstract boolean executeCommand(Server server, CommandSender sender, String command, String[] args, TweakcraftUtils plugin);
-
                 if (!runMethod(sender, name, args)) {
                     sender.sendMessage("This command did not go as intended!");
                 }
-                if (sender instanceof Player) {
+                /* if (sender instanceof Player) {
                     final LocalPlayer lp = plugin.wrapPlayer((Player)sender);
-                    plugin.getLogger().info("[TweakcraftUtils] "+(lp.isInvisible()?"[INVIS] ":"") + sender.getName() + " issued: /" + name + " " + mess);
-                } else
-                    plugin.getLogger().info("[TweakcraftUtils] CONSOLE issued: /" + name + " " + mess);
+                    plugin.getLogger().info((lp.isInvisible()?"[INVIS] ":"") + sender.getName() + " issued: /" + name + " " + mess);
+                } else */
+                if(!(sender instanceof Player))
+                    plugin.getLogger().info("CONSOLE issued: /" + name + " " + mess);
                 return true;
             } /*catch (CommandNotFoundException e) {
                     sender.sendMessage("TweakcraftUtils error, command not found!");
@@ -234,7 +288,7 @@ public class CommandHandler {
                 sender.sendMessage(ChatColor.RED + "You do not have the correct permissions for this command or usage!");
                 if (sender instanceof Player) {
                     final LocalPlayer lp = plugin.wrapPlayer((Player)sender);
-                    plugin.getLogger().info("[TweakcraftUtils] " + (lp.isInvisible()?"[INVIS] ":"") + ((Player) sender).getName() + " tried: /" + name + " " + mess);
+                    plugin.getLogger().info((lp.isInvisible()?"[INVIS] ":"") + ((Player) sender).getName() + " tried: /" + name + " " + mess);
                 }
             } catch (CommandUsageException e) {
                 sender.sendMessage(ChatColor.YELLOW + e.getMessage());
@@ -242,7 +296,7 @@ public class CommandHandler {
                 sender.sendMessage(ChatColor.YELLOW + e.getMessage());
             } catch (CommandException e) {
                 sender.sendMessage(ChatColor.YELLOW + e.getMessage());
-                plugin.getLogger().info("[TweakcraftUtils] " + (sender instanceof Player ? ((Player) sender).getName() : "CONSOLE") + " got a CommandException on : /" + name + " " + mess);
+                plugin.getLogger().info((sender instanceof Player ? ((Player) sender).getName() : "CONSOLE") + " got a CommandException on : /" + name + " " + mess);
             }
         }
         return false;
@@ -270,14 +324,14 @@ public class CommandHandler {
             if (t instanceof CommandException)
                 throw (CommandException) t;
 
-            logger.warning("[TweakcraftUtils] Error occured while executing command!");
-            logger.warning("[TweakcraftUtils] Errornous command : "+name+" "+argsString+"!");
-            logger.warning("[TweakcraftUtils] CommandSender : "+(sender instanceof Player?((Player)sender).getName():"CONSOLE"));
+            plugin.getLogger().warning("Error occured while executing command!");
+            plugin.getLogger().warning("Errornous command : " + name + " " + argsString + "!");
+            plugin.getLogger().warning("CommandSender : " + (sender instanceof Player ? ((Player) sender).getName() : "CONSOLE"));
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            logger.warning("[TweakcraftUtils] Error occured while executing command!");
-            logger.warning("[TweakcraftUtils] Errornous command : "+name+" "+argsString+"!");
-            logger.warning("[TweakcraftUtils] CommandSender : "+(sender instanceof Player?((Player)sender).getName():"CONSOLE"));
+            plugin.getLogger().warning("Error occured while executing command!");
+            plugin.getLogger().warning("Errornous command : " + name + " " + argsString + "!");
+            plugin.getLogger().warning("CommandSender : " + (sender instanceof Player ? ((Player) sender).getName() : "CONSOLE"));
             e.printStackTrace();
         }
 

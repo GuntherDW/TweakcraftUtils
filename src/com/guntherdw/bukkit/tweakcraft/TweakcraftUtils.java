@@ -18,11 +18,9 @@
 
 package com.guntherdw.bukkit.tweakcraft;
 
-// import com.bergerkiller.bukkit.nolagg.NoLagg;
-
 import com.ensifera.animosity.craftirc.CraftIRC;
 import com.ensifera.animosity.craftirc.EndPoint;
-// import com.guntherdw.bukkit.tcutilsclientbridge.TCUtilsClientBridgePlugin;
+
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Commands.CommandHandler;
@@ -42,10 +40,14 @@ import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Util.TeleportHistory;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
+
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+
 import com.zones.Zones;
+
 import de.diddiz.LogBlock.LogBlock;
+
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -60,7 +62,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import javax.persistence.PersistenceException;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Logger;
 
 
 /**
@@ -101,7 +102,6 @@ public class TweakcraftUtils extends JavaPlugin {
     private Set<String> donottplist;
     private List<String> MOTDLines;
 
-    protected final Logger log = Logger.getLogger("Minecraft");
     protected PluginDescriptionFile pdfFile = null;
 
     private Set<Player> cuiPlayers;
@@ -323,9 +323,9 @@ public class TweakcraftUtils extends JavaPlugin {
             if (configHandler.useTweakBotSeen)
                 getDatabase().find(PlayerHistoryInfo.class).findRowCount();
         } catch (PersistenceException ex) {
-            log.info("[TweakcraftUtils] Installing database for " + getDescription().getName() + " due to first time usage");
+            this.getLogger().info("Installing database for " + getDescription().getName() + " due to first time usage");
             if (configHandler.useTweakBotSeen)
-                log.info("[TweakcraftUtils] Also creating the TweakBot !seen helpen table");
+                this.getLogger().info("Also creating the TweakBot !seen helpen table");
             installDDL();
         }
         databaseloaded = true;
@@ -428,11 +428,6 @@ public class TweakcraftUtils extends JavaPlugin {
         return worldListener;
     }
 
-    @Override
-    public Logger getLogger() {
-        return log;
-    }
-
     public List<String> getMOTD() {
         return MOTDLines;
     }
@@ -500,8 +495,8 @@ public class TweakcraftUtils extends JavaPlugin {
                     circ = (CraftIRC) plugin;
                 } else {
                     this.getConfigHandler().enableIRC = false;
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find CraftIRC, but is enabled in the config.");
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling CraftIRC support.");
+                    this.getLogger().warning("WARNING: Couldn't find CraftIRC, but is enabled in the config.");
+                    this.getLogger().warning("WARNING: Disabling CraftIRC support.");
                 }
             }
         }
@@ -516,8 +511,8 @@ public class TweakcraftUtils extends JavaPlugin {
                     wg = (WorldGuardPlugin) plugin;
                 } else {
                     this.getConfigHandler().enableWorldGuard = false;
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find WorldGuard, but is enabled in the config.");
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling WorldGuard support.");
+                    this.getLogger().warning("WARNING: Couldn't find WorldGuard, but is enabled in the config.");
+                    this.getLogger().warning("WARNING: Disabling WorldGuard support.");
                 }
             }
         }
@@ -532,8 +527,8 @@ public class TweakcraftUtils extends JavaPlugin {
                     zones = (Zones) plugin;
                 } else {
                     this.getConfigHandler().enableZones = false;
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find Zones, but is enabled in the config.");
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling Zones support.");
+                    this.getLogger().warning("WARNING: Couldn't find Zones, but is enabled in the config.");
+                    this.getLogger().warning("WARNING: Disabling Zones support.");
                 }
             }
         }
@@ -548,8 +543,8 @@ public class TweakcraftUtils extends JavaPlugin {
                     lb = (LogBlock) plugin;
                 } else {
                     this.getConfigHandler().enableLogBlock = false;
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Couldn't find LogBlock, but is enabled in the config.");
-                    this.getLogger().warning("[TweakcraftUtils] WARNING: Disabling LogBlock support.");
+                    this.getLogger().warning("WARNING: Couldn't find LogBlock, but is enabled in the config.");
+                    this.getLogger().warning("WARNING: Disabling LogBlock support.");
                 }
             }
         }
@@ -584,9 +579,9 @@ public class TweakcraftUtils extends JavaPlugin {
             }
             motdfilereader.close();
         } catch (FileNotFoundException e) {
-            log.severe("[TweakcraftUtils] MOTD file not found!");
+            this.getLogger().severe("MOTD file not found!");
         } catch (IOException e) {
-            log.severe("[TweakcraftUtils] IOException occured while loadign the MOTD file!");
+            this.getLogger().severe("IOException occured while loadign the MOTD file!");
         }
 
     }
@@ -682,7 +677,7 @@ public class TweakcraftUtils extends JavaPlugin {
         playerListener.reloadInvisTable();
         worldmanager.setupWorlds();
 
-        log.info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
+        this.getLogger().info("[" + pdfFile.getName() + "] " + pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 
     }
 
@@ -709,7 +704,7 @@ public class TweakcraftUtils extends JavaPlugin {
     @Override
     public void onDisable() {
         instance = null;
-        log.info("[" + pdfFile.getName() + "] Shutting down!");
+        this.getLogger().info("[" + pdfFile.getName() + "] Shutting down!");
         // this.getDatabase().
     }
 
@@ -727,11 +722,11 @@ public class TweakcraftUtils extends JavaPlugin {
 
         List<String> argsa = new ArrayList<String>();
         // String[] args = new String[];
-        int argc = 0;
+        //int argc = 0;
         for (String a : unfilteredargs) {
             if (a != null && !a.trim().equals("")) {
                 argsa.add(a);
-                argc++;
+                // argc++;
             }
         }
         String[] args = argsa.toArray(new String[argsa.size()]);

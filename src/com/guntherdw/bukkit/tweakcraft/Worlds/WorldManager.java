@@ -82,7 +82,7 @@ public class WorldManager {
             if (split.length > 2) fg.setNormal(Byte.parseByte(split[2]));
             if (split.length > 3) fg.setToplayer(Byte.parseByte(split[3]));
             if (split.length > 4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
-            plugin.getLogger().info("[TweakcraftUtils] Utilising FlatGen for world " + worldName);
+            plugin.getLogger().info("Utilising FlatGen for world " + worldName);
             return fg;
         } else if (split[0].equalsIgnoreCase("plotgen")) {
             PlotGen fg = new PlotGen();
@@ -91,8 +91,8 @@ public class WorldManager {
             if (split.length > 3) fg.setToplayer(Byte.parseByte(split[3]));
             if (split.length > 4) fg.setBedrockBottom(Boolean.parseBoolean(split[4]));
             if (split.length > 5) fg.setPlotSize(Integer.parseInt(split[5]));
-            plugin.getLogger().info("[TweakcraftUtils] Utilising PlotGen for world " + worldName);
-            plugin.getLogger().info("[TweakcraftUtils] PlotGen PlotSize : " + fg.getPlotSize());
+            plugin.getLogger().info("Utilising PlotGen for world " + worldName);
+            plugin.getLogger().info("PlotGen PlotSize : " + fg.getPlotSize());
             // System.out.println("[");
             return fg;
         }
@@ -118,11 +118,11 @@ public class WorldManager {
 
             iWorld w = worlds.get(worldname);
             w.setMOTD(lines.toArray(new String[lines.size()]));
-            plugin.getLogger().info("[TweakcraftUtils] Loaded MOTD for world " + worldname + "!");
+            plugin.getLogger().info("Loaded MOTD for world " + worldname + "!");
         } catch (FileNotFoundException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] Couldn't find MOTD for world " + worldname + "!");
+            plugin.getLogger().warning("Couldn't find MOTD for world " + worldname + "!");
         } catch (IOException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] Error while reading MOTD for world " + worldname + "!");
+            plugin.getLogger().warning("Error while reading MOTD for world " + worldname + "!");
         }
     }
 
@@ -167,10 +167,10 @@ public class WorldManager {
         if (!netherWorldOnline && globalConfig.getBoolean("worlds.enablenether", false)) {
             String netherfolder = globalConfig.getString("worlds.netherfolder", "nether");
             if (!netherfolder.equalsIgnoreCase("")) {
-                plugin.getLogger().info("[TweakcraftUtils] Loading the netherworld!");
+                plugin.getLogger().info("Loading the netherworld!");
                 worlds.put(netherfolder, new TweakWorld(this, netherfolder, Environment.NETHER, true));
             } else {
-                plugin.getLogger().info("[TweakcraftUtils] The nether's folder name can't be empty!");
+                plugin.getLogger().info("The nether's folder name can't be empty!");
             }
         }
 
@@ -205,7 +205,7 @@ public class WorldManager {
 
                 Environment wenv = null;
                 if (env == null || env.equals("")) {
-                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " does not have a valid environment definition, using \"normal\"");
+                    plugin.getLogger().info("World " + node + " does not have a valid environment definition, using \"normal\"");
                     wenv = Environment.NORMAL;
                 } else if (env.equalsIgnoreCase("nether")) {
                     wenv = Environment.NETHER;
@@ -219,33 +219,33 @@ public class WorldManager {
 
 
                 if (wenv == null) {
-                    plugin.getLogger().info("[TweakcraftUtils] " + env + " isn't a correct environment name!");
+                    plugin.getLogger().info(env + " isn't a correct environment name!");
                 } else {
-                    plugin.getLogger().info("[TweakcraftUtils] Adding world with name " + node + " and environmenttype " + env + "!");
-                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " has pvp " + (pvp ? "enabled" : "disabled") + "!");
-                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " monsters : " + (monsters ? "enabled" : "disabled") + ", animals : " + (animals ? "enabled" : "disabled") + "!");
-                    if (addnether) plugin.getLogger().info("[TweakcraftUtils] World " + node + " added nether world!");
-                    if (addtheend) plugin.getLogger().info("[TweakcraftUtils] World " + node + " added the_end world!");
-                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " Tool Durability : " + (durability ? "enabled" : "disabled"));
-                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " GameMode : " + (gm != null ? gm.toString().toLowerCase() : "Survival"));
-                    plugin.getLogger().info("[TweakcraftUtils] World " + node + " Difficulity : " + Difficulty.getByValue(difficulty).name().toLowerCase());
+                    plugin.getLogger().info("Adding world with name " + node + " and environmenttype " + env + "!");
+                    plugin.getLogger().info("World " + node + " has pvp " + (pvp ? "enabled" : "disabled") + "!");
+                    plugin.getLogger().info("World " + node + " monsters : " + (monsters ? "enabled" : "disabled") + ", animals : " + (animals ? "enabled" : "disabled") + "!");
+                    if (addnether) plugin.getLogger().info("World " + node + " added nether world!");
+                    if (addtheend) plugin.getLogger().info("World " + node + " added the_end world!");
+                    plugin.getLogger().info("World " + node + " Tool Durability : " + (durability ? "enabled" : "disabled"));
+                    plugin.getLogger().info("World " + node + " GameMode : " + (gm != null ? gm.toString().toLowerCase() : "Survival"));
+                    plugin.getLogger().info("World " + node + " Difficulity : " + Difficulty.getByValue(difficulty).name().toLowerCase());
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
                     if (difficulty != getDefaultWorld().getDifficulty().getValue())
                         tw.setDifficulty(difficulty);
                     if (gm != null) tw.setGameMode(gm);
                     if (chunkGenClass != null) {
-                        plugin.getLogger().info("[TweakcraftUtils] World " + node + " is using a custom chunkGenClass using the deprecated method!");
-                        plugin.getLogger().info("[TweakcraftUtils] Consider using the newer method!");
+                        plugin.getLogger().info("World " + node + " is using a custom chunkGenClass using the deprecated method!");
+                        plugin.getLogger().info("Consider using the newer method!");
                         tw.setChunkGenClass(chunkGenClass);
                     } else if (chunkGen != null) {
-                        plugin.getLogger().info("[TweakcraftUtils] World " + node + " is using a custom chunkGen!");
+                        plugin.getLogger().info("World " + node + " is using a custom chunkGen!");
                         tw.setChunkGen(chunkGen);
                     }
 
                     if (worldType != null) {
                         WorldType type = WorldType.valueOf(worldType.toUpperCase());
                         if (type != null) {
-                            plugin.getLogger().info("[TweakcraftUtils] World " + node + " has worldType "+type.getName().toLowerCase()+"!");
+                            plugin.getLogger().info("World " + node + " has worldType "+type.getName().toLowerCase()+"!");
                             tw.setWorldType(type);
                         }
                     }
@@ -271,7 +271,7 @@ public class WorldManager {
                     this.loadMotd(tw.getName());
                 }
             } else {
-                plugin.getLogger().info("[TweakcraftUtils] World with name " + node + " already exists!");
+                plugin.getLogger().info("World with name " + node + " already exists!");
             }
         }
 

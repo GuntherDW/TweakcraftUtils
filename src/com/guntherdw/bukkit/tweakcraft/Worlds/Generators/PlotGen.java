@@ -107,9 +107,6 @@ public class PlotGen extends FlatGen {
         int realChunkX = cx << 4;
         int realChunkZ = cz << 4;
 
-        /* System.out.println("cx : "+cx);
-        System.out.println("cz : "+cz); */
-
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
                 for (int y = 0; y < maxHeight; y++) {
@@ -133,21 +130,6 @@ public class PlotGen extends FlatGen {
                 }
             }
         }
-
-        /* for (int x = 0; x < 16; x++) {
-            for (int z = 0; z < 16; z++) {
-                for (int y = 0; y < maxHeight; y++) {
-                    if (y == 0 && bedrockBottom)
-                        setBlock(result, x, y, z, (byte) 7);
-                    else if (y < height)
-                        setBlock(result, x, y, z, normal);
-                    else if (y == height)
-                        setBlock(result, x, y, z, toplayer);
-                    else
-                        setBlock(result, x, y, z, (byte) 0);
-                }
-            }
-        } */
 
         // return null; // Default - returns null, which drives call to generate()
         return result;

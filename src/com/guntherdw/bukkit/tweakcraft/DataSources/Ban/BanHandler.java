@@ -69,8 +69,8 @@ public class BanHandler {
                 }
             }
             banfilereader.close();
-        } catch (FileNotFoundException e) { plugin.getLogger().warning("[TweakcraftUtils] Ban file not found!");
-        } catch (IOException e) { plugin.getLogger().info("[TweakcraftUtils] Ban file I/O error!"); }
+        } catch (FileNotFoundException e) { plugin.getLogger().warning("Ban file not found!");
+        } catch (IOException e) { plugin.getLogger().info("Ban file I/O error!"); }
         if(plugin.getConfigHandler().enablePersistence) {
             List<PlayerOptions> popts = plugin.getDatabase(). find(PlayerOptions.class).where().ieq("optionname", "ban").findList();
             for(PlayerOptions po : popts) {
@@ -102,17 +102,17 @@ public class BanHandler {
                         Long toTime = b.getToTime();
                         Double timerem = Math.floor((toTime-curTime)/1000);
                         String toGo = TimeTool.calcLeft(timerem.longValue());
-                        plugin.getLogger().info("[TweakcraftUtils] Bans: "+b.getPlayer()+" still has "+ toGo + " to go!");
+                        plugin.getLogger().info("Bans: "+b.getPlayer()+" still has "+ toGo + " to go!");
                     }
                     banned = true;
                 }
                 else {
-                    plugin.getLogger().info("[TweakcraftUtils] Bans: auto-unbanning "+b.getPlayer()+", his bantime was over!");
+                    plugin.getLogger().info("Bans: auto-unbanning "+b.getPlayer()+", his bantime was over!");
                     if(plugin.getConfigHandler().enableDebug) {
                         Long toTime = b.getToTime();
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                         
-                        plugin.getLogger().info("[TweakcraftUtils] Bans: it expired at "+sdf.format(new Date(toTime))+"!");
+                        plugin.getLogger().info("Bans: it expired at "+sdf.format(new Date(toTime))+"!");
                     }
                     banned = false;
                     unBan(b.getPlayer());
@@ -160,7 +160,7 @@ public class BanHandler {
 
     public boolean banPlayer(String playername, String reason) {
         if (playername.trim().equals("")) {
-            plugin.getLogger().info("[TweakcraftUtils] Can't ban an empty player!");
+            plugin.getLogger().info("Can't ban an empty player!");
         } else {
             bans.put(playername, new Ban(playername, reason));
             if(plugin.getConfigHandler().enablePersistence) {
@@ -184,7 +184,7 @@ public class BanHandler {
             toTime  = Calendar.getInstance().getTime().getTime();
             toTime += duration*1000;
             if (playername.trim().equals("")) {
-                plugin.getLogger().info("[TweakcraftUtils] Can't ban an empty player!");
+                plugin.getLogger().info("Can't ban an empty player!");
                 return false;
             } else {
                 bans.put(playername, new Ban(playername, reason, toTime));
@@ -236,12 +236,12 @@ public class BanHandler {
      */
     public void saveBans() {
         File banfile = new File(plugin.getDataFolder(), "banned-players.txt");
-        plugin.getLogger().info("[TweakcraftUtils] Trying to save banlist!");
+        plugin.getLogger().info("Trying to save banlist!");
         if (!banfile.exists()) {
             try {
                 banfile.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().severe("[TweakcraftUtils] Failed trying to create banlist!");
+                plugin.getLogger().severe("Failed trying to create banlist!");
             }
         }
 
@@ -255,16 +255,16 @@ public class BanHandler {
                 }
             }
             banfilewriter.close();
-            plugin.getLogger().info("[TweakcraftUtils] Save complete!");
+            plugin.getLogger().info("Save complete!");
         } catch (FileNotFoundException e) {
-            plugin.getLogger().info("[TweakcraftUtils] Ban file not found!");
+            plugin.getLogger().info("Ban file not found!");
         } catch (IOException e) {
-            plugin.getLogger().severe("[TweakcraftUtils] Failed trying to save banlist!");
+            plugin.getLogger().severe("Failed trying to save banlist!");
         }
     }
 
     public void reloadBans() {
         this.loadBans();
-        plugin.getLogger().info("[TweakcraftUtils] Loaded banlist, " + bans.size() + " bans and counting!");
+        plugin.getLogger().info("Loaded banlist, " + bans.size() + " bans and counting!");
     }
 }

@@ -181,7 +181,7 @@ public class ChatHandler {
             }
             if (checktime > muteTime) {
                 if (plugin.getConfigHandler().enableDebug)
-                    plugin.getLogger().info("[TweakcraftUtils] Mutes: auto-unmuting " + player + ", his mutetime was over!");
+                    plugin.getLogger().info(" Mutes: auto-unmuting " + player + ", his mutetime was over!");
                 removeMute(player);
             }
         }

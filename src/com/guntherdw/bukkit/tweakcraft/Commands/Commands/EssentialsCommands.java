@@ -127,7 +127,7 @@ public class EssentialsCommands {
                 sender.sendMessage(ChatColor.YELLOW + "Kickbanning " + player.getName());
                 player.kickPlayer(reason);
             }
-            plugin.getLogger().info("[TweakcraftUtils] Banning " + playername + "!");
+            plugin.getLogger().info("Banning " + playername + "!");
             handler.saveBans();
         }
         return true;
@@ -265,12 +265,6 @@ public class EssentialsCommands {
         boolean aliases = true;
         String toadd = "";
         for (Map.Entry<String, Method> entry : commh.getCommandMap().entrySet()) {
-            // Method commandMethod = commh.getCommandMap().get(cname);
-            // aCommand annotation = commandMethod.getAnnotation(aCommand.class);
-            /* if (plugin.getCommand(entry.getKey()) == null) {
-                System.out.println("Nullpointer for " + entry.getKey());
-                continue;
-            } */
 
             if (addCommandToList(sender, entry.getValue())) {
                 // Fuck minecraft's font :<
@@ -330,7 +324,7 @@ public class EssentialsCommands {
                     }
                 }
             } else {
-                plugin.getLogger().info("[TweakcraftUtils] EXTRAHELP error : " + plug + " is null!");
+                plugin.getLogger().info("EXTRAHELP error : " + plug + " is null!");
             }
         }
 
@@ -489,7 +483,7 @@ public class EssentialsCommands {
                     stack.setData(Material.getMaterial(itemId).getNewData((byte) dataval));
 
                 receiver.getInventory().addItem(stack);
-                plugin.getLogger().info("[TweakcraftUtils] " + giftfrom + " gave " + recvname + " " + itemAmount + "x" + itemId + " (" + itemDmg.intValue() + ")");
+                plugin.getLogger().info(giftfrom + " gave " + recvname + " " + itemAmount + "x" + itemId + " (" + itemDmg.intValue() + ")");
             } else {
                 throw new CommandUsageException("Specified item is not valid!");
             }
@@ -712,7 +706,7 @@ public class EssentialsCommands {
                 // plugin.setPlayerReply(playerto.getName(), ((Player) sender).getName());
             }
 
-            plugin.getLogger().info("[TweakcraftUtils] (MSG) " + clearName + " -> " + playerto.getName() + " : " + message);
+            plugin.getLogger().info("(MSG) " + clearName + " -> " + playerto.getName() + " : " + message);
         } else if (args.length == 1) {
             throw new CommandUsageException("I need a message!");
         } else {
@@ -887,7 +881,7 @@ public class EssentialsCommands {
                 playerto.sendMessage("[" + player.getDisplayName() + " -> Me] " + message);
                 lpTo.setReplyTo(player.getName());
                 // plugin.setPlayerReply(playerto.getName(), player.getName());
-                plugin.getLogger().info("[TweakcraftUtils] (MSG) " + player.getName() + " -> " + playerto.getName() + " : " + message);
+                plugin.getLogger().info("(MSG) " + player.getName() + " -> " + playerto.getName() + " : " + message);
             } else if (args.length == 0) {
                 throw new CommandUsageException("I need a message!");
             }

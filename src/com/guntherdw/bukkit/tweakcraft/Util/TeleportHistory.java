@@ -157,13 +157,13 @@ public class TeleportHistory {
     }
 
     public void clearHistory() {
-        plugin.getLogger().info("[TweakcraftUtils] Clearing complete TPBack history!");
+        plugin.getLogger().info("Clearing complete TPBack history!");
         this.historymap.clear();
         this.historyoffset.clear();
     }
 
     public void clearFuture(String playername) {
-        plugin.getLogger().info("[TweakcraftUtils] Clearing TPBack future for player " + playername + "!");
+        plugin.getLogger().info("Clearing TPBack future for player " + playername + "!");
         if (historymap.containsKey(playername) && historyoffset.containsKey(playername)) {
             List<Location> loclist = historymap.get(playername);
             int size = loclist.size();
@@ -177,7 +177,7 @@ public class TeleportHistory {
     }
 
     public void clearHistory(String playername) {
-        plugin.getLogger().info("[TweakcraftUtils] Clearing TPBack history for player " + playername + "!");
+        plugin.getLogger().info("Clearing TPBack history for player " + playername + "!");
         if (historymap.containsKey(playername)) {
             historymap.remove(playername);
         }

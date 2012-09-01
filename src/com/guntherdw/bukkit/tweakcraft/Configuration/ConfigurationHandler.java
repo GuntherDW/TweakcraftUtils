@@ -140,32 +140,32 @@ public class ConfigurationHandler {
         }
         // if(this.globalconfig==null) this.globalconfig = (YamlConfiguration) plugin.getConfig();
         if (!globalconfigFile.exists()) {
-            plugin.getLogger().warning("[TweakcraftUtils] No config file found, using default values!");
+            plugin.getLogger().warning("No config file found, using default values!");
             return;
         }
         try {
             globalconfig.load(globalconfigFile);
         } catch (InvalidConfigurationException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] InvalidConfigurationException while loading config file, using old values!");
+            plugin.getLogger().warning("InvalidConfigurationException while loading config file, using old values!");
             e.printStackTrace();
             return;
         } /* catch (FileNotFoundException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] No config file found, using default values!");
+            plugin.getLogger().warning("No config file found, using default values!");
             e.printStackTrace();
             return;
         } */ catch (IOException e) {
-            plugin.getLogger().warning("[TweakcraftUtils] IOException while loading config file, using old values!");
+            plugin.getLogger().warning("IOException while loading config file, using old values!");
             e.printStackTrace();
             return;
         }
         // plugin.reloadConfig();
 
-        this.plugin.getLogger().info("[TweakcraftUtils] Parsing configuration file...");
-        this.plugin.getLogger().info("[TweakcraftUtils] Config : "+globalconfigFile.getAbsolutePath());
+        this.plugin.getLogger().info("Parsing configuration file...");
+        this.plugin.getLogger().info("Config : "+globalconfigFile.getAbsolutePath());
 
         this.enablePersistence = globalconfig.getBoolean("Persistence.enabled", true);
         this.useTweakBotSeen = globalconfig.getBoolean("Persistence.useTweakBotSeen", false);
-        plugin.getLogger().info("[TweakcraftUtils] Using TweakBot's seen table for /seen!");
+        plugin.getLogger().info("Using TweakBot's seen table for /seen!");
 
         this.enableLocalChat = globalconfig.getBoolean("ChatMode.LocalChat.enabled", true);
         this.localchatdistance = globalconfig.getInt("ChatMode.LocalChat.range", 200);
@@ -185,7 +185,7 @@ public class ConfigurationHandler {
         this.enableTPBack = globalconfig.getBoolean("enableTPBack", true);
         this.enableDebug = globalconfig.getBoolean("debug.enabled", false);
         if(this.enableDebug) {
-            plugin.getLogger().info("[TweakcraftUtils] Extra verbose messages enabled!");
+            plugin.getLogger().info("Extra verbose messages enabled!");
         }
 
         this.enableRespawnHook = globalconfig.getBoolean("respawn.enableHook", false);
@@ -200,13 +200,13 @@ public class ConfigurationHandler {
                 if(plugin.getServer().getPluginManager().getPlugin(plist) != null) {
                     if(!extrahelpplugin.contains(plist)) {
                         if(this.enableDebug)
-                            plugin.getLogger().info("[TweakcraftUtils] Adding "+plist+" to the /help addons.");
+                            plugin.getLogger().info("Adding "+plist+" to the /help addons.");
                         extrahelpplugin.add(plist);
                     } else {
-                        plugin.getLogger().info("[TweakcraftUtils] WARNING: "+plist+" is on the extrahelp list multiple times!");
+                        plugin.getLogger().info("WARNING: "+plist+" is on the extrahelp list multiple times!");
                     }
                 } else {
-                    plugin.getLogger().info("[TweakcraftUtils] WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
+                    plugin.getLogger().info("WARNING: Can't find plugin with name "+plist+"! Not adding to the help list.");
                 }
             }
         }
@@ -216,16 +216,16 @@ public class ConfigurationHandler {
         this.extrahelphide = globalconfig.getStringList("extrahelp.hide");
 
         if (globalconfig.getBoolean("PlayerHistory.enabled", false)) {
-            plugin.getLogger().info("[TweakcraftUtils] Keeping player history!");
+            plugin.getLogger().info("Keeping player history!");
             File seenFile = new File(plugin.getDataFolder(), "players.yml");
             try {
                 this.seenconfig.load(seenFile);
                 this.enableSeenConfig = true;
             } catch (IOException e) {
-                plugin.getLogger().severe("[TweakcraftUtils] IOExeption thrown while trying to load the seen.yml file! playerhistory disabled!");
+                plugin.getLogger().severe("IOExeption thrown while trying to load the seen.yml file! playerhistory disabled!");
                 this.enableSeenConfig = false;
             } catch (InvalidConfigurationException e) {
-                plugin.getLogger().severe("[TweakcraftUtils] InvalidConfigurationException thrown while trying to load the seen.yml file! playerhistory disabled!");
+                plugin.getLogger().severe("InvalidConfigurationException thrown while trying to load the seen.yml file! playerhistory disabled!");
                 this.enableSeenConfig = false;
             }
 
@@ -265,7 +265,7 @@ public class ConfigurationHandler {
 
         this.enableSpamControl = globalconfig.getBoolean("spamcontrol.enable", false);
         if(this.enableSpamControl) {
-            plugin.getLogger().info("[TweakcraftUtils] Enabling spam control!");
+            plugin.getLogger().info("Enabling spam control!");
             plugin.getChathandler().enableAntiSpam();
         }
         this.spamCheckTime = globalconfig.getInt("spamcontrol.checkTime", 5)*100;

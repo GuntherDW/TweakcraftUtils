@@ -138,8 +138,8 @@ public class TweakWorld implements iWorld {
         if (wm.getPlugin().getConfigHandler().enablemod_InfDura)
             world.setToolDurability(state);
         else {
-            wm.getPlugin().getLogger().severe("[TweakcraftUtils] Tried to enable/disable tool durability for world " + world.getName() + ",");
-            wm.getPlugin().getLogger().severe("[TweakcraftUtils] But either your Bukkit is not modded, or you forgot to enable it in the config!");
+            wm.getPlugin().getLogger().severe("Tried to enable/disable tool durability for world " + world.getName() + ",");
+            wm.getPlugin().getLogger().severe("But either your Bukkit is not modded, or you forgot to enable it in the config!");
         }
 
     }
@@ -201,8 +201,8 @@ public class TweakWorld implements iWorld {
         String[] split = chunkGen.split(":");
         Plugin plugin = wm.getPlugin().getServer().getPluginManager().getPlugin(split[0]);
         if (plugin == null) {
-            wm.getPlugin().getLogger().severe("[TweakcraftUtils] Chunkgenerator error for " + world.getName() + ",");
-            wm.getPlugin().getLogger().severe("[TweakcraftUtils] Couldn't find plugin with name " + split[0] + "!");
+            wm.getPlugin().getLogger().severe("Chunkgenerator error for " + world.getName() + ",");
+            wm.getPlugin().getLogger().severe("Couldn't find plugin with name " + split[0] + "!");
             this.enabled = false;
             return;
         }
@@ -243,7 +243,7 @@ public class TweakWorld implements iWorld {
             worldName = foldername.trim();
             WorldCreator worldCreator = new WorldCreator(worldName);
             if ((world = wm.getPlugin().getServer().getWorld(worldName)) == null) {
-                // wm.getPlugin().getLogger().info("[TweakcraftUtils] Creating new world!");
+                // wm.getPlugin().getLogger().info("Creating new world!");
                 environment = env;
                 if (chunkgen != null)
                     worldCreator.generator(chunkgen);
@@ -269,11 +269,11 @@ public class TweakWorld implements iWorld {
                                     worldCreator.generator(cg);
                                 }
                             } else {
-                                this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world " + worldName + "! " + chunkGenClass + " isn't a Chunk Generator class!");
+                                this.wm.getPlugin().getLogger().info("Error in world " + worldName + "! " + chunkGenClass + " isn't a Chunk Generator class!");
                             }
                         }
                     } catch (ClassNotFoundException e) {
-                        this.wm.getPlugin().getLogger().info("[TweakcraftUtils] Error in world " + worldName + "! Can't find class with name " + chunkGenClass);
+                        this.wm.getPlugin().getLogger().info("Error in world " + worldName + "! Can't find class with name " + chunkGenClass);
                         enabled = false;
                     } catch (InstantiationException e) {
                         enabled = false;
@@ -285,7 +285,7 @@ public class TweakWorld implements iWorld {
                 }
 
             } else {
-                // wm.getPlugin().getLogger().info("[TweakcraftUtils] This world already existed!");
+                // wm.getPlugin().getLogger().info("This world already existed!");
                 environment = world.getEnvironment();
             }
 
@@ -475,7 +475,7 @@ public class TweakWorld implements iWorld {
                 f.mkdirs();
                 f.createNewFile();
             } catch (IOException e) {
-                wm.getPlugin().getLogger().info("[TweakcraftUtils] Can't create world's config file!");
+                wm.getPlugin().getLogger().info("Can't create world's config file!");
                 return null;
             }
         }
