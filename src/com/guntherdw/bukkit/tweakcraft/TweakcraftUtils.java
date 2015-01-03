@@ -39,6 +39,7 @@ import com.guntherdw.bukkit.tweakcraft.Tools.Permissions.Permissions;
 import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
 import com.guntherdw.bukkit.tweakcraft.Tools.TamerTool;
 import com.guntherdw.bukkit.tweakcraft.Util.TeleportHistory;
+import com.guntherdw.bukkit.tweakcraft.Util.UUIDResolver;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -93,6 +94,8 @@ public class TweakcraftUtils extends JavaPlugin {
     private final ChatHandler chathandler = new ChatHandler(this);
     private final PermissionsResolver permsResolver = new PermissionsResolver(this);
 
+    private final UUIDResolver uuidResolver = new UUIDResolver(this);
+
     private HashMap<String, LocalPlayer> localPlayers = new HashMap<String, LocalPlayer>();
 
     private Object circendpoint = null;
@@ -142,15 +145,6 @@ public class TweakcraftUtils extends JavaPlugin {
         return instance;
     }
 
-    /* public TCUtilsClientBridgePlugin getClientBridge() {
-        return tcUtilsClientBridgePlugin;
-    }
-
-    public static void registerClientBridge(TCUtilsClientBridgePlugin clientBridgePlugin) {
-        if(instance==null) return;
-        instance.tcUtilsClientBridgePlugin = clientBridgePlugin;
-    } */
-
     public void sendCUIChatMode(Player player) {
         if (this.cuiPlayers != null && this.cuiPlayers.contains(player)) {
             ChatMode cm = getChathandler().getPlayerChatMode(player);
@@ -186,6 +180,10 @@ public class TweakcraftUtils extends JavaPlugin {
         if (getConfigHandler().enableCUI) {
             player.sendRawMessage(CUIPattern); // HANDSHAKE
         }
+    }
+
+    public UUIDResolver getUUIDResolver() {
+        return uuidResolver;
     }
 
     /**
@@ -362,6 +360,20 @@ public class TweakcraftUtils extends JavaPlugin {
         if (getInstance() != null)
             return getInstance().findPlayerasPlayerList(part);
         else
+            return null;
+    }
+
+    public static List<String> findPlayerByNick_string(String part) {
+        if (getInstance() != null) {
+            List<Player> lijst = getInstance().findPlayerasPlayerList(part);
+            List<String> userList = new ArrayList<String>();
+            if(lijst.size()>0) {
+                for(Player p : lijst) {
+                    userList.add(p.getName());
+                }
+            }
+            return userList;
+        } else
             return null;
     }
 

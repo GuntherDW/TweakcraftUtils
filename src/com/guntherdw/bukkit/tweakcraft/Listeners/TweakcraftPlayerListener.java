@@ -46,7 +46,6 @@ import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -477,7 +476,15 @@ public class TweakcraftPlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLogin(PlayerLoginEvent event) {
         BanHandler handler = plugin.getBanhandler();
-        Ban isBanned = handler.isBannedBan(event.getPlayer().getName());
+
+        Player p = event.getPlayer();
+        UUID playerUUID = p.getUniqueId();
+
+        /* Check for profile, update/link playerName if required. */
+        // TODO: check when it actually is allowed to change names
+        plugin.getUUIDResolver().checkProfile(p);
+
+        Ban isBanned = handler.isBannedBan(playerUUID);
         if (isBanned != null) {
             event.disallow(PlayerLoginEvent.Result.KICK_BANNED, isBanned.getReason());
         }
@@ -932,7 +939,17 @@ public class TweakcraftPlayerListener implements Listener {
                             }
                         } else {
 
-                            EntityType type = EntityType.fromName(animal.getClass().getCanonicalName().split("Craft")[1]);
+                            String clsName = animal.getClass().getCanonicalName().split("Craft")[1];
+                            /* if (clsName.equals("Horse"))
+                               clsName = "EntityHorse"; */
+
+                            EntityType type = EntityType.fromName(clsName);
+
+                            if(type == null) {
+                                player.sendMessage(ChatColor.RED+"Error while getting AnimalInfo.");
+                                player.sendMessage(ChatColor.RED+"ClassName was "+animal.getClass().getCanonicalName());
+                                return;
+                            }
                             String cname = type.getName().toLowerCase();
                             player.sendMessage(ChatColor.BLUE + "Animal info : ");
                             player.sendMessage(ChatColor.BLUE + "type : " + ChatColor.YELLOW + cname);
@@ -943,7 +960,7 @@ public class TweakcraftPlayerListener implements Listener {
 
                         return;
 
-                    } else if (player.getItemInHand().getType().equals(Material.WHEAT) && animal.getAge() < 0) {
+                    } else if (player.getItemInHand().getType().equals(Material.WHEAT) && animal.getAge() < 0 && !(animal instanceof Horse)) {
                         ItemStack inHand = player.getItemInHand();
                         if (inHand.getAmount() > 1)
                             inHand.setAmount(inHand.getAmount() - 1);
@@ -957,7 +974,7 @@ public class TweakcraftPlayerListener implements Listener {
                         player.setItemInHand(inHand);
 
                         player.getWorld().playEffect(animal.getLocation(), Effect.POTION_BREAK, 0);
-                    } else if (player.getItemInHand().getType().equals(Material.MILK_BUCKET) && animal.getAge() < 0) {
+                    } else if (player.getItemInHand().getType().equals(Material.MILK_BUCKET) && animal.getAge() < 0 && !(animal instanceof Horse)) {
                         int newAge = animal.getAge() + 2500;
                         if (newAge > 0) newAge = 0;
                         animal.setAge(newAge);
@@ -992,7 +1009,8 @@ public class TweakcraftPlayerListener implements Listener {
         }
 
 
-        if (player.getItemInHand() != null && player.getItemInHand().getType() == Material.SADDLE) {
+        if (player.getItemInHand() != null && player.getItemInHand().getType() == Material.SADDLE
+            && !(entity instanceof Horse)) { // Horses have their own saddle thing.
             if (entity.isEmpty()) {
                 boolean allowed = true;
                 if (nomount.contains(player.getName())) {

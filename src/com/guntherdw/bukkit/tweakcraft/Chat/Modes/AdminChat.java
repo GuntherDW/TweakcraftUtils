@@ -67,14 +67,14 @@ public class AdminChat extends ChatMode {
         String msg = ChatColor.GREEN + "A: [" + pcolor + sendername + ChatColor.GREEN + "] " + message;
         if (plugin.getConfigHandler().enableIRC && plugin.getCraftIRC() != null && plugin.getConfigHandler().AIRCenabled) {
 
-
             String targetmsg = plugin.getConfigHandler().AIRCMessageFormat;
             targetmsg = targetmsg.replace("%name%", cleanname).
                 replace("%message%", message).
                 replace("%dispname%", ChatColor.stripColor(sendername));
 
             targetmsg = targetmsg.replace("%clearcolors%", Character.toString((char) 3));
-            RelayedMessage rmsg = plugin.getCraftIRC().newMsgToTag(plugin.getAdminEndPoint(), plugin.getConfigHandler().AIRCtag, "generic");
+            RelayedMessage rmsg = plugin.getCraftIRC().newMsgToTag(plugin.getAdminEndPoint(), plugin.getConfigHandler().AIRCtag, "chat");
+
             rmsg.setField("sender", pcolor + sendername);
             rmsg.setField("realSender", cleanname);
             rmsg.setField("message", targetmsg);

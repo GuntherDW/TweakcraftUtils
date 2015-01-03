@@ -22,6 +22,7 @@ import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOption
 import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
 import com.guntherdw.bukkit.tweakcraft.Util.TimeTool;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
@@ -53,24 +54,55 @@ public class BanHandler {
         return null; // I Has found nothing!
     }
 
-    private void loadBans() {
-        bans = new HashMap<String, Ban>();
+    private void convertOldBanFile(File oldBanFile, YamlConfiguration newBanConfig) {
+
+        Map<String, Ban> oldBans = new HashMap<String, Ban>();
+
         try {
-            File banfile = new File(plugin.getDataFolder(), "banned-players.txt");
-            BufferedReader banfilereader = new BufferedReader(new FileReader(banfile));
+            // File banfile = new File(plugin.getDataFolder(), "banned-players.txt");
+
+            BufferedReader banfilereader = new BufferedReader(new FileReader(oldBanFile));
             String line = "";
             while ((line = banfilereader.readLine()) != null) {
                 if (!line.trim().equals("")) {
                     String[] lin = line.split(",");
                     if (lin.length > 1)
-                        bans.put(lin[0], new Ban(lin[0], lin[1]));
+                        oldBans.put(lin[0], new Ban(lin[0], lin[1]));
                     else
-                        bans.put(lin[0], new Ban(lin[0], ""));
+                        oldBans.put(lin[0], new Ban(lin[0], ""));
                 }
             }
             banfilereader.close();
-        } catch (FileNotFoundException e) { plugin.getLogger().warning("Ban file not found!");
-        } catch (IOException e) { plugin.getLogger().info("Ban file I/O error!"); }
+            boolean deleted = oldBanFile.delete();
+            if(!deleted) plugin.getLogger().warning("Could not remove old banfile!");
+            plugin.getLogger().info("Converted banned players file to newer format.");
+        } catch (FileNotFoundException e) {
+            plugin.getLogger().warning("Ban file not found!");
+        } catch (IOException e) {
+            plugin.getLogger().info("Ban file I/O error!");
+        }
+    }
+
+    private void loadBans() {
+        bans = new HashMap<String, Ban>();
+
+        File banFile = new File(plugin.getDataFolder(), "banned-players.yml");
+
+        YamlConfiguration banConfig = new YamlConfiguration();
+        try {
+            banConfig.load(banFile);
+        } catch(Exception e) {
+            plugin.getLogger().warning("Error while loading banned-players.yml, does this file exist?");
+        }
+
+        // check for old BanFile
+        File oldBanFile = new File(plugin.getDataFolder(), "banned-players.txt");
+        if (oldBanFile.exists()) {
+            plugin.getLogger().warning("Old banned-players file found, converting to new format!");
+            this.convertOldBanFile(oldBanFile, banConfig);
+        }
+
+
         if(plugin.getConfigHandler().enablePersistence) {
             List<PlayerOptions> popts = plugin.getDatabase(). find(PlayerOptions.class).where().ieq("optionname", "ban").findList();
             for(PlayerOptions po : popts) {
@@ -152,6 +184,10 @@ public class BanHandler {
             return searchBan(playername);
         else
             return null;
+    }
+
+    public Ban isBannedBan(UUID uuid) {
+        return null;
     }
 
     public boolean isBannedFullname(String playername) {

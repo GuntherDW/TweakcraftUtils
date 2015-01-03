@@ -1,8 +1,9 @@
 name: TweakcraftUtils
 main: com.guntherdw.bukkit.tweakcraft.TweakcraftUtils
 # softdepend: [ 'CraftIRC' ]
-# depend: [ CraftIRC ]
-version: 2.8.1-git
+depend: [ CraftIRC ]
+softdepend: [ 'PermissionsEx' ]
+version: 2.8.2-git
 authors:
   - GuntherDW
   - Meaglin

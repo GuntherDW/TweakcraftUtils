@@ -70,6 +70,8 @@ public class CraftIRCAdminEndPoint implements EndPoint {
                 String name = relayedMessage.getField("sender");
                 String nick = plugin.getPlayerListener().findPlayerNameByNick(name, true);
                 relayedMessage.setField("sender", plugin.getNickWithColors(nick == null ? name : nick));
+            } else {
+                relayedMessage.setField("sender", "unknownSender");
             }
             ac.broadcastMessage(relayedMessage.getMessage(this));
         }

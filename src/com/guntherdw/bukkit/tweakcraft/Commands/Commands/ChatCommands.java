@@ -274,7 +274,7 @@ public class ChatCommands {
                 // plugin.getServer().broadcastMessage(ChatColor.WHITE + "<" + (sender instanceof Player ? ((Player) sender).getDisplayName() : ChatColor.LIGHT_PURPLE + "CONSOLE") + ChatColor.WHITE + "> " + spam);
                 if(sender instanceof Player) {
                     Set<Player> players = new HashSet<Player>();
-                    players.addAll(Arrays.asList(plugin.getServer().getOnlinePlayers()));
+                    players.addAll(plugin.getServer().getOnlinePlayers());
 
                     org.bukkit.event.player.AsyncPlayerChatEvent playerChatEvent = new org.bukkit.event.player.AsyncPlayerChatEvent(false, (Player) sender, spam, players);
                     plugin.getServer().getPluginManager().callEvent(playerChatEvent);

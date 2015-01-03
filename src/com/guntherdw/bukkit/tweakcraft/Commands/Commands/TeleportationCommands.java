@@ -518,7 +518,7 @@ public class TeleportationCommands {
             Player player = (Player) sender;
 
             if (args.length == 1 && args[0].equals("*")) {
-                victims = Arrays.asList(plugin.getServer().getOnlinePlayers());
+                victims = new ArrayList<Player>(plugin.getServer().getOnlinePlayers());
                 if (victims.contains(player))
                     victims.remove(player); // remove the origin player!
             }

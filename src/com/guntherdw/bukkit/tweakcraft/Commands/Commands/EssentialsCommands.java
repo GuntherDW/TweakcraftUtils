@@ -93,6 +93,16 @@ public class EssentialsCommands {
                 throw new CommandException("Didn't find the player, cancelling!");
             }
         }
+        // Check for GameProfile
+
+        OfflinePlayer checkPlayer = null;
+        checkPlayer = Bukkit.getOfflinePlayer(playername);
+        UUID uuid = checkPlayer.getUniqueId();
+
+        if(uuid == null) {
+            throw new CommandException("Didn't find the player's profile, does this player exist?");
+        }
+
 
         if (handler.isBanned(playername)) {
             sender.sendMessage(ChatColor.YELLOW + "This player is already banned!");
@@ -979,6 +989,14 @@ public class EssentialsCommands {
         int age = ap.getInteger("a", -1);
         boolean sitting = ap.getBoolean("sit", false);
         boolean tame = ap.getBoolean("tame", false);
+
+        String horseColor = ap.getString("hc", null);
+        String horseVariant = ap.getString("hv", null);
+        int horseDomestication = ap.getInteger("hd", -1);
+        int horseMaxDomestication = ap.getInteger("hmd", -1);
+        boolean horseHasChest = ap.getBoolean("hhc", false);
+        int horseJumpStrength = ap.getInteger("hjs", -1);
+
         String[] args = ap.getUnusedArgs();
 
         String mobName;
@@ -1108,11 +1126,59 @@ public class EssentialsCommands {
                         if (sheepcolor != null) {
                             DyeColor dc = null;
                             if (sheepcolor.equalsIgnoreCase("random")) {
-                                dc = DyeColor.getByData((byte) rnd.nextInt(16));
+                                dc = DyeColor.getByWoolData((byte) rnd.nextInt(16));
                             } else {
                                 dc = DyeColor.valueOf(sheepcolor.toUpperCase());
                             }
                             if (dc != null) ((Sheep) lent).setColor(dc);
+                        }
+                    }
+
+                    if(lent instanceof  Horse) {
+                        Horse horse = (Horse) lent;
+                        if(horseColor != null) {
+                            Horse.Color c =  null;
+                            if(horseColor.equalsIgnoreCase("random")) {
+                                c = Horse.Color.values()[rnd.nextInt(Horse.Color.values().length)];
+                            } else {
+                                c = Horse.Color.valueOf(horseColor.toUpperCase());
+                            }
+
+                            if(c != null)
+                                horse.setColor(c);
+                            else
+                                sender.sendMessage(ChatColor.YELLOW + "Horse color not valid!");
+
+                        }
+
+                        if (horseVariant != null) {
+                            Horse.Variant v = null;
+                            if (horseVariant.equalsIgnoreCase("random")) {
+                                v = Horse.Variant.values()[rnd.nextInt(Horse.Variant.values().length)];
+                            } else {
+                                v = Horse.Variant.valueOf(horseVariant.toUpperCase());
+                            }
+
+                            if (v != null)
+                                horse.setVariant(v);
+                            else
+                                sender.sendMessage(ChatColor.YELLOW + "Horse variant not valid!");
+
+                        }
+
+                        if(horseDomestication != -1)    horse.setDomestication(horseDomestication);
+                        if(horseMaxDomestication != -1) horse.setMaxDomestication(horseMaxDomestication);
+                        if(horseHasChest)               horse.setCarryingChest(horseHasChest);
+
+                        // sender.sendMessage("horseJumpStrength : "+horseJumpStrength);
+
+                        if(horseJumpStrength == -1) {
+                            double f = rnd.nextInt(2000000);
+                            f /= 1000000.0D;
+                            horse.setJumpStrength(f);
+                            // sender.sendMessage("setJumpStrength("+f+")");
+                        } else {
+                            horse.setJumpStrength(horseJumpStrength/100);
                         }
                     }
 
@@ -1238,10 +1304,14 @@ public class EssentialsCommands {
             if (w == null) throw new CommandUsageException("World not found!");
         }
 
-        List<Player> list = null;
+        Collection<? extends Player> playerList = null;
+        List<Player> list = new ArrayList<Player>();
 
-        if (w == null) list = Arrays.asList(plugin.getServer().getOnlinePlayers());
-        else list = w.getPlayers();
+        if (w == null) {
+            list.addAll(plugin.getServer().getOnlinePlayers());
+        } else {
+            list = w.getPlayers();
+        }
         Integer amountofinvis = 0;
         for (Player p : list) {
             LocalPlayer lp = plugin.wrapPlayer(p);
@@ -1350,12 +1420,15 @@ public class EssentialsCommands {
                                     }
                                 }
                             }
+                            // player.sendMessage("tloc : "+toLocation);
+
                             if (po == null) {
                                 po = new PlayerOptions();
                                 po.setOptionname("worldpos");
                                 po.setName(player.getName());
                             }
                             po.setOptionvalue(this.exportLocationString(player.getLocation()));
+                            // player.sendMessage("nloc : "+this.exportLocationString(player.getLocation()));
                             plugin.getDatabase().save(po);
                         }
                         if (player.teleport(toLocation))

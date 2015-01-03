@@ -158,7 +158,7 @@ public class GeneralCommands {
                 }
             }
         } else
-            recipients = Arrays.asList(plugin.getServer().getOnlinePlayers());
+            recipients = new ArrayList<Player>(plugin.getServer().getOnlinePlayers());
 
         String[] args = ap.getUnusedArgs();
 
@@ -169,10 +169,9 @@ public class GeneralCommands {
                 message += args[x] + (x<args.length?" ":"");
         }
 
-        if(recipients!=null)
-            for (Player p : recipients) {
-                p.sendMessage(ChatColor.RED + "[" + ChatColor.GREEN + "Broadcast" + ChatColor.RED + "] " + ChatColor.GREEN + message);
-            }
+        for (Player p : recipients) {
+            p.sendMessage(ChatColor.RED + "[" + ChatColor.GREEN + "Broadcast" + ChatColor.RED + "] " + ChatColor.GREEN + message);
+        }
 
         if(plugin.getConfigHandler().enableIRC && plugin.getCraftIRC()!=null && groups==null ) {
             if(plugin.getConfigHandler().GIRCenabled) {

@@ -40,7 +40,7 @@ public class TweakTravelAgent implements TravelAgent {
     private int creationRadius = 14; // 16 -> 14
     private boolean canCreatePortal = true;
     private TweakcraftUtils plugin = null;
-    
+
     private Map<Integer, Boolean> buildable;
 
     public TweakTravelAgent(TweakcraftUtils instance) {this.plugin=instance;}
@@ -99,7 +99,7 @@ public class TweakTravelAgent implements TravelAgent {
         buildable.put(Material.MOSSY_COBBLESTONE.getId(), true);
         buildable.put(Material.OBSIDIAN.getId(), true);
     }
-    
+
     public Location findOrCreate(Location location) {
         /* WorldServer worldServer = ((CraftWorld) location.getWorld()).getHandle();
         worldServer.chunkProviderServer.forceChunkLoad = true; */

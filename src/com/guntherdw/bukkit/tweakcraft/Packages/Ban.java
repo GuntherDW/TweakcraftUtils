@@ -18,11 +18,17 @@
 
 package com.guntherdw.bukkit.tweakcraft.Packages;
 
+import org.bukkit.Bukkit;
+
+import java.util.UUID;
+
 /**
  * @author GuntherDW
  */
 public final class Ban {
 
+    // String player;
+    UUID uuid;
     String player;
     String reason;
     Long toTime;
@@ -31,16 +37,29 @@ public final class Ban {
         this.player = Player;
         this.reason = Reason;
         this.toTime = null;
+        this.uuid = Bukkit.getOfflinePlayer(player).getUniqueId();
     }
 
     public Ban(String Player, String Reason, Long ToTime) {
         this.player = Player;
         this.reason = Reason;
         this.toTime = ToTime;
+        this.uuid = Bukkit.getOfflinePlayer(player).getUniqueId();
+    }
+
+    public Ban(UUID uuid, String Reason, Long ToTime) {
+        this.uuid = uuid;
+        this.player = Bukkit.getOfflinePlayer(uuid).getName();
+        this.reason = Reason;
+        this.toTime = ToTime;
     }
 
     public String getPlayer() {
         return player;
+    }
+
+    public UUID getUUID() {
+        return uuid;
     }
 
     public String getReason() {

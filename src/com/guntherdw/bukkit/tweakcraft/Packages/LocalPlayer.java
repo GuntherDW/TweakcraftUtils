@@ -24,12 +24,15 @@ import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
  * @author GuntherDW
  */
 public class LocalPlayer {
 
     private String name;
+    private UUID uuid;
     private Player bukkitPlayer;
     private ChatMode chatMode;
     private boolean afk;
@@ -150,10 +153,20 @@ public class LocalPlayer {
     public LocalPlayer(Player player) {
         this.bukkitPlayer = player;
         this.name = player.getName();
+        this.uuid = player.getUniqueId();
     }
 
     public LocalPlayer(String name) {
         this.name = name;
+    }
+
+    public LocalPlayer(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public LocalPlayer(String name, UUID uuid) {
+        this.name = name;
+        this.uuid = uuid;
     }
 
     public ChatMode getChatMode() {
