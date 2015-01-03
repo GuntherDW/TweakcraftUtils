@@ -98,6 +98,8 @@ public class EssentialsCommands {
         OfflinePlayer checkPlayer = null;
         checkPlayer = Bukkit.getOfflinePlayer(playername);
         UUID uuid = checkPlayer.getUniqueId();
+        // Update playername
+        playername = checkPlayer.getName();
 
         if(uuid == null) {
             throw new CommandException("Didn't find the player's profile, does this player exist?");
@@ -129,7 +131,7 @@ public class EssentialsCommands {
                 throw new CommandUsageException("ERROR: For timed bans to work, persistence HAS to be enabled!");
             }
 
-            handler.banPlayer(playername.toLowerCase(), reason, dura);
+            handler.banPlayer(uuid, playername, reason, dura);
             sender.sendMessage(ChatColor.YELLOW + "Banning " + playername + ChatColor.YELLOW + (dura != null ? " for " + duration + " " + toFull + "!" : ""));
 
             Player player = plugin.getServer().getPlayerExact(playername);
@@ -137,7 +139,7 @@ public class EssentialsCommands {
                 sender.sendMessage(ChatColor.YELLOW + "Kickbanning " + player.getName());
                 player.kickPlayer(reason);
             }
-            plugin.getLogger().info("Banning " + playername + "!");
+            plugin.getLogger().info("Banning " + playername + " (uuid : "+uuid+")!");
             handler.saveBans();
         }
         return true;
@@ -170,8 +172,8 @@ public class EssentialsCommands {
             sender.sendMessage(banmsg);
             banned = "";
 
-            for (String banName : plugin.getBanhandler().getBans().keySet()) {
-                banned += banName + " ";
+            for (Ban ban : plugin.getBanhandler().getBans().values()) {
+                banned += ban.getPlayer() + " ";
             }
             if (banned.length() > 1)
                 banned = banned.substring(0, banned.length() - 1);

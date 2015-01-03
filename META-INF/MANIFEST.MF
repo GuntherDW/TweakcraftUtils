@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Class-Path: WorldGuard.jar
+Class-Path: WorldGuard.jar TweakcraftUtils/evilmidget-uuidfetcher.jar
 

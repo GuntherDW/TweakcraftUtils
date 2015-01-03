@@ -28,28 +28,43 @@ import java.util.UUID;
 public final class Ban {
 
     // String player;
-    UUID uuid;
-    String player;
-    String reason;
-    Long toTime;
+    private UUID uuid;
+    private String player;
+    private String reason;
+    private Long toTime;
+
+    public static boolean skipUUIDCheck = false;
 
     public Ban(String Player, String Reason) {
         this.player = Player;
         this.reason = Reason;
         this.toTime = null;
-        this.uuid = Bukkit.getOfflinePlayer(player).getUniqueId();
+        if(!skipUUIDCheck) this.uuid = Bukkit.getOfflinePlayer(player).getUniqueId();
+    }
+
+    public Ban(UUID uuid, String Reason) {
+        this.player = Bukkit.getOfflinePlayer(uuid).getName();;
+        this.reason = Reason;
+        this.toTime = null;
+        this.uuid = uuid;
     }
 
     public Ban(String Player, String Reason, Long ToTime) {
         this.player = Player;
         this.reason = Reason;
         this.toTime = ToTime;
-        this.uuid = Bukkit.getOfflinePlayer(player).getUniqueId();
+        if(!skipUUIDCheck) this.uuid = Bukkit.getOfflinePlayer(player).getUniqueId();
     }
 
     public Ban(UUID uuid, String Reason, Long ToTime) {
         this.uuid = uuid;
         this.player = Bukkit.getOfflinePlayer(uuid).getName();
+        this.reason = Reason;
+        this.toTime = ToTime;
+    }
+    public Ban(String Player, UUID uuid, String Reason, Long ToTime) {
+        this.uuid = uuid;
+        this.player = Player;
         this.reason = Reason;
         this.toTime = ToTime;
     }
@@ -68,6 +83,10 @@ public final class Ban {
         } else {
             return reason;
         }
+    }
+
+    public void setPlayer(String player) {
+        this.player = player;
     }
 
     public void setReason(String reason) {
