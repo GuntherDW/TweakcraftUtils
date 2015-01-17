@@ -165,6 +165,8 @@ public class TweakcraftUtils extends JavaPlugin {
         LocalPlayer p = this.wrapPlayer(player.getName());
         if (p.getBukkitPlayer() == null || p.getBukkitPlayer() != player)
             p.setBukkitPlayer(player);
+        if(p.getUuid() == null)
+            p.setUuid(player.getUniqueId());
 
         return p;
     }

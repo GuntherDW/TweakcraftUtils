@@ -18,12 +18,17 @@
 
 package com.guntherdw.bukkit.tweakcraft.Tools.Permissions;
 
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.Tools.PermissionsResolver;
+import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Util.UUIDResolver;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
+
+import java.util.UUID;
 
 /**
  * @author GuntherDW
@@ -33,9 +38,11 @@ public class PermsEx extends Permissions {
     private PermissionsResolver permsResolver;
     private final PermissionManager permsManager =
             ru.tehkode.permissions.bukkit.PermissionsEx.getPermissionManager();
+    private final UUIDResolver uuidResolver;
 
     public PermsEx(PermissionsResolver instance) {
         this.permsResolver = instance;
+        this.uuidResolver = TweakcraftUtils.getInstance().getUUIDResolver();
     }
 
     @Override
@@ -46,13 +53,17 @@ public class PermsEx extends Permissions {
 
     @Override
     public String getUserPrefix(String world, String player) {
-        PermissionUser puser = permsManager.getUser(player);
+        UUID uuid = uuidResolver.getOrCreateUUID(player);
+        if(uuid == null) return null;
+        PermissionUser puser = permsManager.getUser(uuid);
         return puser!=null?puser.getPrefix(world).replace("&", "§"):"§f";
     }
 
     @Override
     public String getPrimaryUserGroup(String world, String player) {
-        PermissionUser puser = permsManager.getUser(player);
+        UUID uuid = uuidResolver.getOrCreateUUID(player);
+        if(uuid == null) return null;
+        PermissionUser puser = permsManager.getUser(uuid);
         if(puser!=null) {
             PermissionGroup[] groups = puser.getGroups();
             if(groups.length>0) return groups[0].getName();
@@ -62,7 +73,9 @@ public class PermsEx extends Permissions {
 
     @Override
     public String getUserSuffix(String world, String player) {
-        PermissionUser puser = permsManager.getUser(player);
+        UUID uuid = uuidResolver.getOrCreateUUID(player);
+        if(uuid == null) return null;
+        PermissionUser puser = permsManager.getUser(uuid);
         return puser!=null?puser.getSuffix(world).replace("&", "§"):"§f";
     }
 

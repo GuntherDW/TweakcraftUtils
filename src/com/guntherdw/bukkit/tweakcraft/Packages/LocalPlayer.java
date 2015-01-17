@@ -22,6 +22,7 @@ import com.guntherdw.bukkit.tweakcraft.Chat.ChatHandler;
 import com.guntherdw.bukkit.tweakcraft.Chat.ChatMode;
 import com.guntherdw.bukkit.tweakcraft.Exceptions.ChatModeException;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -34,6 +35,7 @@ public class LocalPlayer {
     private String name;
     private UUID uuid;
     private Player bukkitPlayer;
+    private OfflinePlayer bukkitOfflinePlayer;
     private ChatMode chatMode;
     private boolean afk;
     private int spamcounter;
@@ -59,6 +61,14 @@ public class LocalPlayer {
         this.allowedFlight = hasFlight;
         if(getBukkitPlayer()!=null)
             getBukkitPlayer().setAllowFlight(hasFlight);
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 
     public void setInvisible(boolean state) {
@@ -103,6 +113,13 @@ public class LocalPlayer {
 
     public void setNick(String nick) {
         this.nick = nick;
+    }
+
+    public OfflinePlayer getBukkitOfflinePlayer() {
+        OfflinePlayer op = getBukkitPlayerSafe();
+        if(op == null) op = Bukkit.getOfflinePlayer(name);
+
+        return op;
     }
 
     public Player getBukkitPlayerSafe() {

@@ -19,11 +19,16 @@
 package com.guntherdw.bukkit.tweakcraft.Util;
 
 import com.guntherdw.bukkit.tweakcraft.DataSources.PersistenceClass.PlayerOptions;
+import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * @author GuntherDW
@@ -40,22 +45,56 @@ public class UUIDResolver {
         this.plugin = instance;
     }
 
-    public void checkProfile(Player p) {
+    public UUID getOrCreateUUID(LocalPlayer lp) {
 
-        List<PlayerOptions> popts = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", p.getName()).findList();
+        List<PlayerOptions> popts = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", lp.getName()).findList();
+        UUID retUUID = null;
+
+        if (popts.size() != 0) {
+            PlayerOptions uuid = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", lp.getName()).ieq("optionname", "uuid").findUnique();
+            if (uuid == null) {
+                // Create one
+                retUUID = lp.getBukkitOfflinePlayer().getUniqueId();
+                if(retUUID == null) {
+                    plugin.getLogger().warning("Didn't find any UUID for " + lp.getName() + ", is mojang's API down, or is this a fake player?!");
+                    return null;
+                }
+                plugin.getLogger().warning("Didn't find a cached UUID for " + lp.getName() + ", updating PlayerOptions database!");
+                uuid = new PlayerOptions();
+                uuid.setName(lp.getName());
+                uuid.setOptionname("uuid");
+                uuid.setOptionvalue(retUUID.toString());
+                plugin.getDatabase().save(uuid);
+            } else {
+                plugin.getLogger().log(Level.FINE, "We did find a cached UUID value for "+ lp.getName() + ", using that!");
+                retUUID = UUID.fromString(uuid.getOptionvalue());
+            }
+        }
+
+        lp.setUuid(retUUID);
+        return retUUID;
+    }
+
+    public UUID getOrCreateUUID(String player) {
+        return getOrCreateUUID(plugin.wrapPlayer(player));
+    }
+
+    public void checkProfile(Player p) {
+        String player = p.getName();
+        List<PlayerOptions> popts = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player).findList();
         if(popts.size() != 0) {
-            PlayerOptions uuid = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", p.getName()).ieq("optionname", "uuid").findUnique();
+            PlayerOptions uuid = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", player).ieq("optionname", "uuid").findUnique();
             if(uuid == null) {
                 // Check if he changed his name
                 PlayerOptions oldName = plugin.getDatabase().find(PlayerOptions.class).where().ieq("optionname", "uuid").ieq("optionvalue", p.getUniqueId().toString()).findUnique();
 
                 if(oldName != null) {
-                    plugin.getLogger().warning(oldName.getName() + " changed his name to "+p.getName() +", updating PlayerOptions database!");
+                    plugin.getLogger().warning(oldName.getName() + " changed his name to "+player +", updating PlayerOptions database!");
 
                     List<PlayerOptions> oldOpts = plugin.getDatabase().find(PlayerOptions.class).where().ieq("name", oldName.getName()).findList();
 
                     // Update DB!
-                    String newName = p.getName();
+                    String newName = player;
                     // plugin.getDatabase().find(PlayerOptions.class).where().ieq("name",  oldName).findList()
                     for (Iterator<PlayerOptions> iterator = oldOpts.iterator(); iterator.hasNext(); ) {
                         PlayerOptions next = iterator.next();
@@ -64,9 +103,9 @@ public class UUIDResolver {
                     plugin.getDatabase().save(oldOpts);
 
                 } else {
-                    plugin.getLogger().warning(p.getName() + " had an old profile, updating PlayerOptions database!");
+                    plugin.getLogger().warning(player + " had an old profile, updating PlayerOptions database!");
                     uuid = new PlayerOptions();
-                    uuid.setName(p.getName());
+                    uuid.setName(player);
                     uuid.setOptionname("uuid");
                     uuid.setOptionvalue(p.getUniqueId().toString());
                     plugin.getDatabase().save(uuid);
