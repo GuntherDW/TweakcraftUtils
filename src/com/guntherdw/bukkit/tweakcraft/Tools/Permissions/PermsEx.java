@@ -54,8 +54,8 @@ public class PermsEx extends Permissions {
     @Override
     public String getUserPrefix(String world, String player) {
         UUID uuid = uuidResolver.getOrCreateUUID(player);
-        if(uuid == null) return null;
-        PermissionUser puser = permsManager.getUser(uuid);
+        PermissionUser puser = null;
+        if(uuid != null) puser = permsManager.getUser(uuid);
         return puser!=null?puser.getPrefix(world).replace("&", "§"):"§f";
     }
 
@@ -74,8 +74,8 @@ public class PermsEx extends Permissions {
     @Override
     public String getUserSuffix(String world, String player) {
         UUID uuid = uuidResolver.getOrCreateUUID(player);
-        if(uuid == null) return null;
-        PermissionUser puser = permsManager.getUser(uuid);
+        PermissionUser puser = null;
+        if(uuid != null) puser = permsManager.getUser(uuid);
         return puser!=null?puser.getSuffix(world).replace("&", "§"):"§f";
     }
 

@@ -289,11 +289,13 @@ public class TweakWorld implements iWorld {
                 environment = world.getEnvironment();
             }
 
-            if (seed != null)
+            if (seed != null) {
+                wm.getPlugin().getLogger().info("World " + worldName + " Setting custom seed : "+seed);
                 worldCreator.seed(seed);
+            }
 
             WorldType type = getWorldType();
-            if(type!=null)
+            if (type != null)
                 worldCreator.type(type);
 
             if (enabled) {

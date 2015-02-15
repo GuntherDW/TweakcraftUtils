@@ -30,6 +30,7 @@ import com.guntherdw.bukkit.tweakcraft.Packages.Ban;
 import com.guntherdw.bukkit.tweakcraft.Packages.LocalPlayer;
 import com.guntherdw.bukkit.tweakcraft.Packages.TamerMode;
 import com.guntherdw.bukkit.tweakcraft.TweakcraftUtils;
+import com.guntherdw.bukkit.tweakcraft.Util.UUIDResolver;
 import com.guntherdw.bukkit.tweakcraft.Worlds.WorldManager;
 import com.guntherdw.bukkit.tweakcraft.Worlds.iWorld;
 import org.bukkit.*;
@@ -57,6 +58,7 @@ public class TweakcraftPlayerListener implements Listener {
     private Set<String> invisplayers;
     private Map<String, String> nicks;
     private Map<String, String> capes;
+    private Map<String, String> skins;
     private Set<PlayerInfo> playerinfo = new HashSet<PlayerInfo>();
     private Set<PlayerOptions> playeroptions = new HashSet<PlayerOptions>();
     private Set<String> nomount = new HashSet<String>();
@@ -66,6 +68,7 @@ public class TweakcraftPlayerListener implements Listener {
         invisplayers = new HashSet<String>();
         nicks = new HashMap<String, String>();
         capes = new HashMap<String, String>();
+        skins = new HashMap<String, String>();
     }
 
     public Set<String> getNomount() {
@@ -324,6 +327,13 @@ public class TweakcraftPlayerListener implements Listener {
                 lp.setCapeURL(po.getOptionvalue());
                 capes.put(po.getName(), po.getOptionvalue());
             }
+            if (po.getOptionname().equals("skinurl")) {
+                if (plugin.getConfigHandler().enableDebug)
+                    plugin.getLogger().info("Setting " + po.getName() + "'s SkinURL option!");
+                LocalPlayer lp = plugin.wrapPlayer(po.getName());
+                lp.setSkinURL(po.getOptionvalue());
+                skins.put(po.getName(), po.getOptionvalue());
+            }
         }
         /* if(plugin.getClientBridge() != null) {
             plugin.getClientBridge().getPlayerListener().reloadInfo();
@@ -337,6 +347,10 @@ public class TweakcraftPlayerListener implements Listener {
 
     public Map<String, String> getCapeURLs() {
         return capes;
+    }
+
+    public Map<String, String> getSkinURLs() {
+        return skins;
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -494,9 +508,9 @@ public class TweakcraftPlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         LocalPlayer lp = plugin.wrapPlayer(p);
-        String name = p.getName();
-        String displayName = plugin.getNickWithColors(p.getName());
+        String displayName  = plugin.getNickWithColors(p.getName());
         String ldisplayname = displayName.substring(0, displayName.length() - 2);
+
         p.setDisplayName(displayName);
         if (ldisplayname.length() <= 16)
             try {

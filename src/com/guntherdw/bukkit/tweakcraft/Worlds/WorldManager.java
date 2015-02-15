@@ -193,8 +193,8 @@ public class WorldManager {
                 int viewdistance = globalConfig.getInt("worlds.extraworlds." + node + ".viewdistance", defaultviewdistance);
                 int portalSearchRadius = globalConfig.getInt("worlds.extraworlds." + node + ".portalSearchRadius", 128);
                 int difficulty = globalConfig.getInt("worlds.extraworlds." + node + ".difficulty", Difficulty.NORMAL.getValue());
-                long seed = globalConfig.getInt("worlds.extraworlds." + node + ".seed", -1);
-                long nseed = globalConfig.getInt("worlds.extraworlds." + node + ".netherseed", -1);
+                long seed = globalConfig.getLong("worlds.extraworlds." + node + ".seed", -1);
+                long nseed = globalConfig.getLong("worlds.extraworlds." + node + ".netherseed", -1);
 
                 String gameMode = globalConfig.getString("worlds.extraworlds." + node + ".gamemode", null);
                 GameMode gm = gameMode != null ? GameMode.valueOf(gameMode.toUpperCase()) : null;
@@ -228,7 +228,7 @@ public class WorldManager {
                     if (addtheend) plugin.getLogger().info("World " + node + " added the_end world!");
                     plugin.getLogger().info("World " + node + " Tool Durability : " + (durability ? "enabled" : "disabled"));
                     plugin.getLogger().info("World " + node + " GameMode : " + (gm != null ? gm.toString().toLowerCase() : "Survival"));
-                    plugin.getLogger().info("World " + node + " Difficulity : " + Difficulty.getByValue(difficulty).name().toLowerCase());
+                    plugin.getLogger().info("World " + node + " Difficulty : " + Difficulty.getByValue(difficulty).name().toLowerCase());
                     TweakWorld tw = new TweakWorld(this, node, wenv, pvp, monsters, animals, viewdistance, durability, false);
                     if (difficulty != getDefaultWorld().getDifficulty().getValue())
                         tw.setDifficulty(difficulty);
@@ -252,8 +252,8 @@ public class WorldManager {
 
                     tw.setEnabled(enabled);
                     if (enabled) {
-                        tw.loadWorld();
                         if (seed != -1) tw.setSeed(seed, false);
+                        tw.loadWorld();
                         tw.setSpawnChunksActive(spawnchunksactive);
                         tw.setAllowFlight(allowFlight);
                         if (addnether) {

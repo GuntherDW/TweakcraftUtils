@@ -48,6 +48,7 @@ public class LocalPlayer {
     private boolean tntArrow = false;
     private boolean allowedFlight = false;
     private String capeURL = null;
+    private String skinURL = null;
 
     public boolean isInvisible() {
         return this.invisible;
@@ -198,12 +199,20 @@ public class LocalPlayer {
         this.capeURL = URL;
     }
 
+    public void setSkinURL(String URL) {
+        this.skinURL = URL;
+    }
+
     public boolean isInvisiblePickup() {
         return invisiblePickup;
     }
 
     public String getCapeURL() {
         return this.capeURL;
+    }
+
+    public String getSkinURL() {
+        return this.skinURL;
     }
 
     /**

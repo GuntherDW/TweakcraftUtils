@@ -49,6 +49,7 @@ import com.zones.Zones;
 
 import de.diddiz.LogBlock.LogBlock;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -118,6 +119,8 @@ public class TweakcraftUtils extends JavaPlugin {
     public Map<String, String> playerReplyDB;
     public boolean databaseloaded = false;
 
+    public boolean isServerInOnlineMode = false;
+
 
     public Set<Player> getMod_InfDuraplayers() {
         return mod_InfDuraplayers;
@@ -165,7 +168,8 @@ public class TweakcraftUtils extends JavaPlugin {
         LocalPlayer p = this.wrapPlayer(player.getName());
         if (p.getBukkitPlayer() == null || p.getBukkitPlayer() != player)
             p.setBukkitPlayer(player);
-        if(p.getUuid() == null)
+
+        if(isServerInOnlineMode && p.getUuid() == null)
             p.setUuid(player.getUniqueId());
 
         return p;
@@ -606,8 +610,10 @@ public class TweakcraftUtils extends JavaPlugin {
 
     public String getNickWithColors(String player) {
         String nick = this.wrapPlayer(player).getNick();
+
         String realname = player;
         if (nick == null) nick = realname;
+
         /// return getPlayerColor(realname, false) + nick + ChatColor.WHITE;
         return this.getPermissions().getResolver().getUserPrefix(player) + nick + ChatColor.WHITE;
     }
@@ -646,6 +652,9 @@ public class TweakcraftUtils extends JavaPlugin {
     public void onEnable() {
         pdfFile = this.getDescription();
         instance = this;
+
+        // Check for "online mode", for UUID safety
+        isServerInOnlineMode = this.getServer().getOnlineMode();
 
         donottplist = new HashSet<String>();
         MOTDLines = new ArrayList<String>();
